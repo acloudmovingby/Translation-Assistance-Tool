@@ -5,7 +5,11 @@
  */
 package comparator;
 
+import Files.AbstractTMFile;
+import Files.CompareFile;
+import Files.TMCorpus;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -23,10 +27,11 @@ public class Comparator {
             take finished match and add to matches object
      */
     // shingle length
-    final int NGRAM_LENGTH;
-    final NGramWrapper text;
-    final NGramWrapper corpus;
-    Matches matches;
+    private final int NGRAM_LENGTH;
+    private final NGramWrapper text;
+    private final NGramWrapper corpus;
+    private Matches matches;
+    private CompareFile cFile;
 
     public Comparator(String text, String corpus, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
@@ -35,11 +40,104 @@ public class Comparator {
         this.corpus = new NGramWrapper(corpus, this.NGRAM_LENGTH);
 
         matches = new Matches();
-        findMatches();
+        findMatchesOriginal();
+       // cFile = buildCompareFile();
 
     }
+    
+    /**
+     * THis constructor finds the matches between the text and a file, allowing Comparator to return those matches by means of a CompareFile.
+     * @param text The untranslated text.
+     * @param file The file that should be searched for matches. 
+     * @param minMatchLength Minimum match length
+     */
+    public Comparator(String text, AbstractTMFile file, int minMatchLength) {
+        NGRAM_LENGTH = minMatchLength;
+        
+        /*
+        This takes the text and the string representation of the file and turns them into Ngram.
+        Later, if an index is found in the file, the TM segment for that index can be returned using the method getSingleTM or getMultipleTMs.
+        */
+        this.text = new NGramWrapper(text, this.NGRAM_LENGTH);
+        this.corpus = new NGramWrapper(file.getThai(), this.NGRAM_LENGTH); 
+        
+        String[] thaiSegs = file.getThaiSegments();
+        
+        // this goes through every segment in the target file and finds matches for that segment, building the TM entry to be added to the CompareFile
+        for (int i=0; i<thaiSegs.length; i++) {
+            Matches m = findMatches(text, thaiSegs[i]);
+            Object[] tmMatch = new Object[cFile.getNumFields()];
+            
+            tmMatch[0] = 0;
+            tmMatch[1] = thaiSegs[i];
+                tmMatch[2] = file.getTM(i)[file.getThaiColumn()];
+                tmMatch[3] = new int[m.totalCorpusMatches()][2];
+                tmMatch[4] = file.getFileName();
+                
+            // this finds all the index ranges of where in the target segment (corpus) those matches exist
+            for (MatchEntry3 m1 : m.getMatchList()) {
+                for (int ind : m1.indices) {
+                    tmMatch[3] = new int[] {
+                        ind, m1.match.length()+ind
+                    };
+                }
+               
+            }
+            
+           // cFile.addCompareMatch(thaiSegs[i], file.getTM(i)[file.getEnglishColumn()], int[][])
+            
+        }
+        
+        
+        
+        
+        
+    }
+    
+    public Comparator(String text, TMCorpus corpus, int minMatchLength) {
+        NGRAM_LENGTH = minMatchLength;
+        
+        this.text = new NGramWrapper(text, this.NGRAM_LENGTH);
+        this.corpus = new NGramWrapper(corpus.toString(), this.NGRAM_LENGTH);
+        
+        throw new UnsupportedOperationException();
+    }
 
-    public void findMatches() {
+    public Matches findMatches(String t1, String t2) {
+        NGramWrapper n1 = new NGramWrapper(t1, NGRAM_LENGTH);
+        NGramWrapper n2 = new NGramWrapper(t2, NGRAM_LENGTH);
+        
+        Matches ret = new Matches();
+        
+        for (int i = 0; i < n1.getList().size(); i++) {
+            String s = n1.getList().get(i);
+
+            // finds indices of all matching ngrams in corpus
+            ArrayList<Integer> indices = n2.contains(s);
+
+            if (indices != null) {
+                for (int j : indices) {
+                    
+                    if (!checkPrior(i, j)) {
+
+                        String segment = s;
+                        
+                        String foo1 = remaining(i, n1);
+                        String foo2 = remaining(j, n2);
+                        
+                        segment = segment.concat(afters(foo1, foo2));
+                        
+                        ret.addMatch(segment, i, j);
+                        
+                            
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+    
+    public void findMatchesOriginal() {
         
         // goes through each ngram in text
         for (int i = 0; i < text.getList().size(); i++) {
@@ -137,5 +235,21 @@ public class Comparator {
             str = text.getText().substring(i+NGRAM_LENGTH);
         }
         return str;
+    }
+
+    private CompareFile buildCompareFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public CompareFile getCompareFile() {
+        return cFile;
+    }
+
+    public NGramWrapper getText() {
+        return text;
+    }
+
+    public NGramWrapper getCorpus() {
+        return corpus;
     }
 }
