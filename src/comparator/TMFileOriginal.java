@@ -11,7 +11,7 @@ import java.util.Arrays;
  *
  * @author Chris
  */
-public class TMFile {
+public class TMFileOriginal {
 
     /**
      * TMs has three components in each array: id number (int), thai string, and
@@ -24,21 +24,21 @@ public class TMFile {
     int numFields;
 
     
-    public TMFile(String thai, String eng) {
+    public TMFileOriginal(String thai, String eng) {
         this.thai = thai;
         this.eng = eng;
         numFields = 3;
         makeSegments();
     }
     
-    public TMFile() {
+    public TMFileOriginal() {
         thai = "";
         eng = "";
         numFields = 3;
         TMs = new Object[0][0];
     }
     
-    public TMFile(Object[][] o) {
+    public TMFileOriginal(Object[][] o) {
         TMs = o;
     }
     

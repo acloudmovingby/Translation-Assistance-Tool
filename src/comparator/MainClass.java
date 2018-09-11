@@ -25,8 +25,7 @@ public class MainClass {
         System.out.println("\n****************\n");
         System.out.println(d.upperCase());*/
         
-        System.out.println("\n****************\n");
-        System.out.println(c.matches);
+       
     }
     
 }

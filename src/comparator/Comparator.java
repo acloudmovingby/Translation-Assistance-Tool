@@ -5,11 +5,13 @@
  */
 package comparator;
 
-import Files.AbstractTMFile;
+
 import Files.CompareFile;
+import Files.TMCompareEntry;
 import Files.TMCorpus;
+import Files.TMEntry;
+import Files.TMFile;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  *
@@ -50,14 +52,15 @@ public class Comparator {
      * @param text The untranslated text.
      * @param file The file that should be searched for matches. 
      * @param minMatchLength Minimum match length
-     */
+     
+    
     public Comparator(String text, AbstractTMFile file, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
         
-        /*
+        
         This takes the text and the string representation of the file and turns them into Ngram.
         Later, if an index is found in the file, the TM segment for that index can be returned using the method getSingleTM or getMultipleTMs.
-        */
+        
         this.text = new NGramWrapper(text, this.NGRAM_LENGTH);
         this.corpus = new NGramWrapper(file.getThai(), this.NGRAM_LENGTH); 
         
@@ -92,6 +95,37 @@ public class Comparator {
         
         
         
+    }*/
+    
+    public Comparator(String text, TMFile file, int minMatchLength) {
+        NGRAM_LENGTH = minMatchLength;
+        ArrayList<TMEntry> tms = file.getTMs();
+        
+        //not necessary
+        this.text = new NGramWrapper(text, NGRAM_LENGTH);
+        this.corpus = new NGramWrapper(text, NGRAM_LENGTH);
+        
+        cFile = new CompareFile();
+        
+        for (TMEntry tm : tms) {
+            Matches m = findMatches(text, tm.getThai());
+            TMCompareEntry ce = new TMCompareEntry();
+            ce.setThai(tm.getThai());
+            ce.setEnglish(tm.getEnglish());
+            ce.setFileName(file.getFileName());
+            
+            // WRONG
+            for (MatchEntry3 me : m.getMatchList()) {
+                ArrayList<Integer> indices = me.indices;
+                int[] ia = new int[indices.size()];
+                for (int i = 0; i<indices.size(); i++) {
+                    ia[i] = indices.get(i);
+                }
+                ce.addMatchIntervals(ia);
+            }
+            cFile.addEntry(ce);
+        }
+        
     }
     
     public Comparator(String text, TMCorpus corpus, int minMatchLength) {
@@ -103,7 +137,7 @@ public class Comparator {
         throw new UnsupportedOperationException();
     }
 
-    public Matches findMatches(String t1, String t2) {
+    public final Matches findMatches(String t1, String t2) {
         NGramWrapper n1 = new NGramWrapper(t1, NGRAM_LENGTH);
         NGramWrapper n2 = new NGramWrapper(t2, NGRAM_LENGTH);
         

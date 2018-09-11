@@ -22,7 +22,8 @@ public class Matches implements Iterable {
      */
     private ArrayList<MatchEntry3> matchList;
     /**
-     * HashMap where key is a MatchEntry2 (string and index in text) and the value is an ArrayList of corpus indices
+     * HashMap where key is a MatchEntry2 (string and index in text) and the
+     * value is an ArrayList of corpus indices
      */
     private HashMap<MatchEntry2, ArrayList<Integer>> matchHashT;
 
@@ -42,7 +43,7 @@ public class Matches implements Iterable {
      * @param corpusIndex
      */
     public void addMatch(String s, int textIndex, int corpusIndex) {
-        
+
         if (!contains(s, textIndex, corpusIndex)) {
             MatchEntry2 match = new MatchEntry2(s, textIndex);
             ArrayList<Integer> indices = matchHashT.get(match);
@@ -51,19 +52,16 @@ public class Matches implements Iterable {
             } else {
                 matchList.remove(new MatchEntry3(s, textIndex, indices));
             }
-            
-            
-            
+
             indices.add(corpusIndex);
             matchHashT.put(match, indices);
-            
+
             MatchEntry3 match3 = new MatchEntry3(s, textIndex, indices);
             matchList.add(match3);
             System.out.println(match3);
             System.out.println("MatchList is: " + matchList);
         }
 
-        
     }
 
     /**
@@ -140,13 +138,17 @@ public class Matches implements Iterable {
     public void forEach(Consumer action) {
         Iterable.super.forEach(action); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     public ArrayList<MatchEntry3> getMatchList() {
         return matchList;
     }
 
-    
-    
- 
-    
+    public int totalCorpusMatches() {
+        int ret = 0;
+        for (MatchEntry3 m : matchList) {
+            ret = ret + m.indices.size();
+        }
+        return ret;
+    }
+
 }

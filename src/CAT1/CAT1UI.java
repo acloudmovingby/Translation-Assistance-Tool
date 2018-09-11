@@ -5,7 +5,8 @@
  */
 package CAT1;
 
-import comparator.TMFile;
+import Files.CompareFile;
+import comparator.TMFileOriginal;
 import comparator.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,18 +20,18 @@ import javax.swing.event.ListSelectionListener;
  */
 public class CAT1UI extends javax.swing.JFrame {
 
-    TMFile file;
-    TMFile corpus;
+    TMFileOriginal file;
+    TMFileOriginal corpus;
     int minMatchLength;
 
     /**
      * Creates new form CAT1UI
      */
     public CAT1UI() {
-        file = new TMFile(
+        file = new TMFileOriginal(
                 "ขขข\nการเมือง\nคคคค\nลังเลตลอด",
                 "gor\nfaoher\naerae\nfalerh");
-        corpus = new TMFile(
+        corpus = new TMFileOriginal(
                 "ฟหกดกดก\nการเมืองA\nกกกกกกกก\nการเมืองB\nการเมืองC\nไำไพไพ\nไำพำไำะไำะ\nลังเลตลอด",
                 "c1\nc2\nc3\nc4\nc5\nc6\nc7\nc8");
         minMatchLength = 4;
@@ -46,14 +47,14 @@ public class CAT1UI extends javax.swing.JFrame {
                 
                 String th = (String) fileViewer.getValueAt(fileViewer.getSelectedRow(), 1);
                 
-                TMFile fileMatches = getMatches(th);
+                TMFileOriginal fileMatches = getMatches(th);
                 
                 displayMatches(fileMatches);
                 
             }
         });
         
-        TMFile testFile = new TMFile();
+        TMFileOriginal testFile = new TMFileOriginal();
         System.out.println(testFile);
         
         Object[][] oa = new Object[][] {new Object[] {0, "this", "that"}};
@@ -301,13 +302,13 @@ public class CAT1UI extends javax.swing.JFrame {
         });
     }
     
-    public TMFile getMatches(String th) {
+    public TMFileOriginal getMatches(String th) {
         Comparator c = new Comparator(th, corpus.getThai(), 4);
         ArrayList<MatchEntry3> list = c.getMatches().getMatchList();
         MatchEntry2 aba = new MatchEntry2("this", 3);
        
         
-        TMFile matchesToDisplay = new TMFile();
+        TMFileOriginal matchesToDisplay = new TMFileOriginal();
         System.out.println("Matches are : " + list.toString());
         for (MatchEntry3 m : list) {
             Object[][] segmentArray = corpus.getSegmentArray(m.getIntArray());
@@ -317,15 +318,15 @@ public class CAT1UI extends javax.swing.JFrame {
         return matchesToDisplay;
     }
     
-    public void displayMatches(TMFile t) {
+    public void displayMatches(CompareFile c) {
         tmLookup.setModel(new javax.swing.table.DefaultTableModel(
-            t.getTMArray(),
+            c.toArray(),
             new String [] {
-                "id", "Thai", "English"
+                "id", "Thai", "English", "File Name"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false, false
             };
 
             @Override
