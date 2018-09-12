@@ -19,6 +19,8 @@ import java.util.ArrayList;
  */
 public class Comparator {
 
+    
+    
     /*
     Game Plan
         (1) form ngrams class for each text
@@ -46,6 +48,7 @@ public class Comparator {
        // cFile = buildCompareFile();
 
     }
+    
     
     /**
      * THis constructor finds the matches between the text and a file, allowing Comparator to return those matches by means of a CompareFile.
@@ -114,14 +117,15 @@ public class Comparator {
             ce.setEnglish(tm.getEnglish());
             ce.setFileName(file.getFileName());
             
-            // WRONG
+            // W
             for (MatchEntry3 me : m.getMatchList()) {
-                int[] nextInterval = new int[2];
+                int startIndex = -1;
+                int endIndex = -1;
                 for (int i = 0; i<me.indices.size(); i++) {
-                    nextInterval[0] = me.indices.get(i);
-                    nextInterval[1] = nextInterval[0] + me.match.length();
+                    startIndex = me.indices.get(i);
+                    endIndex = startIndex + me.match.length()-1;
                 }
-                ce.addMatchInterval(nextInterval);
+                ce.addMatchInterval(startIndex, endIndex);
             }
             cFile.addEntry(ce);
         }
@@ -136,7 +140,9 @@ public class Comparator {
         throw new UnsupportedOperationException();
     }
 
-    public final Matches findMatches(String t1, String t2) {
+    Matches findMatches(String t1, String t2) {
+        System.out.println("Two strings for comparison are: \n\t" + t1 + "\n\t" + t2);
+        
         NGramWrapper n1 = new NGramWrapper(t1, NGRAM_LENGTH);
         NGramWrapper n2 = new NGramWrapper(t2, NGRAM_LENGTH);
         
@@ -170,7 +176,7 @@ public class Comparator {
         return ret;
     }
     
-    public void findMatchesOriginal() {
+    private void findMatchesOriginal() {
         
         // goes through each ngram in text
         for (int i = 0; i < text.getList().size(); i++) {
@@ -201,7 +207,7 @@ public class Comparator {
 
     }
 
-    public String priors(int textIndex, int corpusIndex) {
+    private String priors(int textIndex, int corpusIndex) {
         String priorMatch = "";
         for (int i = 1; i <= textIndex || i <= corpusIndex; i++) {
             try {
@@ -220,7 +226,7 @@ public class Comparator {
         return priorMatch;
     }
 
-    public static String afters(String t1, String t2) {
+    private String afters(String t1, String t2) {
 
         StringBuilder afterMatch = new StringBuilder(14);
         boolean finished = false;
@@ -278,11 +284,11 @@ public class Comparator {
         return cFile;
     }
 
-    public NGramWrapper getText() {
+    private NGramWrapper getText() {
         return text;
     }
 
-    public NGramWrapper getCorpus() {
+    private NGramWrapper getCorpus() {
         return corpus;
     }
 }

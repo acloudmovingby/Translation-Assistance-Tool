@@ -16,7 +16,7 @@ import java.util.Objects;
 public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
 
     private ArrayList<int[]> matchIntervals;
-    private int matchSize;
+    private int[] matches;
     private String fileName;
     private String thai;
     private String english;
@@ -27,23 +27,58 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
      */
     public TMCompareEntry() {
         this.setMatchIntervals(new ArrayList<>());
+        matches = new int[0];
     }
     
+    /*
     public TMCompareEntry(String thai, String english, ArrayList<int[]> matchIntervals, String filename) {
         
         setMatchIntervals(matchIntervals);
         this.thai = thai;
         this.english = english;
         setFileName(filename);
-    }
+        matches = new int[thai.length()];
+        for (int i=0; i<matches.length; i++) {
+            matches[i] = 0;
+        }
+    }*/
 
     
-    public void addMatchInterval(int[] interval) {
-        if (interval.length != 2 || interval[0] > interval[1]) {
-            throw new IllegalArgumentException();
+    TMCompareEntry getCopy() {
+        TMCompareEntry ret = new TMCompareEntry();
+        
+        ret.setThai(this.getThai());
+        ret.setEnglish(this.getEnglish());
+        ret.setFileName(this.getFileName());
+        for (int i = 0; i<matchIntervals.size(); i++) {
+            int[] ia1 = matchIntervals.get(i);
+            int[] ia2 = new int[ia1.length];
+            System.arraycopy(ia1, 0, ia2, 0, ia1.length);
+            ret.addMatchInterval(ia1[0], ia1[1]);
         }
-        matchIntervals.add(interval);
-        matchSize = matchSize + (interval[1] - interval[0]);
+        return ret;
+    }
+    
+    /**
+     * Inclusive match interval. For example, if the string is "abcd" and the match is "bc" then startIndex=1, endIndex=2.
+     * @param startIndex Beginning of match.
+     * @param endIndex End of match (inclusive).
+     */
+    public void addMatchInterval(int startIndex, int endIndex) {
+        if (startIndex > endIndex) {
+            throw new IllegalArgumentException("first number must be less than or equal to second");
+        }
+        
+        if (startIndex<0 || startIndex>=thai.length() || endIndex<1 || endIndex>=thai.length()) {
+            throw new IllegalArgumentException("Impossible match interval");
+        }
+        
+        //records over which characters the there are matches
+        matchIntervals.add(new int[] {startIndex, endIndex});
+        for (int i=startIndex; i<=endIndex; i++) {
+            matches[i] = 1;
+            
+        }
 
     }
 
@@ -51,8 +86,17 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
         return matchIntervals;
     }
     
+    /**
+     * The intervals representing matches in string Thai are represented here.
+     * @return 
+     */
     public int[][] getMatchIntervalsArray() {
-        return ((int[][]) matchIntervals.toArray());
+        int[][] ret = new int[matchIntervals.size()][];
+        for (int i=0; i<matchIntervals.size(); i++) {
+            ret[i] = new int[matchIntervals.get(i).length];
+            System.arraycopy(matchIntervals.get(i), 0, ret[i], 0, matchIntervals.get(i).length);
+        }
+        return ret;
     }
     
     final void setMatchIntervals(ArrayList<int[]> matchIntervals) {
@@ -75,6 +119,7 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
     @Override
     public void setThai(String thai) {
         this.thai = thai;
+        matches = new int[thai.length()];
     }
     
     @Override
@@ -88,6 +133,12 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
     }
 
     public int getMatchSize() {
+        int matchSize = 0;
+        for (int i1 : matches) {
+            if (i1 == 1) {
+                matchSize++;
+            }
+        }
         return matchSize;
     }
 
@@ -101,6 +152,10 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
         return NUM_FIELDS;
     }
     
+    /**
+     * 
+     * @return An object array containing three strings: Thai, English, and Filename.
+     */
     @Override
     public Object[] toArray() {
         Object[] oa = new Object[NUM_FIELDS];
@@ -125,7 +180,8 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
         return (m.getEnglish().equals(this.getEnglish())
                 && m.getThai().equals(this.getThai())
                 && deepCompare(m.getMatchIntervals(), this.getMatchIntervals())
-                && m.getFileName().equals(this.getFileName()));
+                && m.getFileName().equals(this.getFileName())
+                && m.getMatchSize()==this.getMatchSize());
     }
 
     private boolean deepCompare(ArrayList<int[]> list1, ArrayList<int[]> list2) {
@@ -135,7 +191,6 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
         }
 
         for (int i = 0; i < list1.size(); i++) {
-System.out.println("WHATSUPPPPPPPPPPPP");
             if (!Arrays.equals(list1.get(i), list2.get(i))) {
                 
                 return false;
@@ -148,9 +203,34 @@ System.out.println("WHATSUPPPPPPPPPPPP");
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.matchIntervals);
-        hash = 59 * hash + this.matchSize;
+        for (int i=0; i<matchIntervals.size(); i++) {
+            hash = 59 * hash + Arrays.hashCode(matchIntervals.get(i));
+        }
+        hash = 59 * hash + getMatchSize();
         hash = 59 * hash + Objects.hashCode(this.fileName);
+        hash = 59 * hash + Objects.hashCode(getThai());
+        hash = 59 * hash + Objects.hashCode(getEnglish());
         return hash;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder bf = new StringBuilder();
+        
+        bf.append("[");
+        bf.append(this.getThai());
+        bf.append(", ");
+        bf.append(this.getEnglish());
+        bf.append(", ");
+        bf.append(this.getFileName());
+        bf.append(" || ");
+        bf.append(Arrays.deepToString(this.getMatchIntervalsArray()));
+        bf.append(", ");
+        bf.append(this.getMatchSize());
+        bf.append("]");
+        
+        return bf.toString();
+       
+    }
+
 }

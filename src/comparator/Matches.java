@@ -58,8 +58,6 @@ public class Matches implements Iterable {
 
             MatchEntry3 match3 = new MatchEntry3(s, textIndex, indices);
             matchList.add(match3);
-            System.out.println(match3);
-            System.out.println("MatchList is: " + matchList);
         }
 
     }
@@ -72,7 +70,7 @@ public class Matches implements Iterable {
      * @param s
      * @param textIndex
      * @param corpusIndices
-     */
+     */ /*
     public void addMatch(String s, int textIndex, ArrayList<Integer> corpusIndices) {
 
         MatchEntry2 match = new MatchEntry2(s, textIndex);
@@ -83,7 +81,7 @@ public class Matches implements Iterable {
         indices.addAll(corpusIndices);
 
         matchHashT.put(match, indices);
-    }
+    } */
 
     public boolean contains(String s, int textIndex, int corpusIndex) {
 

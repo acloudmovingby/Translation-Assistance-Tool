@@ -22,8 +22,8 @@ public class DisplayMatches {
     }
 
     public DisplayMatches(Comparator c) {
-        this.t1 = c.getText();
-        this.t2 = c.getCorpus();
+        //this.t1 = c.getText();
+        //this.t2 = c.getCorpus();
         this.matches = c.getMatches();
     }
 

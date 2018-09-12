@@ -7,6 +7,7 @@ package CAT1;
 
 import Files.BasicFile;
 import Files.CompareFile;
+import Files.FileFactory;
 import Files.TMEntryBasic;
 import comparator.TMFileOriginal;
 import comparator.*;
@@ -22,41 +23,35 @@ import javax.swing.event.ListSelectionListener;
  */
 public class CAT1UI extends javax.swing.JFrame {
 
-    String file2;
-    BasicFile corpus2;
+    BasicFile file1;
+    BasicFile file2;
     
-    TMFileOriginal file;
-    TMFileOriginal corpus;
+    TMFileOriginal originalFile;
+    TMFileOriginal originalCorpus;
     int minMatchLength;
 
     /**
      * Creates new form CAT1UI
      */
     public CAT1UI() {
-        file2 = "การเมือง";
-        corpus2 = new BasicFile();
-        corpus2.setFileName("Corpus2");
-        TMEntryBasic e = new TMEntryBasic();
-        e.setThai("ฟหกดกดก");
-        e.setEnglish("tm1");
-        corpus2.addEntry(e);
-        e.setThai("การเมือง");
-        e.setEnglish("tm2");
-        corpus2.addEntry(e);
-        e.setThai("ฟหกดกดฟำพำเ");
-        e.setEnglish("tm3");
-        corpus2.addEntry(e);
-        e.setThai("กงB");
-        e.setEnglish("tm4");
-        corpus2.addEntry(e);
+        FileFactory ff = new FileFactory();
+        file1 =  ff.buildBasicParse("ขขข\nการเมือง\nคคคค\nลังเลตลอด", 
+                "gor\nfaoher\naerae\nfalerh");
+        file2 = ff.buildBasicParse("ฟหกดกดก\nการเมืองA\nกกกกกกกก\nการเมืองB\nการเมืองC\nไำไพไพ\nไำพำไำะไำะ\nลังเลตลอด", 
+                "c1\nc2\nc3\nc4\nc5\nc6\nc7\nc8");
+        file1.setFileName("Main File");
+        file2.setFileName("Corpus2");
         
+     
         
+        /*
         file = new TMFileOriginal(
                 "ขขข\nการเมือง\nคคคค\nลังเลตลอด",
                 "gor\nfaoher\naerae\nfalerh");
         corpus = new TMFileOriginal(
                 "ฟหกดกดก\nการเมืองA\nกกกกกกกก\nการเมืองB\nการเมืองC\nไำไพไพ\nไำพำไำะไำะ\nลังเลตลอด",
                 "c1\nc2\nc3\nc4\nc5\nc6\nc7\nc8");
+        */
         minMatchLength = 4;
         initComponents();
         ListSelectionModel selectionModel = fileViewer.getSelectionModel();
@@ -70,7 +65,7 @@ public class CAT1UI extends javax.swing.JFrame {
                 
                 String th = (String) fileViewer.getValueAt(fileViewer.getSelectedRow(), 1);
                 
-                Comparator c = new Comparator(file2, corpus2, 4);
+                Comparator c = new Comparator(th, file2, minMatchLength);
                 CompareFile fileMatches = c.getCompareFile();
                 
                 displayMatches(fileMatches);
@@ -117,7 +112,7 @@ public class CAT1UI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         fileViewer.setModel(new javax.swing.table.DefaultTableModel(
-            file.getTMArray(),
+            file1.toArray(),
             new String [] {
                 "id", "Thai", "English"
             }
@@ -325,7 +320,7 @@ public class CAT1UI extends javax.swing.JFrame {
             }
         });
     }
-    
+    /*
     public TMFileOriginal getMatches(String th) {
         Comparator c = new Comparator(th, corpus.getThai(), 4);
         ArrayList<MatchEntry3> list = c.getMatches().getMatchList();
@@ -337,10 +332,10 @@ public class CAT1UI extends javax.swing.JFrame {
         for (MatchEntry3 m : list) {
             Object[][] segmentArray = corpus.getSegmentArray(m.getIntArray());
             matchesToDisplay.addTM(segmentArray);
-            System.out.println("\n\t*/*/*/* matchesToDisplay : " + matchesToDisplay + "\n");
+            System.out.println("\n\t**** matchesToDisplay : " + matchesToDisplay + "\n");
         }
         return matchesToDisplay;
-    }
+    } */
     
     public void displayMatches(CompareFile c) {
         tmLookup.setModel(new javax.swing.table.DefaultTableModel(

@@ -6,6 +6,8 @@
 package Files;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  *
@@ -21,10 +23,16 @@ public class BasicFile implements TMFile {
     public BasicFile() {
         tmList = new ArrayList();
         NUM_FIELDS = 2;
+        fileName = "untitled";
     }
     
     public void addEntry(TMEntryBasic a) {
-        tmList.add(a);
+        System.out.println("tmList before add is : " + tmList);
+        System.out.println("a is : " + a);
+        TMEntryBasic a2 = a.getCopy();
+        tmList.add(a2);
+        System.out.println("tmList after add is: " + tmList);
+       
     }
 
     @Override
@@ -32,7 +40,12 @@ public class BasicFile implements TMFile {
         Object[][] oa = new Object[tmList.size()][];
         
         for (int i=0; i<tmList.size(); i++) {
-            oa[i] = tmList.get(i).toArray();
+            Object[] entryArray = tmList.get(i).toArray();
+            Object[] entryArrayWithID = new Object[entryArray.length+1];
+            // adds id number
+            entryArrayWithID[0] = i;
+            System.arraycopy(entryArray, 0, entryArrayWithID, 1, entryArray.length);
+            oa[i] = entryArrayWithID;
         }
         return oa;
     }
@@ -54,6 +67,59 @@ public class BasicFile implements TMFile {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof BasicFile)) {
+            return false;
+        }
+
+        BasicFile m = (BasicFile) o;
+        
+        // tests equality of all TMs within files
+        boolean areTMsEqual = true;
+        if (m.getTMs().size() != this.getTMs().size()) {
+            return false;
+        } else {
+            Iterator i1 = this.getTMs().iterator();
+            Iterator i2 = m.getTMs().iterator();
+            while (i1.hasNext()) {
+                if (!i1.next().equals(i2.next())) {
+                    areTMsEqual = false;
+                }
+            }
+        }
+        
+        return this.getNumFields() == m.getNumFields() &&
+                this.getFileName().equals(m.getFileName()) &&
+                areTMsEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + Objects.hashCode(this.tmList);
+        hash = 23 * hash + this.NUM_FIELDS;
+        hash = 23 * hash + Objects.hashCode(this.fileName);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Filename: ").append(fileName);
+        sb.append("\n\t");
+        
+        for (TMEntry tm : tmList) {
+            sb.append(tm.toString());
+            sb.append("\n\t");
+        }
+         return sb.toString();
     }
     
 }

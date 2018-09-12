@@ -19,6 +19,8 @@ public class MainClass {
         String t2 = "ฟหกดกดก\nการเมืองA\nกกกกกกกก\nการเมืองB\nการเมืองC\nไำไพไพ\nไำพำไำะไำะ\nลังเลตลอด";
         Comparator c = new Comparator(t1, t2, 4);
         
+        
+        
       
         
         /*DisplayMatches d = new DisplayMatches(c);

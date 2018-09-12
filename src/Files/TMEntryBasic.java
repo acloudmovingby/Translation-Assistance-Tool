@@ -7,6 +7,10 @@ package Files;
 
 import java.util.Objects;
 
+/**
+ * Contains only two fields: a Thai string and an English string.
+ * @author Chris
+ */
 public class TMEntryBasic implements TMEntry {
 
     private String thai;
@@ -21,6 +25,17 @@ public class TMEntryBasic implements TMEntry {
         this.thai = thai;
         this.english = english;
         NUM_FIELDS = 2;
+    }
+    
+    /**
+     * Creates a copy of this TMEntryBasic object.
+     * @return 
+     */
+    public TMEntryBasic getCopy() {
+        TMEntryBasic foo = new TMEntryBasic();
+        foo.setThai(this.getThai());
+        foo.setEnglish(this.getEnglish());
+        return foo;
     }
 
     @Override
@@ -78,5 +93,11 @@ public class TMEntryBasic implements TMEntry {
         hash = 41 * hash + Objects.hashCode(this.getThai());
         return hash;
     }
+    
+    @Override
+    public String toString() {
+        return "[" + getThai() + ", " + getEnglish() + "]";
+    }
+    
 
 }
