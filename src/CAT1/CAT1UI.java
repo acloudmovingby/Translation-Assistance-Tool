@@ -5,7 +5,9 @@
  */
 package CAT1;
 
+import Files.BasicFile;
 import Files.CompareFile;
+import Files.TMEntryBasic;
 import comparator.TMFileOriginal;
 import comparator.*;
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import javax.swing.event.ListSelectionListener;
  */
 public class CAT1UI extends javax.swing.JFrame {
 
+    String file2;
+    BasicFile corpus2;
+    
     TMFileOriginal file;
     TMFileOriginal corpus;
     int minMatchLength;
@@ -28,6 +33,24 @@ public class CAT1UI extends javax.swing.JFrame {
      * Creates new form CAT1UI
      */
     public CAT1UI() {
+        file2 = "การเมือง";
+        corpus2 = new BasicFile();
+        corpus2.setFileName("Corpus2");
+        TMEntryBasic e = new TMEntryBasic();
+        e.setThai("ฟหกดกดก");
+        e.setEnglish("tm1");
+        corpus2.addEntry(e);
+        e.setThai("การเมือง");
+        e.setEnglish("tm2");
+        corpus2.addEntry(e);
+        e.setThai("ฟหกดกดฟำพำเ");
+        e.setEnglish("tm3");
+        corpus2.addEntry(e);
+        e.setThai("กงB");
+        e.setEnglish("tm4");
+        corpus2.addEntry(e);
+        
+        
         file = new TMFileOriginal(
                 "ขขข\nการเมือง\nคคคค\nลังเลตลอด",
                 "gor\nfaoher\naerae\nfalerh");
@@ -47,7 +70,8 @@ public class CAT1UI extends javax.swing.JFrame {
                 
                 String th = (String) fileViewer.getValueAt(fileViewer.getSelectedRow(), 1);
                 
-                TMFileOriginal fileMatches = getMatches(th);
+                Comparator c = new Comparator(file2, corpus2, 4);
+                CompareFile fileMatches = c.getCompareFile();
                 
                 displayMatches(fileMatches);
                 

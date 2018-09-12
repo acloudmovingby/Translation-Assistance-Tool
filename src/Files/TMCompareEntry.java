@@ -38,7 +38,7 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
     }
 
     
-    public void addMatchIntervals(int[] interval) {
+    public void addMatchInterval(int[] interval) {
         if (interval.length != 2 || interval[0] > interval[1]) {
             throw new IllegalArgumentException();
         }

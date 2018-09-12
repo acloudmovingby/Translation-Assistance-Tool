@@ -25,7 +25,7 @@ public class TestFiles {
         a = new TMCompareEntry();
         a.setThai("การเมืองไม่ได้");
         a.setEnglish("politicsnot");
-        a.addMatchIntervals(new int[]{
+        a.addMatchInterval(new int[]{
             0, 7
         });
         a.setFileName("POLITICS2");
@@ -35,7 +35,7 @@ public class TestFiles {
         a = new TMCompareEntry();
         a.setThai("การเมือง");
         a.setEnglish("politics");
-        a.addMatchIntervals(new int[]{
+        a.addMatchInterval(new int[]{
             0, 3
         });
         a.setFileName("POLITICS");
@@ -45,7 +45,7 @@ public class TestFiles {
         a = new TMCompareEntry();
         a.setThai("อย่างอื่น");
         a.setEnglish("something else");
-        a.addMatchIntervals(new int[]{
+        a.addMatchInterval(new int[]{
             1, 5
         });
         a.setFileName("WOAHDADDY");
@@ -59,7 +59,7 @@ public class TestFiles {
         TMCompareEntry a2 = new TMCompareEntry();
         a2.setThai("อย่างอื่น");
         a2.setEnglish("something else");
-        a2.addMatchIntervals(new int[]{
+        a2.addMatchInterval(new int[]{
             1, 5
         });
         a2.setFileName("WOAHDADDY");
@@ -69,7 +69,7 @@ public class TestFiles {
         a2 = new TMCompareEntry();
         a2.setThai("การเมือง");
         a2.setEnglish("politics");
-        a2.addMatchIntervals(new int[]{
+        a2.addMatchInterval(new int[]{
             0, 3
         });
         a2.setFileName("POLITICS");
@@ -79,7 +79,7 @@ public class TestFiles {
         a2 = new TMCompareEntry();
         a2.setThai("การเมืองไม่ได้");
         a2.setEnglish("politicsnot");
-        a2.addMatchIntervals(new int[]{
+        a2.addMatchInterval(new int[]{
             0, 7
         });
         a2.setFileName("POLITICS2");

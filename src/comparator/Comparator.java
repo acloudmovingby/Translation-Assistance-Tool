@@ -116,16 +116,15 @@ public class Comparator {
             
             // WRONG
             for (MatchEntry3 me : m.getMatchList()) {
-                ArrayList<Integer> indices = me.indices;
-                int[] ia = new int[indices.size()];
-                for (int i = 0; i<indices.size(); i++) {
-                    ia[i] = indices.get(i);
+                int[] nextInterval = new int[2];
+                for (int i = 0; i<me.indices.size(); i++) {
+                    nextInterval[0] = me.indices.get(i);
+                    nextInterval[1] = nextInterval[0] + me.match.length();
                 }
-                ce.addMatchIntervals(ia);
+                ce.addMatchInterval(nextInterval);
             }
             cFile.addEntry(ce);
         }
-        
     }
     
     public Comparator(String text, TMCorpus corpus, int minMatchLength) {

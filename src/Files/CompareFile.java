@@ -31,7 +31,7 @@ public class CompareFile implements TMFile {
         a.setThai(thai);
         a.setEnglish(english);
         for (int[] ia : matchIntervals) {
-            a.addMatchIntervals(ia);
+            a.addMatchInterval(ia);
         }
         a.setFileName("POLITICS");
     }
