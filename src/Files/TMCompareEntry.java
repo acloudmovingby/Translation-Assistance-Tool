@@ -144,7 +144,10 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
 
     @Override
     public int compareTo(TMCompareEntry t) {
-        return t.getMatchSize() - this.getMatchSize();
+        if (t.getMatchSize() - getMatchSize() == 0) {
+            return t.getThai().length() - getThai().length();
+        }
+        return t.getMatchSize() - getMatchSize();
     }
 
     @Override
@@ -176,12 +179,14 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
         }
 
         TMCompareEntry m = (TMCompareEntry) o;
-
-        return (m.getEnglish().equals(this.getEnglish())
-                && m.getThai().equals(this.getThai())
-                && deepCompare(m.getMatchIntervals(), this.getMatchIntervals())
-                && m.getFileName().equals(this.getFileName())
-                && m.getMatchSize()==this.getMatchSize());
+      
+        boolean cond1 = m.getThai().equals(getThai());
+        boolean cond2 = m.getEnglish().equals(getEnglish());
+        boolean cond3 = deepCompare(m.getMatchIntervals(), getMatchIntervals());
+        boolean cond4 = m.getFileName().equals(getFileName());
+        boolean cond5 = m.getMatchSize() == getMatchSize();
+        
+        return cond1 && cond2 && cond3 && cond4 && cond5;
     }
 
     private boolean deepCompare(ArrayList<int[]> list1, ArrayList<int[]> list2) {

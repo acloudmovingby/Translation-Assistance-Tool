@@ -8,11 +8,8 @@ package CAT1;
 import Files.BasicFile;
 import Files.CompareFile;
 import Files.FileFactory;
-import Files.TMEntryBasic;
 import comparator.TMFileOriginal;
 import comparator.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -54,6 +51,8 @@ public class CAT1UI extends javax.swing.JFrame {
         */
         minMatchLength = 4;
         initComponents();
+        System.out.println("MAIN FILE: \n\t" + file1);
+        System.out.println("CORPUS: \n\t" + file2);
         ListSelectionModel selectionModel = fileViewer.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -67,28 +66,14 @@ public class CAT1UI extends javax.swing.JFrame {
                 
                 Comparator c = new Comparator(th, file2, minMatchLength);
                 CompareFile fileMatches = c.getCompareFile();
+                System.out.println("The cFile is : " + fileMatches);
                 
                 displayMatches(fileMatches);
                 
             }
         });
         
-        TMFileOriginal testFile = new TMFileOriginal();
-        System.out.println(testFile);
         
-        Object[][] oa = new Object[][] {new Object[] {0, "this", "that"}};
-        testFile.addTM(oa);
-        System.out.println(testFile);
-        
-        oa[0] = new Object[] { 1, "blah", "blue"};
-        testFile.addTM(oa);
-        System.out.println(testFile);
-        
-        oa[0] = new Object[] { 2, "third", "eye"};
-        testFile.addTM(oa);
-        System.out.println(testFile);
-        
-       
 
     }
 

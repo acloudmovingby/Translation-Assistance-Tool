@@ -40,24 +40,8 @@ public class CompareFileTest {
     }
     
     /**
-     * Test of getTMs method, of class CompareFile.
-     */
-    @Test
-    public void testGetTMs() {
-        System.out.println("getTMs");
-        CompareFile instance = new CompareFile();
-        ArrayList<TMEntry> expResult = null;
-        ArrayList<TMEntry> result = instance.getTMs();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-
-
-    /**
      * Test of toArray method, of class CompareFile.
-     */
+     *//*
     @Test
     public void testToArray() {
         System.out.println("toArray");
@@ -85,8 +69,8 @@ public class CompareFileTest {
        
         
         Object[][] expResult = new Object[][] {
-            {"ข้อที่สอง", "second section", "file2"},
-            {"การเมือง", "politics", "file1"},
+            {0, "ข้อที่สอง", "second section", "file2"},
+            {1, "การเมือง", "politics", "file1"},
         };
         
         Object[][] result = instance.toArray();
@@ -97,8 +81,110 @@ public class CompareFileTest {
         
         assertArrayEquals(expResult, result);
     }
+*/
 
+    
+    /**
+     * Tests to make sure two TMEntries can be added to CompareFile even if they have same MatchSize
+     */
+    @Test
+    public void testAddEntry1() {
+        System.out.println("addEntry1");
+        
+        CompareFile instance = new CompareFile();
+        
+        System.out.println("The first entry (การเมือง)");
+        TMCompareEntry t = new TMCompareEntry();
+        t.setThai("การเมือง");
+        t.setEnglish("politics");
+        t.setFileName("file1");
+        t.addMatchInterval(0, 3);
+        instance.addEntry(t);
+         
+        
+        System.out.println("The second entry");
+        TMCompareEntry t2 = new TMCompareEntry();
+        t2.setThai("การเมืองAA");
+        t2.setEnglish("politics");
+        t2.setFileName("file1");
+        t2.addMatchInterval(0, 4);
+        instance.addEntry(t2);
+        
+        int expResult = 2;
+        int result = instance.getTMs().size();
+        
+        assertEquals(expResult, result);
+    }
 
+    /**
+     * Tests to make sure the list reorders properly according to match size
+     */
+    @Test
+    public void testAddEntry2() {
+        System.out.println("addEntry2");
+        
+        CompareFile result = new CompareFile();
+        
+        System.out.println("The first entry (การเมือง)");
+        TMCompareEntry t = new TMCompareEntry();
+        t.setThai("การเมืองCCC");
+        t.setEnglish("politics");
+        t.setFileName("file1");
+        t.addMatchInterval(4, 5);
+        t.addMatchInterval(6,7);
+        result.addEntry(t);
+         
+        
+        System.out.println("The second entry");
+        TMCompareEntry t2 = new TMCompareEntry();
+        t2.setThai("การเมืองAA");
+        t2.setEnglish("politics");
+        t2.setFileName("file1");
+        t2.addMatchInterval(0, 7);
+        result.addEntry(t2);
+        
+        System.out.println("The third entry");
+        t2 = new TMCompareEntry();
+        t2.setThai("การเมืองB");
+        t2.setEnglish("politics");
+        t2.setFileName("file1");
+        t2.addMatchInterval(1, 4);
+        result.addEntry(t2);
+        
+      //**********************
+        CompareFile expResult = new CompareFile();
+        
+        System.out.println("The first entry (การเมือง)");
+        t = new TMCompareEntry();
+        t.setThai("การเมืองAA");
+        t.setEnglish("politics");
+        t.setFileName("file1");
+        t.addMatchInterval(0, 7);
+        expResult.addEntry(t);
+         
+        
+        System.out.println("The second entry");
+        t2 = new TMCompareEntry();
+        t2.setThai("การเมืองB");
+        t2.setEnglish("politics");
+        t2.setFileName("file1");
+        t2.addMatchInterval(1, 4);
+        expResult.addEntry(t2);
+        
+        System.out.println("The third entry");
+        t2 = new TMCompareEntry();
+        t2.setThai("การเมืองCCC");
+        t2.setEnglish("politics");
+        t2.setFileName("file1");
+        t2.addMatchInterval(4, 5);
+        t2.addMatchInterval(6,7);
+        expResult.addEntry(t2);
+       
+        System.out.println("result : \n" + result);
+        System.out.println("expResult : \n" + expResult);
+        assertEquals(expResult, result);
+    }
+    
 
     
 }

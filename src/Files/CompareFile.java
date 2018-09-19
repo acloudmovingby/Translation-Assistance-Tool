@@ -7,29 +7,24 @@ package Files;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.Objects;
 
 
 public class CompareFile implements TMFile {
     
-    TreeSet<TMCompareEntry> ts;
+    ArrayList<TMCompareEntry> tmList;
     private final int NUM_FIELDS;
     private String fileName;
     
     public CompareFile() {
-        ts = new TreeSet();
+        tmList = new ArrayList();
         NUM_FIELDS = (new TMCompareEntry()).getNumFields();
+        fileName = "default";
     }
     
     public void addEntry(TMCompareEntry t) {
-        TMCompareEntry foo = t.getCopy();
-        System.out.println("\tThe foo is \t"+foo);
-        System.out.println("\tThe t is \t" + t);
-        System.out.println("\tThe ts is \t" + ts.toString());
-        System.out.println("\tts contain foo? \t" + ts.contains(foo));
-        System.out.println("\tts contain t? \t" + ts.contains(t));
-        System.out.println("\tAdded the foo? \t" + ts.add(foo));
-        System.out.println("\tThe ts is \t" + ts.toString());
+       TMCompareEntry foo = t.getCopy();
+       tmList.add(foo);
     }
     
     /*
@@ -45,9 +40,10 @@ public class CompareFile implements TMFile {
         ts.add(a.getCopy());
     }*/
     
-     @Override
+    @Override
     public ArrayList<TMEntry> getTMs() {
-        return (new ArrayList(ts));
+        sort();
+        return (new ArrayList(tmList));
     }
     
   
@@ -62,8 +58,9 @@ public class CompareFile implements TMFile {
     
     @Override
     public Object[][] toArray() {
-        Iterator<TMCompareEntry> iter = ts.iterator();
-        Object[][] oa = new Object[ts.size()][];
+        sort();
+        Iterator<TMCompareEntry> iter = tmList.iterator();
+        Object[][] oa = new Object[tmList.size()][];
         
         int i = 0;
         while (iter.hasNext()) {
@@ -87,15 +84,62 @@ public class CompareFile implements TMFile {
    
     @Override
     public String toString() {
+        sort();
         StringBuilder sb = new StringBuilder();
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TMEntry tm : ts) {
+        for (TMEntry tm : tmList) {
             sb.append(tm.toString());
             sb.append("\n\t");
         }
          return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof CompareFile)) {
+            return false;
+        }
+
+        CompareFile m = (CompareFile) o;
+        
+         // tests equality of all TMs within files
+        boolean areTMsEqual = true;
+        if (m.getTMs().size() != this.getTMs().size()) {
+            return false;
+        } else {
+            sort();
+            m.sort();
+            Iterator i1 = this.getTMs().iterator();
+            Iterator i2 = m.getTMs().iterator();
+            while (i1.hasNext()) {
+                if (!i1.next().equals(i2.next())) {
+                    areTMsEqual = false;
+                }
+            }
+        }
+        
+        return this.getNumFields() == m.getNumFields() &&
+                this.getFileName().equals(m.getFileName()) &&
+                areTMsEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.tmList);
+        hash = 67 * hash + this.NUM_FIELDS;
+        hash = 67 * hash + Objects.hashCode(this.fileName);
+        return hash;
+    }
+
+    private void sort() {
+        tmList.sort(null);
     }
     
     

@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- *
+ * A basic file that stores a list of TMBasicEntry's, which each contain just a Thai and an English field.
  * @author Chris
  */
 public class BasicFile implements TMFile {
@@ -27,11 +27,8 @@ public class BasicFile implements TMFile {
     }
     
     public void addEntry(TMEntryBasic a) {
-        System.out.println("tmList before add is : " + tmList);
-        System.out.println("a is : " + a);
         TMEntryBasic a2 = a.getCopy();
         tmList.add(a2);
-        System.out.println("tmList after add is: " + tmList);
        
     }
 
@@ -121,5 +118,6 @@ public class BasicFile implements TMFile {
         }
          return sb.toString();
     }
+
     
 }

@@ -124,7 +124,7 @@ public class Matches implements Iterable {
 
     @Override
     public String toString() {
-        return matchList.toString();
+        return "How long is matchList? " + matchList.size() + " Matchlist is " + matchList.toString();
     }
 
     @Override
@@ -148,5 +148,6 @@ public class Matches implements Iterable {
         }
         return ret;
     }
+    
 
 }

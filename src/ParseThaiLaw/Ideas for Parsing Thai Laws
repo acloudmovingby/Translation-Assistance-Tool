@@ -1,0 +1,22 @@
+
+Common errors: 
+   
+    (MODERATE) A single section number is mistyped.
+        If it's not a valid Thai numeral, check to see if previous and next are okay, then just interpolate
+
+    (HARD) Somtimes a Section is not linebroken to properly.
+        If a Section number jumps up by 2, go back in reverse and see if you can find the prior section 
+        (make sure it's the correct number). This is dangerous of course cuz some clauses reference themselves.
+
+    (EASY) Remove headers and footers
+        If for a given file there is always headers and footers, assuming those phrases are 
+        not in the law itself and are on their own line, you can delete.
+
+    (HARD) Fix common OCR errors 
+        Hard in that I have to figure out what those errors are and I have to use a dictionary to check. 
+            ซ ช 
+            ด ต
+            ฝ ฟ
+            ผ ฝ
+             ิ  ี  ึ  ื
+            ๐ o 0
