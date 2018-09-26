@@ -34,6 +34,7 @@ public final class Comparator {
     private Matches matches;
     private CompareFile cFile;
 
+    
     public Comparator(String text, String corpus, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
 
@@ -103,7 +104,6 @@ public final class Comparator {
 
         for (TMEntry tm : tms) {
             Matches m = findMatches(text, tm.getThai());
-            System.out.println("The matches found were: \n\t" + m);
             if (!m.isEmpty()) {
                 TMCompareEntry ce = new TMCompareEntry();
                 ce.setThai(tm.getThai());
@@ -133,7 +133,6 @@ public final class Comparator {
     }
 
     Matches findMatches(String t1, String t2) {
-        System.out.println("Two strings for comparison are: \n\t" + t1 + "\n\t" + t2);
 
         NGramWrapper n1 = new NGramWrapper(t1, NGRAM_LENGTH);
         NGramWrapper n2 = new NGramWrapper(t2, NGRAM_LENGTH);
@@ -149,7 +148,7 @@ public final class Comparator {
             if (indices != null) {
                 for (int j : indices) {
 
-                    if (!checkPrior(i, j)) {
+                    if (!checkPrior(i, j, t1, t2)) {
 
                         String segment = s;
 
@@ -179,7 +178,7 @@ public final class Comparator {
             if (indices != null) {
                 for (int j : indices) {
 
-                    if (!checkPrior(i, j)) {
+                    if (!checkPriorOriginal(i, j)) {
 
                         String segment = s;
 
@@ -240,7 +239,24 @@ public final class Comparator {
      * @return true if the prior character at i-1, j-1 is identical. Helps
      * prevent redundant match checking
      */
-    private boolean checkPrior(int i, int j) {
+    private boolean checkPrior(int i, int j, String fileText, String corpusText) {
+
+        if (i > 0 && j > 0) {
+            return fileText.charAt(i - 1) == corpusText.charAt(j - 1);
+        } else {
+            return false;
+        }
+
+    }
+    
+    /**
+     *
+     * @param i text index of ngram match
+     * @param j corpus index of ngram match
+     * @return true if the prior character at i-1, j-1 is identical. Helps
+     * prevent redundant match checking
+     */
+    private boolean checkPriorOriginal(int i, int j) {
 
         if (i > 0 && j > 0) {
             return text.getText().charAt(i - 1) == corpus.getText().charAt(j - 1);

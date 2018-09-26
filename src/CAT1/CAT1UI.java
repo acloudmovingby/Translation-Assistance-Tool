@@ -32,12 +32,20 @@ public class CAT1UI extends javax.swing.JFrame {
      */
     public CAT1UI() {
         FileFactory ff = new FileFactory();
+        
+        String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
+        
+        file1 = ff.justThaiFilePath(filePath);
+        file2 = ff.justThaiFilePath(filePath);
+        
+        /*
         file1 =  ff.buildBasicParse("ขขข\nการเมือง\nคคคค\nลังเลตลอด", 
                 "gor\nfaoher\naerae\nfalerh");
         file2 = ff.buildBasicParse("ฟหกดกดก\nการเมืองA\nกกกกกกกก\nการเมืองB\nการเมืองC\nไำไพไพ\nไำพำไำะไำะ\nลังเลตลอด", 
-                "c1\nc2\nc3\nc4\nc5\nc6\nc7\nc8");
+                "c1\nc2\nc3\nc4\nc5\nc6\nc7\nc8"); */
         file1.setFileName("Main File");
-        file2.setFileName("Corpus2");
+        file2.setFileName("Corpus");
+        
         
      
         
@@ -49,7 +57,7 @@ public class CAT1UI extends javax.swing.JFrame {
                 "ฟหกดกดก\nการเมืองA\nกกกกกกกก\nการเมืองB\nการเมืองC\nไำไพไพ\nไำพำไำะไำะ\nลังเลตลอด",
                 "c1\nc2\nc3\nc4\nc5\nc6\nc7\nc8");
         */
-        minMatchLength = 4;
+        minMatchLength = 1000;
         initComponents();
         System.out.println("MAIN FILE: \n\t" + file1);
         System.out.println("CORPUS: \n\t" + file2);
@@ -59,15 +67,14 @@ public class CAT1UI extends javax.swing.JFrame {
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                System.out.println(
-                        fileViewer.getValueAt(fileViewer.getSelectedRow(), fileViewer.getSelectedColumn()));
                 
                 String th = (String) fileViewer.getValueAt(fileViewer.getSelectedRow(), 1);
+                System.out.println("THE CELL SELECTED IS: " + th);
                 
                 Comparator c = new Comparator(th, file2, minMatchLength);
+                System.out.println(c.getMatches());
                 CompareFile fileMatches = c.getCompareFile();
-                System.out.println("The cFile is : " + fileMatches);
-                
+                System.out.println(fileMatches);
                 displayMatches(fileMatches);
                 
             }
@@ -147,6 +154,7 @@ public class CAT1UI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tmLookup.setCellSelectionEnabled(true);
         tmLookup.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(tmLookup);
         if (tmLookup.getColumnModel().getColumnCount() > 0) {

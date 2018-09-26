@@ -52,7 +52,6 @@ public class TMFileOriginal {
         System.arraycopy(o, 0, newTMs, TMs.length, o.length);
         
         for (int i=0; i<newTMs.length; i++) {
-            System.out.println(i);
             newTMs[i][0] = i+1;
         }
         TMs = newTMs;

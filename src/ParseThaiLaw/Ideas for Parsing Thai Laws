@@ -1,6 +1,11 @@
 
 Common errors: 
    
+    (EASY-MODERATE) errors with Section 193/1 formatting
+        Easy because I could just ignore those parts for now. 
+        Moderate because to really deal with it, I have to be able to compare and deal with those cases.
+            Deal with by when checking Section header number, if ou find / then split
+    
     (MODERATE) A single section number is mistyped.
         If it's not a valid Thai numeral, check to see if previous and next are okay, then just interpolate
 
@@ -12,7 +17,7 @@ Common errors:
         If for a given file there is always headers and footers, assuming those phrases are 
         not in the law itself and are on their own line, you can delete.
 
-    (HARD) Fix common OCR errors 
+    (VERY HARD) Fix common OCR errors 
         Hard in that I have to figure out what those errors are and I have to use a dictionary to check. 
             ซ ช 
             ด ต
@@ -20,3 +25,6 @@ Common errors:
             ผ ฝ
              ิ  ี  ึ  ื
             ๐ o 0
+            ๑ ส (for some reason)
+
+ 

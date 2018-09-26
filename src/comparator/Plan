@@ -82,13 +82,12 @@ PROBLEMS WITH WORDFAST:
       We don't know until we translate where exactly we will break up a sentence
       This causes the program to miss huge matches.
       
-API CHANGES:
-    - COMPARATOR:
-        constructor: (text, file) (text, corpus) //maybe: (file, file) (file, corpus)
-        iteratable
-        return matches as compare file (returns in order of largest matches first)
-    - COMPARE FILE:
-        constructor (comparator
+TO DO: 
+    - have ngram wrapper across (1) whole file and (2) whole corpus
+    - text wrap 
+    - type into main view file and upon hitting keyboard command, add item to corpus
+    - make document viewer for repetitions within document
+    - make 
         
 
 
