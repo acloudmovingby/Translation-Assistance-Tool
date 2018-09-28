@@ -19,8 +19,12 @@ import java.util.Iterator;
  */
 public class ThaiLawParser {
 
+    int sectionNumsWrong;
+    int sectionLengthsWrong;
+    
     ThaiLawParser(String fileNameThai, String fileNameEng) {
         try {
+            
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
                     = new FileReader(fileNameThai);
@@ -35,20 +39,21 @@ public class ThaiLawParser {
                     = new BufferedReader(fileReaderEng);
 
             // parses files by section (มาตรา)
-            ArrayList<String> thaiSegments = segmentThaiFile(buffReaderThai);
-            ArrayList<String> engSegments = segmentEngFile(buffReaderEng);
-            checkSectionMatching(thaiSegments, engSegments);
+            ArrayList<String> thaiSegments = firstParseThaiFile(buffReaderThai);
+            ArrayList<String> engSegments = firstParseEngFile(buffReaderEng);
+            sectionNumsWrong = checkSectionMatching(thaiSegments, engSegments);
             /*
             engSegments.forEach((s) -> {
                 System.out.println(s+"\n");
             });*/
-            
-            ArrayList<ArrayList<String>> thaiSectionsParsed = parseSections(thaiSegments);
-            ArrayList<ArrayList<String>> engSectionsParsed = parseSections(engSegments);
-            
-            checkSectionParsing(thaiSectionsParsed, engSectionsParsed);
-            
-            
+
+            ArrayList<ArrayList<String>> thaiSectionsParsed = parseWithinSections(thaiSegments);
+            ArrayList<ArrayList<String>> engSectionsParsed = parseWithinSections(engSegments);
+
+           sectionLengthsWrong = checkSectionParsing(thaiSectionsParsed, engSectionsParsed);
+
+            System.out.println("Section# mis-matches: " + sectionNumsWrong);
+            System.out.println("Section length mis-matches: " + sectionLengthsWrong);
             buffReaderThai.close();
             buffReaderEng.close();
         } catch (FileNotFoundException ex) {
@@ -130,9 +135,11 @@ public class ThaiLawParser {
      *
      * @param thaiSegments
      * @param engSegments
+     * @return The number of Sections that don't have matching numbers
      */
-    public static void checkSectionMatching(ArrayList<String> thaiSegments, ArrayList<String> engSegments) {
-
+    public static int checkSectionMatching(ArrayList<String> thaiSegments, ArrayList<String> engSegments) {
+        
+        int numWrong = 0;
         Iterator thaiIter = thaiSegments.iterator();
         Iterator engIter = engSegments.iterator();
         int adjustment = 0;
@@ -140,10 +147,6 @@ public class ThaiLawParser {
         while (thaiIter.hasNext() && engIter.hasNext()) {
             String th = (String) thaiIter.next();
             String en = (String) engIter.next();
-
-            if (th == null || en == null) {
-                System.out.println("wtf?");
-            }
 
             int thInt = sectionNumToInt(getSectionNumber(th));
             int enInt = sectionNumToInt(getSectionNumber(en));
@@ -154,8 +157,10 @@ public class ThaiLawParser {
                 System.out.println("\tThai section # = " + "\"" + thInt + "\"");
                 System.out.println("\tEnglish section # = " + "\"" + enInt + "\"");
                 adjustment = enInt - thInt;
+                numWrong++;
             }
         }
+        return numWrong;
     }
 
     /**
@@ -197,13 +202,17 @@ public class ThaiLawParser {
      */
     private static int sectionNumToInt(String sectionNumber) {
 
+        
+        
         if (sectionNumber == null) {
             return -1;
         }
-
-        StringBuilder sb = new StringBuilder(sectionNumber.length());
-        for (int i = 0; i < sectionNumber.length(); i++) {
-            char c = sectionNumber.charAt(i);
+        
+        String num = sectionNumber.trim();
+        
+        StringBuilder sb = new StringBuilder(num.length());
+        for (int i = 0; i < num.length(); i++) {
+            char c = num.charAt(i);
             if (c != '/') {
                 sb.append(c);
             } else {
@@ -213,51 +222,76 @@ public class ThaiLawParser {
         return Integer.parseInt(sb.toString());
     }
 
-    private static ArrayList<String> segmentThaiFile(BufferedReader buffReaderThai) throws IOException {
+    private static ArrayList<String> firstParseThaiFile(BufferedReader buffReaderThai) throws IOException {
         ArrayList<String> thSegs = new ArrayList(40);
         String line;
 
+        boolean isPageBreak = false;
+
         StringBuilder sb = new StringBuilder();
+        // Checks to see if a line begins with a new law "Section" (in Thai: มาตรา)
         while ((line = buffReaderThai.readLine()) != null) {
-            if (line.trim().startsWith("มาตรา")) {
+
+            String trimmed = line.trim();
+            boolean startsSection = trimmed.startsWith("มาตรา");
+            boolean isPageNum = trimmed.matches("[0-9]+");
+            boolean isFooterEtc = (trimmed.equalsIgnoreCase("www.ThaiLaws.com")
+                    || trimmed.equalsIgnoreCase("WWW.Thai Laws, com"));
+
+            // if it starts a new section, it starts a new String segment in thSegs
+            if (startsSection) {
                 thSegs.add(sb.toString());
                 sb = new StringBuilder();
                 sb.append(line);
             } 
-            // deals with the headers and footers from website that provided pdf
-            else if (!line.trim().startsWith("www.ThaiLaws.com")
-                    && !line.trim().startsWith("WWW.Thai Laws, com")) {
-                sb.append(line);
+            // does not add line if it's a page number or is a footer from website
+            else if (!(isPageNum || isFooterEtc)) {
+                // if this is a new page, it checks to see if there is an indent. If not, it appends to prior line without a line break.
+                // only works if OCR captures indents
+                /*if (isPageBreak) {
+                    if (line.length() != 0 && line.length() == trimmed.length()) {
+                        sb.append(line);
+                        isPageBreak = false;
+                    }
+                } else {
+                    sb.append("\n").append(line);
+                } */
+                sb.append("\n").append(line);
             }
+
+            /* IF OCR captures indents, otherwise, disable
+            if (isPageNum) {
+                isPageBreak = true;
+            }*/
         }
         thSegs.add(sb.toString());
         thSegs = removeWhiteSpace(thSegs);
         return thSegs;
     }
 
-    private static ArrayList<String> segmentEngFile(BufferedReader buffReaderEng) throws IOException {
+    private static ArrayList<String> firstParseEngFile(BufferedReader buffReaderEng) throws IOException {
         StringBuilder sb = new StringBuilder();
         String line;
         ArrayList<String> enSegs = new ArrayList(40);
         while ((line = buffReaderEng.readLine()) != null) {
-            
+
             String trimmed = line.trim();
-            if (trimmed.startsWith("Section")) {
+            boolean startsSection = trimmed.startsWith("Section");
+            boolean isPageNum = (trimmed.length() <= 3 && trimmed.length() > 0);
+            boolean isFooterEtc = (trimmed.startsWith("www.") 
+                    || trimmed.startsWith("WWW.")
+                    || trimmed.startsWith("Thailand Civil and Commercial Code"));
+            
+            // if it starts a new section, it creates a new segment in enSegs
+            if (startsSection) {
                 enSegs.add(sb.toString());
                 sb = new StringBuilder();
                 sb.append(line).append(" ").append(buffReaderEng.readLine()).append(buffReaderEng.readLine());
-                //System.out.println(sb.append("\n\n"));
-            } 
-            // deals with page numbers (could cause problems for very short lines)
-            // deals with the headers and footers from website that provided pdf
-            // if it isn't one of these unwanted lines, then it appends the line to sb
-            else if (!trimmed.startsWith("www.ThaiLaws.com")
-                    && !trimmed.startsWith("WWW.Thai Laws, com")
-                    && !trimmed.startsWith("Thailand Civil and Commercial Code")
-                    && !(trimmed.length() <=3 && trimmed.length()>0)) {
-                
-                sb.append(line).append("\n");
-            } 
+               
+            } // if it is not a page number of footer,etc. then it adds line to current segment
+            else if (!isFooterEtc && !isPageNum) {
+                sb.append("\n").append(line);
+            }
         }
         enSegs.add(sb.toString());
         enSegs = removeWhiteSpace(enSegs);
@@ -304,10 +338,10 @@ public class ThaiLawParser {
         throw new UnsupportedOperationException();
     }
 
-    private static ArrayList<ArrayList<String>> parseSections(ArrayList<String> segments) {
-        
+    private static ArrayList<ArrayList<String>> parseWithinSections(ArrayList<String> segments) {
+
         ArrayList<ArrayList<String>> ret = new ArrayList(segments.size());
-        
+
         for (String s : segments) {
             String[] sa = s.split("\n");
             ArrayList<String> newSection = new ArrayList(sa.length);
@@ -317,37 +351,47 @@ public class ThaiLawParser {
         }
         return ret;
     }
-    
-    private static void checkSectionParsing(ArrayList<ArrayList<String>> thaiSectionsParsed, ArrayList<ArrayList<String>> engSectionsParsed) {
-        
+
+    private static int checkSectionParsing(ArrayList<ArrayList<String>> thaiSectionsParsed, ArrayList<ArrayList<String>> engSectionsParsed) {
+
         Iterator<ArrayList<String>> thIter = thaiSectionsParsed.iterator();
         Iterator<ArrayList<String>> enIter = engSectionsParsed.iterator();
 
+        int numWrong = 0;
+
         while (thIter.hasNext() && enIter.hasNext()) {
-           
+
             ArrayList<String> thSec = thIter.next();
             ArrayList<String> enSec = enIter.next();
-            
+
             boolean isLengthEqual = (thSec.size() == enSec.size());
-            
+
+            if (!isLengthEqual) {
+                System.out.println("************************************");
+            }
             System.out.println(getSectionNumber(thSec.get(0)) + " : " + isLengthEqual);
             if (!isLengthEqual) {
+                numWrong++;
+                System.out.println(thSec.size() + " " + enSec.size());
                 for (String s : thSec) {
-                    System.out.println("\t"+s);
+                    System.out.println(s + "\n");
                 }
                 for (String s : enSec) {
-                    System.out.println("\t"+s);
+                    System.out.println(s + "\n");
                 }
             }
+            if (!isLengthEqual) {
+                System.out.println("************************************");
+            }
         }
-        
+
         if (thIter.hasNext()) {
             // if thai sections has remaining elements
         } else {
             // if eng sections has remaining elements
         }
-        
-       
-        
+
+        return numWrong;
+
     }
 }
