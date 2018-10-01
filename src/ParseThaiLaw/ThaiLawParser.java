@@ -19,12 +19,29 @@ import java.util.Iterator;
  */
 public class ThaiLawParser {
 
+
     int sectionNumsWrong;
     int sectionLengthsWrong;
-    
+    int thaiSecsSkipped;
+    int engSecsSkipped;
+
+    /*METHODS:
+        -section num extractor, with defined cases for behavior (string->string)
+            Section 187 -> 187
+            Section 178/8 -> 8 (special case)
+            Section 178[8] -> 178 (anything not an English numeral terminates)
+            มาตรา ๔๕๖ -> ๔๕๖
+            มาตรา ๔๕๖/๗ -> ๗ (special case)
+            มาตรา ๔๕๖7[๗] -> ๔๕๖ (anything not an English numeral terminates)
+        - thai numeral converter (string->string)
+            ๔๕๖ -> 456
+            anthing besides thai numerals -> returns -1
+        - string to int converter (string->int)
+            literally just Integer.parseint(string)
+     */
     ThaiLawParser(String fileNameThai, String fileNameEng) {
         try {
-            
+
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
                     = new FileReader(fileNameThai);
@@ -41,21 +58,30 @@ public class ThaiLawParser {
             // parses files by section (มาตรา)
             ArrayList<String> thaiSegments = firstParseThaiFile(buffReaderThai);
             ArrayList<String> engSegments = firstParseEngFile(buffReaderEng);
-            sectionNumsWrong = checkSectionMatching(thaiSegments, engSegments);
-            /*
-            engSegments.forEach((s) -> {
-                System.out.println(s+"\n");
-            });*/
-
-            ArrayList<ArrayList<String>> thaiSectionsParsed = parseWithinSections(thaiSegments);
-            ArrayList<ArrayList<String>> engSectionsParsed = parseWithinSections(engSegments);
-
-           sectionLengthsWrong = checkSectionParsing(thaiSectionsParsed, engSectionsParsed);
-
-            System.out.println("Section# mis-matches: " + sectionNumsWrong);
-            System.out.println("Section length mis-matches: " + sectionLengthsWrong);
             buffReaderThai.close();
             buffReaderEng.close();
+            
+            System.out.println("//////////////SECTION NUMBER MIS-MATCHES////////////");
+            sectionNumsWrong = checkSectionMatching(thaiSegments, engSegments);
+            
+            
+            System.out.println("//////////////SECTION LENGTH MIS-MATCHES////////////");
+            ArrayList<ArrayList<String>> thaiSectionsParsed = parseWithinSections(thaiSegments);
+            ArrayList<ArrayList<String>> engSectionsParsed = parseWithinSections(engSegments);
+            sectionLengthsWrong = checkSectionParsing(thaiSectionsParsed, engSectionsParsed);
+            
+            System.out.println("//////////////SKIPPED SECTIONS////////////");
+            
+            thaiSecsSkipped = skippedSectionCounter(thaiSegments);
+            engSecsSkipped = skippedSectionCounter(engSegments);
+            
+            System.out.println("\t/////////////ANALYSIS////////////////");
+            System.out.println("Thai sections skipped by 1: \t\t" + thaiSecsSkipped);
+            System.out.println("English sections skipped by 1: \t\t" + engSecsSkipped);
+            System.out.println("Section # mis-matches: \t\t\t" + sectionNumsWrong);
+            System.out.println("Section length mis-matches: \t\t" + sectionLengthsWrong);
+            
+
         } catch (FileNotFoundException ex) {
             System.out.println(
                     "Unable to open file '"
@@ -69,11 +95,17 @@ public class ThaiLawParser {
         }
     }
 
+    /**
+     * Converts all the Thai numerals in a string to Arabic numerals (0-9) ® is
+     * interpreted as 1 and ส is interpreted as 9 (common OCR mistake)
+     *
+     * @param thaiNumeral A string which may contain Thai numeral characters
+     * @return The same string with all the Thai numerals converted to 0-9
+     */
     public static String thaiNumeralConverter(String thaiNumeral) {
         thaiNumeral = thaiNumeral.trim();
         StringBuilder sb = new StringBuilder(thaiNumeral.length());
         for (int i = 0; i < thaiNumeral.length(); i++) {
-            //System.out.println("\"" + thaiNumeral.charAt(i) + "\"");
             switch (thaiNumeral.charAt(i)) {
                 case '๐':
                     sb.append('0');
@@ -113,12 +145,18 @@ public class ThaiLawParser {
                     sb.append(1);
                     break;
                 default:
-                    sb.append(thaiNumeral.charAt(i));
+                    throw new IllegalArgumentException("This character is not a Thai numeral: " + thaiNumeral.charAt(i));
             }
         }
         return sb.toString();
     }
 
+    /**
+     *
+     * @param list An ArrayList of Strings
+     * @return An ArrayList with empty strings removed and each string's leading
+     * and trailing whitespace removed-->string.trim()
+     */
     private static ArrayList<String> removeWhiteSpace(ArrayList<String> list) {
         ArrayList<String> ret = new ArrayList(list.size());
         for (String str : list) {
@@ -130,6 +168,67 @@ public class ThaiLawParser {
         return ret;
     }
 
+    private static int skippedSectionCounter(ArrayList<String> segments) {
+
+        int priorNum = -37;
+        Iterator<String> iter = segments.iterator();
+        int numSecSkipped = 0;
+
+        while (iter.hasNext()) {
+            String s = iter.next();
+            if (getSectionNumber(s) != null) {
+                int curNum = Integer.parseInt(getSectionNumber(s));
+                //System.out.println("curNum: " + curNum + "   priorNum: " + priorNum);
+
+                if (curNum - priorNum == 2) {
+                    numSecSkipped++;
+                    if (s.startsWith("มาตรา")) {
+                        System.out.println("มาตรา " + (curNum - 1) + " possibly skipped");
+                    } else if (s.startsWith("Section")) {
+                        System.out.println("Section " + (curNum - 1) + " possibly skipped");
+                    }
+
+                }
+                priorNum = curNum;
+            }
+        }
+
+        return numSecSkipped;
+    }
+    
+    
+    static ArrayList<String> skippedSectionCorrecter(ArrayList<String> input) {
+        ArrayList<String> ret = new ArrayList(input.size());
+        
+        int priorNum = -37;
+        String priorSec = "";
+        Iterator<String> iter = input.iterator();
+
+        while (iter.hasNext()) {
+            String s = iter.next();
+            if (getSectionNumber(s) != null) {
+                int curNum = Integer.parseInt(getSectionNumber(s));
+                //System.out.println("curNum: " + curNum + "   priorNum: " + priorNum);
+
+                if (curNum - priorNum == 2) {
+                    int index;
+                    if (s.startsWith("มาตรา")) {
+                        // find prior instance of มาตรา, split
+                        index = s.lastIndexOf("มาตรา");
+                    } else if (s.startsWith("Section")) {
+                        index = s.lastIndexOf("Section");
+                    }
+                } else {
+                    ret.add(s);
+                }
+                priorNum = curNum;
+            }
+        }
+
+        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * Checks to see if the section numbers match.
      *
@@ -137,8 +236,8 @@ public class ThaiLawParser {
      * @param engSegments
      * @return The number of Sections that don't have matching numbers
      */
-    public static int checkSectionMatching(ArrayList<String> thaiSegments, ArrayList<String> engSegments) {
-        
+    static int checkSectionMatching(ArrayList<String> thaiSegments, ArrayList<String> engSegments) {
+
         int numWrong = 0;
         Iterator thaiIter = thaiSegments.iterator();
         Iterator engIter = engSegments.iterator();
@@ -148,8 +247,20 @@ public class ThaiLawParser {
             String th = (String) thaiIter.next();
             String en = (String) engIter.next();
 
-            int thInt = sectionNumToInt(getSectionNumber(th));
-            int enInt = sectionNumToInt(getSectionNumber(en));
+            int thInt;
+            int enInt;
+
+            if (getSectionNumber(th) != null) {
+                thInt = Integer.parseInt(getSectionNumber(th));
+            } else {
+                thInt = -1;
+            }
+
+            if (getSectionNumber(en) != null) {
+                enInt = Integer.parseInt(getSectionNumber(en));
+            } else {
+                enInt = -1;
+            }
 
             boolean isMatching = (thInt + adjustment == enInt);
             System.out.println(thInt + ": \t" + isMatching);
@@ -164,25 +275,102 @@ public class ThaiLawParser {
     }
 
     /**
-     * Extract the Section number from a line (Thai or English) and returns as a
-     * String.
+     * <h2>Gets Section Number</h2>
+     * Returns section number from a line of Thai law if that line begins with the words
+     * "Section" or "มาตรา". Thai numerals are converted to western numerals
+     * (0-9). <br><br>
+     * Returns null in the following cases: 
+     * <ul>
+     * <li>The line does not begin with "Section" or "มาตรา" </li>
+     * <li>There is no number after the words "Section"/"มาตรา" in the language expected.</li>
+     *</ul> <br>
+     * The number returned will be the digits after the words "Section"/"มาตรา"
+     * until a whitespace or non-digit character is found. 
+     * <br><br><b>Special cases:</b> 
+     * <ul>
+     * <li>If a "/" is found then the digits after / are returned: </li>
+     * <ul><li>"Section 193/3"returns "3" </li></ul>
+     * <li>If the line begins in one language, only the digits in that language will be returned.</li>
+     * <ul>
+     * <li>"Section ๑๑" returns null </li>
+     * <li>"มาตรา 18" returns null </li>
+     * <li>"มาตรา ๑๒8" returns "12"</li>
+     * </ul>
+     * <li>ส and @ are understood to be ๙ (9) and ๑ (1) respectively as these are common OCR mistakes </li>
+     * <ul><li>"มาตรา ๑๒ส" returns "129"</li></ul>
+     * </ul>
      *
-     * @param foo
-     * @return
+     * <b>Other Examples:</b> 
+     * <ul>
+     * <li>"Section 193 ..." returns "193" </li>
+     * <li>"มาตรา ๑๖๖ ..." returns "166" </li>
+     * <li>"มาตรา ๑๖๖3๑ ..." returns "166" </li>
+     * <li>"Section 178[8] ..." returns "178"</li>
+     * </ul>
+     *
+     * @param foo A line of a Thai law
+     * @return The substring of the line representing the law section number.
      */
-    private static String getSectionNumber(String foo) {
+    public static String getSectionNumber(String foo) {
+        int end = Math.min(foo.length(), 16);
+        String regex = "";
+        String foo2;
 
         if (foo.startsWith("Section")) {
-            foo = foo.substring(8, 17);
-            for (int i = 0; i < foo.length(); i++) {
+            foo2 = foo.substring(7, end);
+            regex = "[0-9]";
+        } else if (foo.startsWith("มาตรา")) {
+            foo2 = foo.substring(5, end);
+            // includes all Thai numerals 0-9, 
+            // also ignores ส and ® symbols which are common OCR mistakes for 9 (๙) and 1 (๑) respectively. 
+            regex = "[๑๒๓๔๕๖๗๘๙๐ส®]";
+        } else {
+            return null;
+        }
+
+        foo2 = foo2.trim();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < foo2.length(); i++) {
+            String c = String.valueOf(foo2.charAt(i));
+            if (c.matches("/")) {
+                sb = new StringBuilder();
+            } else {
+                if (c.matches(regex)) {
+                    sb.append(c);
+                } else {
+                    break;
+                }
+            }
+
+        }
+
+        if (sb.length() == 0) {
+            return null;
+        } else {
+            if (foo.startsWith("มาตรา")) {
+                return thaiNumeralConverter(sb.toString());
+            } else {
+                return sb.toString();
+            }
+
+        }
+
+        /*
+        if (foo.startsWith("Section")) {
+            end = Math.min(foo.length(), 16);
+            foo = foo.substring(8, end);
+            for (int i = 1; i < foo.length(); i++) {
                 if (foo.charAt(i) == ' ') {
                     return foo.substring(0, i);
                 }
             }
         } else if (foo.startsWith("มาตรา")) {
-            foo = foo.substring(6, 15).trim();
+            foo = foo.substring(6, end).trim();
             for (int i = 0; i < foo.length(); i++) {
                 if (foo.charAt(i) == ' ') {
+                    if (i==0) {
+                        return null;
+                    }
                     return thaiNumeralConverter(foo.substring(0, i));
                 }
             }
@@ -190,7 +378,7 @@ public class ThaiLawParser {
         } else {
             return null;
         }
-        return null;
+        return null; */
     }
 
     /**
@@ -200,33 +388,42 @@ public class ThaiLawParser {
      * @param sectionNumber The section number in English
      * @return The section number converted to int.
      */
+    /*
     private static int sectionNumToInt(String sectionNumber) {
 
-        
-        
         if (sectionNumber == null) {
             return -1;
         }
-        
+
         String num = sectionNumber.trim();
-        
+
+        String regex;
+        String firstChar = String.valueOf(num.charAt(0));
+        if (firstChar.matches("[0-9]")) {
+            regex = "[0-9]";
+        } else if (firstChar.matches("[๑๒๓๔๕๖๗๘๙๐]")) {
+            regex = "[๑๒๓๔๕๖๗๘๙๐]";
+        } else {
+            return -1;
+        }
+
         StringBuilder sb = new StringBuilder(num.length());
         for (int i = 0; i < num.length(); i++) {
-            char c = num.charAt(i);
-            if (c != '/') {
+            //char c = num.charAt(i);
+            String c = String.valueOf(num.charAt(i));
+            if (c.matches(regex)) {
                 sb.append(c);
             } else {
-                sb = new StringBuilder();
+                int hey = -13;
+                break;
             }
         }
         return Integer.parseInt(sb.toString());
     }
-
+     */
     private static ArrayList<String> firstParseThaiFile(BufferedReader buffReaderThai) throws IOException {
         ArrayList<String> thSegs = new ArrayList(40);
         String line;
-
-        boolean isPageBreak = false;
 
         StringBuilder sb = new StringBuilder();
         // Checks to see if a line begins with a new law "Section" (in Thai: มาตรา)
@@ -238,31 +435,28 @@ public class ThaiLawParser {
             boolean isFooterEtc = (trimmed.equalsIgnoreCase("www.ThaiLaws.com")
                     || trimmed.equalsIgnoreCase("WWW.Thai Laws, com"));
 
+            boolean isPageBreak = line.startsWith("\f");
+            String regex = ("(มาตรา|บรรพ|ส่วนที่|หมวด|ลักษณะ|\\(.*\\)).*");
+            boolean isNewPart = (trimmed.matches(regex));
+
             // if it starts a new section, it starts a new String segment in thSegs
             if (startsSection) {
                 thSegs.add(sb.toString());
                 sb = new StringBuilder();
                 sb.append(line);
-            } 
-            // does not add line if it's a page number or is a footer from website
+            } // does not add line if it's a page number or is a footer from website
             else if (!(isPageNum || isFooterEtc)) {
-                // if this is a new page, it checks to see if there is an indent. If not, it appends to prior line without a line break.
-                // only works if OCR captures indents
-                /*if (isPageBreak) {
-                    if (line.length() != 0 && line.length() == trimmed.length()) {
-                        sb.append(line);
-                        isPageBreak = false;
-                    }
+                // if it could be a page break (there was an empty line detected), then this checks to see if it begins with a special word (book, title, section, etc.). If not, it appends this line to the prior one.
+
+                if (!isNewPart && isPageBreak) {
+                    sb.append(line);
+
+                } else if (!isNewPart && line.length() < 20) {
+                    sb.append(line);
                 } else {
                     sb.append("\n").append(line);
-                } */
-                sb.append("\n").append(line);
+                }
             }
-
-            /* IF OCR captures indents, otherwise, disable
-            if (isPageNum) {
-                isPageBreak = true;
-            }*/
         }
         thSegs.add(sb.toString());
         thSegs = removeWhiteSpace(thSegs);
@@ -278,64 +472,39 @@ public class ThaiLawParser {
             String trimmed = line.trim();
             boolean startsSection = trimmed.startsWith("Section");
             boolean isPageNum = (trimmed.length() <= 3 && trimmed.length() > 0);
-            boolean isFooterEtc = (trimmed.startsWith("www.") 
+            boolean isFooterEtc = (trimmed.startsWith("www.")
                     || trimmed.startsWith("WWW.")
                     || trimmed.startsWith("Thailand Civil and Commercial Code"));
-            
+
+            boolean isPageBreak = line.startsWith("\f");
+            String regex = "(Section|BOOK|PART|CHAPTER|TITLE|\\(.*\\)).*";
+            boolean isNewPart = (trimmed.matches(regex));
+
             // if it starts a new section, it creates a new segment in enSegs
             if (startsSection) {
                 enSegs.add(sb.toString());
                 sb = new StringBuilder();
+
+                /* for first file I made do it this way:
                 sb.append(line).append(" ").append(buffReaderEng.readLine()).append(buffReaderEng.readLine());
-               
+                 */
+                // for every other file use this:
+                sb.append(line).append(" ").append(buffReaderEng.readLine());
+
             } // if it is not a page number of footer,etc. then it adds line to current segment
             else if (!isFooterEtc && !isPageNum) {
-                sb.append("\n").append(line);
+                // if it could be a page break (there was an empty line detected), then this checks to see if it begins with a special word (book, title, section, etc.). If not, it appends this line to the prior one.
+
+                if (isPageBreak && !isNewPart) {
+                    sb.append(line);
+                } else {
+                    sb.append("\n").append(line);
+                }
             }
         }
         enSegs.add(sb.toString());
         enSegs = removeWhiteSpace(enSegs);
         return enSegs;
-    }
-
-    private static ArrayList<String> engCleanUp(ArrayList<String> engSegments) {
-
-        /*
-        takes care of case where the OCR didn't add a linebreak before a section
-        If a section number jumps up by 2, it backtracks to see if there is an intermediate section in between that didn't have a linebreak. If not, it just leaves the segmentation as is.
-        
-        ArrayList<String> newList = new ArrayList(ret.size());
-        Iterator iter = ret.iterator();
-        int prior = -20;
-        String priorSeg = "";
-        while (iter.hasNext()) {
-            
-            String curSeg = (String) iter.next();
-            int cur = getSectionNumber(curSeg);
-            
-            // if the section # went up by 2, it tries to find it.
-            if (cur - prior == 2) {
-                int whereIsSection = priorSeg.lastIndexOf("Section " + (cur-1));
-                if (whereIsSection != -1) {
-                    newList.remove(newList.size()-1);
-                    newList.add(priorSeg.substring(0, whereIsSection));
-                    newList.add(priorSeg.substring(whereIsSection));
-                } 
-            } 
-            newList.add(curSeg);
-            prior = cur;
-            priorSeg = curSeg;
-        }*/
-
- /*
-        ArrayList<String> ret2 = new ArrayList(ret.size());
-        for (String str : ret) {
-            String str2;
-            if (str.startsWith("Section") && str.length()<=13) {
-                
-            }
-        } */
-        throw new UnsupportedOperationException();
     }
 
     private static ArrayList<ArrayList<String>> parseWithinSections(ArrayList<String> segments) {
@@ -394,4 +563,5 @@ public class ThaiLawParser {
         return numWrong;
 
     }
+
 }
