@@ -28,3 +28,9 @@ Common errors:
             ๑ ส (for some reason)
 
  
+    (HARD) Catch "section" or "มาตรา" being mispelled
+    if it has a smlal edit distance away from Section or มาตรา, assume it's one of those
+
+
+OTHER THINGS NOT CAUGHT BUT ARE MAYBE FIXABLE
+- where the translator accidentally restarted numbeing for a certain part (Book 3 1050 goes to 1151)

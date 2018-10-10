@@ -1,0 +1,66 @@
+
+SCANNED TWO FILES USING TWO DIFFERENT OCR METHODS (SQUARE AND AUTO)
+
+(1) thai - SQUARE | eng - SQUARE
+    Original Thai section count: 834
+    Original English section count: 646
+
+    ORIGINAL PARSE
+	Thai sections skipped by 1: 		10
+	English sections skipped by 1: 		32
+	Section # mis-matches: 			85
+	Section length mis-matches: 		407
+
+    AFTER CORRECTING FOR SKIPS
+	Thai sections skipped by 1: 		2
+	English sections skipped by 1: 		2
+	Section # mis-matches: 			51
+	Section length mis-matches: 		51
+
+(2) thai - AUTO | eng - SQUARE
+    Original Thai section count: 839
+    Original English section count: 646
+
+    ORIGINAL PARSE
+	Thai sections skipped by 1: 		5
+	English sections skipped by 1: 		32
+	Section # mis-matches: 			79
+	Section length mis-matches: 		396
+
+    AFTER CORRECTING FOR SKIPS
+	Thai sections skipped by 1: 		2
+	English sections skipped by 1: 		2
+	Section # mis-matches: 			49
+	Section length mis-matches: 		49
+
+(3) thai - SQUARE | eng - AUTO
+    Original Thai section count: 834
+    Original English section count: 703
+
+    ORIGINAL PARSE
+	Thai sections skipped by 1: 		10
+	English sections skipped by 1: 		87
+	Section # mis-matches: 			141
+	Section length mis-matches: 		400
+
+    AFTER CORRECTING FOR SKIPS
+	Thai sections skipped by 1: 		2
+	English sections skipped by 1: 		4
+	Section # mis-matches: 			51
+	Section length mis-matches: 		51
+
+(4) thai - AUTO | eng - AUTO
+    Original Thai section count: 839
+    Original English section count: 703
+
+    ORIGINAL PARSE
+	Thai sections skipped by 1: 		5
+	English sections skipped by 1: 		87
+	Section # mis-matches: 			132
+	Section length mis-matches: 		398
+
+    AFTER CORRECTING FOR SKIPS
+	Thai sections skipped by 1: 		2
+	English sections skipped by 1: 		4
+	Section # mis-matches: 			49
+	Section length mis-matches: 		49
