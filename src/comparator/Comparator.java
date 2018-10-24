@@ -6,11 +6,11 @@
 package comparator;
 
 import Files.CompareFile;
-import Files.TMCompareEntry;
+import Files.TUCompareEntry;
 import Files.TMCorpus;
-import Files.TMEntry;
 import Files.TMFile;
 import java.util.ArrayList;
+import Files.TUEntry;
 
 /**
  *
@@ -98,14 +98,14 @@ public final class Comparator {
      */
     public Comparator(String text, TMFile file, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
-        ArrayList<TMEntry> tms = file.getTMs();
+        ArrayList<TUEntry> tms = file.getTUs();
 
         cFile = new CompareFile();
 
-        for (TMEntry tm : tms) {
+        for (TUEntry tm : tms) {
             Matches m = findMatches(text, tm.getThai());
             if (!m.isEmpty()) {
-                TMCompareEntry ce = new TMCompareEntry();
+                TUCompareEntry ce = new TUCompareEntry();
                 ce.setThai(tm.getThai());
                 ce.setEnglish(tm.getEnglish());
                 ce.setFileName(file.getFileName());

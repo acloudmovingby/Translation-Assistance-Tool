@@ -5,34 +5,35 @@
  */
 package Files;
 
+import JavaFX_1.TUEntry_UI;
 import java.util.Objects;
 
 /**
  * Contains only two fields: a Thai string and an English string.
  * @author Chris
  */
-public class TMEntryBasic implements TMEntry {
+public class TUEntryBasic implements TUEntry {
 
     private String thai;
     private String english;
     private final int NUM_FIELDS;
 
-    public TMEntryBasic() {
+    public TUEntryBasic() {
         NUM_FIELDS = 2;
     }
 
-    public TMEntryBasic(String thai, String english) {
+    public TUEntryBasic(String thai, String english) {
         this.thai = thai;
         this.english = english;
         NUM_FIELDS = 2;
     }
     
     /**
-     * Creates a copy of this TMEntryBasic object.
+     * Creates a copy of this TUEntryBasic object.
      * @return 
      */
-    public TMEntryBasic getCopy() {
-        TMEntryBasic foo = new TMEntryBasic();
+    public TUEntryBasic getCopy() {
+        TUEntryBasic foo = new TUEntryBasic();
         foo.setThai(this.getThai());
         foo.setEnglish(this.getEnglish());
         return foo;
@@ -70,6 +71,11 @@ public class TMEntryBasic implements TMEntry {
         oa[1] = english;
         return oa;
     }
+    
+    @Override
+    public TUEntry_UI getUI() {
+        return new TUEntry_UI(getThai(), getEnglish());
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -77,11 +83,11 @@ public class TMEntryBasic implements TMEntry {
             return true;
         }
 
-        if (!(o instanceof TMEntryBasic)) {
+        if (!(o instanceof TUEntryBasic)) {
             return false;
         }
 
-        TMEntryBasic m = (TMEntryBasic) o;
+        TUEntryBasic m = (TUEntryBasic) o;
         
         return (this.getThai().equals(m.getThai())) && (this.getEnglish().equals(m.getEnglish()));
     }

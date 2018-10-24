@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class BasicFile implements TMFile {
     
-    ArrayList<TMEntry> tmList;
+    ArrayList<TUEntry> tmList;
     private final int NUM_FIELDS;
     private String fileName;
     
@@ -26,8 +26,8 @@ public class BasicFile implements TMFile {
         fileName = "untitled";
     }
     
-    public void addEntry(TMEntryBasic a) {
-        TMEntryBasic a2 = a.getCopy();
+    public void addEntry(TUEntryBasic a) {
+        TUEntryBasic a2 = a.getCopy();
         tmList.add(a2);
        
     }
@@ -48,7 +48,7 @@ public class BasicFile implements TMFile {
     }
     
     @Override
-    public ArrayList<TMEntry> getTMs() {
+    public ArrayList<TUEntry> getTUs() {
         return tmList;
     }
 
@@ -80,11 +80,11 @@ public class BasicFile implements TMFile {
         
         // tests equality of all TMs within files
         boolean areTMsEqual = true;
-        if (m.getTMs().size() != this.getTMs().size()) {
+        if (m.getTUs().size() != this.getTUs().size()) {
             return false;
         } else {
-            Iterator i1 = this.getTMs().iterator();
-            Iterator i2 = m.getTMs().iterator();
+            Iterator i1 = this.getTUs().iterator();
+            Iterator i2 = m.getTUs().iterator();
             while (i1.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
                     areTMsEqual = false;
@@ -112,7 +112,7 @@ public class BasicFile implements TMFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TMEntry tm : tmList) {
+        for (TUEntry tm : tmList) {
             sb.append(tm.toString());
             sb.append("\n\t");
         }

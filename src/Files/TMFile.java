@@ -27,9 +27,9 @@ public interface TMFile {
     
     /**
      * 
-     * @return A list of the TM entries (TMEntry objects).
+     * @return A list of the TM entries (TUEntry objects).
      */
-    public ArrayList<TMEntry> getTMs();
+    public ArrayList<TUEntry> getTUs();
     
     public String getFileName();
     

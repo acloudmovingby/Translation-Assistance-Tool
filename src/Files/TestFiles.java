@@ -20,9 +20,9 @@ public class TestFiles {
         
     // first comparefile
         CompareFile cf = new CompareFile();
-        TMCompareEntry a;
+        TUCompareEntry a;
         // third entry in comparefile
-        a = new TMCompareEntry();
+        a = new TUCompareEntry();
         a.setThai("การเมืองไม่ได้");
         a.setEnglish("politicsnot");
         a.addMatchInterval(0, 7);
@@ -31,7 +31,7 @@ public class TestFiles {
         cf.addEntry(a);   
             System.out.println(a);
         // first entry in compare file
-        a = new TMCompareEntry();
+        a = new TUCompareEntry();
         a.setThai("การเมือง");
         a.setEnglish("politics");
         a.addMatchInterval(0, 3);
@@ -39,7 +39,7 @@ public class TestFiles {
         cf.addEntry(a);
             System.out.println(a);
         // second entry in compare file
-        a = new TMCompareEntry();
+        a = new TUCompareEntry();
         a.setThai("อย่างอื่น");
         a.setEnglish("something else");
         a.addMatchInterval(1, 5);
@@ -51,7 +51,7 @@ public class TestFiles {
     // second comparefile
         CompareFile cf2 = new CompareFile();
         //first entry in comparefile
-        TMCompareEntry a2 = new TMCompareEntry();
+        TUCompareEntry a2 = new TUCompareEntry();
         a2.setThai("อย่างอื่น");
         a2.setEnglish("something else");
         a2.addMatchInterval(1, 5);
@@ -59,7 +59,7 @@ public class TestFiles {
         cf2.addEntry(a2);
             System.out.println(a2);
         // second entry in comparefile
-        a2 = new TMCompareEntry();
+        a2 = new TUCompareEntry();
         a2.setThai("การเมือง");
         a2.setEnglish("politics");
         a2.addMatchInterval(0, 3);
@@ -67,7 +67,7 @@ public class TestFiles {
         cf2.addEntry(a2);
             System.out.println(a2);
         // third entry in comparefile
-        a2 = new TMCompareEntry();
+        a2 = new TUCompareEntry();
         a2.setThai("การเมืองไม่ได้");
         a2.setEnglish("politicsnot");
         a2.addMatchInterval(0, 7);
@@ -87,7 +87,7 @@ public class TestFiles {
         System.out.println("The toArray method on cf2: \n\t" + Arrays.deepToString(cf2.toArray()));
         
           BasicFile bf = new BasicFile();
-        TMEntryBasic x = new TMEntryBasic();
+        TUEntryBasic x = new TUEntryBasic();
         x.setThai("การเมือง");
         x.setEnglish("politics");
         bf.addEntry(x);

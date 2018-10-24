@@ -12,24 +12,24 @@ import java.util.Objects;
 
 public class CompareFile implements TMFile {
     
-    ArrayList<TMCompareEntry> tmList;
+    ArrayList<TUCompareEntry> tmList;
     private final int NUM_FIELDS;
     private String fileName;
     
     public CompareFile() {
         tmList = new ArrayList();
-        NUM_FIELDS = (new TMCompareEntry()).getNumFields();
+        NUM_FIELDS = (new TUCompareEntry()).getNumFields();
         fileName = "default";
     }
     
-    public void addEntry(TMCompareEntry t) {
-       TMCompareEntry foo = t.getCopy();
+    public void addEntry(TUCompareEntry t) {
+       TUCompareEntry foo = t.getCopy();
        tmList.add(foo);
     }
     
     /*
     public void addEntry(String thai, String english, String fileName, ArrayList<int[]> matchIntervals) {
-        TMCompareEntry a = new TMCompareEntry();
+        TUCompareEntry a = new TUCompareEntry();
         
         a.setThai(thai);
         a.setEnglish(english);
@@ -41,7 +41,7 @@ public class CompareFile implements TMFile {
     }*/
     
     @Override
-    public ArrayList<TMEntry> getTMs() {
+    public ArrayList<TUEntry> getTUs() {
         sort();
         return (new ArrayList(tmList));
     }
@@ -59,12 +59,12 @@ public class CompareFile implements TMFile {
     @Override
     public Object[][] toArray() {
         sort();
-        Iterator<TMCompareEntry> iter = tmList.iterator();
+        Iterator<TUCompareEntry> iter = tmList.iterator();
         Object[][] oa = new Object[tmList.size()][];
         
         int i = 0;
         while (iter.hasNext()) {
-            TMCompareEntry nextEntry = iter.next();
+            TUCompareEntry nextEntry = iter.next();
             Object[] entryArray = nextEntry.toArray();
             Object[] entryArrayWithID = new Object[entryArray.length + 1];
             entryArrayWithID[0] = i;
@@ -89,7 +89,7 @@ public class CompareFile implements TMFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TMEntry tm : tmList) {
+        for (TUEntry tm : tmList) {
             sb.append(tm.toString());
             sb.append("\n\t");
         }
@@ -110,13 +110,13 @@ public class CompareFile implements TMFile {
         
          // tests equality of all TMs within files
         boolean areTMsEqual = true;
-        if (m.getTMs().size() != this.getTMs().size()) {
+        if (m.getTUs().size() != this.getTUs().size()) {
             return false;
         } else {
             sort();
             m.sort();
-            Iterator i1 = this.getTMs().iterator();
-            Iterator i2 = m.getTMs().iterator();
+            Iterator i1 = this.getTUs().iterator();
+            Iterator i2 = m.getTUs().iterator();
             while (i1.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
                     areTMsEqual = false;

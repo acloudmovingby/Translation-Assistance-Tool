@@ -5,11 +5,13 @@
  */
 package Files;
 
+import JavaFX_1.TUEntry_UI;
+
 /**
  *
  * @author Chris
  */
-public interface TMEntry {
+public interface TUEntry {
     
     String getThai();
     
@@ -27,9 +29,11 @@ public interface TMEntry {
     
     /**
      * 
-     * @return The TMEntry in array form as to be displayed in the GUI.
+     * @return The TUEntry in array form as to be displayed in the GUI.
      */
     Object[] toArray(); 
+    
+    public TUEntry_UI getUI();
     
     
 }

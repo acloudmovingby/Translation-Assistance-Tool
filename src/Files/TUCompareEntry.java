@@ -5,6 +5,8 @@
  */
 package Files;
 
+import JavaFX_1.TUCompare_UI;
+import JavaFX_1.TUEntry_UI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -13,7 +15,7 @@ import java.util.Objects;
  *
  * @author Chris
  */
-public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
+public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
 
     private ArrayList<int[]> matchIntervals;
     private int[] matches;
@@ -25,13 +27,13 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
     /**
      * Entry has 4 fields: thai, english, match intervals, and filename
      */
-    public TMCompareEntry() {
+    public TUCompareEntry() {
         this.setMatchIntervals(new ArrayList<>());
         matches = new int[0];
     }
     
     /*
-    public TMCompareEntry(String thai, String english, ArrayList<int[]> matchIntervals, String filename) {
+    public TUCompareEntry(String thai, String english, ArrayList<int[]> matchIntervals, String filename) {
         
         setMatchIntervals(matchIntervals);
         this.thai = thai;
@@ -44,8 +46,8 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
     }*/
 
     
-    TMCompareEntry getCopy() {
-        TMCompareEntry ret = new TMCompareEntry();
+    TUCompareEntry getCopy() {
+        TUCompareEntry ret = new TUCompareEntry();
         
         ret.setThai(this.getThai());
         ret.setEnglish(this.getEnglish());
@@ -73,7 +75,7 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
             throw new IllegalArgumentException("Impossible match interval");
         }
         
-        //records over which characters the there are matches
+        //records over which characters there are matches
         matchIntervals.add(new int[] {startIndex, endIndex});
         for (int i=startIndex; i<=endIndex; i++) {
             matches[i] = 1;
@@ -141,9 +143,14 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
         }
         return matchSize;
     }
+    
+    @Override
+    public TUCompare_UI getUI() {
+        return new TUCompare_UI(getThai(), getEnglish(), matchIntervals);
+    }
 
     @Override
-    public int compareTo(TMCompareEntry t) {
+    public int compareTo(TUCompareEntry t) {
         if (t.getMatchSize() - getMatchSize() == 0) {
             return t.getThai().length() - getThai().length();
         }
@@ -174,11 +181,11 @@ public class TMCompareEntry implements TMEntry, Comparable<TMCompareEntry> {
             return true;
         }
 
-        if (!(o instanceof TMCompareEntry)) {
+        if (!(o instanceof TUCompareEntry)) {
             return false;
         }
 
-        TMCompareEntry m = (TMCompareEntry) o;
+        TUCompareEntry m = (TUCompareEntry) o;
       
         boolean cond1 = m.getThai().equals(getThai());
         boolean cond2 = m.getEnglish().equals(getEnglish());

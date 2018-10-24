@@ -38,7 +38,7 @@ public class FileFactory {
         BasicFile bf = new BasicFile();
         
         for (int i = 0; i < th.length; i++) {
-            TMEntryBasic e = new TMEntryBasic();
+            TUEntryBasic e = new TUEntryBasic();
             e.setThai(th[i]);
             if (i < en.length) {
                 e.setEnglish(en[i]);
