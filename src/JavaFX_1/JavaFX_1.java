@@ -22,6 +22,7 @@ public class JavaFX_1 extends Application {
         primaryStage.setTitle("FXML TableView Example");
         Pane myPane = (Pane) FXMLLoader.load(getClass().getResource("fxml_1.fxml"));
         Scene myScene = new Scene(myPane);
+        myScene.getStylesheets().add(getClass().getResource("fxml_1.css").toExternalForm());
         primaryStage.setScene(myScene);
         primaryStage.show();
     }
