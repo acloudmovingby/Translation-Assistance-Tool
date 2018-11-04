@@ -10,6 +10,7 @@ import JavaFX_1.TUEntry_UI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -21,45 +22,15 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     private int[] matches;
     private String fileName;
     private String thai;
+    private StringProperty thaiProperty;
     private String english;
-    private final int NUM_FIELDS = 3;
+    private StringProperty englishProperty;
 
-    /**
-     * Entry has 4 fields: thai, english, match intervals, and filename
-     */
     public TUCompareEntry() {
         this.setMatchIntervals(new ArrayList<>());
         matches = new int[0];
     }
     
-    /*
-    public TUCompareEntry(String thai, String english, ArrayList<int[]> matchIntervals, String filename) {
-        
-        setMatchIntervals(matchIntervals);
-        this.thai = thai;
-        this.english = english;
-        setFileName(filename);
-        matches = new int[thai.length()];
-        for (int i=0; i<matches.length; i++) {
-            matches[i] = 0;
-        }
-    }*/
-
-    
-    TUCompareEntry getCopy() {
-        TUCompareEntry ret = new TUCompareEntry();
-        
-        ret.setThai(this.getThai());
-        ret.setEnglish(this.getEnglish());
-        ret.setFileName(this.getFileName());
-        for (int i = 0; i<matchIntervals.size(); i++) {
-            int[] ia1 = matchIntervals.get(i);
-            int[] ia2 = new int[ia1.length];
-            System.arraycopy(ia1, 0, ia2, 0, ia1.length);
-            ret.addMatchInterval(ia1[0], ia1[1]);
-        }
-        return ret;
-    }
     
     /**
      * Inclusive match interval. For example, if the string is "abcd" and the match is "bc" then startIndex=1, endIndex=2.
@@ -121,6 +92,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     @Override
     public void setThai(String thai) {
         this.thai = thai;
+        thaiProperty.set(thai);
         matches = new int[thai.length()];
     }
     
@@ -132,6 +104,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     @Override
     public void setEnglish(String english) {
         this.english = english;
+        englishProperty.set(english);
     }
 
     public int getMatchSize() {
@@ -146,7 +119,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     
     @Override
     public TUCompare_UI getUI() {
-        return new TUCompare_UI(getThai(), getEnglish(), matchIntervals);
+        return new TUCompare_UI(getThai(), getEnglish(), matchIntervals, fileName);
     }
 
     @Override
@@ -157,23 +130,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         return t.getMatchSize() - getMatchSize();
     }
 
-    @Override
-    public int getNumFields() {
-        return NUM_FIELDS;
-    }
     
-    /**
-     * 
-     * @return An object array containing three strings: Thai, English, and Filename.
-     */
-    @Override
-    public Object[] toArray() {
-        Object[] oa = new Object[NUM_FIELDS];
-        oa[0] = getThai();
-        oa[1] = getEnglish();
-        oa[2] = getFileName();
-        return oa;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -243,6 +200,16 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         
         return bf.toString();
        
+    }
+
+    @Override
+    public StringProperty thaiProperty() {
+         return thaiProperty;
+    }
+
+    @Override
+    public StringProperty englishProperty() {
+        return englishProperty;
     }
 
 }

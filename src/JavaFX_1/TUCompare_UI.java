@@ -18,13 +18,16 @@ public class TUCompare_UI extends TUEntry_UI {
     private final StringProperty thaiField = new SimpleStringProperty();
     private final StringProperty englishField = new SimpleStringProperty();
     private ArrayList<int[]> matchIntervals = new ArrayList();
+    private final StringProperty fileName = new SimpleStringProperty();
 
-    public TUCompare_UI(String thai, String english, ArrayList<int[]> matchIntervals) {
+    public TUCompare_UI(String thai, String english, ArrayList<int[]> matchIntervals, String fileName) {
         super(thai, english);
         setMatchIntervals(matchIntervals);
+        this.fileName.set(fileName);
     }
     
     public ArrayList<int[]> getMatchIntervals() { return matchIntervals; }
     public void setMatchIntervals(ArrayList<int[]> matchIntervals) { this.matchIntervals = matchIntervals; }
+    
    
 }

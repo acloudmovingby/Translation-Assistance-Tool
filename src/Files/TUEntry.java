@@ -6,6 +6,7 @@
 package Files;
 
 import JavaFX_1.TUEntry_UI;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -14,24 +15,12 @@ import JavaFX_1.TUEntry_UI;
 public interface TUEntry {
     
     String getThai();
-    
     void setThai(String thai);
+    public StringProperty thaiProperty();
     
     String getEnglish();
-    
     void setEnglish(String english);
-    
-    /**
-     * 
-     * @return The number of fields to be displayed in the GUI.
-     */
-    int getNumFields();
-    
-    /**
-     * 
-     * @return The TUEntry in array form as to be displayed in the GUI.
-     */
-    Object[] toArray(); 
+    public StringProperty englishProperty();
     
     public TUEntry_UI getUI();
     

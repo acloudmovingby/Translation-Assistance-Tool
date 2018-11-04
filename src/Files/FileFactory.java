@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -73,8 +74,11 @@ public class FileFactory {
                 }                
             } 
             
-            //makes "english" just be an index number, for testing purposes only
+           
             StringBuilder sb2 = new StringBuilder(counter);
+            
+            //makes "english" just be an index number, for testing purposes only
+            
             for (int i=0; i<counter; i++) {
                 sb2.append(i + "\n");
             }
@@ -98,6 +102,25 @@ public class FileFactory {
         return new BasicFile();
     }
     
+    public static BasicFile fromArrayLists(ArrayList<String> thaiSegments, ArrayList<String> englishSegments) {
+        
+        BasicFile bf = new BasicFile();
+
+        // creates iterators for each list of segments
+        Iterator<String> iterThai = thaiSegments.iterator();
+        Iterator<String> iterEnglish = englishSegments.iterator();
+        
+        // iterates down each list, adding them together as TUs
+        while (iterThai.hasNext() && iterEnglish.hasNext()) {
+            TUEntryBasic e = new TUEntryBasic();
+            e.setThai(iterThai.next());
+            e.setEnglish(iterEnglish.next());
+            bf.addEntry(e);
+        }
+        
+        return bf;
+    }
+    
     private static ArrayList<String> removeWhiteSpace(ArrayList<String> list) {
         ArrayList<String> ret = new ArrayList(list.size());
         for (String str : list) {
@@ -108,5 +131,7 @@ public class FileFactory {
         }
         return ret;
     }
+    
+   
     
 }

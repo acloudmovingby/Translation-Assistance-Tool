@@ -7,6 +7,7 @@ package Files;
 
 import JavaFX_1.TUEntry_UI;
 import java.util.Objects;
+import javafx.beans.property.StringProperty;
 
 /**
  * Contains only two fields: a Thai string and an English string.
@@ -16,28 +17,19 @@ public class TUEntryBasic implements TUEntry {
 
     private String thai;
     private String english;
-    private final int NUM_FIELDS;
+    private StringProperty thaiProperty;
+    private StringProperty englishProperty;
 
     public TUEntryBasic() {
-        NUM_FIELDS = 2;
     }
 
     public TUEntryBasic(String thai, String english) {
         this.thai = thai;
         this.english = english;
-        NUM_FIELDS = 2;
+        thaiProperty.set(thai);
+        englishProperty.set(english);
     }
-    
-    /**
-     * Creates a copy of this TUEntryBasic object.
-     * @return 
-     */
-    public TUEntryBasic getCopy() {
-        TUEntryBasic foo = new TUEntryBasic();
-        foo.setThai(this.getThai());
-        foo.setEnglish(this.getEnglish());
-        return foo;
-    }
+
 
     @Override
     public String getThai() {
@@ -47,6 +39,7 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setThai(String thai) {
         this.thai = thai;
+        thaiProperty.set(thai);
     }
 
     @Override
@@ -57,21 +50,9 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setEnglish(String english) {
         this.english = english;
+        englishProperty.set(english);
     }
 
-    @Override
-    public int getNumFields() {
-        return NUM_FIELDS;
-    }
-
-    @Override
-    public Object[] toArray() {
-        Object[] oa = new Object[NUM_FIELDS];
-        oa[0] = thai;
-        oa[1] = english;
-        return oa;
-    }
-    
     @Override
     public TUEntry_UI getUI() {
         return new TUEntry_UI(getThai(), getEnglish());
@@ -103,6 +84,16 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public String toString() {
         return "[" + getThai() + ", " + getEnglish() + "]";
+    }
+
+    @Override
+    public StringProperty thaiProperty() {
+        return thaiProperty;
+    }
+
+    @Override
+    public StringProperty englishProperty() {
+        return englishProperty;
     }
     
 

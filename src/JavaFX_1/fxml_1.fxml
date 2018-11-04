@@ -2,33 +2,82 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" hgap="10.0" prefHeight="664.0" prefWidth="720.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="JavaFX_1.Fxml_1Controller">
-    <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-    </padding> 
+<GridPane alignment="CENTER" prefHeight="707.0" prefWidth="939.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
+   <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
+     <buttons>
+         <Button mnemonicParsing="false" onAction="#commit" text="Commit" />
+     </buttons>
+   </ButtonBar> 
     
-    <Label fx:id="title" style="-fx-font: NORMAL 20 Tahoma;" text="Address Book" GridPane.columnIndex="0" GridPane.rowIndex="0">
+    <Label fx:id="title" style="-fx-font: NORMAL 20 Tahoma;" text="Address Book" GridPane.rowIndex="4">
     </Label>
-    <TableView fx:id="tableView" prefHeight="488.0" prefWidth="699.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-          
-    </TableView>
-   <Button mnemonicParsing="false" onAction="#addRow" text="Button" GridPane.rowIndex="2" />
-   <TableView fx:id="compareTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+    <TableView fx:id="tableView" editable="true" prefHeight="399.0" prefWidth="939.0" GridPane.rowIndex="5">
+      <columns>
+         <TableColumn fx:id="thaiCol" editable="false" prefWidth="289.8408147096634" sortable="false" text="Thai" />
+         <TableColumn fx:id="englishCol" minWidth="0.0" prefWidth="472.15916442871094" sortable="false" text="English" />
+      </columns></TableView>
+   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="8">
+      <children>
+         <Pane prefWidth="939.0">
+            <children>
+               <TextField layoutX="5.0" layoutY="5.0" prefWidth="256.0">
+                  <font>
+                     <Font size="11.0" />
+                  </font>
+               </TextField>
+               <TextField fx:id="minMatchLengthField" layoutX="864.0" layoutY="5.0" onAction="#minMatchLengthChanged" prefWidth="41.0">
+                  <font>
+                     <Font size="11.0" />
+                  </font>
+               </TextField>
+               <Label layoutX="742.0" layoutY="6.0" text="min match length = " />
+            </children>
+            <padding>
+               <Insets bottom="20.0" top="12.0" />
+            </padding>
+         </Pane>
+         <Pane maxHeight="-Infinity" prefHeight="200.0" prefWidth="200.0">
+            <children>
+               <TableView fx:id="compareTable" layoutX="3.0" prefHeight="171.0" prefWidth="936.0">
    
    </TableView>
+            </children>
+         </Pane>
+      </children>
+   </VBox>
+   <Pane maxHeight="-Infinity" prefHeight="25.0" prefWidth="939.0" GridPane.rowIndex="10">
+      <children>
+         <Label layoutX="10.0" layoutY="3.0" text="Matching TUs:" />
+         <Label fx:id="numMatches" layoutX="107.0" layoutY="4.0" prefHeight="17.0" prefWidth="52.0" text="0" />
+      </children>
+   </Pane>
    <columnConstraints>
       <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints minHeight="0.0" />
+      <RowConstraints />
+      <RowConstraints minHeight="0.0" />
       <RowConstraints />
       <RowConstraints />
    </rowConstraints>

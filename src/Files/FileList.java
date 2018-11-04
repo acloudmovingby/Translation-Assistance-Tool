@@ -11,11 +11,11 @@ import java.util.ArrayList;
  *
  * @author Chris
  */
-public class TMCorpus {
+public class FileList {
     
     ArrayList<TMFile> files;
     
-    public TMCorpus() {
+    public FileList() {
         files = new ArrayList();
     }
     

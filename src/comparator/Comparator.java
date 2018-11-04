@@ -7,7 +7,7 @@ package comparator;
 
 import Files.CompareFile;
 import Files.TUCompareEntry;
-import Files.TMCorpus;
+import Files.FileList;
 import Files.TMFile;
 import java.util.ArrayList;
 import Files.TUEntry;
@@ -71,39 +71,57 @@ public final class Comparator {
      *
      * // this goes through every segment in the target file and finds matches
      * for that segment, building the TM entry to be added to the CompareFile
-     * for (int i=0; i<thaiSegs.length; i++) { Matches m = findMatches(text,
-     * thaiSegs[i]); Object[] tmMatch = new Object[cFile.getNumFields()];
-     *
-     * tmMatch[0] = 0; tmMatch[1] = thaiSegs[i]; tmMatch[2] =
-     * file.getTM(i)[file.getThaiColumn()]; tmMatch[3] = new
-     * int[m.totalCorpusMatches()][2]; tmMatch[4] = file.getFileName();
-     *
-     * // this finds all the index ranges of where in the target segment
-     * (corpus) those matches exist for (MatchEntry3 m1 : m.getMatchList()) {
-     * for (int ind : m1.indices) { tmMatch[3] = new int[] { ind,
-     * m1.match.length()+ind }; }
-     *
-     * }
-     *
-     * // cFile.addCompareMatch(thaiSegs[i],
-     * file.getTM(i)[file.getEnglishColumn()], int[][])
-     *
-     * }
-     *
-     *
-     *
-     *
-     *
-     * }
+     * for (int i=0; i<thaiSegs.length; i++) { Matches m = findStringMatches(text,
+ thaiSegs[i]); Object[] tmMatch = new Object[cFile.getNumFields()];
+
+ tmMatch[0] = 0; tmMatch[1] = thaiSegs[i]; tmMatch[2] =
+ file.getTM(i)[file.getThaiColumn()]; tmMatch[3] = new
+ int[m.totalCorpusMatches()][2]; tmMatch[4] = file.getFileName();
+
+ // this finds all the index ranges of where in the target segment
+ (corpus) those matches exist for (MatchEntry3 m1 : m.getMatchList()) {
+ for (int ind : m1.indices) { tmMatch[3] = new int[] { ind,
+ m1.match.length()+ind }; }
+
+ }
+
+ // cFile.addCompareMatch(thaiSegs[i],
+ file.getTM(i)[file.getEnglishColumn()], int[][])
+
+ }
+
+
+
+
+
+ }
      */
     public Comparator(String text, TMFile file, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
+        cFile = new CompareFile();
+        findMatches(text, file);
+    }
+
+    public Comparator(String text, FileList fileList, int minMatchLength) {
+        NGRAM_LENGTH = minMatchLength;
+        cFile = new CompareFile();
+        
+        for (TMFile file : fileList.getFiles()) {
+           findMatches(text, file); 
+        }
+    }
+    
+    /**
+     * Finds the matches between the text and the file and adds them to cFile (the compare file for this comparator object).
+     * @param text The text
+     * @param file The file to compare to.
+     */
+    private void findMatches(String text, TMFile file) {
+        
         ArrayList<TUEntry> tms = file.getTUs();
 
-        cFile = new CompareFile();
-
         for (TUEntry tm : tms) {
-            Matches m = findMatches(text, tm.getThai());
+            Matches m = findStringMatches(text, tm.getThai());
             if (!m.isEmpty()) {
                 TUCompareEntry ce = new TUCompareEntry();
                 ce.setThai(tm.getThai());
@@ -124,15 +142,8 @@ public final class Comparator {
         }
     }
 
-    public Comparator(String text, TMCorpus corpus, int minMatchLength) {
-        NGRAM_LENGTH = minMatchLength;
-        
-        
-
-        throw new UnsupportedOperationException();
-    }
-
-    Matches findMatches(String t1, String t2) {
+    
+    Matches findStringMatches(String t1, String t2) {
 
         NGramWrapper n1 = new NGramWrapper(t1, NGRAM_LENGTH);
         NGramWrapper n2 = new NGramWrapper(t2, NGRAM_LENGTH);

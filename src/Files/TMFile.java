@@ -7,29 +7,27 @@ package Files;
 
 import java.util.ArrayList;
 
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Chris
+ * @param <T> Type of TU Entry
  */
-public interface TMFile {
+public interface TMFile<T> {
+ 
     
     /**
      * 
-     * @return The file in object array form as it is expected to be displayed. 
+     * @return A list of the TU entries (TUEntry objects).
      */
-    public Object[][] toArray();
+    public ArrayList<T> getTUs();
     
     /**
-     * 
-     * @return The numbef of fields to be actually displayed. (not the total number of fields the file's TM entries store).
+     *
+     * @return An observable list of the TUs
      */
-    public int getNumFields();
-    
-    /**
-     * 
-     * @return A list of the TM entries (TUEntry objects).
-     */
-    public ArrayList<TUEntry> getTUs();
+    public ObservableList<T> getObservableList();
     
     public String getFileName();
     

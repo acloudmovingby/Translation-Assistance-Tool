@@ -83,8 +83,6 @@ public class TestFiles {
         
         System.out.println("***** LOOKING WITHIN *****");
         System.out.println("Are they equal? "+cf.equals(cf2));
-        System.out.println("The toArray method on cf: \n\t" + Arrays.deepToString(cf.toArray()));
-        System.out.println("The toArray method on cf2: \n\t" + Arrays.deepToString(cf2.toArray()));
         
           BasicFile bf = new BasicFile();
         TUEntryBasic x = new TUEntryBasic();

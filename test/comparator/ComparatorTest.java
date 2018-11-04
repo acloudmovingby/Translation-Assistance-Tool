@@ -40,7 +40,7 @@ public class ComparatorTest {
     }
 
     /**
-     * Test of findMatches method, of class Comparator.
+     * Test of findStringMatches method, of class Comparator.
      */
     @Test
     public void testFindMatches1() {
@@ -48,7 +48,7 @@ public class ComparatorTest {
         String t1 = "xxabcdxx";
         String t2 = "yyyabcdyabcdy";
         Comparator instance = new Comparator(t1, t2, 4);
-        Matches result = instance.findMatches(t1, t2);
+        Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
         expResult.addMatch("abcd", 2, 3);
@@ -58,7 +58,7 @@ public class ComparatorTest {
     }
 
     /**
-     * Test of findMatches method, of class Comparator.
+     * Test of findStringMatches method, of class Comparator.
      */
     @Test
     public void testFindMatches2() {
@@ -66,7 +66,7 @@ public class ComparatorTest {
         String t1 = "abcdxx";
         String t2 = "yyyabcdyabcdy";
         Comparator instance = new Comparator(t1, t2, 4);
-        Matches result = instance.findMatches(t1, t2);
+        Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
         expResult.addMatch("abcd", 0, 3);
@@ -76,7 +76,7 @@ public class ComparatorTest {
     }
     
     /**
-     * Test of findMatches method, of class Comparator.
+     * Test of findStringMatches method, of class Comparator.
      */
     @Test
     public void testFindMatches3() {
@@ -84,7 +84,7 @@ public class ComparatorTest {
         String t1 = "abcdxx";
         String t2 = "yyyabcdyabcdy";
         Comparator instance = new Comparator(t1, t2, 5);
-        Matches result = instance.findMatches(t1, t2);
+        Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
         
@@ -92,7 +92,7 @@ public class ComparatorTest {
     }
     
     /**
-     * Test of findMatches method, of class Comparator.
+     * Test of findStringMatches method, of class Comparator.
      */
     @Test
     public void testFindMatches4() {
@@ -100,7 +100,7 @@ public class ComparatorTest {
         String t1 = "abcabc";
         String t2 = "abcabcabcabc";
         Comparator instance = new Comparator(t1, t2, 3);
-        Matches result = instance.findMatches(t1, t2);
+        Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
         expResult.addMatch("abcd", 0, 0);

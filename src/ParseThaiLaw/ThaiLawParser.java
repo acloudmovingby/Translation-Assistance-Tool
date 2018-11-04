@@ -1,10 +1,12 @@
-/*
+  /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package ParseThaiLaw;
 
+import Files.BasicFile;
+import Files.FileFactory;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -19,13 +21,15 @@ import java.util.Iterator;
  */
 public class ThaiLawParser {
 
-    int sectionNumsWrong;
-    int sectionLengthsWrong;
-    int thaiSecsSkipped;
-    int engSecsSkipped;
-    static String sectionNumsAnalysis;
-    static String sectionLengthsAnalysis;
-    static String skippedSectionsAnalysis;
+    private int sectionNumsWrong;
+    private int sectionLengthsWrong;
+    private int thaiSecsSkipped;
+    private int engSecsSkipped;
+    private static String sectionNumsAnalysis;
+    private static String sectionLengthsAnalysis;
+    private static String skippedSectionsAnalysis;
+    private ArrayList<String> finalThaiSegs;
+    private ArrayList<String> finalEngSegs;
 
     /*METHODS:
         -section num extractor, with defined cases for behavior (string->string)
@@ -41,7 +45,7 @@ public class ThaiLawParser {
         - string to int converter (string->int)
             literally just Integer.parseint(string)
      */
-    ThaiLawParser(String fileNameThai, String fileNameEng) {
+    public ThaiLawParser(String fileNameThai, String fileNameEng) {
         try {
 
             // FileReader reads text files in the default encoding.
@@ -108,6 +112,9 @@ public class ThaiLawParser {
             System.out.println("\tEnglish sections skipped by 1: \t\t" + engSecsSkipped2);
             System.out.println("\tSection # mis-matches: \t\t\t" + sectionNumsWrong2);
             System.out.println("\tSection length mis-matches: \t\t" + sectionLengthsWrong2);
+            
+            finalThaiSegs = thaiSegments2;
+            finalEngSegs = engSegments2;
 
             /*
             System.out.println(sectionNumsAnalysis);
@@ -623,6 +630,10 @@ public class ThaiLawParser {
         sectionLengthsAnalysis = sb.toString();
         return numWrong;
 
+    }
+    
+    public BasicFile makeFile() {
+         return FileFactory.fromArrayLists(finalThaiSegs, finalEngSegs);
     }
 
 }
