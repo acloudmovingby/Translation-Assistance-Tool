@@ -107,6 +107,7 @@ public class TMCompareEntryTest {
         Object[] expResult = new Object[] {
             "การเมือง", "politics", "file1"
         };
+        e.
         Object[] result = e.toArray();
         assertArrayEquals(expResult, result);
     }

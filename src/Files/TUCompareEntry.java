@@ -92,7 +92,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     @Override
     public void setThai(String thai) {
         this.thai = thai;
-        thaiProperty.set(thai);
+//        thaiProperty.set(thai);
         matches = new int[thai.length()];
     }
     
@@ -104,7 +104,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     @Override
     public void setEnglish(String english) {
         this.english = english;
-        englishProperty.set(english);
+//        englishProperty.set(english);
     }
 
     public int getMatchSize() {

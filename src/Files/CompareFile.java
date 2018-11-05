@@ -8,23 +8,24 @@ package Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import javafx.collections.ObservableList;
 
 
 public class CompareFile implements TMFile {
     
     ArrayList<TUCompareEntry> tmList;
-    private final int NUM_FIELDS;
+    //private final int NUM_FIELDS;
     private String fileName;
     
     public CompareFile() {
         tmList = new ArrayList();
-        NUM_FIELDS = (new TUCompareEntry()).getNumFields();
+       // NUM_FIELDS = (new TUCompareEntry()).getNumFields();
         fileName = "default";
     }
     
     public void addEntry(TUCompareEntry t) {
-       TUCompareEntry foo = t.getCopy();
-       tmList.add(foo);
+       //TUCompareEntry foo = t.getCopy();
+       tmList.add(t);
     }
     
     /*
@@ -55,7 +56,7 @@ public class CompareFile implements TMFile {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    
+    /*
     @Override
     public Object[][] toArray() {
         sort();
@@ -79,7 +80,7 @@ public class CompareFile implements TMFile {
     public int getNumFields() {
         return NUM_FIELDS;
     }
-    
+    */
 
    
     @Override
@@ -124,7 +125,7 @@ public class CompareFile implements TMFile {
             }
         }
         
-        return this.getNumFields() == m.getNumFields() &&
+        return 
                 this.getFileName().equals(m.getFileName()) &&
                 areTMsEqual;
     }
@@ -133,7 +134,6 @@ public class CompareFile implements TMFile {
     public int hashCode() {
         int hash = 5;
         hash = 67 * hash + Objects.hashCode(this.tmList);
-        hash = 67 * hash + this.NUM_FIELDS;
         hash = 67 * hash + Objects.hashCode(this.fileName);
         return hash;
     }
@@ -141,6 +141,16 @@ public class CompareFile implements TMFile {
     private void sort() {
         tmList.sort(null);
     }
+
+    @Override
+    public ObservableList getObservableList() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Object[][] toArray() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
     
    

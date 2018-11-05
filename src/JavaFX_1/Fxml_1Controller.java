@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package JavaFX_1;
 
 import Files.BasicFile;
@@ -16,7 +11,6 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -25,12 +19,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -102,7 +93,6 @@ public class Fxml_1Controller implements Initializable {
         // Sets prompt text for minMatchLengthField to equal default minimum match length
         minMatchLengthField.setPromptText(Integer.toString(minMatchLength));
         
-       
         // Sets main file viewer columns
         PropertyValueFactory pvf = new PropertyValueFactory<>("thai");
         thaiCol.setCellValueFactory(new PropertyValueFactory<>("thai"));
@@ -118,20 +108,21 @@ public class Fxml_1Controller implements Initializable {
             return cell;
         });
 
-        englishCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        
-       
-        /*
-        (tc -> {
-            TableCell<TUEntry_UI, String> cell = new TableCell<>();
-            Text text = new Text();
-            text.setFont(Font.font("Arial"));
-            cell.setGraphic(text);
-            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-            text.wrappingWidthProperty().bind(englishCol.widthProperty());
-            text.textProperty().bind(cell.itemProperty());
-            return cell;
-        });*/
+        /*@Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(item);
+                    setWrapText(true);
+                    System.out.println(getFont());
+                    TableCell.
+                }
+            }*/
+        // });
+        englishCol = new TableColumn<>("English");
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
         
 
@@ -158,11 +149,8 @@ public class Fxml_1Controller implements Initializable {
         title.setText(file1.getFileName());
 
         // binds main file to main table viewer
-        ObservableList<TUEntry_UI> tuList = FXCollections.observableArrayList();
-        file1.getTUs().forEach((t) -> {
-            tuList.add(t.getUI());
-        });
-        tableView.setItems(tuList);
+        
+        tableView.setItems(file1.getObservableList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Sets compare table columns
@@ -222,14 +210,21 @@ public class Fxml_1Controller implements Initializable {
         TUEntry_UI tuNew = new TUEntry_UI("???", "???");
         tableView.getItems().add(tuNew);
     }
-    
+
+    private ObservableList<TUCompare_UI> getCompareTableItems(CompareFile c) {
+        ObservableList<TUCompare_UI> tuList = FXCollections.observableArrayList();
+        c.getTUs().forEach((t) -> {
+            tuList.add((TUCompare_UI) t.getUI());
+        });
+        return tuList;
+    }
     
     private void setCompareTable(String text) {
         currentCompareString = text;
         Comparator c = new Comparator(text, corpus, minMatchLength);
         CompareFile cf = c.getCompareFile();
         setNumMatches(cf.getTUs().size());
-        compareTable.setItems(cf.getObservableList());
+        compareTable.setItems(getCompareTableItems(cf));
     }
     
     private void setNumMatches(int num) {

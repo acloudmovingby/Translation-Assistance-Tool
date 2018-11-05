@@ -5,9 +5,13 @@
  */
 package Files;
 
+import JavaFX_1.TUCompare_UI;
+import JavaFX_1.TUEntry_UI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * A basic file that stores a list of TMBasicEntry's, which each contain just a Thai and an English field.
@@ -16,21 +20,24 @@ import java.util.Objects;
 public class BasicFile implements TMFile {
     
     ArrayList<TUEntry> tmList;
-    private final int NUM_FIELDS;
+    ObservableList<TUEntry_UI> observableList;
+  //  private final int NUM_FIELDS;
     private String fileName;
     
     
     public BasicFile() {
         tmList = new ArrayList();
-        NUM_FIELDS = 2;
+        observableList = FXCollections.observableArrayList();
+      //  NUM_FIELDS = 2;
         fileName = "untitled";
     }
     
     public void addEntry(TUEntryBasic a) {
-        TUEntryBasic a2 = a.getCopy();
-        tmList.add(a2);
-       
+        //TUEntryBasic a2 = a.getCopy();
+        tmList.add(a);
+       observableList.add(a.getUI());
     }
+    /*
 
     @Override
     public Object[][] toArray() {
@@ -56,7 +63,7 @@ public class BasicFile implements TMFile {
     public int getNumFields() {
         return NUM_FIELDS;
     }
-
+*/
     @Override
     public String getFileName() {
         return fileName;
@@ -92,8 +99,7 @@ public class BasicFile implements TMFile {
             }
         }
         
-        return this.getNumFields() == m.getNumFields() &&
-                this.getFileName().equals(m.getFileName()) &&
+        return this.getFileName().equals(m.getFileName()) &&
                 areTMsEqual;
     }
 
@@ -101,7 +107,7 @@ public class BasicFile implements TMFile {
     public int hashCode() {
         int hash = 3;
         hash = 23 * hash + Objects.hashCode(this.tmList);
-        hash = 23 * hash + this.NUM_FIELDS;
+       // hash = 23 * hash + this.NUM_FIELDS;
         hash = 23 * hash + Objects.hashCode(this.fileName);
         return hash;
     }
@@ -118,6 +124,21 @@ public class BasicFile implements TMFile {
         }
          return sb.toString();
     }
+
+    @Override
+    public ArrayList getTUs() {
+        return tmList;
+    }
+
+    @Override
+    public ObservableList getObservableList() {
+        return observableList;
+    }
+
+    public Object[][] toArray() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
     
 }

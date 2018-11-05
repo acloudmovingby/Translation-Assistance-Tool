@@ -39,7 +39,7 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setThai(String thai) {
         this.thai = thai;
-        thaiProperty.set(thai);
+//        thaiProperty.set(thai);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setEnglish(String english) {
         this.english = english;
-        englishProperty.set(english);
+//        englishProperty.set(english);
     }
 
     @Override
