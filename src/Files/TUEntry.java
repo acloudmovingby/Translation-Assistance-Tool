@@ -5,7 +5,6 @@
  */
 package Files;
 
-import JavaFX_1.TUEntry_UI;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -22,7 +21,6 @@ public interface TUEntry {
     void setEnglish(String english);
     public StringProperty englishProperty();
     
-    public TUEntry_UI getUI();
     
     
 }

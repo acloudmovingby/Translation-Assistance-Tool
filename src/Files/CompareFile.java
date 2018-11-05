@@ -8,24 +8,23 @@ package Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
 public class CompareFile implements TMFile {
     
-    ArrayList<TUCompareEntry> tmList;
+    ObservableList<TUCompareEntry> observableList;
     //private final int NUM_FIELDS;
     private String fileName;
     
     public CompareFile() {
-        tmList = new ArrayList();
-       // NUM_FIELDS = (new TUCompareEntry()).getNumFields();
+        observableList = FXCollections.observableArrayList();
         fileName = "default";
     }
     
     public void addEntry(TUCompareEntry t) {
-       //TUCompareEntry foo = t.getCopy();
-       tmList.add(t);
+       observableList.add(t);
     }
     
     /*
@@ -44,7 +43,7 @@ public class CompareFile implements TMFile {
     @Override
     public ArrayList<TUEntry> getTUs() {
         sort();
-        return (new ArrayList(tmList));
+        return (new ArrayList(observableList));
     }
     
   
@@ -56,33 +55,7 @@ public class CompareFile implements TMFile {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    /*
-    @Override
-    public Object[][] toArray() {
-        sort();
-        Iterator<TUCompareEntry> iter = tmList.iterator();
-        Object[][] oa = new Object[tmList.size()][];
-        
-        int i = 0;
-        while (iter.hasNext()) {
-            TUCompareEntry nextEntry = iter.next();
-            Object[] entryArray = nextEntry.toArray();
-            Object[] entryArrayWithID = new Object[entryArray.length + 1];
-            entryArrayWithID[0] = i;
-            System.arraycopy(entryArray, 0, entryArrayWithID, 1, entryArray.length);
-            oa[i] = entryArrayWithID;
-            i++;
-        }
-        return oa;
-    }
-
-    @Override
-    public int getNumFields() {
-        return NUM_FIELDS;
-    }
-    */
-
-   
+    
     @Override
     public String toString() {
         sort();
@@ -90,8 +63,8 @@ public class CompareFile implements TMFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TUEntry tm : tmList) {
-            sb.append(tm.toString());
+        for (TUEntry tu : observableList) {
+            sb.append(tu.toString());
             sb.append("\n\t");
         }
          return sb.toString();
@@ -133,18 +106,18 @@ public class CompareFile implements TMFile {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.tmList);
+        hash = 67 * hash + Objects.hashCode(this.observableList);
         hash = 67 * hash + Objects.hashCode(this.fileName);
         return hash;
     }
 
     private void sort() {
-        tmList.sort(null);
+        observableList.sort(null);
     }
 
     @Override
     public ObservableList getObservableList() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return observableList;
     }
 
     public Object[][] toArray() {

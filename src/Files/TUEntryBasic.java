@@ -5,8 +5,8 @@
  */
 package Files;
 
-import JavaFX_1.TUEntry_UI;
 import java.util.Objects;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -15,48 +15,41 @@ import javafx.beans.property.StringProperty;
  */
 public class TUEntryBasic implements TUEntry {
 
-    private String thai;
-    private String english;
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
 
     public TUEntryBasic() {
+        thaiProperty = new SimpleStringProperty();
+        englishProperty = new SimpleStringProperty();
     }
 
     public TUEntryBasic(String thai, String english) {
-        this.thai = thai;
-        this.english = english;
-        thaiProperty.set(thai);
-        englishProperty.set(english);
+        thaiProperty = new SimpleStringProperty(thai);
+        englishProperty = new SimpleStringProperty(english);
     }
 
 
     @Override
     public String getThai() {
-        return thai;
+        return thaiProperty.getValue();
     }
 
     @Override
     public void setThai(String thai) {
-        this.thai = thai;
-//        thaiProperty.set(thai);
+       thaiProperty.set(thai);
     }
 
     @Override
     public String getEnglish() {
-        return english;
+        return englishProperty.getValue();
     }
 
     @Override
     public void setEnglish(String english) {
-        this.english = english;
-//        englishProperty.set(english);
+        englishProperty.set(english);
     }
 
-    @Override
-    public TUEntry_UI getUI() {
-        return new TUEntry_UI(getThai(), getEnglish());
-    }
+  
 
     @Override
     public boolean equals(Object o) {

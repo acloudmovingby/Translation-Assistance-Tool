@@ -4,12 +4,12 @@ import Files.BasicFile;
 import Files.CompareFile;
 import Files.FileFactory;
 import Files.FileList;
+import Files.TUCompareEntry;
+import Files.TUEntry;
 import ParseThaiLaw.ThaiLawParser;
 import comparator.Comparator;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -34,25 +34,25 @@ public class Fxml_1Controller implements Initializable {
     Label title;
 
     @FXML
-    TableView<TUEntry_UI> tableView;
+    TableView<TUEntry> tableView;
 
     @FXML
-    TableColumn<TUEntry_UI, String> thaiCol;
+    TableColumn<TUEntry, String> thaiCol;
 
     @FXML
-    TableColumn<TUEntry_UI, String> englishCol;
+    TableColumn<TUEntry, String> englishCol;
 
     @FXML
-    TableColumn<TUCompare_UI, String> thaiColComp;
+    TableColumn<TUCompareEntry, String> thaiColComp;
 
     @FXML
-    TableColumn<TUCompare_UI, String> englishColComp;
+    TableColumn<TUCompareEntry, String> englishColComp;
     
     @FXML
-    TableColumn<TUCompare_UI, String> fileNameColComp;
+    TableColumn<TUCompareEntry, String> fileNameColComp;
 
     @FXML
-    TableView<TUCompare_UI> compareTable;
+    TableView<TUCompareEntry> compareTable;
     
     @FXML
     TextField minMatchLengthField;
@@ -94,11 +94,10 @@ public class Fxml_1Controller implements Initializable {
         minMatchLengthField.setPromptText(Integer.toString(minMatchLength));
         
         // Sets main file viewer columns
-        PropertyValueFactory pvf = new PropertyValueFactory<>("thai");
         thaiCol.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiCol.setMinWidth(80);
         thaiCol.setCellFactory(tc -> {
-            TableCell<TUEntry_UI, String> cell = new TableCell<>();
+            TableCell<TUEntry, String> cell = new TableCell<>();
             Text text = new Text();
             text.setFont(Font.font("Arial"));
             cell.setGraphic(text);
@@ -107,25 +106,8 @@ public class Fxml_1Controller implements Initializable {
             text.textProperty().bind(cell.itemProperty());
             return cell;
         });
-
-        /*@Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(item);
-                    setWrapText(true);
-                    System.out.println(getFont());
-                    TableCell.
-                }
-            }*/
-        // });
-        englishCol = new TableColumn<>("English");
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
         
-
         // makes main file
         FileFactory ff = new FileFactory();
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
@@ -158,7 +140,7 @@ public class Fxml_1Controller implements Initializable {
         thaiColComp.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiColComp.setMinWidth(120);
         thaiColComp.setCellFactory(tc -> {
-            TableCell<TUCompare_UI, String> cell = new TableCell<>();
+            TableCell<TUCompareEntry, String> cell = new TableCell<>();
             Text text = new Text();
             text.setFont(Font.font("Arial"));
             cell.setGraphic(text);
@@ -182,8 +164,6 @@ public class Fxml_1Controller implements Initializable {
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 setCompareTable(newSelection.getThai());
-                System.out.println("Selection");
-                System.out.println("Corpus: " + corpus.getFiles().size());
             }
         }
         );
@@ -191,6 +171,7 @@ public class Fxml_1Controller implements Initializable {
         Font.getFamilies().forEach((s) -> {
             System.out.println(s);
         });
+        
     }
 
     @FXML
@@ -202,21 +183,13 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     private void commit(ActionEvent event) {
         System.out.println("commit");
-    }
-    
-    @FXML
-    protected void addRow(ActionEvent event) {
-        System.out.println("button clicked");
-        TUEntry_UI tuNew = new TUEntry_UI("???", "???");
-        tableView.getItems().add(tuNew);
-    }
-
-    private ObservableList<TUCompare_UI> getCompareTableItems(CompareFile c) {
-        ObservableList<TUCompare_UI> tuList = FXCollections.observableArrayList();
-        c.getTUs().forEach((t) -> {
-            tuList.add((TUCompare_UI) t.getUI());
-        });
-        return tuList;
+        TUEntry selectedItem = tableView.getSelectionModel().getSelectedItem();
+        // change the TU to committed
+        
+        
+        // change all thai/english to properties DONE
+        // change all methods so they take TUEntry, not TUEntry_UI
+        // remove TUEntry_UI
     }
     
     private void setCompareTable(String text) {
@@ -224,7 +197,7 @@ public class Fxml_1Controller implements Initializable {
         Comparator c = new Comparator(text, corpus, minMatchLength);
         CompareFile cf = c.getCompareFile();
         setNumMatches(cf.getTUs().size());
-        compareTable.setItems(getCompareTableItems(cf));
+        compareTable.setItems(cf.getObservableList());
     }
     
     private void setNumMatches(int num) {

@@ -5,8 +5,6 @@
  */
 package Files;
 
-import JavaFX_1.TUCompare_UI;
-import JavaFX_1.TUEntry_UI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
@@ -19,14 +17,12 @@ import javafx.collections.ObservableList;
  */
 public class BasicFile implements TMFile {
     
-    ArrayList<TUEntry> tmList;
-    ObservableList<TUEntry_UI> observableList;
+    ObservableList<TUEntry> observableList;
   //  private final int NUM_FIELDS;
     private String fileName;
     
     
     public BasicFile() {
-        tmList = new ArrayList();
         observableList = FXCollections.observableArrayList();
       //  NUM_FIELDS = 2;
         fileName = "untitled";
@@ -34,8 +30,7 @@ public class BasicFile implements TMFile {
     
     public void addEntry(TUEntryBasic a) {
         //TUEntryBasic a2 = a.getCopy();
-        tmList.add(a);
-       observableList.add(a.getUI());
+       observableList.add(a);
     }
     /*
 
@@ -106,9 +101,9 @@ public class BasicFile implements TMFile {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 23 * hash + Objects.hashCode(this.tmList);
+        hash = 23 * hash + Objects.hashCode(getObservableList());
        // hash = 23 * hash + this.NUM_FIELDS;
-        hash = 23 * hash + Objects.hashCode(this.fileName);
+        hash = 23 * hash + Objects.hashCode(getFileName());
         return hash;
     }
     
@@ -118,8 +113,8 @@ public class BasicFile implements TMFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TUEntry tm : tmList) {
-            sb.append(tm.toString());
+        for (TUEntry tu : getObservableList()) {
+            sb.append(tu.toString());
             sb.append("\n\t");
         }
          return sb.toString();
@@ -127,11 +122,11 @@ public class BasicFile implements TMFile {
 
     @Override
     public ArrayList getTUs() {
-        return tmList;
+        return new ArrayList(observableList);
     }
 
     @Override
-    public ObservableList getObservableList() {
+    public ObservableList<TUEntry> getObservableList() {
         return observableList;
     }
 

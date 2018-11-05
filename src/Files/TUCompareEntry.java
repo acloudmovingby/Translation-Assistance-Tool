@@ -5,11 +5,10 @@
  */
 package Files;
 
-import JavaFX_1.TUCompare_UI;
-import JavaFX_1.TUEntry_UI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -21,12 +20,12 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     private ArrayList<int[]> matchIntervals;
     private int[] matches;
     private String fileName;
-    private String thai;
     private StringProperty thaiProperty;
-    private String english;
     private StringProperty englishProperty;
 
     public TUCompareEntry() {
+        thaiProperty = new SimpleStringProperty();
+        englishProperty = new SimpleStringProperty();
         this.setMatchIntervals(new ArrayList<>());
         matches = new int[0];
     }
@@ -42,7 +41,7 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
             throw new IllegalArgumentException("first number must be less than or equal to second");
         }
         
-        if (startIndex<0 || startIndex>=thai.length() || endIndex<1 || endIndex>=thai.length()) {
+        if (startIndex<0 || startIndex>=getThai().length() || endIndex<1 || endIndex>=getThai().length()) {
             throw new IllegalArgumentException("Impossible match interval");
         }
         
@@ -86,25 +85,23 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     
     @Override
     public String getThai() {
-        return thai;
+        return thaiProperty.getValue();
     }
     
     @Override
     public void setThai(String thai) {
-        this.thai = thai;
-//        thaiProperty.set(thai);
-        matches = new int[thai.length()];
+       thaiProperty.set(thai);
+        matches = new int[getThai().length()];
     }
     
     @Override
     public String getEnglish() {
-        return english;
+        return englishProperty.getValue();
     }
     
     @Override
     public void setEnglish(String english) {
-        this.english = english;
-//        englishProperty.set(english);
+        englishProperty.set(english);
     }
 
     public int getMatchSize() {
@@ -117,10 +114,6 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         return matchSize;
     }
     
-    @Override
-    public TUCompare_UI getUI() {
-        return new TUCompare_UI(getThai(), getEnglish(), matchIntervals, fileName);
-    }
 
     @Override
     public int compareTo(TUCompareEntry t) {
