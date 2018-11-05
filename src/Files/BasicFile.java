@@ -30,6 +30,7 @@ public class BasicFile implements TMFile {
     
     public void addEntry(TUEntryBasic a) {
         //TUEntryBasic a2 = a.getCopy();
+        a.setFileName(getFileName());
        observableList.add(a);
     }
     /*

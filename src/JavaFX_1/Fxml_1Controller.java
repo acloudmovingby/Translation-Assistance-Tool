@@ -183,13 +183,13 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     private void commit(ActionEvent event) {
         System.out.println("commit");
-        TUEntry selectedItem = tableView.getSelectionModel().getSelectedItem();
+        TUEntry selectedTU = tableView.getSelectionModel().getSelectedItem();
+        selectedTU.setCommitted(true);
+        
+        
         // change the TU to committed
         
         
-        // change all thai/english to properties DONE
-        // change all methods so they take TUEntry, not TUEntry_UI
-        // remove TUEntry_UI
     }
     
     private void setCompareTable(String text) {

@@ -20,6 +20,12 @@ public interface TUEntry {
     String getEnglish();
     void setEnglish(String english);
     public StringProperty englishProperty();
+
+    public boolean isCommitted();
+    public void setCommitted(boolean b);
+    
+    String getFileName();
+    void setFileName(String fileName);
     
     
     

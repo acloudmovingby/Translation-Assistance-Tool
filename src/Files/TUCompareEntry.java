@@ -22,8 +22,10 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     private String fileName;
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
+    boolean isCommitted;
 
     public TUCompareEntry() {
+        isCommitted = true;
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
         this.setMatchIntervals(new ArrayList<>());
@@ -75,13 +77,16 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         this.matchIntervals = matchIntervals;
     }
 
+    @Override
+    public String getFileName() {
+        return fileName;
+    }
+    
+    @Override
     public final void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
     
     @Override
     public String getThai() {
@@ -204,5 +209,16 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     public StringProperty englishProperty() {
         return englishProperty;
     }
+
+    @Override
+    public void setCommitted(boolean b) {
+         isCommitted = b;
+    }
+
+    @Override
+    public boolean isCommitted() {
+        return isCommitted;
+    }
+    
 
 }

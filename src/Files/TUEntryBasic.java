@@ -17,10 +17,14 @@ public class TUEntryBasic implements TUEntry {
 
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
+    String fileName;
+    boolean isCommitted;
 
     public TUEntryBasic() {
+        boolean isCommitted = false;
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
+        fileName = "TU Filename not set";
     }
 
     public TUEntryBasic(String thai, String english) {
@@ -87,6 +91,27 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public StringProperty englishProperty() {
         return englishProperty;
+    }
+
+    @Override
+    public boolean isCommitted() {
+        
+        return isCommitted;
+    }
+    
+    @Override
+    public void setCommitted(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getFileName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setFileName(String fileName) {
+         this.fileName = fileName;
     }
     
 
