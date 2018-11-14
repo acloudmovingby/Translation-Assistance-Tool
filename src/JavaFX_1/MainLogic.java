@@ -7,7 +7,7 @@ package JavaFX_1;
 
 import Files.BasicFile;
 import Files.CompareFile;
-import Files.FileFactory;
+import Files.FileBuilder;
 import Files.FileList;
 import Files.TUCompareEntry;
 import Files.TUEntry;
@@ -16,8 +16,8 @@ import comparator.Comparator;
 
 /*
 COMMIT TO DO:
-    - change status color on commit
-    - make so TUs don't match themselves
+    -change status color on commit
+    ------make so TUs don't match themselves
     - change selection on commit
     - add key press to commit
     - make English cells editable again
@@ -27,8 +27,8 @@ OPTIONAL LATER:
     - make it so if that status is true, it changes status color
     - make it so that if you start typing in a cell after committed, it changes the post-commit status
 
-HIGHLIGHT MATCHES
-    - research more if multiple styles 
+-----HIGHLIGHT MATCHES
+    ------make comparetable thai column take TextFlow objects
 
 SPLIT:
     - Make two new TUs: 
@@ -45,6 +45,15 @@ MERGE:
     - remove original TUs
     - merge new TUs
 
+MATCH SCORE
+    - (easy) make so that all compare files are run at program opening, then value stored in match score
+    - (hard / bad) 
+        - store all compare files at beginning, 
+        - for redraw table, replace list elemetns in comparefile (so not mess up observable)
+        - identify / implement where compare files need to be regenerated:
+            - change min length
+            - commit / split / merge
+        - if space is for some reason an issue, make Comparator method that doesn't store Cfs, but just find max TU match score
 GLOSSARY:
     - make top with searchbar
     - listview, each cell has:
@@ -90,10 +99,10 @@ public class MainLogic {
         minMatchLength = 5;
         
         // makes main file
-        FileFactory ff = new FileFactory();
+        FileBuilder fileBuilder = new FileBuilder();
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
-        mainFile = ff.justThaiFilePath(filePath);
-        mainFile.setFileName("Main File");
+        mainFile = fileBuilder.justThaiFilePath(filePath);
+        mainFile.commitAllTUs();
         
         // MAKES CORPUS, ADDS SOME FILES
         corpus = new FileList();

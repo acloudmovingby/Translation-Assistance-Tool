@@ -116,7 +116,7 @@ public class CompareFile implements TMFile {
     }
 
     @Override
-    public ObservableList getObservableList() {
+    public ObservableList<TUCompareEntry> getObservableList() {
         return observableList;
     }
 

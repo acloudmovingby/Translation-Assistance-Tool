@@ -38,14 +38,14 @@ public class FileFactoryTest {
     }
 
     /**
-     * Test of buildBasicParse method, of class FileFactory.
+     * Test of buildBasicParse method, of class FileBuilder.
      */
     @Test
     public void testBuildBasicParse1() {
         System.out.println("buildBasicParse1");
         String thai = "";
         String english = "";
-        FileFactory instance = new FileFactory();
+        FileBuilder instance = new FileBuilder();
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
@@ -65,7 +65,7 @@ public class FileFactoryTest {
         System.out.println("buildBasicParse2");
         String thai = "การเมือง";
         String english = "politics";
-        FileFactory instance = new FileFactory();
+        FileBuilder instance = new FileBuilder();
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
@@ -85,7 +85,7 @@ public class FileFactoryTest {
         System.out.println("buildBasicParse3");
         String thai = "การเมือง\nของประเทศไทย";
         String english = "politics\nof Thailand";
-        FileFactory instance = new FileFactory();
+        FileBuilder instance = new FileBuilder();
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();

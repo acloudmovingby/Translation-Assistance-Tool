@@ -7,7 +7,7 @@ package CAT1;
 
 import Files.BasicFile;
 import Files.CompareFile;
-import Files.FileFactory;
+import Files.FileBuilder;
 import comparator.TMFileOriginal;
 import comparator.*;
 import javax.swing.ListSelectionModel;
@@ -31,7 +31,7 @@ public class CAT1UI extends javax.swing.JFrame {
      * Creates new form CAT1UI
      */
     public CAT1UI() {
-        FileFactory ff = new FileFactory();
+        FileBuilder ff = new FileBuilder();
         
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         

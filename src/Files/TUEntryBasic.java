@@ -95,18 +95,17 @@ public class TUEntryBasic implements TUEntry {
 
     @Override
     public boolean isCommitted() {
-        
         return isCommitted;
     }
     
     @Override
     public void setCommitted(boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        isCommitted = b;
     }
 
     @Override
     public String getFileName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return fileName;
     }
 
     @Override

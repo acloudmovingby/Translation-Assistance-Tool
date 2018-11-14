@@ -29,37 +29,10 @@ public class BasicFile implements TMFile {
     }
     
     public void addEntry(TUEntryBasic a) {
-        //TUEntryBasic a2 = a.getCopy();
         a.setFileName(getFileName());
        observableList.add(a);
     }
-    /*
-
-    @Override
-    public Object[][] toArray() {
-        Object[][] oa = new Object[tmList.size()][];
-        
-        for (int i=0; i<tmList.size(); i++) {
-            Object[] entryArray = tmList.get(i).toArray();
-            Object[] entryArrayWithID = new Object[entryArray.length+1];
-            // adds id number
-            entryArrayWithID[0] = i;
-            System.arraycopy(entryArray, 0, entryArrayWithID, 1, entryArray.length);
-            oa[i] = entryArrayWithID;
-        }
-        return oa;
-    }
-    
-    @Override
-    public ArrayList<TUEntry> getTUs() {
-        return tmList;
-    }
-
-    @Override
-    public int getNumFields() {
-        return NUM_FIELDS;
-    }
-*/
+   
     @Override
     public String getFileName() {
         return fileName;
@@ -67,6 +40,15 @@ public class BasicFile implements TMFile {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+        for (TUEntry tu : observableList) {
+            tu.setFileName(fileName);
+        }
+    }
+    
+    public void commitAllTUs() {
+        for (TUEntry tu : getObservableList()) {
+            tu.setCommitted(true);
+        }
     }
     
     @Override

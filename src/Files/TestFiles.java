@@ -90,7 +90,7 @@ public class TestFiles {
         x.setEnglish("politics");
         bf.addEntry(x);
         
-        FileFactory ff = new FileFactory();
+        FileBuilder ff = new FileBuilder();
         BasicFile bf2 = ff.buildBasicParse("การเมือง", "politics");
     }
     

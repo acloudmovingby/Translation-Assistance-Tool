@@ -111,6 +111,13 @@ public final class Comparator {
         }
     }
     
+    public Comparator(String text, TUEntry tu, int minMatchLength) {
+        NGRAM_LENGTH = minMatchLength;
+        cFile = new CompareFile();
+        
+        findMatches(text, tu);
+    }
+    
     /**
      * Finds the matches between the text and the file and adds them to cFile (the compare file for this comparator object).
      * @param text The text
@@ -120,13 +127,19 @@ public final class Comparator {
         
         ArrayList<TUEntry> tms = file.getTUs();
 
-        for (TUEntry tm : tms) {
-            Matches m = findStringMatches(text, tm.getThai());
+        for (TUEntry tu : tms) {
+            findMatches(text, tu);
+        }
+    }
+
+    private void findMatches(String text, TUEntry tu) {
+        if (tu.isCommitted()) {
+        Matches m = findStringMatches(text, tu.getThai());
             if (!m.isEmpty()) {
                 TUCompareEntry ce = new TUCompareEntry();
-                ce.setThai(tm.getThai());
-                ce.setEnglish(tm.getEnglish());
-                ce.setFileName(file.getFileName());
+                ce.setThai(tu.getThai());
+                ce.setEnglish(tu.getEnglish());
+                ce.setFileName(tu.getFileName());
 
                 for (MatchEntry3 me : m.getMatchList()) {
                     int startIndex = -1;
@@ -141,7 +154,6 @@ public final class Comparator {
             }
         }
     }
-
     
     Matches findStringMatches(String t1, String t2) {
 

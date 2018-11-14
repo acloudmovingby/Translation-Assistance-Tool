@@ -16,7 +16,7 @@ import java.util.Iterator;
  *
  * @author Chris
  */
-public class FileFactory {
+public class FileBuilder {
 
     /**
      * Takes a thai and english text and splits into segments based on line
@@ -53,7 +53,7 @@ public class FileFactory {
     }
     
     public BasicFile justThaiFilePath(String filePath) {
-        
+        BasicFile ret = new BasicFile();
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
@@ -83,10 +83,10 @@ public class FileFactory {
                 sb2.append(i + "\n");
             }
            //System.out.println(sb.toString());
-            BasicFile ret = this.buildBasicParse(sb.toString(), sb2.toString());
+            ret = this.buildBasicParse(sb.toString(), sb2.toString());
            
             buffReaderThai.close();
-             return ret;
+            ret.setFileName(makeFileNameFromPath(filePath));
         } catch (FileNotFoundException ex) {
             System.out.println(
                     "Unable to open file '"
@@ -99,7 +99,7 @@ public class FileFactory {
             // ex.printStackTrace();
         }
         
-        return new BasicFile();
+        return ret;
     }
     
     public static BasicFile fromArrayLists(ArrayList<String> thaiSegments, ArrayList<String> englishSegments) {
@@ -130,6 +130,15 @@ public class FileFactory {
             }
         }
         return ret;
+    }
+    
+    public static String makeFileNameFromPath(String filePath) {
+        String fileName = "default";
+        if (filePath != null) {
+            String[] filePathSplit = filePath.split("/");
+            fileName = filePathSplit[filePathSplit.length-1];
+        }
+        return fileName;
     }
     
    

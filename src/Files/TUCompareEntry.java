@@ -18,18 +18,21 @@ import javafx.beans.property.StringProperty;
 public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
 
     private ArrayList<int[]> matchIntervals;
-    private int[] matches;
-    private String fileName;
+    private boolean[] matches;
+    private StringProperty fileName;
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
     boolean isCommitted;
+    int matchSize;
+    int longestMatchLength;
 
     public TUCompareEntry() {
         isCommitted = true;
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
+        fileName = new SimpleStringProperty();
         this.setMatchIntervals(new ArrayList<>());
-        matches = new int[0];
+        
     }
     
     
@@ -50,9 +53,11 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         //records over which characters there are matches
         matchIntervals.add(new int[] {startIndex, endIndex});
         for (int i=startIndex; i<=endIndex; i++) {
-            matches[i] = 1;
-            
+            matches[i] = true;
         }
+        
+        setMatchSize();
+        setLongestMatchLength();
 
     }
 
@@ -73,18 +78,30 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         return ret;
     }
     
+    public boolean[] whereAreMatches() {
+        boolean[] matchArray = new boolean[getThai().length()];
+        for (int i=0; i<getThai().length(); i++) {
+            matchArray[i] = false;
+        }
+        for (int[] match : matchIntervals) {
+            
+        }
+        
+        return matchArray;
+    }
+    
     final void setMatchIntervals(ArrayList<int[]> matchIntervals) {
         this.matchIntervals = matchIntervals;
     }
 
     @Override
     public String getFileName() {
-        return fileName;
+        return fileName.getValue();
     }
     
     @Override
     public final void setFileName(String fileName) {
-        this.fileName = fileName;
+        this.fileName.set(fileName);
     }
 
     
@@ -96,7 +113,10 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     @Override
     public void setThai(String thai) {
        thaiProperty.set(thai);
-        matches = new int[getThai().length()];
+        matches = new boolean[getThai().length()];
+        for (boolean b : matches) {
+            b = false;
+        }
     }
     
     @Override
@@ -109,16 +129,23 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         englishProperty.set(english);
     }
 
-    public int getMatchSize() {
-        int matchSize = 0;
-        for (int i1 : matches) {
-            if (i1 == 1) {
+    public boolean[] getMatches() {
+        return matches;
+    }
+    
+    private void setMatchSize() {
+        matchSize = 0;
+        for (boolean b : matches) {
+            if (b == true) {
                 matchSize++;
             }
         }
-        return matchSize;
+        
     }
     
+    public int getMatchSize() {
+        return matchSize;
+    }
 
     @Override
     public int compareTo(TUCompareEntry t) {
@@ -209,6 +236,14 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     public StringProperty englishProperty() {
         return englishProperty;
     }
+    
+    public StringProperty fileNameProperty() {
+        return fileName;
+    }
+    
+    public StringProperty matchSizeProperty() {
+        return new SimpleStringProperty(String.valueOf(getMatchSize()));
+    }
 
     @Override
     public void setCommitted(boolean b) {
@@ -220,5 +255,23 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         return isCommitted;
     }
     
+    private void setLongestMatchLength() {
+        int longestLength = 0;
+        int currentLength = 0;
+        for (boolean b : matches) {
+            if (b==false) {
+                longestLength = currentLength>longestLength ? currentLength : longestLength;
+                currentLength = 0;
+            }
+            if (b==true) {
+                currentLength++;
+            }
+        }
+        longestMatchLength = (currentLength>longestLength ? currentLength : longestLength);
+    }
+    
+    public StringProperty longestMatchLengthProperty() {
+        return new SimpleStringProperty(String.valueOf(longestMatchLength));
+    }
 
 }

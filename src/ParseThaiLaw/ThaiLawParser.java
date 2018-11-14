@@ -6,7 +6,8 @@
 package ParseThaiLaw;
 
 import Files.BasicFile;
-import Files.FileFactory;
+import Files.FileBuilder;
+import static Files.FileBuilder.makeFileNameFromPath;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,6 +22,8 @@ import java.util.Iterator;
  */
 public class ThaiLawParser {
 
+    String fileNameThai;
+    
     private int sectionNumsWrong;
     private int sectionLengthsWrong;
     private int thaiSecsSkipped;
@@ -46,6 +49,7 @@ public class ThaiLawParser {
             literally just Integer.parseint(string)
      */
     public ThaiLawParser(String fileNameThai, String fileNameEng) {
+        this.fileNameThai = fileNameThai;
         try {
 
             // FileReader reads text files in the default encoding.
@@ -66,7 +70,6 @@ public class ThaiLawParser {
             ArrayList<String> engSegments = firstParseEngFile(buffReaderEng);
             buffReaderThai.close();
             buffReaderEng.close();
-
             System.out.println("//////////////SECTION NUMBER MIS-MATCHES////////////");
             sectionNumsWrong = checkSectionMatching(thaiSegments, engSegments);
             //System.out.println(sectionNumsAnalysis);
@@ -78,17 +81,27 @@ public class ThaiLawParser {
             //System.out.println(sectionLengthsAnalysis);
 
             System.out.println("//////////////SKIPPED SECTIONS////////////");
-            thaiSecsSkipped = skippedSectionCounter(thaiSegments);
-            engSecsSkipped = skippedSectionCounter(engSegments);
-            //System.out.println(skippedSectionsAnalysis);
+            thaiSecsSkipped = checkSectionSkips(thaiSegments);
+            engSecsSkipped = checkSectionSkips(engSegments);
+            System.out.println(skippedSectionsAnalysis);
 
             ArrayList<String> thaiSegments2 = skippedSectionCorrecter(thaiSegments);
             ArrayList<String> engSegments2 = skippedSectionCorrecter(engSegments);
-            int thaiSecsSkipped2 = skippedSectionCounter(thaiSegments2);
-            int engSecsSkipped2 = skippedSectionCounter(engSegments2);
+            int thaiSecsSkipped2 = checkSectionSkips(thaiSegments2);
+            int engSecsSkipped2 = checkSectionSkips(engSegments2);
+            
+            ArrayList<ArrayList<String>> thaiSectionsParsed2 = parseWithinSections(thaiSegments2);
+            System.out.println(thaiSectionsParsed2);
+            /*for (ArrayList<String> al : thaiSectionsParsed2) {
+                String indent = "";
+                for (String s : al) {
+                    System.out.println(indent + s);
+                    indent = "\t-";
+                }
+            }*/
+            ArrayList<ArrayList<String>> engSectionsParsed2 = parseWithinSections(engSegments2);
             int sectionNumsWrong2 = checkSectionMatching(thaiSegments2, engSegments2);
             int sectionLengthsWrong2 = checkSectionMatching(thaiSegments2, engSegments2);
-
             System.out.println("\n//////////////SECTION NUMBER MIS-MATCHES 2////////////");
             System.out.println(sectionNumsAnalysis);
             System.out.println("//////////////SECTION LENGTH MIS-MATCHES 2////////////");
@@ -115,6 +128,8 @@ public class ThaiLawParser {
             
             finalThaiSegs = thaiSegments2;
             finalEngSegs = engSegments2;
+           // finalThaiSegs = this.unpackSections(parseWithinSections(thaiSegments2));
+           // finalEngSegs =  this.unpackSections(parseWithinSections(engSegments2));
 
             /*
             System.out.println(sectionNumsAnalysis);
@@ -207,7 +222,12 @@ public class ThaiLawParser {
         return ret;
     }
 
-    private static int skippedSectionCounter(ArrayList<String> segments) {
+    /**
+     * Checks to see if a section number was skipped (i.e. went from Section 24 to 26). Does not correct these errors, but sets variable skippedSectionAnalysis.
+     * @param segments After first parse, before parse within sections. 
+     * @return The number of skipped sections.
+     */
+    private static int checkSectionSkips(ArrayList<String> segments) {
 
         int priorNum = -37;
         Iterator<String> iter = segments.iterator();
@@ -237,6 +257,11 @@ public class ThaiLawParser {
         return numSecSkipped;
     }
 
+    /**
+     * Tries to make a new entry for a skipped section if it can be found. Specifically, if a section number skips (say from 24 to 26), it looks in the prior section to see if the skipped section is in there and the OCR didn't add a line break properly. (i.e. it looks for Section 25 near the end of what was previously the Section 24 segment).
+     * @param input A list of sections 
+     * @return The list but with as many skipped sections unpacked as could be found. 
+     */
     static ArrayList<String> skippedSectionCorrecter(ArrayList<String> input) {
         ArrayList<String> ret = new ArrayList(input.size());
 
@@ -582,6 +607,7 @@ public class ThaiLawParser {
         }
         return ret;
     }
+    
 
     private static int checkSectionParsing(ArrayList<ArrayList<String>> thaiSectionsParsed, ArrayList<ArrayList<String>> engSectionsParsed) {
 
@@ -632,8 +658,21 @@ public class ThaiLawParser {
 
     }
     
+    // Takes the nested arraylists and turns them into a single arrayList
+    private ArrayList<String> unpackSections(ArrayList<ArrayList<String>> arrayList) {
+        ArrayList<String> ret = new ArrayList(arrayList.size());
+        for (ArrayList<String> al : arrayList) {
+            for (String s : al) {
+                ret.add(s);
+            }
+        }
+        return ret;
+    }
+    
     public BasicFile makeFile() {
-         return FileFactory.fromArrayLists(finalThaiSegs, finalEngSegs);
+        BasicFile file = FileBuilder.fromArrayLists(finalThaiSegs, finalEngSegs);
+        file.setFileName(makeFileNameFromPath(fileNameThai));
+         return file;
     }
 
 }
