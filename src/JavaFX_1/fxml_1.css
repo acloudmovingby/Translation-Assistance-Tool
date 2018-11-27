@@ -3,9 +3,17 @@
  */
 
 .mainFxmlClass {
-    .split-pane *.split-pane-divider {
-        -fx-padding: 0 1 0 1;
-    }
+    
+    .text-field {
+    -fx-background-radius: 0 ;
+}
+
+.text-field-table-cell .text-field {
+    -fx-border-color: -fx-background;
+    -fx-background-radius: 0 ;
+}
+.text-field:focused {
+}
     
 
 }

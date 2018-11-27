@@ -16,11 +16,15 @@ import comparator.Comparator;
 
 /*
 COMMIT TO DO:
-    -change status color on commit
+    ------change status color on commit
     ------make so TUs don't match themselves
     - change selection on commit
     - add key press to commit
-    - make English cells editable again
+    - RIGHT NOW: 
+        - remove numbering
+        - make so "editOnCommit" (i.e. "return") is the commit button
+        - make so status color changes on commit
+        - check to make sure CF files are working properly
 
 OPTIONAL LATER:
     - make so TUs have post-commit editing status 
@@ -64,6 +68,34 @@ GLOSSARY:
         - glossary module searches if any term exists in Thai, if so, it is returned to Main Logic
         - Main Logic updates listview
     - words are highlighted in 
+
+DATABASE
+    - Initial implementation: 
+        - one table with each row representing a TU with the following fields:
+            - id (primary key)
+            - file id
+            - file name
+            - Thai
+            - English
+            - commit status
+        - ways to access TU and what is wanted/used:
+            - parse new file
+                - every field
+            - comparator
+                - commit status and thai (most of all)
+                - then, if there is a match, then the english, filename, etc.
+            - commit
+                - commit status
+            - merge / split
+                - every aspect of those specific TUs
+        - build database by taking files in corpus and entering them.
+        - TEMPORARY: every time you start the program, take all files out of memory and store them as file objects again (i.e. recreate your entire corpus in memory)
+        - steps:
+            - make database
+            - make method that enters TUs for 1 file giving unique, ordered id number
+        - need to make new table for file id's / file #s in case files exist with no TUs in them.
+            - when createFileID() is called, it needs to add the new id to that table
+           
 */
 
 /**
@@ -102,7 +134,9 @@ public class MainLogic {
         FileBuilder fileBuilder = new FileBuilder();
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         mainFile = fileBuilder.justThaiFilePath(filePath);
-        mainFile.commitAllTUs();
+        // Commits all TUS in main file (only for testing purposes)
+        //mainFile.commitAllTUs();
+        
         
         // MAKES CORPUS, ADDS SOME FILES
         corpus = new FileList();
@@ -170,5 +204,10 @@ public class MainLogic {
         for (TUCompareEntry tu : c.getCompareFile().getObservableList()) {
             currentCompareFile.addEntry(tu);
         }
+    }
+    
+    void englishEdited(TUEntry selectedTU, String newText) {
+       selectedTU.setEnglish(newText);
+       commit(selectedTU);
     }
 }

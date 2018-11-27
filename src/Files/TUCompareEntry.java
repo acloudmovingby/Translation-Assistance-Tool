@@ -8,6 +8,8 @@ package Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -23,11 +25,13 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
     boolean isCommitted;
+    private BooleanProperty isCommittedProperty;
     int matchSize;
     int longestMatchLength;
 
     public TUCompareEntry() {
         isCommitted = true;
+        isCommittedProperty = new SimpleBooleanProperty(true);
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
         fileName = new SimpleStringProperty();
@@ -247,12 +251,19 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
 
     @Override
     public void setCommitted(boolean b) {
+         isCommittedProperty.set(b);
          isCommitted = b;
+         
     }
 
     @Override
     public boolean isCommitted() {
         return isCommitted;
+    }
+    
+     @Override
+    public BooleanProperty isCommittedProperty() {
+        return isCommittedProperty;
     }
     
     private void setLongestMatchLength() {

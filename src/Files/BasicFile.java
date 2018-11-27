@@ -5,6 +5,7 @@
  */
 package Files;
 
+import Database.DatabaseOperations;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
@@ -20,17 +21,34 @@ public class BasicFile implements TMFile {
     ObservableList<TUEntry> observableList;
   //  private final int NUM_FIELDS;
     private String fileName;
+    private final double fileID;
     
     
     public BasicFile() {
         observableList = FXCollections.observableArrayList();
       //  NUM_FIELDS = 2;
         fileName = "untitled";
+        fileID = DatabaseOperations.createFileID();
     }
     
-    public void addEntry(TUEntryBasic a) {
-        a.setFileName(getFileName());
-       observableList.add(a);
+    /**
+     * Adds the TU to the BasicFile. Because TUEntryBasic id field is final, it makes a new TUEntryBasic object copying the fields from the input and assigning it a new id linked to the file. TUEntryBasics made outside of this context are assigned a default (non-unique) id value;
+     * @param a The TU to be added to the file.
+     */
+    public TUEntryBasic addEntry(TUEntryBasic a) {
+       // sets id's and filenames
+       TUEntryBasic newTU = new TUEntryBasic(makeTUID());
+       newTU.setFileID(getFileID());
+       newTU.setFileName(getFileName());
+       
+       // assigns other fields based on input TUEntryBasic object
+       newTU.setThai(a.getThai());
+       newTU.setEnglish(a.getEnglish());
+       newTU.setCommitted(a.isCommitted());
+       
+       DatabaseOperations.addTUtoDatabase(newTU);
+       observableList.add(newTU);
+       return newTU;
     }
    
     @Override
@@ -117,6 +135,29 @@ public class BasicFile implements TMFile {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public double getFileID() {
+        return fileID;
+    }
+    
+    public void setFileID(double fileID) {
+        
+    }
 
+    /**
+     * Assigns an id value to the TU. The id value is equal to the fileID plus increments of 0.0001
+     * Each time a new TU is added to the end of the list its id is assigned to be 0.0001 higher than the prior one. 
+     * 
+     * @return 
+     */
+    private double makeTUID() {
+        if (observableList.isEmpty()) {
+            return fileID + 0.0001;
+        } else {
+            return ((TUEntryBasic) observableList.get(observableList.size()-1)).getID() + 0.0001;
+        }
+        
+    }
+    
+    
     
 }

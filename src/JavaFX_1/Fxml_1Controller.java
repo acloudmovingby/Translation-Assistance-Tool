@@ -7,7 +7,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -16,12 +19,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Callback;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.StringConverter;
 
 /**
  * FXML Controller class
@@ -43,8 +49,8 @@ public class Fxml_1Controller implements Initializable {
     TableColumn<TUEntry, String> englishCol;
 
     @FXML
-    TableColumn<TUEntry, String> status;
-    
+    TableColumn<TUEntry, Boolean> status;
+
     @FXML
     TableColumn<TUEntry, String> matchScore;
 
@@ -56,7 +62,7 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     TableColumn<TUCompareEntry, String> fileColComp;
-    
+
     @FXML
     TableColumn<TUCompareEntry, String> scoreColComp;
 
@@ -71,6 +77,8 @@ public class Fxml_1Controller implements Initializable {
 
     Font defaultThaiFont;
     Font defaultEnglishFont;
+    String committedStatusColor;
+    String unCommittedStatusColor;
     /**
      * Main logic of the program. Controller retrieves and sends information to
      * main.
@@ -89,6 +97,8 @@ public class Fxml_1Controller implements Initializable {
         main = new MainLogic();
         defaultThaiFont = Font.font("Arial");
         defaultEnglishFont = Font.font("Arial");
+        committedStatusColor = "rgb(183, 215, 255)";
+        unCommittedStatusColor = "rgb(255, 255, 255)";
 
         // Default minimum length for matches
         // Sets prompt text for minMatchLengthField to equal default minimum match length
@@ -109,8 +119,63 @@ public class Fxml_1Controller implements Initializable {
             return cell;
         });
         // English column:
+        englishCol.setCellFactory(new Callback<TableColumn<TUEntry, String>, TableCell<TUEntry, String>>() {
+            @Override
+            public TableCell<TUEntry, String> call(TableColumn<TUEntry, String> tc) {
+                TextFieldTableCell<TUEntry, String> cell = new TextFieldTableCell(new StringConverter() {
+                 
+                    @Override
+                    public String toString(Object t) {
+                        return t.toString();
+                    }
+
+                    @Override
+                    public Object fromString(String string) {
+                        return string;
+                    }
+                });
+                return cell;
+            }
+        });
+
+        englishCol.setOnEditCommit(new EventHandler<CellEditEvent<TUEntry, String>>() {
+            @Override
+            public void handle(CellEditEvent<TUEntry, String> t) {
+                main.englishEdited(((TUEntry) t.getTableView().getItems().get(t.getTablePosition().getRow())),
+                        t.getNewValue());
+            }
+        });
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
+
         // Status column:
+        // makes it so this columns cellValueFactory is bound to the isCommitted() method of TUEntry
+        status.setCellValueFactory(new PropertyValueFactory<>("isCommitted"));
+        //if the value of isCommitted() changes, the background color of the cell changes
+        status.setCellFactory(tc -> {
+            TableCell<TUEntry, Boolean> cell = new TableCell<TUEntry, Boolean>() {
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    // assign item's toString value as text
+                    if (empty || item == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        TUEntry thisCellTU = tc.getTableView().getItems().get(this.getIndex());
+                        boolean isCommitted = thisCellTU.isCommitted();
+                        if (isCommitted == true) {
+                            this.setStyle("-fx-background-color: " + committedStatusColor + ";");
+                        } else {
+                            setText(null);
+                            setGraphic(null);
+                        }
+                    }
+                }
+            };
+            return cell;
+        });
+
         // MatchScore:
         matchScore.setCellValueFactory(new PropertyValueFactory<>("matchScore"));
 
@@ -120,6 +185,7 @@ public class Fxml_1Controller implements Initializable {
 
         // binds main file to main table viewer
         tableView.setItems(main.getMainFile().getObservableList());
+        tableView.setEditable(true);
         // tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // COMPARE FILE VIEWER
@@ -138,7 +204,7 @@ public class Fxml_1Controller implements Initializable {
                         setStyle("");
 
                     } else {
-                        
+
                         TUCompareEntry thisCellTU = tc.getTableView().getItems().get(this.getIndex());
                         boolean[] matches = thisCellTU.getMatches();
                         // all true will be one color, all false will be another color

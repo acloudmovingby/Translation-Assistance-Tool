@@ -91,7 +91,7 @@ public class ThaiLawParser {
             int engSecsSkipped2 = checkSectionSkips(engSegments2);
             
             ArrayList<ArrayList<String>> thaiSectionsParsed2 = parseWithinSections(thaiSegments2);
-            System.out.println(thaiSectionsParsed2);
+            //System.out.println(thaiSectionsParsed2);
             /*for (ArrayList<String> al : thaiSectionsParsed2) {
                 String indent = "";
                 for (String s : al) {

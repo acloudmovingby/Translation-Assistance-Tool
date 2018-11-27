@@ -5,7 +5,10 @@
  */
 package Files;
 
+import Database.DatabaseOperations;
 import java.util.Objects;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -15,22 +18,36 @@ import javafx.beans.property.StringProperty;
  */
 public class TUEntryBasic implements TUEntry {
 
+    private final double id;
+    private double fileID;
+    private String fileName;
+    
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
-    String fileName;
-    boolean isCommitted;
+    
+    private boolean isCommitted;
+    BooleanProperty isCommittedProperty;
 
     public TUEntryBasic() {
         boolean isCommitted = false;
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
-        fileName = "TU Filename not set";
+        isCommittedProperty = new SimpleBooleanProperty(false);
+        id = -100;
     }
-
+    
+    public TUEntryBasic(double id) {
+        boolean isCommitted = false;
+        thaiProperty = new SimpleStringProperty();
+        englishProperty = new SimpleStringProperty();
+        isCommittedProperty = new SimpleBooleanProperty(false);
+        this.id = id;
+    }
+/*
     public TUEntryBasic(String thai, String english) {
         thaiProperty = new SimpleStringProperty(thai);
         englishProperty = new SimpleStringProperty(english);
-    }
+    }*/
 
 
     @Override
@@ -67,7 +84,12 @@ public class TUEntryBasic implements TUEntry {
 
         TUEntryBasic m = (TUEntryBasic) o;
         
-        return (this.getThai().equals(m.getThai())) && (this.getEnglish().equals(m.getEnglish()));
+        return (this.getThai().equals(m.getThai())) && 
+                (this.getEnglish().equals(m.getEnglish())) &&
+                (this.getFileID() == m.getFileID()) &&
+                (this.getFileName().equals(m.getFileName())) &&
+                (this.getID() == m.getID()) &&
+                (this.isCommitted() == m.isCommitted());
     }
 
     @Override
@@ -75,12 +97,16 @@ public class TUEntryBasic implements TUEntry {
         int hash = 7;
         hash = 41 * hash + Objects.hashCode(this.getEnglish());
         hash = 41 * hash + Objects.hashCode(this.getThai());
+        hash = 41 * hash + Objects.hashCode(this.getFileID());
+        hash = 41 * hash + Objects.hashCode(this.getFileName());
+        hash = 41 * hash + Objects.hashCode(this.getID());
+        hash = 41 * hash + Objects.hashCode(this.isCommitted);
         return hash;
     }
     
     @Override
     public String toString() {
-        return "[" + getThai() + ", " + getEnglish() + "]";
+        return "[" + getID()  + ", " + getFileID() + ", " + getFileName()  + ", " + isCommitted()  + ", " + getThai() + ", " + getEnglish() + "]";
     }
 
     @Override
@@ -98,9 +124,16 @@ public class TUEntryBasic implements TUEntry {
         return isCommitted;
     }
     
+     @Override
+    public BooleanProperty isCommittedProperty() {
+        return isCommittedProperty;
+    }
+    
     @Override
     public void setCommitted(boolean b) {
+        isCommittedProperty.set(b);
         isCommitted = b;
+        DatabaseOperations.replaceTU(this);
     }
 
     @Override
@@ -111,6 +144,23 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setFileName(String fileName) {
          this.fileName = fileName;
+    }
+    
+    /*
+    public void setID(double id) {
+        this.id = id;
+    } */
+    
+    public double getID() {
+        return id;
+    }
+    
+    public void setFileID(double fileID) {
+        this.fileID = fileID;
+    }
+    
+    public double getFileID() {
+        return fileID;
     }
     
 

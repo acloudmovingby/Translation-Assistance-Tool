@@ -77,11 +77,12 @@ public class FileBuilder {
            
             StringBuilder sb2 = new StringBuilder(counter);
             
+            /*
             //makes "english" just be an index number, for testing purposes only
             
             for (int i=0; i<counter; i++) {
                 sb2.append(i + "\n");
-            }
+            }*/
            //System.out.println(sb.toString());
             ret = this.buildBasicParse(sb.toString(), sb2.toString());
            

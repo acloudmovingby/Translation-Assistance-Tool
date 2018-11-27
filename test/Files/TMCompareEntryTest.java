@@ -60,15 +60,6 @@ public class TMCompareEntryTest {
         e2.addMatchInterval(0, 2);
         e2.addMatchInterval(3, 4);
         e2.setFileName("file1");
-        
-        TUCompareEntry e3 = e2.getCopy();
-        
-        boolean result = 
-                e2.equals(e3) &&
-                e2 != e3;
-        
-        boolean expResult = true;
-        assertEquals(expResult, result); 
     }
 
     /**
@@ -98,20 +89,7 @@ public class TMCompareEntryTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of toArray method, of class TUCompareEntry.
-     */
-    @Test
-    public void testToArray() {
-        System.out.println("toArray");
-        Object[] expResult = new Object[] {
-            "การเมือง", "politics", "file1"
-        };
-        e.
-        Object[] result = e.toArray();
-        assertArrayEquals(expResult, result);
-    }
-
+    
     /**
      * Test of equals method, of class TUCompareEntry.
      */

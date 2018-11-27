@@ -5,6 +5,7 @@
  */
 package Files;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -24,6 +25,7 @@ public interface TUEntry {
     
 
     public boolean isCommitted();
+    public BooleanProperty isCommittedProperty();
     public void setCommitted(boolean b);
     
     String getFileName();
