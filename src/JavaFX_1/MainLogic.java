@@ -13,6 +13,7 @@ import Files.TUCompareEntry;
 import Files.TUEntry;
 import ParseThaiLaw.ThaiLawParser;
 import comparator.Comparator;
+import java.util.ArrayList;
 
 /*
 COMMIT TO DO:
@@ -95,7 +96,20 @@ DATABASE
             - make method that enters TUs for 1 file giving unique, ordered id number
         - need to make new table for file id's / file #s in case files exist with no TUs in them.
             - when createFileID() is called, it needs to add the new id to that table
-           
+        - LONG TERM PLAN:
+            - I dont generate parsed law files each time, I instead pull from DB:
+                - make optional part of file parser be it adds to the DB. At some point just run it and add.
+                - take out ThaiLawParser from main
+            - when game begins, instead of builing corpus, it just makes calls to Comparator
+                - Comparator retrieves stuff from DB on its own
+                - main though can add stuff to DB of course:
+                    - commit, merge, split
+            - main file? 
+                - Just have it pulled from db
+                - just put in main the file id
+                - have a method that calls id and makes that file the MF
+                - requires a DBOperations method GetFile (creates BasicFile)
+          
 */
 
 /**
@@ -103,6 +117,8 @@ DATABASE
  * @author Chris
  */
 public class MainLogic {
+    
+    private static final boolean IS_DATABASE_DISABLED = false;
     
     /**
      * The file currently being translated.
@@ -114,12 +130,20 @@ public class MainLogic {
      */
     FileList corpus;
     
+    /**
+     * The cached compare files.
+     */
+    private CompareFile[] compareFileCache;
+    
+    /**
+     * THe current compare file being displayed in the compare table view.
+     */
     private CompareFile currentCompareFile;
     
     /**
      * The string that was used to set the current compare table.
      */
-    private String currentCompareString;
+    private int currentIndex;
 
     /**
      * The minimum length for matching substrings shown in compare table viewer.
@@ -136,6 +160,10 @@ public class MainLogic {
         mainFile = fileBuilder.justThaiFilePath(filePath);
         // Commits all TUS in main file (only for testing purposes)
         //mainFile.commitAllTUs();
+        
+        //creates comparefile cache
+        compareFileCache = new CompareFile[mainFile.getObservableList().size()];
+        
         
         
         // MAKES CORPUS, ADDS SOME FILES
@@ -175,21 +203,29 @@ public class MainLogic {
     
     protected void setMinMatchLength(int k) {
         minMatchLength = k;
+        for(CompareFile c : compareFileCache) {
+            c=null;
+        }
     }
 
-    protected String getCurrentCompareString() {
-        return currentCompareString;
+    protected int getCurrentIndex() {
+        return currentIndex;
     }
     
-    private void setCurrentCompareString(String newCompareString) {
-        currentCompareString = newCompareString;
+    private void setCurrentTU(int index) {
+        currentIndex = index;
     }
 
-    protected CompareFile getCompareFile(String newCompareString) {
-        setCurrentCompareString(newCompareString);
-        Comparator c = new Comparator(getCurrentCompareString(), getCorpus(), getMinMatchLength());
-        currentCompareFile = c.getCompareFile();
-        return currentCompareFile;
+    protected CompareFile getCompareFile(int index) {
+        if (compareFileCache[index] == null) {
+             setCurrentTU(index);
+            Comparator c = new Comparator(mainFile.getTU(getCurrentIndex()).getThai(), getCorpus(), getMinMatchLength());
+            currentCompareFile = c.getCompareFile();
+            compareFileCache[index] = currentCompareFile;
+            return currentCompareFile;
+        } else {
+            return compareFileCache[index];
+        }
     }
 
     void commit(TUEntry selectedTU) {
@@ -198,8 +234,12 @@ public class MainLogic {
              selectedTU.setCommitted(true);
         }
         
-        // Finds all matches with this newly committed TU
-        Comparator c = new Comparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
+        for(CompareFile c : compareFileCache) {
+            c=null;
+        }
+        
+        // Finds all matches with this newly committed TU (not with whole corpus)
+        Comparator c = new Comparator(mainFile.getTU(getCurrentIndex()).getThai(), selectedTU, getMinMatchLength());
         // adds these matches to the current compareFile.
         for (TUCompareEntry tu : c.getCompareFile().getObservableList()) {
             currentCompareFile.addEntry(tu);
@@ -209,5 +249,9 @@ public class MainLogic {
     void englishEdited(TUEntry selectedTU, String newText) {
        selectedTU.setEnglish(newText);
        commit(selectedTU);
+    }
+    
+    public static boolean isDatabaseDisabled() {
+        return IS_DATABASE_DISABLED;
     }
 }

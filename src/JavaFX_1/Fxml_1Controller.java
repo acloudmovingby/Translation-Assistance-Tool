@@ -166,6 +166,7 @@ public class Fxml_1Controller implements Initializable {
                         boolean isCommitted = thisCellTU.isCommitted();
                         if (isCommitted == true) {
                             this.setStyle("-fx-background-color: " + committedStatusColor + ";");
+                            setText(thisCellTU.getThai());
                         } else {
                             setText(null);
                             setGraphic(null);
@@ -307,14 +308,14 @@ public class Fxml_1Controller implements Initializable {
         scoreColComp.setCellValueFactory(new PropertyValueFactory<>("longestMatchLength"));
 
         // sets initial compare file in compare table to first TU in main file viewer
-        setCompareTable(main.getMainFile().getObservableList().get(0).toString());
+        setCompareTable(0);
 
         /*
             Makes it so when a row is selected in the main table, this renders compareTable with a new CompareFile made from the Thai String from the main table.
          */
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                setCompareTable(newSelection.getThai());
+                setCompareTable(tableView.getSelectionModel().getSelectedIndex());
             }
         }
         );
@@ -330,7 +331,7 @@ public class Fxml_1Controller implements Initializable {
         // changes the minimum match length (retrieved from the minMatchLength field)
         main.setMinMatchLength(Integer.valueOf(minMatchLengthField.getText()));
         // redraws the compare table
-        setCompareTable(main.getCurrentCompareString());
+        setCompareTable(main.getCurrentIndex());
     }
 
     @FXML
@@ -338,8 +339,8 @@ public class Fxml_1Controller implements Initializable {
         main.commit(tableView.getSelectionModel().getSelectedItem());
     }
 
-    private void setCompareTable(String text) {
-        CompareFile cf = main.getCompareFile(text);
+    private void setCompareTable(int index) {
+        CompareFile cf = main.getCompareFile(index);
         setNumMatches(cf.getTUs().size());
         compareTable.setItems(cf.getObservableList());
     }

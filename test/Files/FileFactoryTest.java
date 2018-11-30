@@ -49,10 +49,10 @@ public class FileFactoryTest {
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
-        TUEntryBasic e = new TUEntryBasic();
+        TUEntryBasic e = expResult.newTU();
         e.setThai(thai);
         e.setEnglish(english);
-        expResult.addEntry(e);
+        //expResult.addEntry(e);
         
         assertEquals(expResult, result);
     }
@@ -69,10 +69,10 @@ public class FileFactoryTest {
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
-        TUEntryBasic e = new TUEntryBasic();
+        TUEntryBasic e = expResult.newTU();
         e.setThai(thai);
         e.setEnglish(english);
-        expResult.addEntry(e);
+        //expResult.addEntry(e);
         
         assertEquals(expResult, result);
     }
@@ -89,15 +89,15 @@ public class FileFactoryTest {
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
-        TUEntryBasic e = new TUEntryBasic();
+        TUEntryBasic e = expResult.newTU();
         e.setThai("การเมือง");
         e.setEnglish("politics");
-        expResult.addEntry(e);
+        //expResult.addEntry(e);
             
-        e = new TUEntryBasic();
+        e = expResult.newTU();
         e.setThai("ของประเทศไทย");
         e.setEnglish("of Thailand");
-        expResult.addEntry(e);
+       // expResult.addEntry(e);
            
         
         System.out.println("result is: \n" + result);

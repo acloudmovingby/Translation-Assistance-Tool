@@ -46,11 +46,11 @@ public class DatabaseOperationsTest {
     public void testAddTUtoDatabase() {
         System.out.println("addTUtoDatabase");
         BasicFile bf = new BasicFile();
-        TUEntryBasic expResult = new TUEntryBasic();
+        TUEntryBasic expResult = bf.newTU();
         expResult.setCommitted(false);
         expResult.setEnglish("English");
         expResult.setThai("Thai");
-        expResult = bf.addEntry(expResult);
+       // expResult = bf.addEntry(expResult);
         
         assertEquals(DatabaseOperations.addTUtoDatabase(expResult), false);
         
@@ -71,11 +71,11 @@ public class DatabaseOperationsTest {
         
         System.out.println("replaceTU");
         BasicFile bf = new BasicFile();
-        TUEntryBasic tu1 = new TUEntryBasic();
+        TUEntryBasic tu1 = bf.newTU();
         tu1.setCommitted(false);
         tu1.setEnglish("English");
         tu1.setThai("Thai");
-        tu1 = bf.addEntry(tu1);
+        //tu1 = bf.addEntry(tu1);
         assertEquals(DatabaseOperations.tuIDExists(tu1.getID()), true);
         
         tu1.setEnglish("ENGLISH CHANGED");
@@ -95,11 +95,11 @@ public class DatabaseOperationsTest {
     @Test
     public void testCreateFileID() {
         BasicFile bf = new BasicFile();
-        TUEntryBasic tu1 = new TUEntryBasic();
+        TUEntryBasic tu1 = bf.newTU();
         tu1.setCommitted(false);
         tu1.setEnglish("English");
         tu1.setThai("Thai");
-        bf.addEntry(tu1);
+       // bf.addEntry(tu1);
         
        
         double result = DatabaseOperations.createFileID();

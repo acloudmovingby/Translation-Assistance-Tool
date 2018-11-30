@@ -85,10 +85,11 @@ public class TestFiles {
         System.out.println("Are they equal? "+cf.equals(cf2));
         
           BasicFile bf = new BasicFile();
-        TUEntryBasic x = new TUEntryBasic();
+         
+        TUEntryBasic x = bf.newTU();
         x.setThai("การเมือง");
         x.setEnglish("politics");
-        bf.addEntry(x);
+        //bf.addEntry(x);
         
         FileBuilder ff = new FileBuilder();
         BasicFile bf2 = ff.buildBasicParse("การเมือง", "politics");
