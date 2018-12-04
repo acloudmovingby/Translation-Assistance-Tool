@@ -40,14 +40,12 @@ public class FileBuilder {
         
         for (int i = 0; i < th.length; i++) {
             TUEntryBasic e = bf.newTU();
-            //TUEntryBasic e = new TUEntryBasic();
             e.setThai(th[i]);
             if (i < en.length) {
                 e.setEnglish(en[i]);
             } else {
                 e.setEnglish("");
             }
-           // bf.addEntry(e);
         }
         
         return bf;
@@ -115,10 +113,8 @@ public class FileBuilder {
         // iterates down each list, adding them together as TUs
         while (iterThai.hasNext() && iterEnglish.hasNext()) {
             TUEntryBasic e = bf.newTU();
-            //TUEntryBasic e = new TUEntryBasic();
             e.setThai(iterThai.next());
             e.setEnglish(iterEnglish.next());
-            //bf.addEntry(e);
         }
         
         return bf;

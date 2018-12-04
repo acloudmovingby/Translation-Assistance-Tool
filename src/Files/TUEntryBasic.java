@@ -25,36 +25,37 @@ public class TUEntryBasic implements TUEntry {
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
     
+    private boolean isCommitted;
     BooleanProperty isCommittedProperty;
 
-    
     /*
-    protected TUEntryBasic(double id) {
+    public TUEntryBasic() {
+        boolean isCommitted = false;
+        thaiProperty = new SimpleStringProperty();
+        englishProperty = new SimpleStringProperty();
+        isCommittedProperty = new SimpleBooleanProperty(false);
+        id = -100;
+    }*/
+    /*
+    public TUEntryBasic(double id) {
+        boolean isCommitted = false;
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
         isCommittedProperty = new SimpleBooleanProperty(false);
         this.id = id;
-        DatabaseOperations.addTUtoDatabase(this);
-    }*/
-    
-    /**
-     * Constructor to create a TUEntryBasic when the associated file id is already known.
-     * Only used in context where there is no file object (i.e. when the TU is being retrieved from the database).
-     * When a totally new TU is being created it must be created through the BasicFile class, method newTU() 
-     * @param id
-     * @param fileID
-     * @param fileName 
-     */
-    public TUEntryBasic(double id, double fileID, String fileName) {
+    }
+    */
+    public TUEntryBasic(double id, double fileID, String fileName){
+        boolean isCommitted = false;
+        thaiProperty = new SimpleStringProperty();
+        englishProperty = new SimpleStringProperty();
+        isCommittedProperty = new SimpleBooleanProperty(false);
         this.id = id;
         this.fileID = fileID;
         this.fileName = fileName;
-        thaiProperty = new SimpleStringProperty();
-        englishProperty = new SimpleStringProperty();
-        isCommittedProperty = new SimpleBooleanProperty(false);
-        DatabaseOperations.addTUtoDatabase(this);
+        //DatabaseOperations.addTUtoDatabase(this);
     }
-/*
+    /*
     public TUEntryBasic(String thai, String english) {
         thaiProperty = new SimpleStringProperty(thai);
         englishProperty = new SimpleStringProperty(english);
@@ -69,7 +70,6 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setThai(String thai) {
        thaiProperty.set(thai);
-       DatabaseOperations.replaceTU(this);
     }
 
     @Override
@@ -80,7 +80,6 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setEnglish(String english) {
         englishProperty.set(english);
-        DatabaseOperations.replaceTU(this);
     }
 
   
@@ -113,7 +112,7 @@ public class TUEntryBasic implements TUEntry {
         hash = 41 * hash + Objects.hashCode(this.getFileID());
         hash = 41 * hash + Objects.hashCode(this.getFileName());
         hash = 41 * hash + Objects.hashCode(this.getID());
-        hash = 41 * hash + Objects.hashCode(this.isCommitted());
+        hash = 41 * hash + Objects.hashCode(this.isCommitted);
         return hash;
     }
     
@@ -134,7 +133,7 @@ public class TUEntryBasic implements TUEntry {
 
     @Override
     public boolean isCommitted() {
-        return isCommittedProperty.get();
+        return isCommitted;
     }
     
      @Override
@@ -145,7 +144,8 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setCommitted(boolean b) {
         isCommittedProperty.set(b);
-        DatabaseOperations.replaceTU(this);
+        isCommitted = b;
+        //DatabaseOperations.replaceTU(this);
     }
 
     @Override
@@ -156,7 +156,6 @@ public class TUEntryBasic implements TUEntry {
     @Override
     public void setFileName(String fileName) {
          this.fileName = fileName;
-         DatabaseOperations.replaceTU(this);
     }
     
     /*
@@ -167,11 +166,10 @@ public class TUEntryBasic implements TUEntry {
     public double getID() {
         return id;
     }
-    
+    /*
     public void setFileID(double fileID) {
         this.fileID = fileID;
-        DatabaseOperations.replaceTU(this);
-    }
+    }*/
     
     public double getFileID() {
         return fileID;

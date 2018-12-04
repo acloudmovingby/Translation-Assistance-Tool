@@ -19,12 +19,14 @@ import javafx.collections.ObservableList;
 public class BasicFile implements TMFile {
     
     ObservableList<TUEntry> observableList;
+  //  private final int NUM_FIELDS;
     private String fileName;
     private final double fileID;
     
     
     public BasicFile() {
         observableList = FXCollections.observableArrayList();
+      //  NUM_FIELDS = 2;
         fileName = "untitled";
         fileID = DatabaseOperations.createFileID();
     }
@@ -39,12 +41,12 @@ public class BasicFile implements TMFile {
        return newTU;
     }
     
+    
     /**
      * Adds the TU to the BasicFile. Because TUEntryBasic id field is final, it makes a new TUEntryBasic object copying the fields from the input and assigning it a new id linked to the file. TUEntryBasics made outside of this context are assigned a default (non-unique) id value;
      * @param a The TU to be added to the file.
-     * @return 
-     *
-    private TUEntryBasic addEntry(TUEntryBasic a) {
+     
+    public TUEntryBasic addEntry(TUEntryBasic a) {
        // sets id's and filenames
        TUEntryBasic newTU = new TUEntryBasic(makeTUID());
        newTU.setFileID(getFileID());
@@ -55,9 +57,10 @@ public class BasicFile implements TMFile {
        newTU.setEnglish(a.getEnglish());
        newTU.setCommitted(a.isCommitted());
        
+       DatabaseOperations.addTUtoDatabase(newTU);
        observableList.add(newTU);
        return newTU;
-    } */
+    }*/
    
     @Override
     public String getFileName() {
@@ -133,10 +136,6 @@ public class BasicFile implements TMFile {
     public ArrayList getTUs() {
         return new ArrayList(observableList);
     }
-    
-    public TUEntry getTU(int index) {
-        return getObservableList().get(index);
-    }
 
     @Override
     public ObservableList<TUEntry> getObservableList() {
@@ -149,6 +148,10 @@ public class BasicFile implements TMFile {
 
     public double getFileID() {
         return fileID;
+    }
+    
+    public void setFileID(double fileID) {
+        
     }
 
     /**

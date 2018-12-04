@@ -103,7 +103,6 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         return fileName.getValue();
     }
     
-    @Override
     public final void setFileName(String fileName) {
         this.fileName.set(fileName);
     }
