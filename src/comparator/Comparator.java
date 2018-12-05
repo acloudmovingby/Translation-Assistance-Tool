@@ -5,12 +5,12 @@
  */
 package comparator;
 
+import Files.BasicFile;
 import Files.CompareFile;
 import Files.TUCompareEntry;
 import Files.FileList;
-import Files.TMFile;
 import java.util.ArrayList;
-import Files.TUEntry;
+import Files.TUEntryBasic;
 
 /**
  *
@@ -96,7 +96,7 @@ public final class Comparator {
 
  }
      */
-    public Comparator(String text, TMFile file, int minMatchLength) {
+    public Comparator(String text, BasicFile file, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
         cFile = new CompareFile();
         findMatches(text, file);
@@ -106,12 +106,12 @@ public final class Comparator {
         NGRAM_LENGTH = minMatchLength;
         cFile = new CompareFile();
         
-        for (TMFile file : fileList.getFiles()) {
+        for (BasicFile file : fileList.getFiles()) {
            findMatches(text, file); 
         }
     }
     
-    public Comparator(String text, TUEntry tu, int minMatchLength) {
+    public Comparator(String text, TUEntryBasic tu, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
         cFile = new CompareFile();
         
@@ -123,16 +123,16 @@ public final class Comparator {
      * @param text The text
      * @param file The file to compare to.
      */
-    private void findMatches(String text, TMFile file) {
+    private void findMatches(String text, BasicFile file) {
         
-        ArrayList<TUEntry> tms = file.getTUs();
+        ArrayList<TUEntryBasic> tms = file.getTUs();
 
-        for (TUEntry tu : tms) {
+        for (TUEntryBasic tu : tms) {
             findMatches(text, tu);
         }
     }
 
-    private void findMatches(String text, TUEntry tu) {
+    private void findMatches(String text, TUEntryBasic tu) {
         if (tu.isCommitted()) {
         Matches m = findStringMatches(text, tu.getThai());
             if (!m.isEmpty()) {

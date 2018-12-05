@@ -16,7 +16,7 @@ import javafx.beans.property.StringProperty;
  * Contains only two fields: a Thai string and an English string.
  * @author Chris
  */
-public class TUEntryBasic implements TUEntry {
+public class TUEntryBasic {
 
     private final double id;
     private double fileID;
@@ -28,23 +28,6 @@ public class TUEntryBasic implements TUEntry {
     private boolean isCommitted;
     BooleanProperty isCommittedProperty;
 
-    /*
-    public TUEntryBasic() {
-        boolean isCommitted = false;
-        thaiProperty = new SimpleStringProperty();
-        englishProperty = new SimpleStringProperty();
-        isCommittedProperty = new SimpleBooleanProperty(false);
-        id = -100;
-    }*/
-    /*
-    public TUEntryBasic(double id) {
-        boolean isCommitted = false;
-        thaiProperty = new SimpleStringProperty();
-        englishProperty = new SimpleStringProperty();
-        isCommittedProperty = new SimpleBooleanProperty(false);
-        this.id = id;
-    }
-    */
     public TUEntryBasic(double id, double fileID, String fileName){
         boolean isCommitted = false;
         thaiProperty = new SimpleStringProperty();
@@ -55,29 +38,24 @@ public class TUEntryBasic implements TUEntry {
         this.fileName = fileName;
         //DatabaseOperations.addTUtoDatabase(this);
     }
-    /*
-    public TUEntryBasic(String thai, String english) {
-        thaiProperty = new SimpleStringProperty(thai);
-        englishProperty = new SimpleStringProperty(english);
-    }*/
 
 
-    @Override
+
     public String getThai() {
         return thaiProperty.getValue();
     }
 
-    @Override
+
     public void setThai(String thai) {
        thaiProperty.set(thai);
     }
 
-    @Override
+
     public String getEnglish() {
         return englishProperty.getValue();
     }
 
-    @Override
+
     public void setEnglish(String english) {
         englishProperty.set(english);
     }
@@ -121,55 +99,43 @@ public class TUEntryBasic implements TUEntry {
         return "[" + getID()  + ", " + getFileID() + ", " + getFileName()  + ", " + isCommitted()  + ", " + getThai() + ", " + getEnglish() + "]";
     }
 
-    @Override
+
     public StringProperty thaiProperty() {
         return thaiProperty;
     }
 
-    @Override
+
     public StringProperty englishProperty() {
         return englishProperty;
     }
 
-    @Override
+
     public boolean isCommitted() {
         return isCommitted;
     }
-    
-     @Override
+
     public BooleanProperty isCommittedProperty() {
         return isCommittedProperty;
     }
     
-    @Override
+
     public void setCommitted(boolean b) {
         isCommittedProperty.set(b);
         isCommitted = b;
         //DatabaseOperations.replaceTU(this);
     }
 
-    @Override
     public String getFileName() {
         return fileName;
     }
 
-    @Override
     public void setFileName(String fileName) {
          this.fileName = fileName;
     }
     
-    /*
-    public void setID(double id) {
-        this.id = id;
-    } */
-    
     public double getID() {
         return id;
     }
-    /*
-    public void setFileID(double fileID) {
-        this.fileID = fileID;
-    }*/
     
     public double getFileID() {
         return fileID;

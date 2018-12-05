@@ -2,7 +2,7 @@ package JavaFX_1;
 
 import Files.CompareFile;
 import Files.TUCompareEntry;
-import Files.TUEntry;
+import Files.TUEntryBasic;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,19 +40,19 @@ public class Fxml_1Controller implements Initializable {
     Label title;
 
     @FXML
-    TableView<TUEntry> tableView;
+    TableView<TUEntryBasic> tableView;
 
     @FXML
-    TableColumn<TUEntry, String> thaiCol;
+    TableColumn<TUEntryBasic, String> thaiCol;
 
     @FXML
-    TableColumn<TUEntry, String> englishCol;
+    TableColumn<TUEntryBasic, String> englishCol;
 
     @FXML
-    TableColumn<TUEntry, Boolean> status;
+    TableColumn<TUEntryBasic, Boolean> status;
 
     @FXML
-    TableColumn<TUEntry, String> matchScore;
+    TableColumn<TUEntryBasic, String> matchScore;
 
     @FXML
     TableColumn<TUCompareEntry, String> thaiColComp;
@@ -109,7 +109,7 @@ public class Fxml_1Controller implements Initializable {
         thaiCol.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiCol.setMinWidth(80);
         thaiCol.setCellFactory(tc -> {
-            TableCell<TUEntry, String> cell = new TableCell<>();
+            TableCell<TUEntryBasic, String> cell = new TableCell<>();
             Text text = new Text();
             text.setFont(defaultThaiFont);
             cell.setGraphic(text);
@@ -119,10 +119,10 @@ public class Fxml_1Controller implements Initializable {
             return cell;
         });
         // English column:
-        englishCol.setCellFactory(new Callback<TableColumn<TUEntry, String>, TableCell<TUEntry, String>>() {
+        englishCol.setCellFactory(new Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>>() {
             @Override
-            public TableCell<TUEntry, String> call(TableColumn<TUEntry, String> tc) {
-                TextFieldTableCell<TUEntry, String> cell = new TextFieldTableCell(new StringConverter() {
+            public TableCell<TUEntryBasic, String> call(TableColumn<TUEntryBasic, String> tc) {
+                TextFieldTableCell<TUEntryBasic, String> cell = new TextFieldTableCell(new StringConverter() {
                  
                     @Override
                     public String toString(Object t) {
@@ -138,10 +138,10 @@ public class Fxml_1Controller implements Initializable {
             }
         });
 
-        englishCol.setOnEditCommit(new EventHandler<CellEditEvent<TUEntry, String>>() {
+        englishCol.setOnEditCommit(new EventHandler<CellEditEvent<TUEntryBasic, String>>() {
             @Override
-            public void handle(CellEditEvent<TUEntry, String> t) {
-                main.englishEdited(((TUEntry) t.getTableView().getItems().get(t.getTablePosition().getRow())),
+            public void handle(CellEditEvent<TUEntryBasic, String> t) {
+                main.englishEdited(( t.getTableView().getItems().get(t.getTablePosition().getRow())),
                         t.getNewValue());
             }
         });
@@ -152,7 +152,7 @@ public class Fxml_1Controller implements Initializable {
         status.setCellValueFactory(new PropertyValueFactory<>("isCommitted"));
         //if the value of isCommitted() changes, the background color of the cell changes
         status.setCellFactory(tc -> {
-            TableCell<TUEntry, Boolean> cell = new TableCell<TUEntry, Boolean>() {
+            TableCell<TUEntryBasic, Boolean> cell = new TableCell<TUEntryBasic, Boolean>() {
                 @Override
                 protected void updateItem(Boolean item, boolean empty) {
                     super.updateItem(item, empty);
@@ -162,7 +162,7 @@ public class Fxml_1Controller implements Initializable {
                         setText(null);
                         setGraphic(null);
                     } else {
-                        TUEntry thisCellTU = tc.getTableView().getItems().get(this.getIndex());
+                        TUEntryBasic thisCellTU = tc.getTableView().getItems().get(this.getIndex());
                         boolean isCommitted = thisCellTU.isCommitted();
                         if (isCommitted == true) {
                             this.setStyle("-fx-background-color: " + committedStatusColor + ";");

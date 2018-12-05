@@ -10,7 +10,7 @@ import Files.CompareFile;
 import Files.FileBuilder;
 import Files.FileList;
 import Files.TUCompareEntry;
-import Files.TUEntry;
+import Files.TUEntryBasic;
 import ParseThaiLaw.ThaiLawParser;
 import comparator.Comparator;
 
@@ -202,7 +202,7 @@ public class MainLogic {
         return IS_DATABASE_ACTIVE;
     }
     
-    void commit(TUEntry selectedTU) {
+    void commit(TUEntryBasic selectedTU) {
         // Changes the committed status of this TU
         if (selectedTU != null) {
              selectedTU.setCommitted(true);
@@ -216,7 +216,7 @@ public class MainLogic {
         }
     }
     
-    void englishEdited(TUEntry selectedTU, String newText) {
+    void englishEdited(TUEntryBasic selectedTU, String newText) {
        selectedTU.setEnglish(newText);
        commit(selectedTU);
     }

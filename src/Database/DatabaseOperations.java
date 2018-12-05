@@ -5,6 +5,7 @@
  */
 package Database;
 
+import Files.BasicFile;
 import Files.TUEntryBasic;
 import JavaFX_1.MainLogic;
 import java.sql.Connection;
@@ -13,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javafx.collections.ObservableList;
 
 /**
@@ -37,50 +39,80 @@ public class DatabaseOperations {
         }
         return conn;
     }
-    
+
     /**
-     * Puts the TU into the database. If a TU with that id already exists, then it is replaced by the new TU. If successful, returns true. If there is a SQL error, then this returns false. 
+     * Puts the TU into the database. If a TU with that id already exists, then
+     * it is replaced by the new TU. If successful, returns true. If there is a
+     * SQL error, then this returns false.
+     *
      * @param tu
-     * @return 
+     * @return
      */
-    public static boolean pushTU(TUEntryBasic tu) {
-         if (!MainLogic.isDatabaseActive()) {
+    public static boolean addOrUpdateTU(TUEntryBasic tu) {
+        if (!MainLogic.isDatabaseActive()) {
             return true;
         } else {
-             String sql = "INSERT INTO corpus1(id, fileID, fileName, thai, english, committed) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET id=?, fileID=?, fileName=?, thai=?, english=?, committed=?";
+            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed) VALUES(?,?,?,?,?,?)";
 
             try (Connection conn = DatabaseOperations.connect();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setDouble(1, tu.getID());
-                pstmt.setDouble(7, tu.getID());
-                
+                //pstmt.setDouble(7, tu.getID());
+
                 pstmt.setDouble(2, tu.getFileID());
-                pstmt.setDouble(8, tu.getFileID());
-                
+                // pstmt.setDouble(8, tu.getFileID());
+
                 pstmt.setString(3, tu.getFileName());
-                pstmt.setString(9, tu.getFileName());
-                
+                //pstmt.setString(9, tu.getFileName());
+
                 pstmt.setString(4, tu.getThai());
-                pstmt.setString(10, tu.getThai());
-                
+                // pstmt.setString(10, tu.getThai());
+
                 pstmt.setString(5, tu.getEnglish());
-                pstmt.setString(11, tu.getEnglish());
-                
+                //pstmt.setString(11, tu.getEnglish());
+
                 if (tu.isCommitted()) {
                     pstmt.setInt(6, 1);
-                    pstmt.setInt(12, 1);
+                    //pstmt.setInt(12, 1);
                 } else {
                     pstmt.setInt(6, 0);
-                    pstmt.setInt(12, 0);
+                    //pstmt.setInt(12, 0);
                 }
-                
+
                 pstmt.executeUpdate();
                 return true;
             } catch (SQLException e) {
                 System.out.println("PushTU: " + e.getMessage());
                 return false;
             }
-        
+
+        }
+    }
+
+    /**
+     * Adds all TU entries contained in the file to the database or updates
+     * them if they already exist. If there are TU entries matching this fileID already in the
+     * database but are not in the current file, they are NOT deleted. (In other words, TU entries can be added or
+     * updated via this method, but never removed from the database).
+     *
+     * @param bf
+     * @return True if all TUs are added successfully. If file is null or there
+     * is an SQL error, returns false.
+     */
+    public static boolean addFile(BasicFile bf) {
+        if (!MainLogic.isDatabaseActive()) {
+            return true;
+        } else {
+            
+            boolean ret = true;
+
+            if (bf == null) {
+                return false;
+            }
+            for (TUEntryBasic tu : bf.getObservableList()) {
+                ret = DatabaseOperations.addOrUpdateTU(tu);
+            }
+            return ret;
         }
     }
 
@@ -91,59 +123,39 @@ public class DatabaseOperations {
      *
      * @param tu The TU to be added/replaced
      * @return True if it successfully added the new TU.
-     */
-    public static boolean addTUtoDatabase(TUEntryBasic tu) {
-
-        // If database isn't active, this returns default of true;
-        if (!MainLogic.isDatabaseActive()) {
-            return true;
-        } else {
-            String sql = "INSERT INTO corpus1(id, fileID, fileName, thai, english, committed) VALUES(?,?,?,?,?,?)";
-
-            if (DatabaseOperations.tuIDExists(tu.getID())) {
-                return false;
-            }
-
-            try (Connection conn = DatabaseOperations.connect();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, tu.getID());
-                pstmt.setDouble(2, tu.getFileID());
-                pstmt.setString(3, tu.getFileName());
-                pstmt.setString(4, tu.getThai());
-                pstmt.setString(5, tu.getEnglish());
-                if (tu.isCommitted()) {
-                    pstmt.setInt(6, 1);
-                } else {
-                    pstmt.setInt(6, 0);
-                }
-                pstmt.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                System.out.println("Add TU to database: " + e.getMessage());
-                return false;
-            }
-        }
-    }
-    
-   
-
-    /**
+     *
+     * public static boolean addTUtoDatabase(TUEntryBasic tu) {
+     *
+     * // If database isn't active, this returns default of true; if
+     * (!MainLogic.isDatabaseActive()) { return true; } else { String sql =
+     * "INSERT INTO corpus1(id, fileID, fileName, thai, english, committed)
+     * VALUES(?,?,?,?,?,?)";
+     *
+     * if (DatabaseOperations.tuIDExists(tu.getID())) { return false; }
+     *
+     * try (Connection conn = DatabaseOperations.connect(); PreparedStatement
+     * pstmt = conn.prepareStatement(sql)) { pstmt.setDouble(1, tu.getID());
+     * pstmt.setDouble(2, tu.getFileID()); pstmt.setString(3, tu.getFileName());
+     * pstmt.setString(4, tu.getThai()); pstmt.setString(5, tu.getEnglish()); if
+     * (tu.isCommitted()) { pstmt.setInt(6, 1); } else { pstmt.setInt(6, 0); }
+     * pstmt.executeUpdate(); return true; } catch (SQLException e) {
+     * System.out.println("Add TU to database: " + e.getMessage()); return
+     * false; } } }
+     *
+     *
+     *
+     * /**
      * Replaces the TU if a TU with the same id exists in the database. If the
      * TU doesn't exist, returns false and no TU is added.
      *
      * @param tu
      * @return True if a TU was replaced, false if not.
-     */
-    public static boolean replaceTU(TUEntryBasic tu) {
-        if (DatabaseOperations.tuIDExists(tu.getID())) {
-            removeTU(tu.getID());
-            return addTUtoDatabase(tu);
-        } else {
-            return false;
-        }
-    }
-
-    /**
+     *
+     * public static boolean replaceTU(TUEntryBasic tu) { if
+     * (DatabaseOperations.tuIDExists(tu.getID())) { removeTU(tu.getID());
+     * return addTUtoDatabase(tu); } else { return false; } } /
+     *
+     * /**
      * Called when you create a new file. Creates a new unique file ID for that
      * file.
      *
@@ -235,7 +247,7 @@ public class DatabaseOperations {
                 // loop through the result set
                 while (rs.next()) {
                     TUEntryBasic ret = new TUEntryBasic(rs.getDouble("id"), rs.getDouble("fileID"), rs.getString("fileName"));
-                   
+
                     ret.setThai(rs.getString("thai"));
                     ret.setEnglish(rs.getString("english"));
                     int committedStatus = rs.getInt("committed");
@@ -278,21 +290,20 @@ public class DatabaseOperations {
             }
         }
     }
-    
-    
+
     /**
      * For testing. Tries taking a connection to avoid SQL errors.
+     *
      * @param conn
      * @param tu
-     * @return 
+     * @return
      */
-     public static boolean addTU2(Connection conn, TUEntryBasic tu) {
-         // If database isn't active, this returns default of true;
+    public static boolean addTU2(Connection conn, TUEntryBasic tu) {
+        // If database isn't active, this returns default of true;
         if (!MainLogic.isDatabaseActive()) {
             return true;
         } else {
             String sql = "INSERT INTO corpus1(id, fileID, fileName, thai, english, committed) VALUES(?,?,?,?,?,?)";
-
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setDouble(1, tu.getID());
@@ -311,15 +322,16 @@ public class DatabaseOperations {
                 System.out.println("AddTU2: " + e.getMessage());
                 return false;
             }
+        }
     }
-    }
-    
-     /**
-      * For testing. Tries taking a connection to avoid SQL errors.
-      * @param conn
-      * @param id
-      * @return 
-      */
+
+    /**
+     * For testing. Tries taking a connection to avoid SQL errors.
+     *
+     * @param conn
+     * @param id
+     * @return
+     */
     public static TUEntryBasic getTU2(Connection conn, double id) {
 
         // If database isn't active, this returns default of null;
@@ -336,7 +348,7 @@ public class DatabaseOperations {
                 // loop through the result set
                 while (rs.next()) {
                     TUEntryBasic ret = new TUEntryBasic(rs.getDouble("id"), rs.getDouble("fileID"), rs.getString("fileName"));
-                   
+
                     ret.setThai(rs.getString("thai"));
                     ret.setEnglish(rs.getString("english"));
                     int committedStatus = rs.getInt("committed");
@@ -353,9 +365,9 @@ public class DatabaseOperations {
                 System.out.println("GetTU2: " + e.getMessage());
             }
             System.out.println("5");
-            
+
             return null;
-            
+
         }
     }
 

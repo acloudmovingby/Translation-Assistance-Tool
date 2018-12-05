@@ -74,7 +74,7 @@ public class DatabaseOperationsTest {
     
     /**
      * Test of addTUtoDatabase method, of class DatabaseOperations.
-     */
+     
     @Test
     public void testAddTUtoDatabase() {
         System.out.println("addTUtoDatabase");
@@ -97,7 +97,7 @@ public class DatabaseOperationsTest {
 
     /**
      * Test of replaceTU method, of class DatabaseOperations.
-     */
+     
     @Test
     public void testReplaceTU() {
         
@@ -120,7 +120,7 @@ public class DatabaseOperationsTest {
         
         assertEquals(DatabaseOperations.getTU(tu1.getID()), tu1);
     }
-
+*/
     /**
      * Test of createFileID method, of class DatabaseOperations.
      * Passes if it simply returns a double. Doesn't truly test it.
@@ -145,8 +145,8 @@ public class DatabaseOperationsTest {
      * By using a single connection, maybe you can avoid certain SQL errors?
      */
     @Test
-    public void testPushTU() {
-        System.out.println("pushTU");
+    public void testAddOrUpdateTU() {
+        System.out.println("addOrUpdateTU");
         
         // initialize tu entry
         BasicFile bf = new BasicFile();
@@ -158,16 +158,18 @@ public class DatabaseOperationsTest {
         
         // Add TU (should return true)
         System.out.println("1st Push");
-        assertEquals(DatabaseOperations.pushTU(expResult), true);
+        assertEquals(DatabaseOperations.addOrUpdateTU(expResult), true);
+        assertEquals(DatabaseOperations.getTU(expResult.getID()), expResult);
        
         // Add again (should return true)
         System.out.println("2nd Push");
-        assertEquals(DatabaseOperations.pushTU(expResult), true);
+        assertEquals(DatabaseOperations.addOrUpdateTU(expResult), true);
+        assertEquals(DatabaseOperations.getTU(expResult.getID()), expResult);
         
         // Add a third time, with a change (should still return true)
         System.out.println("3rd Push (with change)");
         expResult.setEnglish("English changed");
-        assertEquals(DatabaseOperations.pushTU(expResult), true);
+        assertEquals(DatabaseOperations.addOrUpdateTU(expResult), true);
         
         // When you get the TU from the db, it should have the updated value. 
         assertEquals(DatabaseOperations.getTU(expResult.getID()), expResult);

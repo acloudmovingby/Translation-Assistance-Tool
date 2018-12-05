@@ -17,7 +17,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author Chris
  */
-public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
+public class TUCompareEntry implements Comparable<TUCompareEntry> {
 
     private ArrayList<int[]> matchIntervals;
     private boolean[] matches;
@@ -98,7 +98,6 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         this.matchIntervals = matchIntervals;
     }
 
-    @Override
     public String getFileName() {
         return fileName.getValue();
     }
@@ -107,13 +106,10 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         this.fileName.set(fileName);
     }
 
-    
-    @Override
     public String getThai() {
         return thaiProperty.getValue();
     }
     
-    @Override
     public void setThai(String thai) {
        thaiProperty.set(thai);
         matches = new boolean[getThai().length()];
@@ -122,12 +118,10 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         }
     }
     
-    @Override
     public String getEnglish() {
         return englishProperty.getValue();
     }
     
-    @Override
     public void setEnglish(String english) {
         englishProperty.set(english);
     }
@@ -230,12 +224,10 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
        
     }
 
-    @Override
     public StringProperty thaiProperty() {
          return thaiProperty;
     }
 
-    @Override
     public StringProperty englishProperty() {
         return englishProperty;
     }
@@ -248,19 +240,16 @@ public class TUCompareEntry implements TUEntry, Comparable<TUCompareEntry> {
         return new SimpleStringProperty(String.valueOf(getMatchSize()));
     }
 
-    @Override
     public void setCommitted(boolean b) {
          isCommittedProperty.set(b);
          isCommitted = b;
          
     }
 
-    @Override
     public boolean isCommitted() {
         return isCommitted;
     }
     
-     @Override
     public BooleanProperty isCommittedProperty() {
         return isCommittedProperty;
     }

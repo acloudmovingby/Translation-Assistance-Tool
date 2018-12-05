@@ -13,17 +13,17 @@ import java.util.ArrayList;
  */
 public class FileList {
     
-    ArrayList<TMFile> files;
+    ArrayList<BasicFile> files;
     
     public FileList() {
         files = new ArrayList();
     }
     
-    public void addFile(TMFile file) {
+    public void addFile(BasicFile file) {
         files.add(file);
     }
     
-    public ArrayList<TMFile> getFiles() {
+    public ArrayList<BasicFile> getFiles() {
         return files;
     }
 }

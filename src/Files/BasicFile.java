@@ -16,9 +16,9 @@ import javafx.collections.ObservableList;
  * A basic file that stores a list of TMBasicEntry's, which each contain just a Thai and an English field.
  * @author Chris
  */
-public class BasicFile implements TMFile {
+public class BasicFile {
     
-    ObservableList<TUEntry> observableList;
+    ObservableList<TUEntryBasic> observableList;
   //  private final int NUM_FIELDS;
     private String fileName;
     private final double fileID;
@@ -62,20 +62,19 @@ public class BasicFile implements TMFile {
        return newTU;
     }*/
    
-    @Override
     public String getFileName() {
         return fileName;
     }
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
-        for (TUEntry tu : observableList) {
+        for (TUEntryBasic tu : observableList) {
             tu.setFileName(fileName);
         }
     }
     
     public void commitAllTUs() {
-        for (TUEntry tu : getObservableList()) {
+        for (TUEntryBasic tu : getObservableList()) {
             tu.setCommitted(true);
         }
     }
@@ -125,20 +124,18 @@ public class BasicFile implements TMFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TUEntry tu : getObservableList()) {
+        for (TUEntryBasic tu : getObservableList()) {
             sb.append(tu.toString());
             sb.append("\n\t");
         }
          return sb.toString();
     }
 
-    @Override
     public ArrayList getTUs() {
         return new ArrayList(observableList);
     }
 
-    @Override
-    public ObservableList<TUEntry> getObservableList() {
+    public ObservableList<TUEntryBasic> getObservableList() {
         return observableList;
     }
 

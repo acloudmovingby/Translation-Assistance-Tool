@@ -12,7 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
-public class CompareFile implements TMFile {
+public class CompareFile {
     
     ObservableList<TUCompareEntry> observableList;
     //private final int NUM_FIELDS;
@@ -40,14 +40,11 @@ public class CompareFile implements TMFile {
         ts.add(a.getCopy());
     }*/
     
-    @Override
-    public ArrayList<TUEntry> getTUs() {
+    public ArrayList<TUCompareEntry> getTUs() {
         sort();
         return (new ArrayList(observableList));
     }
-    
-  
-    @Override
+   
     public String getFileName() {
         return fileName;
     }
@@ -63,7 +60,7 @@ public class CompareFile implements TMFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (TUEntry tu : observableList) {
+        for (TUCompareEntry tu : observableList) {
             sb.append(tu.toString());
             sb.append("\n\t");
         }
@@ -115,7 +112,6 @@ public class CompareFile implements TMFile {
         observableList.sort(null);
     }
 
-    @Override
     public ObservableList<TUCompareEntry> getObservableList() {
         return observableList;
     }
