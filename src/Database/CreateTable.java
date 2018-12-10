@@ -17,21 +17,44 @@ import java.sql.Statement;
 public class CreateTable {
 
     /**
-     * Create a new table in the test database
+     * Create a new table in the test database for TU Entries.
      *
      */
-    public static void createNewTable() {
+    public static void createTUEntryTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
-        // SQL statement for creating a new table
+        // TU Entry table
         String sql = "CREATE TABLE IF NOT EXISTS corpus1 ("
                 + "	id       REAL   PRIMARY KEY     NOT NULL,"
                 + "	fileID   INT                    NOT NULL,"
-                + "	fileName TEXT                   NOT NULL," 
                 + "	thai     TEXT,"
                 + "	english  TEXT,"
-                + "     committed INT                   NOT NULL"
+                + "     committed INT                   NOT NULL,"
+                + "     removed  INT                    NOT NULL"
+                + ");";
+
+        try (Connection conn = DriverManager.getConnection(url);
+                Statement stmt = conn.createStatement()) {
+            // create a new table
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    /**
+     * Create a new table in the test database for files.
+     *
+     */
+    public static void createFileTable() {
+        // SQLite connection string
+        String url = "jdbc:sqlite:database1.db";
+
+        // TU Entry table
+        String sql = "CREATE TABLE IF NOT EXISTS files ("
+                + "	fileID       REAL   PRIMARY KEY     NOT NULL,"
+                + "	fileName     TEXT                   NOT NULL"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(url);
@@ -47,7 +70,8 @@ public class CreateTable {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        createNewTable();
+        createTUEntryTable();
+        createFileTable();
     }
 
 }
