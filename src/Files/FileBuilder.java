@@ -5,6 +5,7 @@
  */
 package Files;
 
+import ParseThaiLaw.TMXResourceBundle;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -52,7 +53,7 @@ public class FileBuilder {
     }
     
     public BasicFile justThaiFilePath(String filePath) {
-        BasicFile ret = new BasicFile();
+        BasicFile ret = null;
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
@@ -138,6 +139,30 @@ public class FileBuilder {
             fileName = filePathSplit[filePathSplit.length-1];
         }
         return fileName;
+    }
+    
+    public static BasicFile parseTMX(String filePath) {
+        BasicFile bf = new BasicFile();
+        bf.setFileName(makeFileNameFromPath(filePath));
+        
+        TMXResourceBundle thaiBundle = new TMXResourceBundle(
+               filePath,
+                "th-TH");
+
+        TMXResourceBundle engBundle = new TMXResourceBundle(
+                 filePath,
+                "en-US");
+        
+        for (String s : thaiBundle.keySet()) {
+            if (engBundle.containsKey(s)) {
+                TUEntryBasic tu = bf.newTU();
+                tu.setThai(thaiBundle.getString(s));
+                tu.setEnglish(engBundle.getString(s));
+                tu.setCommitted(true);
+            }
+        }
+        
+        return bf;
     }
     
    

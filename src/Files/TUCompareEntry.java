@@ -103,7 +103,11 @@ public class TUCompareEntry implements Comparable<TUCompareEntry> {
     }
     
     public final void setFileName(String fileName) {
-        this.fileName.set(fileName);
+        if (fileName == null) {
+            this.fileName.set("");
+        } else {
+            this.fileName.set(fileName);
+        }
     }
 
     public String getThai() {

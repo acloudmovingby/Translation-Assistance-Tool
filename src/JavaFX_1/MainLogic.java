@@ -5,6 +5,7 @@
  */
 package JavaFX_1;
 
+import Database.DatabaseOperations;
 import Files.BasicFile;
 import Files.CompareFile;
 import Files.FileBuilder;
@@ -13,6 +14,10 @@ import Files.TUCompareEntry;
 import Files.TUEntryBasic;
 import ParseThaiLaw.ThaiLawParser;
 import comparator.Comparator;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /*
 COMMIT TO DO:
@@ -100,28 +105,28 @@ DATABASE
             If I write do it with the same connection, does it throw an error?
                 - try "addTU" and "getTU" but you pass a connection
                 - run one after another adn see if the SQLite error is thrown 
-*/
-
+ */
 /**
  *
  * @author Chris
  */
 public class MainLogic {
-    
-    static final boolean IS_DATABASE_ACTIVE = true;
-    
+
+    static final boolean DATABASE_IS_READABLE = true;
+    static final boolean DATABASE_IS_WRITABLE = true;
+
     /**
      * The file currently being translated.
      */
     BasicFile mainFile;
-    
-     /**
+
+    /**
      * The corpus where matches are found.
      */
     FileList corpus;
-    
+
     private CompareFile currentCompareFile;
-    
+
     /**
      * The string that was used to set the current compare table.
      */
@@ -131,20 +136,27 @@ public class MainLogic {
      * The minimum length for matching substrings shown in compare table viewer.
      */
     private int minMatchLength;
-    
+
     MainLogic() {
         // Default minimum length for matches
         minMatchLength = 5;
-        
+
         // makes main file
         FileBuilder fileBuilder = new FileBuilder();
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         mainFile = fileBuilder.justThaiFilePath(filePath);
+        DatabaseOperations.addFile(mainFile);
         // Commits all TUS in main file (only for testing purposes)
         //mainFile.commitAllTUs();
-        
-        
+
         // MAKES CORPUS, ADDS SOME FILES
+        corpus = DatabaseOperations.getAllCommittedTUs();
+       // corpus.addFile(mainFile);
+        System.out.println("Corpus size: " + corpus.getFiles().size());
+        for (BasicFile bf : corpus.getFiles()) {
+            System.out.println(bf.getFileName() + ", " + bf.getFileID());
+        }
+        /*
         corpus = new FileList();
         corpus.addFile(mainFile);
         
@@ -165,6 +177,7 @@ public class MainLogic {
         BasicFile file3 = (new ThaiLawParser(thaiFile3, engFile3)).makeFile();
         file3.commitAllTUs();
         corpus.addFile(file3);
+         */
     }
 
     protected BasicFile getMainFile() {
@@ -178,7 +191,7 @@ public class MainLogic {
     protected int getMinMatchLength() {
         return minMatchLength;
     }
-    
+
     protected void setMinMatchLength(int k) {
         minMatchLength = k;
     }
@@ -186,7 +199,7 @@ public class MainLogic {
     protected String getCurrentCompareString() {
         return currentCompareString;
     }
-    
+
     private void setCurrentCompareString(String newCompareString) {
         currentCompareString = newCompareString;
     }
@@ -198,26 +211,68 @@ public class MainLogic {
         return currentCompareFile;
     }
 
-    public static boolean isDatabaseActive() {
-        return IS_DATABASE_ACTIVE;
+    public static boolean databaseIsReadable() {
+        return DATABASE_IS_READABLE;
     }
-    
-    void commit(TUEntryBasic selectedTU) {
+
+    public static boolean databaseIsWritable() {
+        return DATABASE_IS_WRITABLE;
+    }
+
+    private void commit(TUEntryBasic selectedTU) {
         // Changes the committed status of this TU
         if (selectedTU != null) {
-             selectedTU.setCommitted(true);
+            selectedTU.setCommitted(true);
+
+            // Finds all matches with this newly committed TU
+            Comparator c = new Comparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
+            // adds these matches to the current compareFile.
+            for (TUCompareEntry tu : c.getCompareFile().getObservableList()) {
+                currentCompareFile.addEntry(tu);
+            }
+
+            // DATABASE
         }
-        
-        // Finds all matches with this newly committed TU
-        Comparator c = new Comparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
-        // adds these matches to the current compareFile.
-        for (TUCompareEntry tu : c.getCompareFile().getObservableList()) {
-            currentCompareFile.addEntry(tu);
-        }
+
     }
-    
+
     void englishEdited(TUEntryBasic selectedTU, String newText) {
-       selectedTU.setEnglish(newText);
-       commit(selectedTU);
+        selectedTU.setEnglish(newText);
+        commit(selectedTU);
     }
+
+    /**
+     * Prints the English from all committed TUs in the main file to a file. 
+     */
+    protected void exportCommittedTUs() {
+
+        PrintWriter out = null;
+        
+        try {
+            String FILENAME = "TranslationProgramExport.txt";
+            out = 
+                    new PrintWriter(
+                            new BufferedWriter(
+                                    new FileWriter(FILENAME)));
+            
+            for (TUEntryBasic tu : getMainFile().getObservableList()) {
+                if (tu.isCommitted()) {
+                    out.println(tu.getEnglish());
+                }
+            }
+
+            System.out.println("Done");
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        } finally {
+                if (out != null) {
+                    out.close();
+                }
+        }
+
+    }
+
 }

@@ -2,6 +2,14 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+
+TU ids go up by 1000.
+When I insert 
+    put in at 500 (750, etc..)
+    check to make sure it doesn't exist
+    
+
+
  */
 package Database;
 

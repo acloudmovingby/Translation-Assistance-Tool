@@ -1,5 +1,6 @@
 package JavaFX_1;
 
+import Files.BasicFile;
 import Files.CompareFile;
 import Files.TUCompareEntry;
 import Files.TUEntryBasic;
@@ -7,8 +8,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
@@ -18,7 +23,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -41,6 +48,9 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     TableView<TUEntryBasic> tableView;
+
+    @FXML
+    TableColumn<TUEntryBasic, Integer> idCol;
 
     @FXML
     TableColumn<TUEntryBasic, String> thaiCol;
@@ -105,9 +115,19 @@ public class Fxml_1Controller implements Initializable {
         minMatchLengthField.setPromptText(Integer.toString(main.getMinMatchLength()));
 
         // MAIN FILE VIEWER COLUMNS
+        // id column:
+        idCol.setCellValueFactory(new Callback<CellDataFeatures<TUEntryBasic, Integer>, ObservableValue<Integer>>() {
+            @Override
+            public ObservableValue<Integer> call(CellDataFeatures<TUEntryBasic, Integer> p) {
+                return new ReadOnlyObjectWrapper(tableView.getItems().indexOf(p.getValue()));
+            }
+        });
+        idCol.setSortable(false);
+
         // Thai column:
         thaiCol.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiCol.setMinWidth(80);
+        thaiCol.setEditable(true);
         thaiCol.setCellFactory(tc -> {
             TableCell<TUEntryBasic, String> cell = new TableCell<>();
             Text text = new Text();
@@ -116,17 +136,27 @@ public class Fxml_1Controller implements Initializable {
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
             text.wrappingWidthProperty().bind(thaiCol.widthProperty());
             text.textProperty().bind(cell.itemProperty());
+            cell.setEditable(true);
             return cell;
         });
+        
         // English column:
+        EditableEnglishCellFactory cf2 = new EditableEnglishCellFactory();
+        cf2.setFont(defaultEnglishFont);
+        englishCol.setCellFactory(cf2); 
+        /*
         englishCol.setCellFactory(new Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>>() {
             @Override
             public TableCell<TUEntryBasic, String> call(TableColumn<TUEntryBasic, String> tc) {
                 TextFieldTableCell<TUEntryBasic, String> cell = new TextFieldTableCell(new StringConverter() {
-                 
+
                     @Override
                     public String toString(Object t) {
-                        return t.toString();
+                        if (t != null) {
+                            return t.toString();
+                        } else {
+                            return null;
+                        }
                     }
 
                     @Override
@@ -138,18 +168,30 @@ public class Fxml_1Controller implements Initializable {
             }
         });
 
+        /*
         englishCol.setOnEditCommit(new EventHandler<CellEditEvent<TUEntryBasic, String>>() {
             @Override
             public void handle(CellEditEvent<TUEntryBasic, String> t) {
-                main.englishEdited(( t.getTableView().getItems().get(t.getTablePosition().getRow())),
+                main.englishEdited((t.getTableView().getItems().get(t.getTablePosition().getRow())),
                         t.getNewValue());
+                
             }
         });
+         */
+        englishCol.setOnEditCommit(e -> {
+            int row = e.getTablePosition().getRow();
+            TUEntryBasic editedTU = tableView.getItems().get(row);
+            editedTU.setEnglish(e.getNewValue());
+            editedTU.setCommitted(true);
+            tableView.getItems().set(row, editedTU);
+            //(main.getMainFile().insertTU(0)).setThai("Something");
+        }
+        );
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
 
         // Status column:
         // makes it so this columns cellValueFactory is bound to the isCommitted() method of TUEntry
-        status.setCellValueFactory(new PropertyValueFactory<>("isCommitted"));
+        status.setCellValueFactory(cellData -> cellData.getValue().isCommittedProperty());
         //if the value of isCommitted() changes, the background color of the cell changes
         status.setCellFactory(tc -> {
             TableCell<TUEntryBasic, Boolean> cell = new TableCell<TUEntryBasic, Boolean>() {
@@ -162,11 +204,11 @@ public class Fxml_1Controller implements Initializable {
                         setText(null);
                         setGraphic(null);
                     } else {
-                        TUEntryBasic thisCellTU = tc.getTableView().getItems().get(this.getIndex());
-                        boolean isCommitted = thisCellTU.isCommitted();
-                        if (isCommitted == true) {
-                            this.setStyle("-fx-background-color: " + committedStatusColor + ";");
+                        if (item == true) {
+                            setText(null);
+                            setStyle("-fx-background-color: " + committedStatusColor + ";");
                         } else {
+                            setStyle("");
                             setText(null);
                             setGraphic(null);
                         }
@@ -186,6 +228,8 @@ public class Fxml_1Controller implements Initializable {
         // binds main file to main table viewer
         tableView.setItems(main.getMainFile().getObservableList());
         tableView.setEditable(true);
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         // tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // COMPARE FILE VIEWER
@@ -199,12 +243,13 @@ public class Fxml_1Controller implements Initializable {
                     super.updateItem(item, empty);
 
                     if (item == null || empty) {
-
+                        setGraphic(null);
                         setText(null);
                         setStyle("");
 
                     } else {
-
+                        setText(null);
+                        setStyle("");
                         TUCompareEntry thisCellTU = tc.getTableView().getItems().get(this.getIndex());
                         boolean[] matches = thisCellTU.getMatches();
                         // all true will be one color, all false will be another color
@@ -228,8 +273,33 @@ public class Fxml_1Controller implements Initializable {
         });
         // English column
         englishColComp.setCellValueFactory(new PropertyValueFactory<>("english"));
-        englishColComp.setCellFactory(tc -> {
-            TableCell<TUCompareEntry, String> cell = new TableCell<>();
+        BasicCellFactory cf1 = new BasicCellFactory();
+        cf1.setFont(defaultEnglishFont);
+        englishColComp.setCellFactory(cf1);
+        /*englishColComp.setCellFactory(tc -> {
+            TableCell<TUCompareEntry, String> cell = new TableCell<TUCompareEntry, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setStyle("");
+                        setGraphic(null);
+                    } else {
+                        /*
+                        setText(null);
+                        setStyle("");
+                        setGraphic(null);
+                         
+                        Text text = new Text();
+                        text.setFont(defaultEnglishFont);
+                        setGraphic(text);
+                        setPrefHeight(Control.USE_COMPUTED_SIZE);
+                        text.wrappingWidthProperty().bind(englishColComp.widthProperty());
+                        text.textProperty().bind(this.itemProperty());
+                    }
+                }
+            };
             Text text = new Text();
             text.setFont(defaultEnglishFont);
             cell.setGraphic(text);
@@ -238,9 +308,11 @@ public class Fxml_1Controller implements Initializable {
             text.textProperty().bind(cell.itemProperty());
             return cell;
         });
+*/
         //compareTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //File column
         Callback<TableColumn<TUCompareEntry, String>, TableCell<TUCompareEntry, String>> myCallBack;
+        /*
         myCallBack = new Callback<TableColumn<TUCompareEntry, String>, TableCell<TUCompareEntry, String>>() {
             @Override
             public TableCell<TUCompareEntry, String> call(TableColumn<TUCompareEntry, String> param) {
@@ -281,13 +353,7 @@ public class Fxml_1Controller implements Initializable {
                     }
                 };
 
-                /*ObjectProperty<String> itemProperty = cell.itemProperty();
-                System.out.println(itemProperty);
-                String cellString = itemProperty.get();
-                System.out.println(cellString);
-                String str1 = cellString.substring(0, cellString.length()/2);
-                String str2 = cellString.substring(cellString.length()/2, cellString.length());
-                 */
+               
                 Text text1 = new Text();
                 text1.setFill(Color.BLUE);
                 text1.textProperty().bind(cell.itemProperty());
@@ -301,6 +367,7 @@ public class Fxml_1Controller implements Initializable {
             }
 
         };
+         */
         //fileColComp.setCellFactory(myCallBack);
         fileColComp.setCellValueFactory(new PropertyValueFactory<>("fileName"));
         // Sets "score" rating for match. Currently represents the number of matching characters.
@@ -334,10 +401,38 @@ public class Fxml_1Controller implements Initializable {
     }
 
     @FXML
+    private void merge(ActionEvent event) {
+        ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        if (selectedItems != null) {
+            main.getMainFile().mergeTU(selectedItems);
+        }
+    }
+    
+    @FXML
     private void commit(ActionEvent event) {
-        main.commit(tableView.getSelectionModel().getSelectedItem());
+        ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        //TUEntryBasic selectedItem = tableView.getSelectionModel().getSelectedItem();
+        if (selectedItems != null) {
+            for (TUEntryBasic tu : selectedItems) {
+                tu.setCommitted(true);
+            }
+        }
+    }
+    
+    @FXML
+    private void split(ActionEvent event) {
+        ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        TUEntryBasic tu = selectedItems.get(0);
+        if (selectedItems != null) {
+            main.getMainFile().splitTU(tu, 10);
+        }
     }
 
+    @FXML
+    private void export(ActionEvent event) {
+        main.exportCommittedTUs();
+    }
+    
     private void setCompareTable(String text) {
         CompareFile cf = main.getCompareFile(text);
         setNumMatches(cf.getTUs().size());

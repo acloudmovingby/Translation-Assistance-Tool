@@ -17,10 +17,10 @@ import java.sql.Statement;
 public class DeleteTable {
 
     /**
-     * Create a new table in the test database
+     * Deletes the TU entry table. 
      *
      */
-    public static void deleteTable() {
+    public static void deleteTUTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
@@ -35,12 +35,33 @@ public class DeleteTable {
             System.out.println(e.getMessage());
         }
     }
+    
+    /**
+     * Deletes the files table.
+     *
+     */
+    public static void deleteFileTable() {
+        // SQLite connection string
+        String url = "jdbc:sqlite:database1.db";
+
+        // SQL statement for creating a new table
+        String sql = "DROP TABLE IF EXISTS files;";
+
+        try (Connection conn = DriverManager.getConnection(url);
+                Statement stmt = conn.createStatement()) {
+            
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        deleteTable();
+        deleteTUTable();
+        deleteFileTable();
     }
 
 }

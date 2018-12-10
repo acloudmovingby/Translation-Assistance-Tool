@@ -17,7 +17,10 @@
 <GridPane alignment="CENTER" prefHeight="707.0" prefWidth="939.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
    <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
      <buttons>
+         <Button mnemonicParsing="false" onAction="#split" text="Split" />
+         <Button mnemonicParsing="false" onAction="#merge" text="Merge" />
          <Button mnemonicParsing="false" onAction="#commit" text="Commit" />
+         <Button mnemonicParsing="false" onAction="#export" text="Export Committed" />
      </buttons>
    </ButtonBar> 
     
@@ -25,11 +28,12 @@
     </Label>
     <TableView fx:id="tableView" editable="true" prefHeight="399.0" prefWidth="939.0" GridPane.rowIndex="5">
       <columns>
-         <TableColumn fx:id="thaiCol" editable="false" prefWidth="284.0" sortable="false" text="Thai" />
-         <TableColumn fx:id="englishCol" minWidth="0.0" prefWidth="463.0" sortable="false" text="English" />
-         <TableColumn fx:id="status" prefWidth="59.0" text="Status" />
-         <TableColumn fx:id="matchScore" prefWidth="58.0" text="Match" />
-         <TableColumn prefWidth="58.0" text="Tags" />
+         <TableColumn fx:id="idCol" prefWidth="32.77339541912079" text="id" />
+         <TableColumn fx:id="thaiCol" editable="false" prefWidth="311.81269454956055" sortable="false" text="Thai" />
+         <TableColumn fx:id="englishCol" minWidth="0.0" prefWidth="378.1872253417969" sortable="false" text="English" />
+         <TableColumn fx:id="status" minWidth="0.0" prefWidth="75.94622802734375" text="Status" />
+         <TableColumn fx:id="matchScore" prefWidth="60.7294921875" text="Match" />
+         <TableColumn prefWidth="63.62591552734375" text="Tags" />
       </columns></TableView>
    <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="8">
       <children>

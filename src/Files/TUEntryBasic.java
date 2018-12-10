@@ -13,29 +13,30 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Contains only two fields: a Thai string and an English string.
+ * Stores the Thai and English translation (if it exists yet) for a given Thai segment. This entry is tied to the fileID of the file with which it is associated.
  * @author Chris
  */
 public class TUEntryBasic {
 
     private final double id;
     private double fileID;
-    private String fileName;
     
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
     
     private boolean isCommitted;
     BooleanProperty isCommittedProperty;
+    
+    private boolean isRemoved;
 
-    public TUEntryBasic(double id, double fileID, String fileName){
+    public TUEntryBasic(double id, double fileID){
         boolean isCommitted = false;
-        thaiProperty = new SimpleStringProperty();
-        englishProperty = new SimpleStringProperty();
+        thaiProperty = new SimpleStringProperty("");
+        englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
+        isRemoved = false;
         this.id = id;
         this.fileID = fileID;
-        this.fileName = fileName;
         //DatabaseOperations.addTUtoDatabase(this);
     }
 
@@ -126,11 +127,7 @@ public class TUEntryBasic {
     }
 
     public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-         this.fileName = fileName;
+        return DatabaseOperations.getFileName(fileID);
     }
     
     public double getID() {
@@ -139,6 +136,14 @@ public class TUEntryBasic {
     
     public double getFileID() {
         return fileID;
+    }
+
+    public void setRemoved(boolean b) {
+        isRemoved = b;
+    }
+    
+    public boolean isRemoved() {
+        return isRemoved;
     }
     
 

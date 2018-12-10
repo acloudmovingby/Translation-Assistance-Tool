@@ -11,6 +11,7 @@ import Files.TUCompareEntry;
 import Files.FileList;
 import java.util.ArrayList;
 import Files.TUEntryBasic;
+import java.util.List;
 
 /**
  *
@@ -125,7 +126,7 @@ public final class Comparator {
      */
     private void findMatches(String text, BasicFile file) {
         
-        ArrayList<TUEntryBasic> tms = file.getTUs();
+        List<TUEntryBasic> tms = file.getObservableList();
 
         for (TUEntryBasic tu : tms) {
             findMatches(text, tu);
