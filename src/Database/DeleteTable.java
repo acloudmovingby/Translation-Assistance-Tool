@@ -20,7 +20,7 @@ public class DeleteTable {
      * Deletes the TU entry table. 
      *
      */
-    public static void deleteTUTable() {
+    private static void deleteTUTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
@@ -40,7 +40,7 @@ public class DeleteTable {
      * Deletes the files table.
      *
      */
-    public static void deleteFileTable() {
+    private static void deleteFileTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
@@ -55,13 +55,9 @@ public class DeleteTable {
             System.out.println(e.getMessage());
         }
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
+    
+    public static void deleteAllTables() {
         deleteTUTable();
         deleteFileTable();
     }
-
 }

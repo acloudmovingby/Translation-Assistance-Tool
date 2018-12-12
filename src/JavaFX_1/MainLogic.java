@@ -103,7 +103,7 @@ DATABASE
         - need to fix the "sqlite_busy" bug. 
             basically, my tests have to be atomic transactions
             If I write do it with the same connection, does it throw an error?
-                - try "addTU" and "getTU" but you pass a connection
+                - try "addTUAtEnd" and "getTU" but you pass a connection
                 - run one after another adn see if the SQLite error is thrown 
  */
 /**
@@ -114,6 +114,7 @@ public class MainLogic {
 
     static final boolean DATABASE_IS_READABLE = true;
     static final boolean DATABASE_IS_WRITABLE = true;
+    static final boolean ALWAYS_REBOOT_DATABASE = true;
 
     /**
      * The file currently being translated.
@@ -138,19 +139,25 @@ public class MainLogic {
     private int minMatchLength;
 
     MainLogic() {
+        if (ALWAYS_REBOOT_DATABASE) {
+            DatabaseOperations.rebootDB();
+        }
         // Default minimum length for matches
         minMatchLength = 5;
 
         // makes main file
+        
         FileBuilder fileBuilder = new FileBuilder();
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         mainFile = fileBuilder.justThaiFilePath(filePath);
         DatabaseOperations.addFile(mainFile);
+        
+       // mainFile = DatabaseOperations.getFile(0);
         // Commits all TUS in main file (only for testing purposes)
         //mainFile.commitAllTUs();
 
         // MAKES CORPUS, ADDS SOME FILES
-        corpus = DatabaseOperations.getAllCommittedTUs();
+        corpus = DatabaseOperations.getAllTUs();
        // corpus.addFile(mainFile);
         System.out.println("Corpus size: " + corpus.getFiles().size());
         for (BasicFile bf : corpus.getFiles()) {
@@ -255,7 +262,7 @@ public class MainLogic {
                             new BufferedWriter(
                                     new FileWriter(FILENAME)));
             
-            for (TUEntryBasic tu : getMainFile().getObservableList()) {
+            for (TUEntryBasic tu : getMainFile().getTUsToDisplay()) {
                 if (tu.isCommitted()) {
                     out.println(tu.getEnglish());
                 }

@@ -126,7 +126,7 @@ public final class Comparator {
      */
     private void findMatches(String text, BasicFile file) {
         
-        List<TUEntryBasic> tms = file.getObservableList();
+        List<TUEntryBasic> tms = file.getTUsToDisplay();
 
         for (TUEntryBasic tu : tms) {
             findMatches(text, tu);

@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 
 /**
@@ -33,7 +35,6 @@ public class DatabaseOperations {
      *
      *************************************************************************
      */
-    
     /**
      * Puts the TU into the database. If a TU with that id already exists, then
      * it is replaced by the new TU. If successful, returns true. If there is a
@@ -47,7 +48,11 @@ public class DatabaseOperations {
             return false;
         } else {
 
-            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, thai, english, committed, removed) VALUES(?,?,?,?,?,?)";
+            if (tu.getID() == 0) {
+                tu.setID(makeTUID());
+            }
+
+            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?)";
 
             try (Connection conn = DatabaseOperations.connect();
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -65,12 +70,9 @@ public class DatabaseOperations {
                 } else {
                     pstmt.setInt(5, 0);
                 }
-
-                if (tu.isRemoved()) {
-                    pstmt.setInt(6, 1);
-                } else {
-                    pstmt.setInt(6, 0);
-                }
+                pstmt.setInt(6, tu.isRemoved() ? 1 : 0);
+                
+                pstmt.setInt(7, tu.getRank());
 
                 pstmt.executeUpdate();
                 return true;
@@ -98,8 +100,6 @@ public class DatabaseOperations {
             return false;
         } else {
 
-            
-            
             boolean ret = true;
 
             if (bf == null) {
@@ -107,9 +107,9 @@ public class DatabaseOperations {
             }
             // updates fileName
             addOrUpdateFileName(bf.getFileID(), bf.getFileName());
-            
+
             // adds all TUs in file to database
-            for (TUEntryBasic tu : bf.getObservableList()) {
+            for (TUEntryBasic tu : bf.getTUsToDisplay()) {
                 ret = DatabaseOperations.addOrUpdateTU(tu);
             }
             return ret;
@@ -144,25 +144,25 @@ public class DatabaseOperations {
 
         }
     }
-    
-      /**
+
+    /**
      * Creates a fileID for the given fileName and adds to the database.
      *
      * @param fileName The name of the file.
      * @return A new file ID that doesn't exist in the database
      */
-    public static double createFileID(String fileName) {
+    public static int createFileID(String fileName) {
 
-        double fileID;
+        int fileID;
 
         if (!MainLogic.databaseIsWritable()) {
-            fileID = (int) (Math.random() * 100000);
+            fileID = (int) (Math.random() * 100000000);
         } else {
             fileID = 0;
 
             // checks to see if the curent fileID is in database. If yes, then it generates a random new one until a new one is found. 
             while (containsFileID(fileID)) {
-                fileID = (int) (Math.random() * 100000);
+                fileID = (int) (Math.random() * 100000000);
             }
             // adds this id/name pairing to the database
             addOrUpdateFileName(fileID, fileName);
@@ -174,10 +174,11 @@ public class DatabaseOperations {
 
     /**
      * Removes the TU with the specified id from the database
+     *
      * @param id
      * @return True if removed successfully with no SQL errors.
      */
-     private static boolean removeTU(double id) {
+    private static boolean removeTU(double id) {
 
         // If database isn't active, this returns default of false;
         if (!MainLogic.databaseIsWritable()) {
@@ -201,53 +202,50 @@ public class DatabaseOperations {
             }
         }
     }
-   
 
-     /**
+    /**
      * ***********************************************************************
      *
      * Methods that READ from database
      *
      *************************************************************************
      */
-    
-   public static int numberOfTUs() {
-       if (!MainLogic.databaseIsReadable()) {
+    public static int numberOfTUs() {
+        if (!MainLogic.databaseIsReadable()) {
             return 0;
         } else {
-           String sql = "SELECT COUNT(*) FROM corpus1;";
-           
-           int notDistinctCount = 0;
-           int distinctCount = 0;
+            String sql = "SELECT COUNT(*) FROM corpus1;";
+
+            int notDistinctCount = 0;
+            int distinctCount = 0;
 
             try (Connection conn = DatabaseOperations.connect();
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)) {
-              
+
                 notDistinctCount = rs.getInt(1);
             } catch (SQLException e) {
                 System.out.println("count: " + e.getMessage());
             }
-            
+
             sql = "SELECT COUNT(DISTINCT id) FROM corpus1;";
-             try (Connection conn = DatabaseOperations.connect();
+            try (Connection conn = DatabaseOperations.connect();
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)) {
-              
+
                 distinctCount = rs.getInt(1);
             } catch (SQLException e) {
                 System.out.println("count: " + e.getMessage());
             }
-            
+
             if (distinctCount != notDistinctCount) {
-                 System.out.println(distinctCount + ", " + notDistinctCount);
+                System.out.println(distinctCount + ", " + notDistinctCount);
             }
-             
+
             return distinctCount;
-       }
-   }
-       
-    
+        }
+    }
+
     public static String getFileName(double fileID) {
 
         // If database isn't active, this returns default of null;
@@ -296,22 +294,8 @@ public class DatabaseOperations {
 
                 // loop through the result set
                 while (rs.next()) {
-                    TUEntryBasic ret = new TUEntryBasic(rs.getDouble("id"), rs.getDouble("fileID"));
-                    ret.setThai(rs.getString("thai"));
-                    ret.setEnglish(rs.getString("english"));
-                    int committedStatus = rs.getInt("committed");
-                    if (committedStatus == 0) {
-                        ret.setCommitted(false);
-                    } else if (committedStatus == 1) {
-                        ret.setCommitted(true);
-                    }
-                    int removedStatus = rs.getInt("removed");
-                    if (removedStatus == 0) {
-                        ret.setRemoved(false);
-                    } else if (removedStatus == 1) {
-                        ret.setRemoved(true);
-                    }
-                    return ret;
+                    TUEntryBasic ret = new TUEntryBasic(rs.getInt("id"), rs.getInt("fileID"));
+                    return rebuildTU(rs, ret);
                 }
                 return null;
             } catch (SQLException e) {
@@ -321,7 +305,7 @@ public class DatabaseOperations {
         }
     }
 
-    public static FileList getAllCommittedTUs() {
+    public static FileList getAllTUs() {
 
         FileList fList = new FileList();
 
@@ -332,7 +316,7 @@ public class DatabaseOperations {
 
             // gets all fileIDs
             // rebuilds a file for each one and adds to the fileList
-            ArrayList<Double> allFileIDs = getAllFileIDs();
+            ArrayList<Integer> allFileIDs = getAllFileIDs();
             allFileIDs.forEach((fileID) -> {
                 fList.addFile(getFile(fileID));
             });
@@ -341,12 +325,12 @@ public class DatabaseOperations {
     }
 
     /**
-     * Retrieves a file from the database. If that fileID
+     * Retrieves a file from the database.
      *
      * @param fileID
      * @return
      */
-    private static BasicFile getFile(double fileID) {
+    public static BasicFile getFile(int fileID) {
 
         // recreates the BasicFile object with the specified id and name.
         BasicFile file = new BasicFile(fileID, getFileName(fileID));
@@ -357,7 +341,7 @@ public class DatabaseOperations {
         } else {
 
             String idAsString = String.valueOf(fileID);
-            String sql = "SELECT id, fileID, thai, english, committed FROM corpus1 WHERE (fileID =" + idAsString + ") AND (removed = 0);";
+            String sql = "SELECT id, fileID, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";
 
             try (Connection conn = DatabaseOperations.connect();
                     Statement stmt = conn.createStatement();
@@ -365,7 +349,34 @@ public class DatabaseOperations {
 
                 // loop through the result set
                 while (rs.next()) {
-                    TUEntryBasic tu = new TUEntryBasic(rs.getDouble("id"), rs.getDouble("fileID"));
+
+                    TUEntryBasic tu = new TUEntryBasic(file.getFileID());
+                    tu = rebuildTU(rs, tu);
+                    if (tu.isRemoved()) {
+                       file.getRemovedTUs().add(tu);
+                    } else {
+                       file.getTUsToDisplay().add(tu);
+                    }
+
+                    /*tu2.setThai(rs.getString("thai"));
+                    tu2.setEnglish(rs.getString("english"));
+                    int committedStatus = rs.getInt("committed");
+                    if (committedStatus == 0) {
+                        tu2.setCommitted(false);
+                    } else if (committedStatus == 1) {
+                        tu2.setCommitted(true);
+                    }
+                    int removedStatus = rs.getInt("removed");
+                    if (removedStatus == 0) {
+                        tu2.setRemoved(false);
+                    } else if (removedStatus == 1) {
+                        tu2.setRemoved(true);
+                    }
+                    tu2.setRank(rs.getInt("rank"));
+                    
+                    
+                    /*
+                    TUEntryBasic tu = new TUEntryBasic(rs.getInt("id"), rs.getInt("fileID"));
                     tu.setThai(rs.getString("thai"));
                     tu.setEnglish(rs.getString("english"));
                     int committedStatus = rs.getInt("committed");
@@ -374,7 +385,8 @@ public class DatabaseOperations {
                     } else if (committedStatus == 1) {
                         tu.setCommitted(true);
                     }
-                    file.addTU(tu);
+                    file.addTUAtEnd(tu);
+                     */
                 }
             } catch (SQLException e) {
                 System.out.println("getFile: " + e.getMessage());
@@ -384,12 +396,33 @@ public class DatabaseOperations {
     }
 
     /**
+     * Sets all fields on the TU except the id and fileID.
+     *
+     * @param rs The result set returned from the database.
+     * @param tu The TUEntryBasic to be rebuilt in memory.
+     * @return
+     * @throws SQLException
+     */
+    private static TUEntryBasic rebuildTU(ResultSet rs, TUEntryBasic tu) throws SQLException {
+
+        tu.setID(rs.getInt("id"));
+        tu.setThai(rs.getString("thai"));
+        tu.setEnglish(rs.getString("english"));
+        int committedStatus = rs.getInt("committed");
+        tu.setCommitted(rs.getInt("committed") == 1);
+        tu.setRemoved(rs.getInt("removed") == 1);
+        tu.setRank(rs.getInt("rank"));
+
+        return tu;
+    }
+
+    /**
      * Retrieves all fileID from database
      *
      * @return
      */
-    private static ArrayList<Double> getAllFileIDs() {
-        ArrayList<Double> fileIDs = new ArrayList();
+    public static ArrayList<Integer> getAllFileIDs() {
+        ArrayList<Integer> fileIDs = new ArrayList();
 
         // If database isn't active, this returns default of null;
         if (!MainLogic.databaseIsReadable()) {
@@ -402,7 +435,7 @@ public class DatabaseOperations {
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
-                    fileIDs.add(rs.getDouble("fileID"));
+                    fileIDs.add(rs.getInt("fileID"));
                 }
                 return fileIDs;
             } catch (SQLException e) {
@@ -414,29 +447,50 @@ public class DatabaseOperations {
 
     /**
      * Sees if the specified TU id exists in the database.
+     *
      * @param tuID
-     * @return 
+     * @return
      */
-    public static boolean containsID(double tuID) {
-        String sql = "SELECT id FROM corpus1";
+    public static boolean containsID(int tuID) {
+        String sql = "SELECT id FROM corpus1 where id= ?";
 
         // If database isn't active, this returns false;
         if (!MainLogic.databaseIsReadable()) {
             return false;
         } else {
 
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
 
+            try {
+                conn = DatabaseOperations.connect();
+                pstmt = conn.prepareStatement(sql);
+
+                pstmt.setInt(1, tuID);
+                rs = pstmt.executeQuery();
                 // loop through the result set
                 while (rs.next()) {
-                    if (tuID == rs.getDouble("id")) {
+                    if (tuID == rs.getInt("id")) {
                         return true;
                     }
                 }
             } catch (SQLException e) {
-                System.out.println("tuIDExists: " + e.getMessage());
+                System.out.println("containsID: " + e.getMessage());
+            } finally {
+                try {
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (pstmt != null) {
+                        pstmt.close();
+                    }
+                    if (conn != null) {
+                        conn.close();
+                    }
+                } catch (SQLException e) {
+                    System.out.println("containsID: " + e.getMessage());
+                }
             }
             return false;
         }
@@ -444,8 +498,9 @@ public class DatabaseOperations {
 
     /**
      * Sees if the specified file ID exists in the database.
+     *
      * @param fileID
-     * @return 
+     * @return
      */
     protected static boolean containsFileID(double fileID) {
 
@@ -473,8 +528,6 @@ public class DatabaseOperations {
         }
     }
 
-   
-
     /**
      * Connect to the test.db database
      *
@@ -490,6 +543,31 @@ public class DatabaseOperations {
             System.out.println("Connect: " + e.getMessage());
         }
         return conn;
+    }
+
+    public static void rebootDB() {
+        DeleteTable.deleteAllTables();
+        CreateTable.createTables();
+    }
+
+    /**
+     * Generates a unique TU id. However, unlike createFileID, this does not ad
+     * it to the database.
+     *
+     * @return
+     */
+    public static int makeTUID() {
+        int newID = 0;
+
+        if (MainLogic.databaseIsReadable()) {
+
+            // If id already exists or is equal to zero, it regenerates.
+            while (containsFileID(newID) || newID == 0) {
+                newID = (int) (Math.random() * 100000000);
+            }
+            // returns the id so the BasicFile object can store it.
+        }
+        return newID;
     }
 
 }

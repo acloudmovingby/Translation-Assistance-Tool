@@ -21,17 +21,23 @@ import javafx.collections.ObservableList;
  */
 public class BasicFile {
 
-    ObservableList<TUEntryBasic> observableList;
+    // the TUs to be displayed to the user
+    ObservableList<TUEntryBasic> tusToDisplay;
+    // all the TUs, including the ones that have been 'removed' from the file.
+    ArrayList<TUEntryBasic> allTUs;
+    ArrayList<TUEntryBasic> removedTUs;
     //  private final int NUM_FIELDS;
     private String fileName;
-    private final double fileID;
+    private final int fileID;
 
     /**
      * When creating a new BasicFile, the fileID is auto-generated and a default
      * fileName of "untitled" is assigned.
      */
     public BasicFile() {
-        observableList = FXCollections.observableArrayList();
+        tusToDisplay = FXCollections.observableArrayList();
+        allTUs = new ArrayList();
+        removedTUs = new ArrayList();
         fileName = "untitled";
         fileID = DatabaseOperations.createFileID(fileName);
     }
@@ -42,28 +48,34 @@ public class BasicFile {
      * @param fileID
      * @param fileName
      */
-    public BasicFile(double fileID, String fileName) {
+    public BasicFile(int fileID, String fileName) {
         this.fileID = fileID;
         this.fileName = fileName;
-        observableList = FXCollections.observableArrayList();
+        tusToDisplay = FXCollections.observableArrayList();
+        allTUs = new ArrayList();
+        removedTUs = new ArrayList();
     }
 
     public TUEntryBasic newTU() {
         // makes id that matches this file and assigns the fileid
-        TUEntryBasic newTU = new TUEntryBasic(makeTUID(), getFileID());
-        // adds to end of list
-        observableList.add(newTU);
+        TUEntryBasic newTU = new TUEntryBasic(getFileID());
+        // adds to end of lists
+        addTUAtEnd(newTU);
         // returns the TU so it can be modified by the user (i.e. Thai/English can be added)
         return newTU;
     }
 
     /**
-     * Used for reconstructing files from the database.
+     * Helper method to add new TUs to the various lists.
      *
      * @param tu
      */
-    public void addTU(TUEntryBasic tu) {
-        observableList.add(tu);
+    private void addTUAtEnd(TUEntryBasic tu) {
+        if (!tu.isRemoved()) {
+            tusToDisplay.add(tu);
+        }
+        allTUs.add(tu);
+        tu.setRank(allTUs.size() - 1);
     }
 
     /**
@@ -77,69 +89,6 @@ public class BasicFile {
      *********************************************************************************
      */
     /**
-     * Inserts a TU at the specified position in this list. Shifts the element
-     * currently at that position (if any) and any subsequent elements to the
-     * right (adds one to their indices). Returns the TU that was created.
-     *
-     * @param index
-     * @return The newly created TU
-     */
-    private TUEntryBasic insertTU(int index) {
-        if (index == observableList.size()) {
-            return newTU();
-        } else {
-            double newID;
-
-            if (index == 0) {
-                double nextID = observableList.get(index).getID();
-                newID = (nextID + getFileID()) / 2;
-            } else {
-                double priorID = observableList.get(index - 1).getID();
-                double nextID = observableList.get(index).getID();
-                newID = (priorID + nextID) / 2;
-            }
-            System.out.println("newID = " + newID);
-            System.out.println("does id exist? " + DatabaseOperations.containsID(newID));
-            for (TUEntryBasic tu1 : observableList) {
-                System.out.println("\t" + tu1.getID());
-            }
-            TUEntryBasic newTU = new TUEntryBasic(newID, getFileID());
-            observableList.add(index, newTU);
-            return newTU;
-        }
-    }
-
-    /**
-     * Removes the TU from the list. Sets the boolean isRemoved to true and
-     * updates the TU in the database.
-     *
-     * @param tu
-     */
-    private TUEntryBasic removeTU(int index) {
-        TUEntryBasic removedTU = observableList.remove(index);
-        removedTU.setRemoved(true);
-        return removedTU;
-    }
-
-    public void changeThai(TUEntryBasic tu, String newThaiText) {
-        // retrieves index of old TU
-        int index = observableList.indexOf(tu);
-
-        // inserts new TU andd updates information
-        TUEntryBasic insertedTU = insertTU(index);
-        insertedTU.setThai(newThaiText);
-        insertedTU.setEnglish(tu.getEnglish());
-        insertedTU.setCommitted(tu.isCommitted());
-
-        // removes the previous TU
-        TUEntryBasic removedTU = removeTU(observableList.indexOf(tu));
-
-        // DATABASE
-        DatabaseOperations.addOrUpdateTU(removedTU);
-        DatabaseOperations.addOrUpdateTU(insertedTU);
-    }
-
-    /**
      * Splits a TU into two pieces. The second TU begins with the character at
      * the specified index. So if this method was given "unhappy" and 2, the two
      * new TUs would be "un" and "happy".
@@ -148,65 +97,134 @@ public class BasicFile {
      * @param splitIndex
      */
     public void splitTU(TUEntryBasic tu, int splitIndex) {
+        if (tu == null || splitIndex==0 || splitIndex==tu.getThai().length()) {
+            return;
+        }
         String firstThai = tu.getThai().substring(0, splitIndex);
         String secondThai = tu.getThai().substring(splitIndex);
 
         // retrieves index of old TU
-        int index = observableList.indexOf(tu);
+        int index = tusToDisplay.indexOf(tu);
 
-        // inserts first TU andd updates information
-        TUEntryBasic insertedTU1 = insertTU(index);
-        insertedTU1.setThai(firstThai);
-        insertedTU1.setEnglish(tu.getEnglish());
-        insertedTU1.setCommitted(false);
+        // creates first new TU and inserts
+        TUEntryBasic newTU1 = new TUEntryBasic(getFileID());
+        newTU1.setThai(firstThai);
+        newTU1.setEnglish(tu.getEnglish());
+        newTU1.setCommitted(false);
+        getTUsToDisplay().add(index, newTU1);
 
-        // inserts second TU and updates information
-        TUEntryBasic insertedTU2 = insertTU(index + 1);
-        insertedTU2.setThai(secondThai);
-        insertedTU2.setEnglish("");
-        insertedTU2.setCommitted(false);
+        // creates second new TU and inserts
+        TUEntryBasic newTU2 = new TUEntryBasic(getFileID());
+        newTU2.setThai(secondThai);
+        newTU2.setEnglish("");
+        newTU2.setCommitted(false);
+        getTUsToDisplay().add(index + 1, newTU2);
 
         //removes old TU
-        TUEntryBasic removedTU = removeTU(observableList.indexOf(tu));
+        removeTU(tu);
 
         // DATABASE
-        DatabaseOperations.addOrUpdateTU(removedTU);
-        DatabaseOperations.addOrUpdateTU(insertedTU1);
-        DatabaseOperations.addOrUpdateTU(insertedTU2);
+        realignRanks();
     }
 
-    public void mergeTU(List<TUEntryBasic> tuList) {
-  System.out.println("Before: " + DatabaseOperations.numberOfTUs());
+    public void mergeTUs(List<TUEntryBasic> tusToMerge) {
+
+        if (tusToMerge.size() < 2) {
+            return;
+        }
+
+        // Add to removed list
+        for (TUEntryBasic tu : tusToMerge) {
+            tu.setRemoved(true);
+            System.out.println("?" + tu.isRemoved());
+            this.getRemovedTUs().add(tu);
+        }
+
+        // Build new TU 
         StringBuilder thaiSB = new StringBuilder();
         StringBuilder engSB = new StringBuilder();
-        int firstTUIndex = observableList.indexOf(tuList.get(0));
-
-        for (TUEntryBasic tu : tuList) {
+        for (TUEntryBasic tu : tusToMerge) {
+            System.out.println("?" + tu.isRemoved());
             thaiSB.append(tu.getThai());
             engSB.append(tu.getEnglish());
         }
-
-        // removes each of the selected TUs from the file's observablelist
-        int numberOfTUs = tuList.size();
-        ArrayList<TUEntryBasic> removedTUs = new ArrayList();
-        for (int i = 0; i < numberOfTUs; i++) {
-            removedTUs.add(removeTU(firstTUIndex));
-        }
-
-        // inserts new TU into place and adds features
-       System.out.println("Mid1: " + DatabaseOperations.numberOfTUs());
-        TUEntryBasic newTU = insertTU(firstTUIndex);
+        TUEntryBasic newTU = new TUEntryBasic(DatabaseOperations.makeTUID(), getFileID());
         newTU.setThai(thaiSB.toString());
         newTU.setEnglish(engSB.toString());
-        newTU.setCommitted(false);
- System.out.println("Mid2: " + DatabaseOperations.numberOfTUs());
-        // DATABASE
-        removedTUs.forEach((removedTU1) -> {
-            DatabaseOperations.addOrUpdateTU(removedTU1);
-        });
-        
-        System.out.println(DatabaseOperations.addOrUpdateTU(newTU));
-        System.out.println("After: " + DatabaseOperations.numberOfTUs());
+
+        // Remove old TUs from display list
+        int firstIndex = this.getTUsToDisplay().indexOf(tusToMerge.get(0));
+        int size = tusToMerge.size();
+        for (int i = 0; i < size; i++) {
+            TUEntryBasic removedTU = getTUsToDisplay().remove(firstIndex);
+        }
+
+        // Insert new TU
+        this.getTUsToDisplay().add(firstIndex, newTU);
+        realignRanks();
+
+    }
+
+    /**
+     * Inserts the new TU (tu) in the tusToDisplay at the specified index, while
+     * also updating the allTUs list.
+     *
+     * @param index
+     * @param tu
+     */
+    private void insertTU(int index, TUEntryBasic tu) {
+        // the indices of tusToDisplay and allTUs may not be same, so this ensures tu is inserted in the proper place in both lists
+        int index2 = allTUs.indexOf(
+                tusToDisplay.get(index));
+
+        if (!tu.isRemoved()) {
+            tusToDisplay.add(index, tu);
+        }
+        allTUs.add(index2, tu);
+        realignRanks();
+    }
+
+    private void removeTU(TUEntryBasic tu) {
+        tu.setRemoved(true);
+        removedTUs.add(tu);
+        tusToDisplay.remove(tu);
+    }
+
+    private void realignRanks() {
+        // updates tusToDisplay in DB
+        for (int i = 0; i < getTUsToDisplay().size(); i++) {
+            TUEntryBasic tu = getTUsToDisplay().get(i);
+           
+                tu.setRank(i);
+                DatabaseOperations.addOrUpdateTU(tu);
+            
+        }
+
+        // updates removedTUs in DB
+        for (int i = 0; i < getRemovedTUs().size(); i++) {
+            TUEntryBasic tu = getRemovedTUs().get(i);
+
+            tu.setRank(i);
+            DatabaseOperations.addOrUpdateTU(tu);
+
+        }
+    }
+
+    public void changeThai(TUEntryBasic tu, String newThaiText) {
+        // retrieves index of old TU
+        int index = tusToDisplay.indexOf(tu);
+
+        // inserts new TU andd updates information
+        TUEntryBasic insertedTU = new TUEntryBasic(getFileID());
+        insertedTU.setThai(newThaiText);
+        insertedTU.setEnglish(tu.getEnglish());
+        insertedTU.setCommitted(tu.isCommitted());
+        insertTU(index, insertedTU);
+
+        // removes the previous TU
+        removeTU(tu);
+
+        realignRanks();
     }
 
     public String getFileName() {
@@ -219,7 +237,7 @@ public class BasicFile {
     }
 
     public void commitAllTUs() {
-        for (TUEntryBasic tu : getObservableList()) {
+        for (TUEntryBasic tu : getTUsToDisplay()) {
             tu.setCommitted(true);
             // DATABASE
             DatabaseOperations.addOrUpdateTU(tu);
@@ -240,11 +258,11 @@ public class BasicFile {
 
         // tests equality of all TMs within files
         boolean areTMsEqual = true;
-        if (m.getObservableList().size() != this.getObservableList().size()) {
+        if (m.getTUsToDisplay().size() != this.getTUsToDisplay().size()) {
             return false;
         } else {
-            Iterator i1 = this.getObservableList().iterator();
-            Iterator i2 = m.getObservableList().iterator();
+            Iterator i1 = this.getTUsToDisplay().iterator();
+            Iterator i2 = m.getTUsToDisplay().iterator();
             while (i1.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
                     areTMsEqual = false;
@@ -259,7 +277,7 @@ public class BasicFile {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 23 * hash + Objects.hashCode(getObservableList());
+        hash = 23 * hash + Objects.hashCode(getTUsToDisplay());
         // hash = 23 * hash + this.NUM_FIELDS;
         hash = 23 * hash + Objects.hashCode(getFileName());
         return hash;
@@ -271,44 +289,43 @@ public class BasicFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
 
-        for (TUEntryBasic tu : getObservableList()) {
+        for (TUEntryBasic tu : getTUsToDisplay()) {
             sb.append(tu.toString());
             sb.append("\n\t");
         }
         return sb.toString();
     }
 
-    /*
-    public ArrayList getTUs() {
-        return new ArrayList(observableList);
-    }
-     */
-    public ObservableList<TUEntryBasic> getObservableList() {
-        return observableList;
+    public ObservableList<TUEntryBasic> getTUsToDisplay() {
+        return tusToDisplay;
     }
 
-    public Object[][] toArray() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public double getFileID() {
+    public int getFileID() {
         return fileID;
     }
 
     /**
-     * Assigns an id value to the TU. The id value is equal to the fileID plus
-     * increments of 0.0001 Each time a new TU is added to the end of the list
-     * its id is assigned to be 0.0001 higher than the prior one.
+     * Assigns an id value to the TU. Only for when the TU is being added to the
+     * end of the list. The id increments 256 higher than the prior one.
      *
      * @return
      */
-    private double makeTUID() {
-        if (observableList.isEmpty()) {
-            return fileID + 0.0001;
+    private int makeTUID() {
+        // FIX
+        if (tusToDisplay.isEmpty()) {
+            return fileID + 256;
         } else {
-            return ((TUEntryBasic) observableList.get(observableList.size() - 1)).getID() + 0.0001;
+            return ((TUEntryBasic) tusToDisplay.get(tusToDisplay.size() - 1)).getID() + 256;
         }
 
+    }
+
+    protected ArrayList<TUEntryBasic> getAllTUs() {
+        return allTUs;
+    }
+
+    public ArrayList<TUEntryBasic> getRemovedTUs() {
+        return removedTUs;
     }
 
 }

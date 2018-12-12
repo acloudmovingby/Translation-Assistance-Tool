@@ -226,7 +226,7 @@ public class Fxml_1Controller implements Initializable {
         title.setText(main.getMainFile().getFileName());
 
         // binds main file to main table viewer
-        tableView.setItems(main.getMainFile().getObservableList());
+        tableView.setItems(main.getMainFile().getTUsToDisplay());
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -374,7 +374,7 @@ public class Fxml_1Controller implements Initializable {
         scoreColComp.setCellValueFactory(new PropertyValueFactory<>("longestMatchLength"));
 
         // sets initial compare file in compare table to first TU in main file viewer
-        setCompareTable(main.getMainFile().getObservableList().get(0).toString());
+        setCompareTable(main.getMainFile().getTUsToDisplay().get(0).toString());
 
         /*
             Makes it so when a row is selected in the main table, this renders compareTable with a new CompareFile made from the Thai String from the main table.
@@ -404,7 +404,7 @@ public class Fxml_1Controller implements Initializable {
     private void merge(ActionEvent event) {
         ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            main.getMainFile().mergeTU(selectedItems);
+            main.getMainFile().mergeTUs(selectedItems);
         }
     }
     
@@ -423,7 +423,7 @@ public class Fxml_1Controller implements Initializable {
     private void split(ActionEvent event) {
         ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
         TUEntryBasic tu = selectedItems.get(0);
-        if (selectedItems != null) {
+        if (selectedItems != null || selectedItems.isEmpty()) {
             main.getMainFile().splitTU(tu, 10);
         }
     }

@@ -8,6 +8,8 @@ When I insert
     put in at 500 (750, etc..)
     check to make sure it doesn't exist
     
+If it exists (which is unlikely because user probably won't merge/split more than a time or two).
+    have method to reassign neighboring TU ids. This requires at most log2 1000 upateTU calls (?).
 
 
  */
@@ -28,18 +30,19 @@ public class CreateTable {
      * Create a new table in the test database for TU Entries.
      *
      */
-    public static void createTUEntryTable() {
+    private static void createTUEntryTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
         // TU Entry table
         String sql = "CREATE TABLE IF NOT EXISTS corpus1 ("
-                + "	id       REAL   PRIMARY KEY     NOT NULL,"
+                + "	id       INT   PRIMARY KEY     NOT NULL,"
                 + "	fileID   INT                    NOT NULL,"
                 + "	thai     TEXT,"
                 + "	english  TEXT,"
                 + "     committed INT                   NOT NULL,"
-                + "     removed  INT                    NOT NULL"
+                + "     removed  INT                    NOT NULL,"
+                + "     rank     INT                    NOT NULL"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(url);
@@ -55,13 +58,13 @@ public class CreateTable {
      * Create a new table in the test database for files.
      *
      */
-    public static void createFileTable() {
+    private static void createFileTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
         // TU Entry table
         String sql = "CREATE TABLE IF NOT EXISTS files ("
-                + "	fileID       REAL   PRIMARY KEY     NOT NULL,"
+                + "	fileID       ID     PRIMARY KEY     NOT NULL,"
                 + "	fileName     TEXT                   NOT NULL"
                 + ");";
 
@@ -74,12 +77,8 @@ public class CreateTable {
         }
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
+    public static void createTables() {
         createTUEntryTable();
         createFileTable();
     }
-
 }

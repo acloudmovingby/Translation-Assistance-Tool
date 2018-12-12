@@ -18,8 +18,8 @@ import javafx.beans.property.StringProperty;
  */
 public class TUEntryBasic {
 
-    private final double id;
-    private double fileID;
+    private int id;
+    private int fileID;
     
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
@@ -28,8 +28,19 @@ public class TUEntryBasic {
     BooleanProperty isCommittedProperty;
     
     private boolean isRemoved;
+    private int rank;
 
-    public TUEntryBasic(double id, double fileID){
+    public TUEntryBasic(int fileID){
+        boolean isCommitted = false;
+        thaiProperty = new SimpleStringProperty("");
+        englishProperty = new SimpleStringProperty("");
+        isCommittedProperty = new SimpleBooleanProperty(false);
+        isRemoved = false;
+        this.id = 0;
+        this.fileID = fileID;
+    }
+    
+    public TUEntryBasic(int id, int fileID){
         boolean isCommitted = false;
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
@@ -37,7 +48,6 @@ public class TUEntryBasic {
         isRemoved = false;
         this.id = id;
         this.fileID = fileID;
-        //DatabaseOperations.addTUtoDatabase(this);
     }
 
 
@@ -97,7 +107,14 @@ public class TUEntryBasic {
     
     @Override
     public String toString() {
-        return "[" + getID()  + ", " + getFileID() + ", " + getFileName()  + ", " + isCommitted()  + ", " + getThai() + ", " + getEnglish() + "]";
+        return "[" + getID()  + ", " 
+                + getFileID() + ", " 
+                + getFileName()  + ", " 
+                + getRank() + ", "
+                + getThai() + ", " 
+                + getEnglish() + ", "
+                + isCommitted()  + ", " 
+                + isRemoved()  + "]";
     }
 
 
@@ -123,18 +140,17 @@ public class TUEntryBasic {
     public void setCommitted(boolean b) {
         isCommittedProperty.set(b);
         isCommitted = b;
-        //DatabaseOperations.replaceTU(this);
     }
 
     public String getFileName() {
         return DatabaseOperations.getFileName(fileID);
     }
     
-    public double getID() {
+    public int getID() {
         return id;
     }
     
-    public double getFileID() {
+    public int getFileID() {
         return fileID;
     }
 
@@ -145,6 +161,19 @@ public class TUEntryBasic {
     public boolean isRemoved() {
         return isRemoved;
     }
+
+    public int getRank() {
+        return rank;
+    }
+    
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public void setID(int id) {
+        this.id = id;
+    }
+    
     
 
 }
