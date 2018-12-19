@@ -18,13 +18,13 @@ public class NGramWrapper implements Iterable {
 
     String text;
     int ngramLength;    
-    HashMap<String, ArrayList<Integer>> hash;
+    HashMap<String, List<Integer>> hash;
     List<String> list;
 
     /**
      *
-     * @param text Text to be divided into ngramLength-grams
-     * @param n Length of ngramLength-gram.
+     * @param text Text to be divided into ngrams of length n.
+     * @param n Length of ngram.
      * @throws IllegalArgumentException if ngramLength<1
      */
     public NGramWrapper(String text, int n) throws IllegalArgumentException {
@@ -46,7 +46,6 @@ public class NGramWrapper implements Iterable {
         } else {
             for (int i = 0; i <= text.length() - ngramLength; i++) {
                 String str;
-                
                 str = text.substring(i, i + ngramLength);
                 addToHash(str, i);
                 list.add(str);
@@ -61,7 +60,7 @@ public class NGramWrapper implements Iterable {
      */
     private void addToHash(String str, int i) {
         
-        ArrayList<Integer> indices = hash.get(str);
+        List<Integer> indices = hash.get(str);
         if (indices == null) {
             indices = new ArrayList();
             indices.add(i);
@@ -78,7 +77,7 @@ public class NGramWrapper implements Iterable {
      * @return list of indices of where that ngram exists, if it doesn't exist,
      * it returns null
      */
-    public ArrayList<Integer> contains(String ngram) {
+    public List<Integer> contains(String ngram) {
         return hash.get(ngram);
     }
 
@@ -98,7 +97,7 @@ public class NGramWrapper implements Iterable {
         return ngramLength;
     }
     
-    public HashMap<String, ArrayList<Integer>> getHashMap() {
+    public HashMap<String, List<Integer>> getHashMap() {
         return hash;
     }
     
@@ -136,7 +135,7 @@ public class NGramWrapper implements Iterable {
     }
     
     @Override
-    public Iterator iterator() {
+    public Iterator<String> iterator() {
         return list.listIterator();
     }
 }

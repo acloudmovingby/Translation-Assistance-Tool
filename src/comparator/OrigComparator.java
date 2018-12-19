@@ -9,7 +9,6 @@ import Files.BasicFile;
 import Files.CompareFile;
 import Files.TUCompareEntry;
 import Files.FileList;
-import java.util.ArrayList;
 import Files.TUEntryBasic;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
  *
  * @author Chris
  */
-public final class Comparator {
+public final class OrigComparator {
 
     /*
     Game Plan
@@ -36,7 +35,7 @@ public final class Comparator {
     private CompareFile cFile;
 
     
-    public Comparator(String text, String corpus, int minMatchLength) {
+    public OrigComparator(String text, String corpus, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
 
         this.text = new NGramWrapper(text, this.NGRAM_LENGTH);
@@ -97,13 +96,13 @@ public final class Comparator {
 
  }
      */
-    public Comparator(String text, BasicFile file, int minMatchLength) {
+    public OrigComparator(String text, BasicFile file, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
         cFile = new CompareFile();
         findMatches(text, file);
     }
 
-    public Comparator(String text, FileList fileList, int minMatchLength) {
+    public OrigComparator(String text, FileList fileList, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
         cFile = new CompareFile();
         
@@ -112,7 +111,7 @@ public final class Comparator {
         }
     }
     
-    public Comparator(String text, TUEntryBasic tu, int minMatchLength) {
+    public OrigComparator(String text, TUEntryBasic tu, int minMatchLength) {
         NGRAM_LENGTH = minMatchLength;
         cFile = new CompareFile();
         
@@ -133,7 +132,7 @@ public final class Comparator {
         }
     }
 
-    private void findMatches(String text, TUEntryBasic tu) {
+    public void findMatches(String text, TUEntryBasic tu) {
         if (tu.isCommitted()) {
         Matches m = findStringMatches(text, tu.getThai());
             if (!m.isEmpty()) {
@@ -167,7 +166,7 @@ public final class Comparator {
             String s = n1.getList().get(i);
 
             // finds indices of all matching ngrams in corpus
-            ArrayList<Integer> indices = n2.contains(s);
+            List<Integer> indices = n2.contains(s);
 
             if (indices != null) {
                 for (int j : indices) {
@@ -197,7 +196,7 @@ public final class Comparator {
             String s = text.getList().get(i);
 
             // finds indices of all matching ngrams in corpus
-            ArrayList<Integer> indices = corpus.contains(s);
+            List<Integer> indices = corpus.contains(s);
 
             if (indices != null) {
                 for (int j : indices) {

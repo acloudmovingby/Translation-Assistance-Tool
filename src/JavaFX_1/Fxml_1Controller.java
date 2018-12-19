@@ -13,6 +13,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,15 +27,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Callback;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.StringConverter;
 
 /**
  * FXML Controller class
@@ -94,6 +92,7 @@ public class Fxml_1Controller implements Initializable {
      * main.
      */
     MainLogic main;
+    CompareFile cf;
 
     /**
      * Initializes the controller class.
@@ -374,30 +373,45 @@ public class Fxml_1Controller implements Initializable {
         scoreColComp.setCellValueFactory(new PropertyValueFactory<>("longestMatchLength"));
 
         // sets initial compare file in compare table to first TU in main file viewer
-        setCompareTable(main.getMainFile().getTUsToDisplay().get(0).toString());
+        //setCompareTable(main.getMainFile().getTUsToDisplay().get(0).toString());
 
         /*
             Makes it so when a row is selected in the main table, this renders compareTable with a new CompareFile made from the Thai String from the main table.
          */
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                setCompareTable(newSelection.getThai());
+                main.newSelection(newSelection);
+                //setCompareTable(newSelection.getThai());
             }
         }
         );
 
+        /* FONTS
         Font.getFamilies().forEach((s) -> {
             System.out.println(s);
-        });
+        }); */
+        
+        // REDO
+        cf = main.getCompareFile();
+        compareTable.setItems(cf.getObservableList());
+        // binds the number of matches to length of matchList
+        //matchList.addListener((ListChangeListener) (c -> setNumMatches(c.getList().size())));
+        
+        
 
     }
 
     @FXML
     protected void minMatchLengthChanged(ActionEvent event) {
+        
+        main.setMinLength(Integer.valueOf(minMatchLengthField.getText()));
+        
+        /*
         // changes the minimum match length (retrieved from the minMatchLength field)
         main.setMinMatchLength(Integer.valueOf(minMatchLengthField.getText()));
         // redraws the compare table
         setCompareTable(main.getCurrentCompareString());
+        */
     }
 
     @FXML
@@ -498,7 +512,10 @@ public class Fxml_1Controller implements Initializable {
         return textFlow;
     }
 
+    
 }
+
+
 
 /*
 Callback: 

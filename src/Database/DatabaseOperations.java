@@ -17,10 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.collections.ObservableList;
 
 /**
  *
@@ -47,7 +43,7 @@ public class DatabaseOperations {
         if (!MainLogic.databaseIsWritable()) {
             return false;
         } else {
-
+            
             if (tu.getID() == 0) {
                 tu.setID(makeTUID());
             }
@@ -548,6 +544,7 @@ public class DatabaseOperations {
     public static void rebootDB() {
         DeleteTable.deleteAllTables();
         CreateTable.createTables();
+        BuildCorpus.build();
     }
 
     /**

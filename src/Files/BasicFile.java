@@ -22,10 +22,8 @@ import javafx.collections.ObservableList;
 public class BasicFile {
 
     // the TUs to be displayed to the user
-    ObservableList<TUEntryBasic> tusToDisplay;
-    // all the TUs, including the ones that have been 'removed' from the file.
-    ArrayList<TUEntryBasic> allTUs;
-    ArrayList<TUEntryBasic> removedTUs;
+    private ObservableList<TUEntryBasic> tusToDisplay;
+    private ArrayList<TUEntryBasic> removedTUs;
     //  private final int NUM_FIELDS;
     private String fileName;
     private final int fileID;
@@ -36,7 +34,6 @@ public class BasicFile {
      */
     public BasicFile() {
         tusToDisplay = FXCollections.observableArrayList();
-        allTUs = new ArrayList();
         removedTUs = new ArrayList();
         fileName = "untitled";
         fileID = DatabaseOperations.createFileID(fileName);
@@ -52,7 +49,6 @@ public class BasicFile {
         this.fileID = fileID;
         this.fileName = fileName;
         tusToDisplay = FXCollections.observableArrayList();
-        allTUs = new ArrayList();
         removedTUs = new ArrayList();
     }
 
@@ -62,6 +58,7 @@ public class BasicFile {
         // adds to end of lists
         addTUAtEnd(newTU);
         // returns the TU so it can be modified by the user (i.e. Thai/English can be added)
+      
         return newTU;
     }
 
@@ -71,12 +68,21 @@ public class BasicFile {
      * @param tu
      */
     private void addTUAtEnd(TUEntryBasic tu) {
-        if (!tu.isRemoved()) {
-            tusToDisplay.add(tu);
+        if (tu.isRemoved()) {
+            removedTUs.add(tu);
+        } else {
+            ObservableList<TUEntryBasic> dispTUs = getTUsToDisplay();
+            int newRank;
+            if (dispTUs.isEmpty()) {
+                newRank = Integer.MIN_VALUE + 8192;
+            } else {
+                newRank = 8192 + dispTUs.get(dispTUs.size()-1).getRank();
+            }
+            dispTUs.add(tu);
+            tu.setRank(newRank);
         }
-        allTUs.add(tu);
-        tu.setRank(allTUs.size() - 1);
     }
+    
 
     /**
      * ************************************************************************************
@@ -97,7 +103,7 @@ public class BasicFile {
      * @param splitIndex
      */
     public void splitTU(TUEntryBasic tu, int splitIndex) {
-        if (tu == null || splitIndex==0 || splitIndex==tu.getThai().length()) {
+        if (tu == null || splitIndex == 0 || splitIndex == tu.getThai().length()) {
             return;
         }
         String firstThai = tu.getThai().substring(0, splitIndex);
@@ -160,28 +166,10 @@ public class BasicFile {
         }
 
         // Insert new TU
-        this.getTUsToDisplay().add(firstIndex, newTU);
-        realignRanks();
+        insertTU(firstIndex, newTU);
+        //getTUsToDisplay().add(firstIndex, newTU);
+        //realignRanks();
 
-    }
-
-    /**
-     * Inserts the new TU (tu) in the tusToDisplay at the specified index, while
-     * also updating the allTUs list.
-     *
-     * @param index
-     * @param tu
-     */
-    private void insertTU(int index, TUEntryBasic tu) {
-        // the indices of tusToDisplay and allTUs may not be same, so this ensures tu is inserted in the proper place in both lists
-        int index2 = allTUs.indexOf(
-                tusToDisplay.get(index));
-
-        if (!tu.isRemoved()) {
-            tusToDisplay.add(index, tu);
-        }
-        allTUs.add(index2, tu);
-        realignRanks();
     }
 
     private void removeTU(TUEntryBasic tu) {
@@ -189,42 +177,54 @@ public class BasicFile {
         removedTUs.add(tu);
         tusToDisplay.remove(tu);
     }
+    
+    /**
+     * Adds the TU at the proper index in TUsToDisplay and sets it's rank accordingly
+     * @param index
+     * @param tu 
+     */
+    private void insertTU(int index, TUEntryBasic tu) {
+        int priorRank;
+        int nextRank;
+        
+        if (index == getTUsToDisplay().size()-1 || getTUsToDisplay().isEmpty()) {
+            addTUAtEnd(tu);
+            return;
+        } else if (index == 0) {
+            priorRank = Integer.MIN_VALUE;
+        } else {
+            priorRank = getTUsToDisplay().get(index-1).getRank();
+        }
+        
+        nextRank = getTUsToDisplay().get(index).getRank();
+        int newRank = (nextRank+priorRank)/2;
+        tu.setRank(newRank);
+        getTUsToDisplay().add(index, tu);
+        
+        if (nextRank-priorRank < 2) {
+            System.out.println("Ranks realigned");
+            realignRanks();
+        }
+
+    }
 
     private void realignRanks() {
         // updates tusToDisplay in DB
-        for (int i = 0; i < getTUsToDisplay().size(); i++) {
+        if (!getTUsToDisplay().isEmpty()) {
+            getTUsToDisplay().get(0).setRank(Integer.MIN_VALUE + 8192);
+        }
+        for (int i = 1; i < getTUsToDisplay().size(); i++) {
             TUEntryBasic tu = getTUsToDisplay().get(i);
-           
-                tu.setRank(i);
-                DatabaseOperations.addOrUpdateTU(tu);
-            
+            tu.setRank(getTUsToDisplay().get(i-1).getRank());
+            DatabaseOperations.addOrUpdateTU(tu);
         }
 
         // updates removedTUs in DB
         for (int i = 0; i < getRemovedTUs().size(); i++) {
             TUEntryBasic tu = getRemovedTUs().get(i);
-
-            tu.setRank(i);
             DatabaseOperations.addOrUpdateTU(tu);
 
         }
-    }
-
-    public void changeThai(TUEntryBasic tu, String newThaiText) {
-        // retrieves index of old TU
-        int index = tusToDisplay.indexOf(tu);
-
-        // inserts new TU andd updates information
-        TUEntryBasic insertedTU = new TUEntryBasic(getFileID());
-        insertedTU.setThai(newThaiText);
-        insertedTU.setEnglish(tu.getEnglish());
-        insertedTU.setCommitted(tu.isCommitted());
-        insertTU(index, insertedTU);
-
-        // removes the previous TU
-        removeTU(tu);
-
-        realignRanks();
     }
 
     public String getFileName() {
@@ -318,10 +318,6 @@ public class BasicFile {
             return ((TUEntryBasic) tusToDisplay.get(tusToDisplay.size() - 1)).getID() + 256;
         }
 
-    }
-
-    protected ArrayList<TUEntryBasic> getAllTUs() {
-        return allTUs;
     }
 
     public ArrayList<TUEntryBasic> getRemovedTUs() {

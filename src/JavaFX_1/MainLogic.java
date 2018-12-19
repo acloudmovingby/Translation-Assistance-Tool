@@ -6,6 +6,7 @@
 package JavaFX_1;
 
 import Database.DatabaseOperations;
+import Database.PostingsList;
 import Files.BasicFile;
 import Files.CompareFile;
 import Files.FileBuilder;
@@ -13,11 +14,14 @@ import Files.FileList;
 import Files.TUCompareEntry;
 import Files.TUEntryBasic;
 import ParseThaiLaw.ThaiLawParser;
-import comparator.Comparator;
+import comparator.MatchFinder;
+import comparator.OrigComparator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import javafx.collections.ObservableList;
 
 /*
 COMMIT TO DO:
@@ -62,7 +66,7 @@ MATCH SCORE
         - identify / implement where compare files need to be regenerated:
             - change min length
             - commit / split / merge
-        - if space is for some reason an issue, make Comparator method that doesn't store Cfs, but just find max TU match score
+        - if space is for some reason an issue, make OrigComparator method that doesn't store Cfs, but just find max TU match score
 GLOSSARY:
     - make top with searchbar
     - listview, each cell has:
@@ -114,7 +118,7 @@ public class MainLogic {
 
     static final boolean DATABASE_IS_READABLE = true;
     static final boolean DATABASE_IS_WRITABLE = true;
-    static final boolean ALWAYS_REBOOT_DATABASE = true;
+    static final boolean REBOOT_DATABASE = false;
 
     /**
      * The file currently being translated.
@@ -126,7 +130,7 @@ public class MainLogic {
      */
     FileList corpus;
 
-    private CompareFile currentCompareFile;
+    private final CompareFile compareFile;
 
     /**
      * The string that was used to set the current compare table.
@@ -137,9 +141,13 @@ public class MainLogic {
      * The minimum length for matching substrings shown in compare table viewer.
      */
     private int minMatchLength;
+    
+   private MatchFinder matchFinder;
+   
+   private TUEntryBasic segSelected;
 
     MainLogic() {
-        if (ALWAYS_REBOOT_DATABASE) {
+        if (REBOOT_DATABASE) {
             DatabaseOperations.rebootDB();
         }
         // Default minimum length for matches
@@ -158,11 +166,19 @@ public class MainLogic {
 
         // MAKES CORPUS, ADDS SOME FILES
         corpus = DatabaseOperations.getAllTUs();
+        
        // corpus.addFile(mainFile);
         System.out.println("Corpus size: " + corpus.getFiles().size());
         for (BasicFile bf : corpus.getFiles()) {
             System.out.println(bf.getFileName() + ", " + bf.getFileID());
         }
+        
+        segSelected =  mainFile.getTUsToDisplay().get(0);
+        matchFinder = new MatchFinder();
+        compareFile = autoFindMatch(segSelected);
+        
+        System.out.println("Compare FILE " + compareFile.getObservableList());
+        
         /*
         corpus = new FileList();
         corpus.addFile(mainFile);
@@ -211,11 +227,12 @@ public class MainLogic {
         currentCompareString = newCompareString;
     }
 
+    
     protected CompareFile getCompareFile(String newCompareString) {
-        setCurrentCompareString(newCompareString);
-        Comparator c = new Comparator(getCurrentCompareString(), getCorpus(), getMinMatchLength());
-        currentCompareFile = c.getCompareFile();
-        return currentCompareFile;
+        //setCurrentCompareString(newCompareString);
+        //OrigComparator c = new OrigComparator(getCurrentCompareString(), getCorpus(), getMinMatchLength());
+        //compareFile = c.getCompareFile();
+        return compareFile;
     }
 
     public static boolean databaseIsReadable() {
@@ -232,10 +249,10 @@ public class MainLogic {
             selectedTU.setCommitted(true);
 
             // Finds all matches with this newly committed TU
-            Comparator c = new Comparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
+            OrigComparator c = new OrigComparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
             // adds these matches to the current compareFile.
             for (TUCompareEntry tu : c.getCompareFile().getObservableList()) {
-                currentCompareFile.addEntry(tu);
+                compareFile.addEntry(tu);
             }
 
             // DATABASE
@@ -281,5 +298,61 @@ public class MainLogic {
         }
 
     }
+    
+    
+    /**********
+     * REDO OF COMPARE TABLE IMPL
+     */
+    
+    
 
+    /**
+     * When a new selection is made in main file viewer.
+     * @param segSelected 
+     */
+    public void newSelection(TUEntryBasic segSelected) {
+        this.segSelected = segSelected;
+        CompareFile newMatches = autoFindMatch(segSelected);
+        resetCFList(newMatches);
+    }
+    
+    /**
+     * 
+     * @param minMatchLength 
+     */
+    public void setMinLength(int minMatchLength) {
+        this.setMinMatchLength(minMatchLength);
+        resetCFList(autoFindMatch(segSelected));
+    }
+    
+    public void commitSeg(TUEntryBasic seg) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+    
+    private void resetCFList(CompareFile newMatches) {
+        List<TUCompareEntry> l = newMatches.getObservableList();
+        compareFile.getObservableList().clear();
+        compareFile.getObservableList().addAll(l);
+    }
+    
+   
+    
+    /**
+     * Finds matching segments according to default match fining algorithm
+     * @param seg
+     * @return CompareFile with matching segments
+     */
+    private CompareFile autoFindMatch(TUEntryBasic seg) {
+        return matchFinder.basicMatch(seg, minMatchLength, corpus);
+    }
+    
+    private CompareFile findExactMatch(String str) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+    
+    CompareFile getCompareFile() {
+         return compareFile;
+    }
+    
+    
 }

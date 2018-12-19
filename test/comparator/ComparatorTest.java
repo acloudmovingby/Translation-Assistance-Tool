@@ -40,14 +40,14 @@ public class ComparatorTest {
     }
 
     /**
-     * Test of findStringMatches method, of class Comparator.
+     * Test of findStringMatches method, of class OrigComparator.
      */
     @Test
     public void testFindMatches1() {
         System.out.println("findMatches1");
         String t1 = "xxabcdxx";
         String t2 = "yyyabcdyabcdy";
-        Comparator instance = new Comparator(t1, t2, 4);
+        OrigComparator instance = new OrigComparator(t1, t2, 4);
         Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
@@ -58,14 +58,14 @@ public class ComparatorTest {
     }
 
     /**
-     * Test of findStringMatches method, of class Comparator.
+     * Test of findStringMatches method, of class OrigComparator.
      */
     @Test
     public void testFindMatches2() {
         System.out.println("findMatches2");
         String t1 = "abcdxx";
         String t2 = "yyyabcdyabcdy";
-        Comparator instance = new Comparator(t1, t2, 4);
+        OrigComparator instance = new OrigComparator(t1, t2, 4);
         Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
@@ -76,14 +76,14 @@ public class ComparatorTest {
     }
     
     /**
-     * Test of findStringMatches method, of class Comparator.
+     * Test of findStringMatches method, of class OrigComparator.
      */
     @Test
     public void testFindMatches3() {
         System.out.println("findMatches3");
         String t1 = "abcdxx";
         String t2 = "yyyabcdyabcdy";
-        Comparator instance = new Comparator(t1, t2, 5);
+        OrigComparator instance = new OrigComparator(t1, t2, 5);
         Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();
@@ -92,14 +92,14 @@ public class ComparatorTest {
     }
     
     /**
-     * Test of findStringMatches method, of class Comparator.
+     * Test of findStringMatches method, of class OrigComparator.
      */
     @Test
     public void testFindMatches4() {
         System.out.println("findMatches4");
         String t1 = "abcabc";
         String t2 = "abcabcabcabc";
-        Comparator instance = new Comparator(t1, t2, 3);
+        OrigComparator instance = new OrigComparator(t1, t2, 3);
         Matches result = instance.findStringMatches(t1, t2);
         
         Matches expResult = new Matches();

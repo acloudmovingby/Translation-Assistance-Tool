@@ -16,11 +16,8 @@ import ParseThaiLaw.ThaiLawParser;
  */
 public class BuildCorpus {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (!MainLogic.databaseIsReadable()) {
+    public static void build() {
+         if (!MainLogic.databaseIsReadable()) {
             System.out.println("Database not active. Corpus not built.");
         } else {
             
@@ -62,6 +59,15 @@ public class BuildCorpus {
         BasicFile tmxParse3 = FileBuilder.parseTMX(tmxFilePath3);
         DatabaseOperations.addFile(tmxParse3);
         }
+    }
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        DeleteTable.deleteAllTables();
+        CreateTable.createTables();
+       build();
     }
     
 }
