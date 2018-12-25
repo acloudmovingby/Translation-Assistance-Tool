@@ -40,7 +40,7 @@ public class FileBuilder {
         BasicFile bf = new BasicFile();
         
         for (int i = 0; i < th.length; i++) {
-            TUEntryBasic e = bf.newTU();
+            Segment e = bf.newSeg();
             e.setThai(th[i]);
             if (i < en.length) {
                 e.setEnglish(en[i]);
@@ -113,7 +113,7 @@ public class FileBuilder {
         
         // iterates down each list, adding them together as TUs
         while (iterThai.hasNext() && iterEnglish.hasNext()) {
-            TUEntryBasic e = bf.newTU();
+            Segment e = bf.newSeg();
             e.setThai(iterThai.next());
             e.setEnglish(iterEnglish.next());
         }
@@ -155,7 +155,7 @@ public class FileBuilder {
         
         for (String s : thaiBundle.keySet()) {
             if (engBundle.containsKey(s)) {
-                TUEntryBasic tu = bf.newTU();
+                Segment tu = bf.newSeg();
                 tu.setThai(thaiBundle.getString(s));
                 tu.setEnglish(engBundle.getString(s));
                 tu.setCommitted(true);

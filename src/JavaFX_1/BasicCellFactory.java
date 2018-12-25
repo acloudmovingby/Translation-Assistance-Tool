@@ -5,8 +5,8 @@
  */
 package JavaFX_1;
 
-import Files.TUCompareEntry;
-import Files.TUEntryBasic;
+import Files.MatchSegment;
+import Files.Segment;
 import java.text.Format;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
@@ -21,7 +21,7 @@ import javafx.util.Callback;
  * @author Chris
  */
 public class BasicCellFactory     
-        implements Callback<TableColumn<TUCompareEntry, String>, TableCell<TUCompareEntry, String>> {
+        implements Callback<TableColumn<MatchSegment, String>, TableCell<MatchSegment, String>> {
     
     private TextAlignment alignment;
     private Format format;
@@ -57,8 +57,8 @@ public class BasicCellFactory
     
     @Override
     @SuppressWarnings("unchecked")
-    public TableCell<TUCompareEntry, String> call(TableColumn<TUCompareEntry, String> p) {
-        TableCell<TUCompareEntry, String> cell = new TableCell<TUCompareEntry, String>() {
+    public TableCell<MatchSegment, String> call(TableColumn<MatchSegment, String> p) {
+        TableCell<MatchSegment, String> cell = new TableCell<MatchSegment, String>() {
             private Text text;
             @Override
             public void updateItem(String item, boolean empty) {

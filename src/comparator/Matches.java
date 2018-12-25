@@ -62,26 +62,6 @@ public class Matches implements Iterable {
 
     }
 
-    /**
-     * Adds the given string as a match. If that string and textIndex already
-     * exist as a MatchEntry, t adds the corpusIndices to the already existing
-     * list of corpus indices for that MatchEntry
-     *
-     * @param s
-     * @param textIndex
-     * @param corpusIndices
-     */ /*
-    public void addMatch(String s, int textIndex, ArrayList<Integer> corpusIndices) {
-
-        MatchEntry2 match = new MatchEntry2(s, textIndex);
-        ArrayList<Integer> indices = matchHashT.get(match);
-        if (indices == null) {
-            indices = new ArrayList();
-        }
-        indices.addAll(corpusIndices);
-
-        matchHashT.put(match, indices);
-    } */
 
     public boolean contains(String s, int textIndex, int corpusIndex) {
 

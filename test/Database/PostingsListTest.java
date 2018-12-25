@@ -6,7 +6,7 @@
 package Database;
 
 import Files.BasicFile;
-import Files.TUEntryBasic;
+import Files.Segment;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -55,14 +55,14 @@ public class PostingsListTest {
         
          // create TU
         BasicFile bf1 = new BasicFile();
-        TUEntryBasic tu1 = bf1.newTU();
+        Segment tu1 = bf1.newSeg();
         tu1.setThai("Abcabcdddd");
         pl1.addTU(tu1);
         
         // set up expResult and result lists
-        List<Integer> expResult = new ArrayList();
-        expResult.add(tu1.getID());
-        List<Integer> result;
+        List<Segment> expResult = new ArrayList();
+        expResult.add(tu1);
+        List<Segment> result;
         
         // all these ngrams should now be stored in PostingsList
         result = pl1.getMatchingID("abc");
@@ -118,33 +118,34 @@ public class PostingsListTest {
         
         // test 1 TU
         BasicFile bf1 = new BasicFile();
-        TUEntryBasic tu1 = bf1.newTU();
+        Segment tu1 = bf1.newSeg();
         tu1.setThai("Abcabcdddd");
         pl1.addTU(tu1);
-        assertEquals(Integer.valueOf(tu1.getID()), pl1.getMatchingID("abc").get(0));
+        assertEquals(tu1, pl1.getMatchingID("abc").get(0));
         
         // test reparsing TU (shouldn't change results)
         pl1.addTU(tu1);
         assertEquals(1, pl1.getMatchingID("abc").size());
         
         // test adding 2nd TU
-        TUEntryBasic tu2 = bf1.newTU();
+        Segment tu2 = bf1.newSeg();
         tu2.setThai("Abcabcdeee");
         pl1.addTU(tu2);
-        List<Integer> expResult = new ArrayList();
-        expResult.add(tu1.getID(), tu2.getID());
-        List<Integer> result = pl1.getMatchingID("abc");
+        List<Segment> expResult = new ArrayList();
+        expResult.add(tu1);
+        expResult.add(tu2);
+        List<Segment> result = pl1.getMatchingID("abc");
         assertEquals(expResult, result);
         
         // test uniqueness of 2nd TU
         expResult = new ArrayList();
-        expResult.add(tu2.getID());
+        expResult.add(tu2);
         result = pl1.getMatchingID("eee");
         assertEquals(expResult, result);
         
         // test uniquness of 1st TU
         expResult = new ArrayList();
-        expResult.add(tu1.getID());
+        expResult.add(tu1);
         result = pl1.getMatchingID("ddd");
         assertEquals(expResult, result);
     }

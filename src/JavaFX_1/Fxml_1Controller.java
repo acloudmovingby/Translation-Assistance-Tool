@@ -1,9 +1,9 @@
 package JavaFX_1;
 
 import Files.BasicFile;
-import Files.CompareFile;
-import Files.TUCompareEntry;
-import Files.TUEntryBasic;
+import Files.MatchFile;
+import Files.MatchSegment;
+import Files.Segment;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,37 +45,37 @@ public class Fxml_1Controller implements Initializable {
     Label title;
 
     @FXML
-    TableView<TUEntryBasic> tableView;
+    TableView<Segment> tableView;
 
     @FXML
-    TableColumn<TUEntryBasic, Integer> idCol;
+    TableColumn<Segment, Integer> idCol;
 
     @FXML
-    TableColumn<TUEntryBasic, String> thaiCol;
+    TableColumn<Segment, String> thaiCol;
 
     @FXML
-    TableColumn<TUEntryBasic, String> englishCol;
+    TableColumn<Segment, String> englishCol;
 
     @FXML
-    TableColumn<TUEntryBasic, Boolean> status;
+    TableColumn<Segment, Boolean> status;
 
     @FXML
-    TableColumn<TUEntryBasic, String> matchScore;
+    TableColumn<Segment, String> matchScore;
 
     @FXML
-    TableColumn<TUCompareEntry, String> thaiColComp;
+    TableColumn<MatchSegment, String> thaiColComp;
 
     @FXML
-    TableColumn<TUCompareEntry, String> englishColComp;
+    TableColumn<MatchSegment, String> englishColComp;
 
     @FXML
-    TableColumn<TUCompareEntry, String> fileColComp;
+    TableColumn<MatchSegment, String> fileColComp;
 
     @FXML
-    TableColumn<TUCompareEntry, String> scoreColComp;
+    TableColumn<MatchSegment, String> scoreColComp;
 
     @FXML
-    TableView<TUCompareEntry> compareTable;
+    TableView<MatchSegment> compareTable;
 
     @FXML
     TextField minMatchLengthField;
@@ -83,8 +83,6 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     Label numMatches;
 
-    Font defaultThaiFont;
-    Font defaultEnglishFont;
     String committedStatusColor;
     String unCommittedStatusColor;
     /**
@@ -92,7 +90,7 @@ public class Fxml_1Controller implements Initializable {
      * main.
      */
     MainLogic main;
-    CompareFile cf;
+    MatchFile cf;
 
     /**
      * Initializes the controller class.
@@ -104,8 +102,6 @@ public class Fxml_1Controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         main = new MainLogic();
-        defaultThaiFont = Font.font("Arial");
-        defaultEnglishFont = Font.font("Arial");
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
 
@@ -115,9 +111,9 @@ public class Fxml_1Controller implements Initializable {
 
         // MAIN FILE VIEWER COLUMNS
         // id column:
-        idCol.setCellValueFactory(new Callback<CellDataFeatures<TUEntryBasic, Integer>, ObservableValue<Integer>>() {
+        idCol.setCellValueFactory(new Callback<CellDataFeatures<Segment, Integer>, ObservableValue<Integer>>() {
             @Override
-            public ObservableValue<Integer> call(CellDataFeatures<TUEntryBasic, Integer> p) {
+            public ObservableValue<Integer> call(CellDataFeatures<Segment, Integer> p) {
                 return new ReadOnlyObjectWrapper(tableView.getItems().indexOf(p.getValue()));
             }
         });
@@ -128,9 +124,9 @@ public class Fxml_1Controller implements Initializable {
         thaiCol.setMinWidth(80);
         thaiCol.setEditable(true);
         thaiCol.setCellFactory(tc -> {
-            TableCell<TUEntryBasic, String> cell = new TableCell<>();
+            TableCell<Segment, String> cell = new TableCell<>();
             Text text = new Text();
-            text.setFont(defaultThaiFont);
+            text.setFont(MainLogic.getThaiFont());
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
             text.wrappingWidthProperty().bind(thaiCol.widthProperty());
@@ -141,7 +137,7 @@ public class Fxml_1Controller implements Initializable {
         
         // English column:
         EditableEnglishCellFactory cf2 = new EditableEnglishCellFactory();
-        cf2.setFont(defaultEnglishFont);
+        cf2.setFont(MainLogic.getEnglishFont());
         englishCol.setCellFactory(cf2); 
         /*
         englishCol.setCellFactory(new Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>>() {
@@ -179,7 +175,7 @@ public class Fxml_1Controller implements Initializable {
          */
         englishCol.setOnEditCommit(e -> {
             int row = e.getTablePosition().getRow();
-            TUEntryBasic editedTU = tableView.getItems().get(row);
+            Segment editedTU = tableView.getItems().get(row);
             editedTU.setEnglish(e.getNewValue());
             editedTU.setCommitted(true);
             tableView.getItems().set(row, editedTU);
@@ -193,7 +189,7 @@ public class Fxml_1Controller implements Initializable {
         status.setCellValueFactory(cellData -> cellData.getValue().isCommittedProperty());
         //if the value of isCommitted() changes, the background color of the cell changes
         status.setCellFactory(tc -> {
-            TableCell<TUEntryBasic, Boolean> cell = new TableCell<TUEntryBasic, Boolean>() {
+            TableCell<Segment, Boolean> cell = new TableCell<Segment, Boolean>() {
                 @Override
                 protected void updateItem(Boolean item, boolean empty) {
                     super.updateItem(item, empty);
@@ -236,7 +232,7 @@ public class Fxml_1Controller implements Initializable {
         thaiColComp.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiColComp.setMinWidth(120);
         thaiColComp.setCellFactory(tc -> {
-            TableCell<TUCompareEntry, String> cell = new TableCell<TUCompareEntry, String>() {
+            TableCell<MatchSegment, String> cell = new TableCell<MatchSegment, String>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -249,10 +245,10 @@ public class Fxml_1Controller implements Initializable {
                     } else {
                         setText(null);
                         setStyle("");
-                        TUCompareEntry thisCellTU = tc.getTableView().getItems().get(this.getIndex());
-                        boolean[] matches = thisCellTU.getMatches();
+                        MatchSegment thisCellSegment = tc.getTableView().getItems().get(this.getIndex());
+                        boolean[] matches = thisCellSegment.getMatches();
                         // all true will be one color, all false will be another color
-                        final TextFlow textFlow = matchesAsTextFlow(thisCellTU.getThai(), matches);
+                        final TextFlow textFlow = matchesAsTextFlow(thisCellSegment.getThai(), matches);
                         this.setGraphic(textFlow);
                         setPrefHeight(textFlow.prefHeight(thaiColComp.getWidth()) + 4);
 
@@ -273,7 +269,7 @@ public class Fxml_1Controller implements Initializable {
         // English column
         englishColComp.setCellValueFactory(new PropertyValueFactory<>("english"));
         BasicCellFactory cf1 = new BasicCellFactory();
-        cf1.setFont(defaultEnglishFont);
+        cf1.setFont(MainLogic.getEnglishFont());
         englishColComp.setCellFactory(cf1);
         /*englishColComp.setCellFactory(tc -> {
             TableCell<TUCompareEntry, String> cell = new TableCell<TUCompareEntry, String>() {
@@ -310,7 +306,7 @@ public class Fxml_1Controller implements Initializable {
 */
         //compareTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //File column
-        Callback<TableColumn<TUCompareEntry, String>, TableCell<TUCompareEntry, String>> myCallBack;
+        Callback<TableColumn<MatchSegment, String>, TableCell<MatchSegment, String>> myCallBack;
         /*
         myCallBack = new Callback<TableColumn<TUCompareEntry, String>, TableCell<TUCompareEntry, String>>() {
             @Override
@@ -376,7 +372,7 @@ public class Fxml_1Controller implements Initializable {
         //setCompareTable(main.getMainFile().getTUsToDisplay().get(0).toString());
 
         /*
-            Makes it so when a row is selected in the main table, this renders compareTable with a new CompareFile made from the Thai String from the main table.
+            Makes it so when a row is selected in the main table, this renders compareTable with a new MatchFile made from the Thai String from the main table.
          */
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -395,7 +391,9 @@ public class Fxml_1Controller implements Initializable {
         cf = main.getCompareFile();
         compareTable.setItems(cf.getObservableList());
         // binds the number of matches to length of matchList
-        //matchList.addListener((ListChangeListener) (c -> setNumMatches(c.getList().size())));
+        cf.getObservableList().addListener((ListChangeListener) c -> {
+            setNumMatches(c.getList().size()); 
+        });
         
         
 
@@ -416,7 +414,7 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     private void merge(ActionEvent event) {
-        ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
             main.getMainFile().mergeTUs(selectedItems);
         }
@@ -424,10 +422,10 @@ public class Fxml_1Controller implements Initializable {
     
     @FXML
     private void commit(ActionEvent event) {
-        ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         //TUEntryBasic selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (selectedItems != null) {
-            for (TUEntryBasic tu : selectedItems) {
+            for (Segment tu : selectedItems) {
                 tu.setCommitted(true);
             }
         }
@@ -435,8 +433,8 @@ public class Fxml_1Controller implements Initializable {
     
     @FXML
     private void split(ActionEvent event) {
-        ObservableList<TUEntryBasic> selectedItems = tableView.getSelectionModel().getSelectedItems();
-        TUEntryBasic tu = selectedItems.get(0);
+        ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        Segment tu = selectedItems.get(0);
         if (selectedItems != null || selectedItems.isEmpty()) {
             main.getMainFile().splitTU(tu, 10);
         }
@@ -445,12 +443,6 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     private void export(ActionEvent event) {
         main.exportCommittedTUs();
-    }
-    
-    private void setCompareTable(String text) {
-        CompareFile cf = main.getCompareFile(text);
-        setNumMatches(cf.getTUs().size());
-        compareTable.setItems(cf.getObservableList());
     }
 
     private void setNumMatches(int num) {
@@ -504,7 +496,7 @@ public class Fxml_1Controller implements Initializable {
         while (iter.hasNext()) {
             Text text = new Text(iter.next());
             text.setFill(currentColor);
-            text.setFont(defaultThaiFont);
+            text.setFont(MainLogic.getThaiFont());
             textFlow.getChildren().add(text);
             // switches current color
             currentColor = currentColor == matchColor ? nonMatchColor : matchColor;

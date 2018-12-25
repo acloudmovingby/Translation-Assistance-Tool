@@ -5,9 +5,12 @@
  */
 package comparator;
 
-import Files.CompareFile;
+import Files.BasicFile;
+import Files.MatchFile;
 import Files.FileList;
-import Files.TUEntryBasic;
+import Files.MatchSegment;
+import Files.Segment;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,22 +45,49 @@ public class MatchFinderTest {
 
     /**
      * Test of basicMatch method, of class MatchFinder.
-     */
+     *
     @Test
     public void testBasicMatch() {
         System.out.println("basicMatch");
+        FileList fl = new FileList();
+        BasicFile bf1 = new BasicFile();
+        Segment newSeg = bf1.newSeg();
+        newSeg.setThai("test");
+        newSeg.setCommitted(true);
+        fl.addFile(bf1);
+        
+        BasicFile bf2 = new BasicFile();
+        Segment testSeg = bf2.newSeg();
+        testSeg.setThai("test");
+        
+        // test that seg1 is returned
+        MatchFile mFile = MatchFinder.basicMatch(testSeg, 3, fl);
+        MatchSegment me = (mFile.getObservableList()).get(0);
+        
+        assertEquals("test", me.getThai());
+      
+        // test that both seg1 and seg2 are returned
+        Segment seg2 = bf1.newSeg();
+        seg2.setThai("aaestcc");
+        seg2.setCommitted(true);
+        mFile = MatchFinder.basicMatch(testSeg, 3, fl);
+        assertEquals(2, mFile.getObservableList().size());
+        assertEquals("test", mFile.getObservableList().get(0).getThai());
+        assertEquals("aaestcc", mFile.getObservableList().get(1).getThai());
+        
+        // test that seg3 isn't returned
+        Segment seg3 = bf1.newSeg();
+        seg3.setThai("tepstflip");
+        seg3.setCommitted(true);
+        mFile = MatchFinder.basicMatch(testSeg, 3, fl);
+        assertEquals(2, mFile.getObservableList().size());
+        assertEquals("test", mFile.getObservableList().get(0).getThai());
+        assertEquals("aaestcc", mFile.getObservableList().get(1).getThai());
         
         
-        TUEntryBasic seg = null;
-        int minMatchLength = 0;
-        FileList corpus = null;
-        MatchFinder instance = new MatchFinder();
-        CompareFile expResult = null;
-        CompareFile result = instance.basicMatch(seg, minMatchLength, corpus);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
+    */
 
     /**
      * Test of exactMatch method, of class MatchFinder.
@@ -67,8 +97,8 @@ public class MatchFinderTest {
         System.out.println("exactMatch");
         String text = "";
         MatchFinder instance = new MatchFinder();
-        CompareFile expResult = null;
-        CompareFile result = instance.exactMatch(text);
+        MatchFile expResult = null;
+        MatchFile result = instance.exactMatch(text);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -80,10 +110,10 @@ public class MatchFinderTest {
     @Test
     public void testComplexMatch() {
         System.out.println("complexMatch");
-        TUEntryBasic seg = null;
+        Segment seg = null;
         MatchFinder instance = new MatchFinder();
-        CompareFile expResult = null;
-        CompareFile result = instance.complexMatch(seg);
+        MatchFile expResult = null;
+        MatchFile result = instance.complexMatch(seg);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

@@ -5,8 +5,8 @@
  */
 package JavaFX_1;
 
-import Files.TUCompareEntry;
-import Files.TUEntryBasic;
+import Files.MatchSegment;
+import Files.Segment;
 import java.text.Format;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
@@ -23,7 +23,7 @@ import javafx.util.StringConverter;
  * @author Chris
  */
 public class EditableEnglishCellFactory
-        implements Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>> {
+        implements Callback<TableColumn<Segment, String>, TableCell<Segment, String>> {
     
     private TextAlignment alignment;
     private Format format;
@@ -59,8 +59,8 @@ public class EditableEnglishCellFactory
     
     @Override
     @SuppressWarnings("unchecked")
-    public TableCell<TUEntryBasic, String> call(TableColumn<TUEntryBasic, String> p) {
-        TextFieldTableCell<TUEntryBasic, String> cell = new TextFieldTableCell<TUEntryBasic, String>(new StringConverter() {
+    public TableCell<Segment, String> call(TableColumn<Segment, String> p) {
+        TextFieldTableCell<Segment, String> cell = new TextFieldTableCell<Segment, String>(new StringConverter() {
 
             // String converter...don't know what it does but is needed for TextFieldTableCell
             @Override

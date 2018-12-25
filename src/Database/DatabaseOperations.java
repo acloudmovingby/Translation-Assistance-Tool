@@ -7,7 +7,7 @@ package Database;
 
 import Files.BasicFile;
 import Files.FileList;
-import Files.TUEntryBasic;
+import Files.Segment;
 import JavaFX_1.MainLogic;
 import java.sql.Array;
 import java.sql.Connection;
@@ -39,7 +39,7 @@ public class DatabaseOperations {
      * @param tu
      * @return
      */
-    public static boolean addOrUpdateTU(TUEntryBasic tu) {
+    public static boolean addOrUpdateTU(Segment tu) {
         if (!MainLogic.databaseIsWritable()) {
             return false;
         } else {
@@ -105,7 +105,7 @@ public class DatabaseOperations {
             addOrUpdateFileName(bf.getFileID(), bf.getFileName());
 
             // adds all TUs in file to database
-            for (TUEntryBasic tu : bf.getTUsToDisplay()) {
+            for (Segment tu : bf.getTUsToDisplay()) {
                 ret = DatabaseOperations.addOrUpdateTU(tu);
             }
             return ret;
@@ -268,13 +268,13 @@ public class DatabaseOperations {
     }
 
     /**
-     * Returns the TUEntryBasic object to which the specified key is mapped, or
-     * null if the database contains no mapping for the key.
+     * Returns the Segment object to which the specified key is mapped, or
+ null if the database contains no mapping for the key.
      *
      * @param id
-     * @return The TUEntryBasic object associated with that id
+     * @return The Segment object associated with that id
      */
-    public static TUEntryBasic getTU(double id) {
+    public static Segment getTU(double id) {
 
         // If database isn't active, this returns default of null;
         if (!MainLogic.databaseIsReadable()) {
@@ -290,7 +290,7 @@ public class DatabaseOperations {
 
                 // loop through the result set
                 while (rs.next()) {
-                    TUEntryBasic ret = new TUEntryBasic(rs.getInt("id"), rs.getInt("fileID"));
+                    Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"));
                     return rebuildTU(rs, ret);
                 }
                 return null;
@@ -346,7 +346,7 @@ public class DatabaseOperations {
                 // loop through the result set
                 while (rs.next()) {
 
-                    TUEntryBasic tu = new TUEntryBasic(file.getFileID());
+                    Segment tu = new Segment(file.getFileID());
                     tu = rebuildTU(rs, tu);
                     if (tu.isRemoved()) {
                        file.getRemovedTUs().add(tu);
@@ -372,7 +372,7 @@ public class DatabaseOperations {
                     
                     
                     /*
-                    TUEntryBasic tu = new TUEntryBasic(rs.getInt("id"), rs.getInt("fileID"));
+                    Segment tu = new Segment(rs.getInt("id"), rs.getInt("fileID"));
                     tu.setThai(rs.getString("thai"));
                     tu.setEnglish(rs.getString("english"));
                     int committedStatus = rs.getInt("committed");
@@ -395,11 +395,11 @@ public class DatabaseOperations {
      * Sets all fields on the TU except the id and fileID.
      *
      * @param rs The result set returned from the database.
-     * @param tu The TUEntryBasic to be rebuilt in memory.
+     * @param tu The Segment to be rebuilt in memory.
      * @return
      * @throws SQLException
      */
-    private static TUEntryBasic rebuildTU(ResultSet rs, TUEntryBasic tu) throws SQLException {
+    private static Segment rebuildTU(ResultSet rs, Segment tu) throws SQLException {
 
         tu.setID(rs.getInt("id"));
         tu.setThai(rs.getString("thai"));

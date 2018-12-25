@@ -6,110 +6,21 @@
 package JavaFX_1;
 
 import Database.DatabaseOperations;
-import Database.PostingsList;
 import Files.BasicFile;
-import Files.CompareFile;
+import Files.MatchFile;
 import Files.FileBuilder;
 import Files.FileList;
-import Files.TUCompareEntry;
-import Files.TUEntryBasic;
-import ParseThaiLaw.ThaiLawParser;
+import Files.MatchSegment;
+import Files.Segment;
 import comparator.MatchFinder;
-import comparator.OrigComparator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import javafx.collections.ObservableList;
+import javafx.scene.text.Font;
 
-/*
-COMMIT TO DO:
-    ------change status color on commit
-    ------make so TUs don't match themselves
-    - change selection on commit
-    - add key press to commit
-    - RIGHT NOW: 
-        - remove numbering
-        - make so "editOnCommit" (i.e. "return") is the commit button
-        - make so status color changes on commit
-        - check to make sure CF files are working properly
 
-OPTIONAL LATER:
-    - make so TUs have post-commit editing status 
-    - make it so if that status is true, it changes status color
-    - make it so that if you start typing in a cell after committed, it changes the post-commit status
-
------HIGHLIGHT MATCHES
-    ------make comparetable thai column take TextFlow objects
-
-SPLIT:
-    - Make two new TUs: 
-        - Thai split
-        - whatever English was written is now in first one
-        - both uncommitted
-    - add new TUs
-    - remove original TU from list (this means the commit will be gone)
-
-MERGE: 
-    - Make new TU Thai/English combined 
-    - If old TU had been committed, make it "hidden", i.e. can't be displayed:
-        - could make so observable list
-    - remove original TUs
-    - merge new TUs
-
-MATCH SCORE
-    - (easy) make so that all compare files are run at program opening, then value stored in match score
-    - (hard / bad) 
-        - store all compare files at beginning, 
-        - for redraw table, replace list elemetns in comparefile (so not mess up observable)
-        - identify / implement where compare files need to be regenerated:
-            - change min length
-            - commit / split / merge
-        - if space is for some reason an issue, make OrigComparator method that doesn't store Cfs, but just find max TU match score
-GLOSSARY:
-    - make top with searchbar
-    - listview, each cell has:
-           - glossary term
-           - english definition, indented over
-    - upon selection of TU:
-        - glossary module is called
-        - glossary module searches if any term exists in Thai, if so, it is returned to Main Logic
-        - Main Logic updates listview
-    - words are highlighted in 
-
-DATABASE
-    - Initial implementation: 
-        - one table with each row representing a TU with the following fields:
-            - id (primary key)
-            - file id
-            - file name
-            - Thai
-            - English
-            - commit status
-        - ways to access TU and what is wanted/used:
-            - parse new file
-                - every field
-            - comparator
-                - commit status and thai (most of all)
-                - then, if there is a match, then the english, filename, etc.
-            - commit
-                - commit status
-            - merge / split
-                - every aspect of those specific TUs
-        - build database by taking files in corpus and entering them.
-        - TEMPORARY: every time you start the program, take all files out of memory and store them as file objects again (i.e. recreate your entire corpus in memory)
-        - steps:
-            - make database
-            - make method that enters TUs for 1 file giving unique, ordered id number
-        - need to make new table for file id's / file #s in case files exist with no TUs in them.
-            - when createFileID() is called, it needs to add the new id to that table
-        - need to fix the "sqlite_busy" bug. 
-            basically, my tests have to be atomic transactions
-            If I write do it with the same connection, does it throw an error?
-                - try "addTUAtEnd" and "getTU" but you pass a connection
-                - run one after another adn see if the SQLite error is thrown 
- */
 /**
  *
  * @author Chris
@@ -119,6 +30,9 @@ public class MainLogic {
     static final boolean DATABASE_IS_READABLE = true;
     static final boolean DATABASE_IS_WRITABLE = true;
     static final boolean REBOOT_DATABASE = false;
+    private static final Font DEFAULT_THAI_FONT = Font.font("Arial");
+    private static final Font DEFAULT_ENGLISH_FONT = Font.font("Arial");
+
 
     /**
      * The file currently being translated.
@@ -130,28 +44,23 @@ public class MainLogic {
      */
     FileList corpus;
 
-    private final CompareFile compareFile;
-
-    /**
-     * The string that was used to set the current compare table.
-     */
-    private String currentCompareString;
+    private final MatchFile compareFile;
 
     /**
      * The minimum length for matching substrings shown in compare table viewer.
      */
     private int minMatchLength;
-    
-   private MatchFinder matchFinder;
    
-   private TUEntryBasic segSelected;
+   private Segment segSelected;
+   
+   
 
     MainLogic() {
         if (REBOOT_DATABASE) {
             DatabaseOperations.rebootDB();
         }
         // Default minimum length for matches
-        minMatchLength = 5;
+        minMatchLength = 10;
 
         // makes main file
         
@@ -174,10 +83,8 @@ public class MainLogic {
         }
         
         segSelected =  mainFile.getTUsToDisplay().get(0);
-        matchFinder = new MatchFinder();
-        compareFile = autoFindMatch(segSelected);
+        compareFile = defaultMatchFind(segSelected);
         
-        System.out.println("Compare FILE " + compareFile.getObservableList());
         
         /*
         corpus = new FileList();
@@ -218,17 +125,8 @@ public class MainLogic {
     protected void setMinMatchLength(int k) {
         minMatchLength = k;
     }
-
-    protected String getCurrentCompareString() {
-        return currentCompareString;
-    }
-
-    private void setCurrentCompareString(String newCompareString) {
-        currentCompareString = newCompareString;
-    }
-
     
-    protected CompareFile getCompareFile(String newCompareString) {
+    protected MatchFile getCompareFile(String newCompareString) {
         //setCurrentCompareString(newCompareString);
         //OrigComparator c = new OrigComparator(getCurrentCompareString(), getCorpus(), getMinMatchLength());
         //compareFile = c.getCompareFile();
@@ -243,24 +141,25 @@ public class MainLogic {
         return DATABASE_IS_WRITABLE;
     }
 
-    private void commit(TUEntryBasic selectedTU) {
+    // NOT WORKING AS ORIGINALLY DID (DOESN'T RESET MATCH LIST)
+    private void commit(Segment selectedTU) {
         // Changes the committed status of this TU
         if (selectedTU != null) {
             selectedTU.setCommitted(true);
 
             // Finds all matches with this newly committed TU
-            OrigComparator c = new OrigComparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
-            // adds these matches to the current compareFile.
-            for (TUCompareEntry tu : c.getCompareFile().getObservableList()) {
+            //OrigComparator c = new OrigComparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
+            /* adds these matches to the current compareFile.
+            for (MatchSegment tu : c.getCompareFile().getObservableList()) {
                 compareFile.addEntry(tu);
             }
-
+*/
             // DATABASE
         }
 
     }
 
-    void englishEdited(TUEntryBasic selectedTU, String newText) {
+    void englishEdited(Segment selectedTU, String newText) {
         selectedTU.setEnglish(newText);
         commit(selectedTU);
     }
@@ -279,7 +178,7 @@ public class MainLogic {
                             new BufferedWriter(
                                     new FileWriter(FILENAME)));
             
-            for (TUEntryBasic tu : getMainFile().getTUsToDisplay()) {
+            for (Segment tu : getMainFile().getTUsToDisplay()) {
                 if (tu.isCommitted()) {
                     out.println(tu.getEnglish());
                 }
@@ -310,10 +209,10 @@ public class MainLogic {
      * When a new selection is made in main file viewer.
      * @param segSelected 
      */
-    public void newSelection(TUEntryBasic segSelected) {
+    public void newSelection(Segment segSelected) {
         this.segSelected = segSelected;
-        CompareFile newMatches = autoFindMatch(segSelected);
-        resetCFList(newMatches);
+        MatchFile newMatches = defaultMatchFind(segSelected);
+        resetMatchList(newMatches);
     }
     
     /**
@@ -322,15 +221,15 @@ public class MainLogic {
      */
     public void setMinLength(int minMatchLength) {
         this.setMinMatchLength(minMatchLength);
-        resetCFList(autoFindMatch(segSelected));
+        resetMatchList(defaultMatchFind(segSelected));
     }
     
-    public void commitSeg(TUEntryBasic seg) {
+    public void commitSeg(Segment seg) {
         throw new UnsupportedOperationException("Not supported yet."); 
     }
     
-    private void resetCFList(CompareFile newMatches) {
-        List<TUCompareEntry> l = newMatches.getObservableList();
+    private void resetMatchList(MatchFile newMatches) {
+        List<MatchSegment> l = newMatches.getObservableList();
         compareFile.getObservableList().clear();
         compareFile.getObservableList().addAll(l);
     }
@@ -340,19 +239,27 @@ public class MainLogic {
     /**
      * Finds matching segments according to default match fining algorithm
      * @param seg
-     * @return CompareFile with matching segments
+     * @return MatchFile with matching segments
      */
-    private CompareFile autoFindMatch(TUEntryBasic seg) {
-        return matchFinder.basicMatch(seg, minMatchLength, corpus);
+    private MatchFile defaultMatchFind(Segment seg) {
+        return MatchFinder.basicMatch2(seg, minMatchLength, corpus);
     }
     
-    private CompareFile findExactMatch(String str) {
+    private MatchFile findExactMatch(String str) {
         throw new UnsupportedOperationException("Not supported yet."); 
     }
     
-    CompareFile getCompareFile() {
+    MatchFile getCompareFile() {
          return compareFile;
     }
     
     
+    public static Font getThaiFont() {
+        return DEFAULT_THAI_FONT;
+    }
+    
+    public static Font getEnglishFont() {
+        
+        return DEFAULT_ENGLISH_FONT;
+    }
 }

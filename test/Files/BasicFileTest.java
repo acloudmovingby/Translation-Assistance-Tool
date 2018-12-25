@@ -54,33 +54,33 @@ public class BasicFileTest {
             BasicFile bf = new BasicFile();
 
             // makes two copies of 5 TUs
-            TUEntryBasic tu1 = bf.newTU();
+            Segment tu1 = bf.newSeg();
             tu1.setID(DatabaseOperations.makeTUID());
             tu1.setThai("th1");
             tu1.setEnglish("en1");
 
-            TUEntryBasic tu2 = bf.newTU();
+            Segment tu2 = bf.newSeg();
             tu2.setID(DatabaseOperations.makeTUID());
             tu2.setThai("th2");
             tu2.setEnglish("en2");
 
-            TUEntryBasic tu3 = bf.newTU();
+            Segment tu3 = bf.newSeg();
             tu3.setID(DatabaseOperations.makeTUID());
             tu3.setThai("th3");
             tu3.setEnglish("en3");
 
-            TUEntryBasic tu4 = bf.newTU();
+            Segment tu4 = bf.newSeg();
             tu4.setID(DatabaseOperations.makeTUID());
             tu4.setThai("th4");
             tu4.setEnglish("en4");
 
-            TUEntryBasic tu5 = bf.newTU();
+            Segment tu5 = bf.newSeg();
             tu5.setID(DatabaseOperations.makeTUID());
             tu5.setThai("th5");
             tu5.setEnglish("en5");
 
             DatabaseOperations.addFile(bf);
-            TUEntryBasic selectedTU;
+            Segment selectedTU;
             int splitIndex;
             
             switch (i) {
@@ -361,33 +361,33 @@ public class BasicFileTest {
             BasicFile bf = new BasicFile();
 
             // makes two copies of 5 TUs
-            TUEntryBasic tu1 = bf.newTU();
+            Segment tu1 = bf.newSeg();
             tu1.setID(DatabaseOperations.makeTUID());
             tu1.setThai("t1");
             tu1.setEnglish("e1");
 
-            TUEntryBasic tu2 = bf.newTU();
+            Segment tu2 = bf.newSeg();
             tu2.setID(DatabaseOperations.makeTUID());
             tu2.setThai("t2");
             tu2.setEnglish("e2");
 
-            TUEntryBasic tu3 = bf.newTU();
+            Segment tu3 = bf.newSeg();
             tu3.setID(DatabaseOperations.makeTUID());
             tu3.setThai("t3");
             tu3.setEnglish("e3");
 
-            TUEntryBasic tu4 = bf.newTU();
+            Segment tu4 = bf.newSeg();
             tu4.setID(DatabaseOperations.makeTUID());
             tu4.setThai("t4");
             tu4.setEnglish("e4");
 
-            TUEntryBasic tu5 = bf.newTU();
+            Segment tu5 = bf.newSeg();
             tu5.setID(DatabaseOperations.makeTUID());
             tu5.setThai("t5");
             tu5.setEnglish("e5");
 
             DatabaseOperations.addFile(bf);
-            ArrayList<TUEntryBasic> selectedTUs = new ArrayList();
+            ArrayList<Segment> selectedTUs = new ArrayList();
             switch (i) {
                 case 0: {
                     // if i=0 --> 'merge' first tu (no change)
@@ -440,8 +440,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
                     
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
@@ -479,8 +479,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(2).equals(tu3), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -519,8 +519,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(1).equals(tu3), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -558,8 +558,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(1).equals(tu3), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -598,8 +598,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
                     assertEquals(bf.getRemovedTUs().get(2).equals(tu3), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -636,8 +636,8 @@ public class BasicFileTest {
                     assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
                     assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -678,8 +678,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(3).equals(tu4), true);
                     assertEquals(bf.getRemovedTUs().get(4).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -715,8 +715,8 @@ public class BasicFileTest {
                     assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
                     assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -765,8 +765,8 @@ public class BasicFileTest {
                     assertEquals(bf.getRemovedTUs().get(3).equals(tu4), true);
                     assertEquals(bf.getRemovedTUs().get(5).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<TUEntryBasic> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<TUEntryBasic> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
+                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
@@ -806,32 +806,32 @@ public class BasicFileTest {
         BasicFile bf = new BasicFile();
 
         // makes two copies of 5 TUs
-        TUEntryBasic tu1 = bf.newTU();
+        Segment tu1 = bf.newSeg();
         tu1.setID(DatabaseOperations.makeTUID());
         tu1.setThai("t1");
         tu1.setEnglish("e1");
 
-        TUEntryBasic tu2 = bf.newTU();
+        Segment tu2 = bf.newSeg();
         tu2.setID(DatabaseOperations.makeTUID());
         tu2.setThai("t2");
         tu2.setEnglish("e2");
 
-        TUEntryBasic tu3 = bf.newTU();
+        Segment tu3 = bf.newSeg();
         tu3.setID(DatabaseOperations.makeTUID());
         tu3.setThai("t3");
         tu3.setEnglish("e3");
 
-        TUEntryBasic tu4 = bf.newTU();
+        Segment tu4 = bf.newSeg();
         tu4.setID(DatabaseOperations.makeTUID());
         tu4.setThai("t4");
         tu4.setEnglish("e4");
 
-        TUEntryBasic tu5 = bf.newTU();
+        Segment tu5 = bf.newSeg();
         tu5.setID(DatabaseOperations.makeTUID());
         tu5.setThai("t5");
         tu5.setEnglish("e5");
 
-        ArrayList<TUEntryBasic> selectedTUs = new ArrayList();
+        ArrayList<Segment> selectedTUs = new ArrayList();
     }
 
 }

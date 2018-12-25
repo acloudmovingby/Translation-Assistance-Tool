@@ -6,7 +6,7 @@
 package Database;
 
 import Files.BasicFile;
-import Files.TUEntryBasic;
+import Files.Segment;
 import java.sql.Connection;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -112,7 +112,7 @@ public class DatabaseOperationsTest {
         
         // initialize tu entry
         BasicFile bf = new BasicFile();
-        TUEntryBasic expResult = bf.newTU();
+        Segment expResult = bf.newSeg();
         expResult.setCommitted(false);
         expResult.setEnglish("English");
         expResult.setThai("Thai");

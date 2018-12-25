@@ -9,27 +9,27 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- *
+ * Represents a single string that appears both in one segment (s1) and in a committed segment (s2) from the corpus.
+ * A match of the string "zz" where s1 = "aaazz" and s2 = "zzzzz" would store:
+ * "zz" as the string
+ * 3 as the index in s1
+ * 0, 1, 2, 3 as the indices in s2 (notice the overlap)
  * @author Chris
  */
 public class MatchEntry3 {
+    
+    // The string 
     String match;
+    // The index of where that string is in s1 (the segment we are running through MatchFinder)
     int index;
+    // the list of indices where the string appears in s2 (segment from the corpus). 
+    // As currently implemented, these indices may overlap. 
     ArrayList<Integer> indices;
     
     public MatchEntry3(String match, int index, ArrayList<Integer> indices) {
         this.match = match;
         this.index = index;
         this.indices = indices;
-    }
-    
-    public int[] getIntArray() {
-        int[] foo = new int[indices.size()];
-        for (int i=0; i<indices.size(); i++) {
-            foo[i] = (indices.get(i));
-            
-        }
-        return foo;
     }
     
     @Override

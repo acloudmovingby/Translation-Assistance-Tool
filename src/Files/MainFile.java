@@ -11,7 +11,7 @@ package Files;
  */
 public class MainFile extends BasicFile {
     
-    CompareFile[] compareFileCache;
+    MatchFile[] compareFileCache;
     
     MainFile() {
         

@@ -46,18 +46,18 @@ public class FileListTest {
     @Test
     public void testGetAllCommittedTUs() {
         BasicFile bf1 = new BasicFile();
-        TUEntryBasic tu11 = bf1.newTU();
+        Segment tu11 = bf1.newSeg();
         tu11.setThai("bf1.1.th");
         tu11.setCommitted(true);
-        TUEntryBasic tu12 = bf1.newTU();
+        Segment tu12 = bf1.newSeg();
         tu12.setThai("bf1.2.th");
         tu12.setCommitted(false);
         
         BasicFile bf2 = new BasicFile();
-        TUEntryBasic tu21 = bf2.newTU();
+        Segment tu21 = bf2.newSeg();
         tu21.setThai("bf2.1.th");
         tu21.setCommitted(false);
-        TUEntryBasic tu22 = bf2.newTU();
+        Segment tu22 = bf2.newSeg();
         tu22.setThai("bf2.2.th");
         tu22.setCommitted(true);
         
@@ -65,10 +65,10 @@ public class FileListTest {
         fl.addFile(bf1);
         fl.addFile(bf2);
         
-        ArrayList<TUEntryBasic> result = fl.getAllCommittedTUs();
+        ArrayList<Segment> result = fl.getAllCommittedTUs();
         System.out.println(result);
         assertEquals(2, result.size());
-        ArrayList<TUEntryBasic> expResult = new ArrayList();
+        ArrayList<Segment> expResult = new ArrayList();
         expResult.add(tu11);
         expResult.add(tu22);
         assertEquals(expResult, result);

@@ -19,10 +19,10 @@ import static org.junit.Assert.*;
  */
 public class TMCompareEntryTest {
     
-    TUCompareEntry e;
+    MatchSegment e;
     
     public TMCompareEntryTest() {
-        e = new TUCompareEntry();
+        e = new MatchSegment();
         e.setThai("การเมือง");
         e.setEnglish("politics");
         e.addMatchInterval(0, 2);
@@ -47,14 +47,14 @@ public class TMCompareEntryTest {
     }
 
     /**
-     * Test of getCopy method, of class TUCompareEntry.
+     * Test of getCopy method, of class MatchSegment.
      */
     @Test
     public void testGetCopy() {
         System.out.println("getCopy");
-        TUCompareEntry instance = new TUCompareEntry();
+        MatchSegment instance = new MatchSegment();
         
-        TUCompareEntry e2 = new TUCompareEntry();
+        MatchSegment e2 = new MatchSegment();
         e2.setThai("การเมือง");
         e2.setEnglish("politics");
         e2.addMatchInterval(0, 2);
@@ -63,7 +63,7 @@ public class TMCompareEntryTest {
     }
 
     /**
-     * Test of getMatchIntervalsArray method, of class TUCompareEntry.
+     * Test of getMatchIntervalsArray method, of class MatchSegment.
      */
     @Test
     public void testGetMatchIntervalsArray() {
@@ -79,7 +79,7 @@ public class TMCompareEntryTest {
     }
 
     /**
-     * Test of getMatchSize method, of class TUCompareEntry.
+     * Test of getMatchSize method, of class MatchSegment.
      */
     @Test
     public void testGetMatchSize() {
@@ -91,12 +91,12 @@ public class TMCompareEntryTest {
 
     
     /**
-     * Test of equals method, of class TUCompareEntry.
+     * Test of equals method, of class MatchSegment.
      */
     @Test
     public void testEquals() {
         
-        TUCompareEntry e2 = new TUCompareEntry();
+        MatchSegment e2 = new MatchSegment();
         e2.setThai("การเมือง");
         e2.setEnglish("politics");
         e2.addMatchInterval(0, 2);
@@ -104,7 +104,7 @@ public class TMCompareEntryTest {
         e2.setFileName("file1");
         
         // CHANGED INTERVALS
-        TUCompareEntry e3 = new TUCompareEntry();
+        MatchSegment e3 = new MatchSegment();
         e3.setThai("การเมือง");
         e3.setEnglish("politics");
         e3.addMatchInterval(0, 3);
@@ -112,7 +112,7 @@ public class TMCompareEntryTest {
         e3.setFileName("file1");
         
         // CHANGED INTERVALS
-        TUCompareEntry e4 = new TUCompareEntry();
+        MatchSegment e4 = new MatchSegment();
         e4.setThai("การเมือง");
         e4.setEnglish("politics");
         e4.addMatchInterval(0, 2);
@@ -120,7 +120,7 @@ public class TMCompareEntryTest {
         e4.setFileName("file1");
         
         //CHANGED THAI
-        TUCompareEntry e5 = new TUCompareEntry();
+        MatchSegment e5 = new MatchSegment();
         e5.setThai("CHANGED");
         e5.setEnglish("politics");
         e5.addMatchInterval(0, 2);
@@ -128,7 +128,7 @@ public class TMCompareEntryTest {
         e5.setFileName("file1");
         
         // CHANGED ENGLISH
-        TUCompareEntry e6 = new TUCompareEntry();
+        MatchSegment e6 = new MatchSegment();
         e6.setThai("การเมือง");
         e6.setEnglish("CHANGED");
         e6.addMatchInterval(0, 2);
@@ -136,7 +136,7 @@ public class TMCompareEntryTest {
         e6.setFileName("file1");
         
         // CHANGED FILENAME
-        TUCompareEntry e7 = new TUCompareEntry();
+        MatchSegment e7 = new MatchSegment();
         e7.setThai("การเมือง");
         e7.setEnglish("politics");
         e7.addMatchInterval(0, 2);
@@ -157,13 +157,13 @@ public class TMCompareEntryTest {
     }
 
     /**
-     * Test of hashCode method, of class TUCompareEntry.
+     * Test of hashCode method, of class MatchSegment.
      */
     @Test
     public void testHashCode() {
         
         // SAME AS e DEFINED ABOVE
-        TUCompareEntry e2 = new TUCompareEntry();
+        MatchSegment e2 = new MatchSegment();
         e2.setThai("การเมือง");
         e2.setEnglish("politics");
         e2.addMatchInterval(0, 2);
@@ -171,7 +171,7 @@ public class TMCompareEntryTest {
         e2.setFileName("file1");
         
         // CHANGED INTERVALS
-        TUCompareEntry e3 = new TUCompareEntry();
+        MatchSegment e3 = new MatchSegment();
         e3.setThai("การเมือง");
         e3.setEnglish("politics");
         e3.addMatchInterval(0, 3);
@@ -179,7 +179,7 @@ public class TMCompareEntryTest {
         e3.setFileName("file1");
         
         // CHANGED INTERVALS
-        TUCompareEntry e4 = new TUCompareEntry();
+        MatchSegment e4 = new MatchSegment();
         e4.setThai("การเมือง");
         e4.setEnglish("politics");
         e4.addMatchInterval(0, 2);
@@ -187,7 +187,7 @@ public class TMCompareEntryTest {
         e4.setFileName("file1");
         
         //CHANGED THAI
-        TUCompareEntry e5 = new TUCompareEntry();
+        MatchSegment e5 = new MatchSegment();
         e5.setThai("CHANGED");
         e5.setEnglish("politics");
         e5.addMatchInterval(0, 2);
@@ -195,7 +195,7 @@ public class TMCompareEntryTest {
         e5.setFileName("file1");
         
         // CHANGED ENGLISH
-        TUCompareEntry e6 = new TUCompareEntry();
+        MatchSegment e6 = new MatchSegment();
         e6.setThai("การเมือง");
         e6.setEnglish("CHANGED");
         e6.addMatchInterval(0, 2);
@@ -203,7 +203,7 @@ public class TMCompareEntryTest {
         e6.setFileName("file1");
         
         // CHANGED FILENAME
-        TUCompareEntry e7 = new TUCompareEntry();
+        MatchSegment e7 = new MatchSegment();
         e7.setThai("การเมือง");
         e7.setEnglish("politics");
         e7.addMatchInterval(0, 2);

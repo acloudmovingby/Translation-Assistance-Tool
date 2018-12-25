@@ -22,8 +22,8 @@ import javafx.collections.ObservableList;
 public class BasicFile {
 
     // the TUs to be displayed to the user
-    private ObservableList<TUEntryBasic> tusToDisplay;
-    private ArrayList<TUEntryBasic> removedTUs;
+    private ObservableList<Segment> tusToDisplay;
+    private ArrayList<Segment> removedTUs;
     //  private final int NUM_FIELDS;
     private String fileName;
     private final int fileID;
@@ -52,9 +52,9 @@ public class BasicFile {
         removedTUs = new ArrayList();
     }
 
-    public TUEntryBasic newTU() {
+    public Segment newSeg() {
         // makes id that matches this file and assigns the fileid
-        TUEntryBasic newTU = new TUEntryBasic(getFileID());
+        Segment newTU = new Segment(getFileID());
         // adds to end of lists
         addTUAtEnd(newTU);
         // returns the TU so it can be modified by the user (i.e. Thai/English can be added)
@@ -67,11 +67,11 @@ public class BasicFile {
      *
      * @param tu
      */
-    private void addTUAtEnd(TUEntryBasic tu) {
+    private void addTUAtEnd(Segment tu) {
         if (tu.isRemoved()) {
             removedTUs.add(tu);
         } else {
-            ObservableList<TUEntryBasic> dispTUs = getTUsToDisplay();
+            ObservableList<Segment> dispTUs = getTUsToDisplay();
             int newRank;
             if (dispTUs.isEmpty()) {
                 newRank = Integer.MIN_VALUE + 8192;
@@ -102,7 +102,7 @@ public class BasicFile {
      * @param tu
      * @param splitIndex
      */
-    public void splitTU(TUEntryBasic tu, int splitIndex) {
+    public void splitTU(Segment tu, int splitIndex) {
         if (tu == null || splitIndex == 0 || splitIndex == tu.getThai().length()) {
             return;
         }
@@ -113,14 +113,14 @@ public class BasicFile {
         int index = tusToDisplay.indexOf(tu);
 
         // creates first new TU and inserts
-        TUEntryBasic newTU1 = new TUEntryBasic(getFileID());
+        Segment newTU1 = new Segment(getFileID());
         newTU1.setThai(firstThai);
         newTU1.setEnglish(tu.getEnglish());
         newTU1.setCommitted(false);
         getTUsToDisplay().add(index, newTU1);
 
         // creates second new TU and inserts
-        TUEntryBasic newTU2 = new TUEntryBasic(getFileID());
+        Segment newTU2 = new Segment(getFileID());
         newTU2.setThai(secondThai);
         newTU2.setEnglish("");
         newTU2.setCommitted(false);
@@ -133,14 +133,14 @@ public class BasicFile {
         realignRanks();
     }
 
-    public void mergeTUs(List<TUEntryBasic> tusToMerge) {
+    public void mergeTUs(List<Segment> tusToMerge) {
 
         if (tusToMerge.size() < 2) {
             return;
         }
 
         // Add to removed list
-        for (TUEntryBasic tu : tusToMerge) {
+        for (Segment tu : tusToMerge) {
             tu.setRemoved(true);
             System.out.println("?" + tu.isRemoved());
             this.getRemovedTUs().add(tu);
@@ -149,12 +149,12 @@ public class BasicFile {
         // Build new TU 
         StringBuilder thaiSB = new StringBuilder();
         StringBuilder engSB = new StringBuilder();
-        for (TUEntryBasic tu : tusToMerge) {
+        for (Segment tu : tusToMerge) {
             System.out.println("?" + tu.isRemoved());
             thaiSB.append(tu.getThai());
             engSB.append(tu.getEnglish());
         }
-        TUEntryBasic newTU = new TUEntryBasic(DatabaseOperations.makeTUID(), getFileID());
+        Segment newTU = new Segment(DatabaseOperations.makeTUID(), getFileID());
         newTU.setThai(thaiSB.toString());
         newTU.setEnglish(engSB.toString());
 
@@ -162,17 +162,17 @@ public class BasicFile {
         int firstIndex = this.getTUsToDisplay().indexOf(tusToMerge.get(0));
         int size = tusToMerge.size();
         for (int i = 0; i < size; i++) {
-            TUEntryBasic removedTU = getTUsToDisplay().remove(firstIndex);
+            Segment removedTU = getTUsToDisplay().remove(firstIndex);
         }
 
         // Insert new TU
         insertTU(firstIndex, newTU);
-        //getTUsToDisplay().add(firstIndex, newTU);
+        //getTUsToDisplay().add(firstIndex, newSeg);
         //realignRanks();
 
     }
 
-    private void removeTU(TUEntryBasic tu) {
+    private void removeTU(Segment tu) {
         tu.setRemoved(true);
         removedTUs.add(tu);
         tusToDisplay.remove(tu);
@@ -183,7 +183,7 @@ public class BasicFile {
      * @param index
      * @param tu 
      */
-    private void insertTU(int index, TUEntryBasic tu) {
+    private void insertTU(int index, Segment tu) {
         int priorRank;
         int nextRank;
         
@@ -214,14 +214,14 @@ public class BasicFile {
             getTUsToDisplay().get(0).setRank(Integer.MIN_VALUE + 8192);
         }
         for (int i = 1; i < getTUsToDisplay().size(); i++) {
-            TUEntryBasic tu = getTUsToDisplay().get(i);
+            Segment tu = getTUsToDisplay().get(i);
             tu.setRank(getTUsToDisplay().get(i-1).getRank());
             DatabaseOperations.addOrUpdateTU(tu);
         }
 
         // updates removedTUs in DB
         for (int i = 0; i < getRemovedTUs().size(); i++) {
-            TUEntryBasic tu = getRemovedTUs().get(i);
+            Segment tu = getRemovedTUs().get(i);
             DatabaseOperations.addOrUpdateTU(tu);
 
         }
@@ -237,7 +237,7 @@ public class BasicFile {
     }
 
     public void commitAllTUs() {
-        for (TUEntryBasic tu : getTUsToDisplay()) {
+        for (Segment tu : getTUsToDisplay()) {
             tu.setCommitted(true);
             // DATABASE
             DatabaseOperations.addOrUpdateTU(tu);
@@ -289,14 +289,14 @@ public class BasicFile {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
 
-        for (TUEntryBasic tu : getTUsToDisplay()) {
+        for (Segment tu : getTUsToDisplay()) {
             sb.append(tu.toString());
             sb.append("\n\t");
         }
         return sb.toString();
     }
 
-    public ObservableList<TUEntryBasic> getTUsToDisplay() {
+    public ObservableList<Segment> getTUsToDisplay() {
         return tusToDisplay;
     }
 
@@ -315,12 +315,12 @@ public class BasicFile {
         if (tusToDisplay.isEmpty()) {
             return fileID + 256;
         } else {
-            return ((TUEntryBasic) tusToDisplay.get(tusToDisplay.size() - 1)).getID() + 256;
+            return ((Segment) tusToDisplay.get(tusToDisplay.size() - 1)).getID() + 256;
         }
 
     }
 
-    public ArrayList<TUEntryBasic> getRemovedTUs() {
+    public ArrayList<Segment> getRemovedTUs() {
         return removedTUs;
     }
 

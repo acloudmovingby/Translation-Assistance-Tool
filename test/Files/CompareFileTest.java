@@ -45,10 +45,10 @@ public class CompareFileTest {
     @Test
     public void testToArray() {
         System.out.println("toArray");
-        CompareFile instance = new CompareFile();
+        MatchFile instance = new MatchFile();
         
         System.out.println("The first entry (การเมือง)");
-        TUCompareEntry t = new TUCompareEntry();
+        MatchSegment t = new MatchSegment();
         t.setThai("การเมือง");
         t.setEnglish("politics");
         t.setFileName("file1");
@@ -57,7 +57,7 @@ public class CompareFileTest {
          
         
         System.out.println("The second entry (ข้อที่สอง)");
-        TUCompareEntry t2 = new TUCompareEntry();
+        MatchSegment t2 = new MatchSegment();
         t2.setThai("ข้อที่สอง");
         t2.setEnglish("second section");
         t2.setFileName("file2");
@@ -85,16 +85,16 @@ public class CompareFileTest {
 
     
     /**
-     * Tests to make sure two TMEntries can be added to CompareFile even if they have same MatchSize
+     * Tests to make sure two TMEntries can be added to MatchFile even if they have same MatchSize
      */
     @Test
     public void testAddEntry1() {
         System.out.println("addEntry1");
         
-        CompareFile instance = new CompareFile();
+        MatchFile instance = new MatchFile();
         
         System.out.println("The first entry (การเมือง)");
-        TUCompareEntry t = new TUCompareEntry();
+        MatchSegment t = new MatchSegment();
         t.setThai("การเมือง");
         t.setEnglish("politics");
         t.setFileName("file1");
@@ -103,7 +103,7 @@ public class CompareFileTest {
          
         
         System.out.println("The second entry");
-        TUCompareEntry t2 = new TUCompareEntry();
+        MatchSegment t2 = new MatchSegment();
         t2.setThai("การเมืองAA");
         t2.setEnglish("politics");
         t2.setFileName("file1");
@@ -123,10 +123,10 @@ public class CompareFileTest {
     public void testAddEntry2() {
         System.out.println("addEntry2");
         
-        CompareFile result = new CompareFile();
+        MatchFile result = new MatchFile();
         
         System.out.println("The first entry (การเมือง)");
-        TUCompareEntry t = new TUCompareEntry();
+        MatchSegment t = new MatchSegment();
         t.setThai("การเมืองCCC");
         t.setEnglish("politics");
         t.setFileName("file1");
@@ -136,7 +136,7 @@ public class CompareFileTest {
          
         
         System.out.println("The second entry");
-        TUCompareEntry t2 = new TUCompareEntry();
+        MatchSegment t2 = new MatchSegment();
         t2.setThai("การเมืองAA");
         t2.setEnglish("politics");
         t2.setFileName("file1");
@@ -144,7 +144,7 @@ public class CompareFileTest {
         result.addEntry(t2);
         
         System.out.println("The third entry");
-        t2 = new TUCompareEntry();
+        t2 = new MatchSegment();
         t2.setThai("การเมืองB");
         t2.setEnglish("politics");
         t2.setFileName("file1");
@@ -152,10 +152,10 @@ public class CompareFileTest {
         result.addEntry(t2);
         
       //**********************
-        CompareFile expResult = new CompareFile();
+        MatchFile expResult = new MatchFile();
         
         System.out.println("The first entry (การเมือง)");
-        t = new TUCompareEntry();
+        t = new MatchSegment();
         t.setThai("การเมืองAA");
         t.setEnglish("politics");
         t.setFileName("file1");
@@ -164,7 +164,7 @@ public class CompareFileTest {
          
         
         System.out.println("The second entry");
-        t2 = new TUCompareEntry();
+        t2 = new MatchSegment();
         t2.setThai("การเมืองB");
         t2.setEnglish("politics");
         t2.setFileName("file1");
@@ -172,7 +172,7 @@ public class CompareFileTest {
         expResult.addEntry(t2);
         
         System.out.println("The third entry");
-        t2 = new TUCompareEntry();
+        t2 = new MatchSegment();
         t2.setThai("การเมืองCCC");
         t2.setEnglish("politics");
         t2.setFileName("file1");

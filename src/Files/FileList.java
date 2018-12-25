@@ -15,25 +15,21 @@ import java.util.HashMap;
 public class FileList {
 
     ArrayList<BasicFile> files;
-    HashMap<Integer, TUEntryBasic> idHash;
 
     public FileList() {
         files = new ArrayList();
-        idHash = new HashMap();
     }
 
     public void addFile(BasicFile file) {
         files.add(file);
-        file.getTUsToDisplay().forEach(tu -> idHash.put(tu.getID(), tu));
-        file.getRemovedTUs().forEach(tu -> idHash.put(tu.getID(), tu));
     }
 
     public ArrayList<BasicFile> getFiles() {
         return files;
     }
 
-    public ArrayList<TUEntryBasic> getAllCommittedTUs() {
-        ArrayList<TUEntryBasic> aList = new ArrayList();
+    public ArrayList<Segment> getAllCommittedTUs() {
+        ArrayList<Segment> aList = new ArrayList();
 
         files.stream().forEach(f -> {
             aList.addAll(f.getTUsToDisplay());
@@ -42,9 +38,5 @@ public class FileList {
         aList.removeIf(tu -> !tu.isCommitted());
 
         return aList;
-    }
-
-    public TUEntryBasic getTU(Integer id) {
-        return idHash.get(id);
     }
 }
