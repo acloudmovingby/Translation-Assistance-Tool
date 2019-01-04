@@ -42,7 +42,7 @@ public class PostingsListTest {
     }
 
     /**
-     * Test of addTU method, of class PostingsList.
+     * Test of tokenizeSegment method, of class PostingsList.
      */
     @Test
     public void testParseTU() {
@@ -57,7 +57,7 @@ public class PostingsListTest {
         BasicFile bf1 = new BasicFile();
         Segment tu1 = bf1.newSeg();
         tu1.setThai("Abcabcdddd");
-        pl1.addTU(tu1);
+        pl1.tokenizeSegment(tu1);
         
         // set up expResult and result lists
         List<Segment> expResult = new ArrayList();
@@ -120,17 +120,17 @@ public class PostingsListTest {
         BasicFile bf1 = new BasicFile();
         Segment tu1 = bf1.newSeg();
         tu1.setThai("Abcabcdddd");
-        pl1.addTU(tu1);
+        pl1.tokenizeSegment(tu1);
         assertEquals(tu1, pl1.getMatchingID("abc").get(0));
         
         // test reparsing TU (shouldn't change results)
-        pl1.addTU(tu1);
+        pl1.tokenizeSegment(tu1);
         assertEquals(1, pl1.getMatchingID("abc").size());
         
         // test adding 2nd TU
         Segment tu2 = bf1.newSeg();
         tu2.setThai("Abcabcdeee");
-        pl1.addTU(tu2);
+        pl1.tokenizeSegment(tu2);
         List<Segment> expResult = new ArrayList();
         expResult.add(tu1);
         expResult.add(tu2);

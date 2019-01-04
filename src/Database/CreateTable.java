@@ -38,6 +38,7 @@ public class CreateTable {
         String sql = "CREATE TABLE IF NOT EXISTS corpus1 ("
                 + "	id       INT   PRIMARY KEY     NOT NULL,"
                 + "	fileID   INT                    NOT NULL,"
+                + "	fileName TEXT,"
                 + "	thai     TEXT,"
                 + "	english  TEXT,"
                 + "     committed INT                   NOT NULL,"

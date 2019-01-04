@@ -120,22 +120,22 @@ public class DatabaseOperationsTest {
         int numOfTUsInDB = DatabaseOperations.numberOfTUs();
         // Add TU (should return true)
         System.out.println("1st Push");
-        assertEquals(DatabaseOperations.addOrUpdateTU(expResult), true);
-        assertEquals(DatabaseOperations.getTU(expResult.getID()), expResult);
+        assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
+        assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
        
         // Add again (should return true)
         System.out.println("2nd Push");
-        assertEquals(DatabaseOperations.addOrUpdateTU(expResult), true);
-        assertEquals(DatabaseOperations.getTU(expResult.getID()), expResult);
+        assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
+        assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
         
         // Add a third time, with a change. When you get it the version from the database, shouldn't match, but will return true if added. 
         System.out.println("3rd Push (with change)");
         expResult.setEnglish("English changed");
-        assertEquals(false, DatabaseOperations.getTU(expResult.getID()).equals(expResult));
-        assertEquals(DatabaseOperations.addOrUpdateTU(expResult), true);
+        assertEquals(false, DatabaseOperations.getSegment(expResult.getID()).equals(expResult));
+        assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
         
         // When you get the TU from the db, it should have the updated value. 
-        assertEquals(DatabaseOperations.getTU(expResult.getID()), expResult);
+        assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
         
         // After all these operations, there should still only be one more TU in db
         assertEquals(numOfTUsInDB + 1, DatabaseOperations.numberOfTUs());

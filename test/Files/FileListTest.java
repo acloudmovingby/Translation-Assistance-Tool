@@ -41,7 +41,7 @@ public class FileListTest {
    
 
     /**
-     * Test of getAllCommittedTUs method, of class FileList.
+     * Test of getAllCommittedTUs method, of class Corpus.
      */
     @Test
     public void testGetAllCommittedTUs() {
@@ -61,7 +61,7 @@ public class FileListTest {
         tu22.setThai("bf2.2.th");
         tu22.setCommitted(true);
         
-        FileList fl = new FileList();
+        Corpus fl = new Corpus();
         fl.addFile(bf1);
         fl.addFile(bf2);
         

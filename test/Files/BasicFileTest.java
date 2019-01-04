@@ -89,27 +89,27 @@ public class BasicFileTest {
                     selectedTU = null;
                     splitIndex = 0;
                     bf.splitTU(selectedTU, splitIndex);
-                    assertEquals(5, bf.getTUsToDisplay().size());
-                    assertEquals(0, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
+                    assertEquals(5, bf.getActiveSegs().size());
+                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu5), true);
                     
                     // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -118,27 +118,27 @@ public class BasicFileTest {
                     selectedTU = tu1;
                     splitIndex = 0;
                     bf.splitTU(selectedTU, splitIndex);
-                    assertEquals(5, bf.getTUsToDisplay().size());
-                    assertEquals(0, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
+                    assertEquals(5, bf.getActiveSegs().size());
+                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu5), true);
                     
                      // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -147,27 +147,27 @@ public class BasicFileTest {
                     selectedTU = tu1;
                     splitIndex = tu1.getThai().length();
                     bf.splitTU(selectedTU, splitIndex);
-                    assertEquals(5, bf.getTUsToDisplay().size());
-                    assertEquals(0, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
+                    assertEquals(5, bf.getActiveSegs().size());
+                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu5), true);
                     
                      // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -176,31 +176,31 @@ public class BasicFileTest {
                     selectedTU = tu1;
                     splitIndex = 1;
                     bf.splitTU(selectedTU, splitIndex);
-                    assertEquals(6, bf.getTUsToDisplay().size());
-                    assertEquals(1, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).getThai(), "t");
-                    assertEquals(bf.getTUsToDisplay().get(1).getThai(), "h1");
-                    assertEquals(bf.getTUsToDisplay().get(0).getEnglish(), "en1");
-                    assertEquals(bf.getTUsToDisplay().get(1).getEnglish(), "");
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(5).equals(tu5), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
+                    assertEquals(6, bf.getActiveSegs().size());
+                    assertEquals(1, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).getThai(), "t");
+                    assertEquals(bf.getActiveSegs().get(1).getThai(), "h1");
+                    assertEquals(bf.getActiveSegs().get(0).getEnglish(), "en1");
+                    assertEquals(bf.getActiveSegs().get(1).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(5).equals(tu5), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
                     
                      // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -214,39 +214,39 @@ public class BasicFileTest {
                     bf.splitTU(selectedTU, splitIndex);
                     
                     // asserts lists same length
-                    assertEquals(7, bf.getTUsToDisplay().size());
-                    assertEquals(2, bf.getRemovedTUs().size());
+                    assertEquals(7, bf.getActiveSegs().size());
+                    assertEquals(2, bf.getRemovedSegs().size());
                     
                     // asserts Thai/English split properly
-                    assertEquals(bf.getTUsToDisplay().get(0).getThai(), "t");
-                    assertEquals(bf.getTUsToDisplay().get(1).getThai(), "h1");
-                    assertEquals(bf.getTUsToDisplay().get(0).getEnglish(), "en1");
-                    assertEquals(bf.getTUsToDisplay().get(1).getEnglish(), "");
-                    assertEquals(bf.getTUsToDisplay().get(5).getThai(), "t");
-                    assertEquals(bf.getTUsToDisplay().get(6).getThai(), "h5");
-                    assertEquals(bf.getTUsToDisplay().get(5).getEnglish(), "en5");
-                    assertEquals(bf.getTUsToDisplay().get(6).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(0).getThai(), "t");
+                    assertEquals(bf.getActiveSegs().get(1).getThai(), "h1");
+                    assertEquals(bf.getActiveSegs().get(0).getEnglish(), "en1");
+                    assertEquals(bf.getActiveSegs().get(1).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(5).getThai(), "t");
+                    assertEquals(bf.getActiveSegs().get(6).getThai(), "h5");
+                    assertEquals(bf.getActiveSegs().get(5).getEnglish(), "en5");
+                    assertEquals(bf.getActiveSegs().get(6).getEnglish(), "");
                     
                     // asserts the original TUs are in the proper lists
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu4), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu5), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu4), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu5), true);
                     
                      // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -255,42 +255,42 @@ public class BasicFileTest {
                     selectedTU = tu1;
                     splitIndex = 2;
                     bf.splitTU(selectedTU, splitIndex);
-                    selectedTU = bf.getTUsToDisplay().get(0);
+                    selectedTU = bf.getActiveSegs().get(0);
                     splitIndex = 1;
                     bf.splitTU(selectedTU, splitIndex);
                     
                      // asserts lists same length
-                    assertEquals(7, bf.getTUsToDisplay().size());
-                    assertEquals(2, bf.getRemovedTUs().size());
+                    assertEquals(7, bf.getActiveSegs().size());
+                    assertEquals(2, bf.getRemovedSegs().size());
                     
                     // asserts Thai/English split properly
-                    assertEquals(bf.getTUsToDisplay().get(0).getThai(), "t");
-                    assertEquals(bf.getTUsToDisplay().get(1).getThai(), "h");
-                    assertEquals(bf.getTUsToDisplay().get(2).getThai(), "1");
-                    assertEquals(bf.getTUsToDisplay().get(0).getEnglish(), "en1");
-                    assertEquals(bf.getTUsToDisplay().get(1).getEnglish(), "");
-                    assertEquals(bf.getTUsToDisplay().get(2).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(0).getThai(), "t");
+                    assertEquals(bf.getActiveSegs().get(1).getThai(), "h");
+                    assertEquals(bf.getActiveSegs().get(2).getThai(), "1");
+                    assertEquals(bf.getActiveSegs().get(0).getEnglish(), "en1");
+                    assertEquals(bf.getActiveSegs().get(1).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(2).getEnglish(), "");
                     
                     // asserts the original TUs are in the proper lists
-                    assertEquals(bf.getTUsToDisplay().get(3), tu2);
-                    assertEquals(bf.getTUsToDisplay().get(4), tu3);
-                    assertEquals(bf.getTUsToDisplay().get(5), tu4);
-                    assertEquals(bf.getTUsToDisplay().get(6), tu5);
-                    assertEquals(bf.getRemovedTUs().get(0), tu1);
+                    assertEquals(bf.getActiveSegs().get(3), tu2);
+                    assertEquals(bf.getActiveSegs().get(4), tu3);
+                    assertEquals(bf.getActiveSegs().get(5), tu4);
+                    assertEquals(bf.getActiveSegs().get(6), tu5);
+                    assertEquals(bf.getRemovedSegs().get(0), tu1);
                     
                     // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -299,42 +299,42 @@ public class BasicFileTest {
                     selectedTU = tu1;
                     splitIndex = 1;
                     bf.splitTU(selectedTU, splitIndex);
-                    selectedTU = bf.getTUsToDisplay().get(1);
+                    selectedTU = bf.getActiveSegs().get(1);
                     splitIndex = 1;
                     bf.splitTU(selectedTU, splitIndex);
                     
                      // asserts lists same length
-                    assertEquals(7, bf.getTUsToDisplay().size());
-                    assertEquals(2, bf.getRemovedTUs().size());
+                    assertEquals(7, bf.getActiveSegs().size());
+                    assertEquals(2, bf.getRemovedSegs().size());
                     
                     // asserts Thai/English split properly
-                    assertEquals(bf.getTUsToDisplay().get(0).getThai(), "t");
-                    assertEquals(bf.getTUsToDisplay().get(1).getThai(), "h");
-                    assertEquals(bf.getTUsToDisplay().get(2).getThai(), "1");
-                    assertEquals(bf.getTUsToDisplay().get(0).getEnglish(), "en1");
-                    assertEquals(bf.getTUsToDisplay().get(1).getEnglish(), "");
-                    assertEquals(bf.getTUsToDisplay().get(2).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(0).getThai(), "t");
+                    assertEquals(bf.getActiveSegs().get(1).getThai(), "h");
+                    assertEquals(bf.getActiveSegs().get(2).getThai(), "1");
+                    assertEquals(bf.getActiveSegs().get(0).getEnglish(), "en1");
+                    assertEquals(bf.getActiveSegs().get(1).getEnglish(), "");
+                    assertEquals(bf.getActiveSegs().get(2).getEnglish(), "");
                     
                     // asserts the original TUs are in the proper lists
-                    assertEquals(bf.getTUsToDisplay().get(3), tu2);
-                    assertEquals(bf.getTUsToDisplay().get(4), tu3);
-                    assertEquals(bf.getTUsToDisplay().get(5), tu4);
-                    assertEquals(bf.getTUsToDisplay().get(6), tu5);
-                    assertEquals(bf.getRemovedTUs().get(0), tu1);
+                    assertEquals(bf.getActiveSegs().get(3), tu2);
+                    assertEquals(bf.getActiveSegs().get(4), tu3);
+                    assertEquals(bf.getActiveSegs().get(5), tu4);
+                    assertEquals(bf.getActiveSegs().get(6), tu5);
+                    assertEquals(bf.getRemovedSegs().get(0), tu1);
                     
                      // checks that database is equivalent to what's in memory
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
-                            .allMatch(a -> bf.getTUsToDisplay().contains(a)), 
+                    assertEquals(fileFromDB.getActiveSegs().stream()
+                            .allMatch(a -> bf.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getTUsToDisplay().stream()
-                            .allMatch(a -> fileFromDB.getTUsToDisplay().contains(a)), 
+                    assertEquals(bf.getActiveSegs().stream()
+                            .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
-                            .allMatch(a -> bf.getRemovedTUs().contains(a)), 
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
+                            .allMatch(a -> bf.getRemovedSegs().contains(a)), 
                             true);
-                    assertEquals(bf.getRemovedTUs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedTUs().contains(a)), 
+                    assertEquals(bf.getRemovedSegs().stream()
+                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -394,34 +394,34 @@ public class BasicFileTest {
 
                     selectedTUs.add(tu1);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(5, bf.getTUsToDisplay().size());
-                    assertEquals(0, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
+                    assertEquals(5, bf.getActiveSegs().size());
+                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu5), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
                     // is tusToDisplay from database same as in memory?
-                    assertEquals(fileFromDB.getTUsToDisplay().stream()
+                    assertEquals(fileFromDB.getActiveSegs().stream()
                             .allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
-                    assertEquals(bf.getTUsToDisplay().stream()
+                    assertEquals(bf.getActiveSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                     // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
 
                     break;
@@ -431,36 +431,36 @@ public class BasicFileTest {
                     selectedTUs.add(tu1);
                     selectedTUs.add(tu2);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(4, bf.getTUsToDisplay().size());
-                    assertEquals(2, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu5), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
+                    assertEquals(4, bf.getActiveSegs().size());
+                    assertEquals(2, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu5), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu2), true);
                     
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     break;
                 }
@@ -470,37 +470,37 @@ public class BasicFileTest {
                     selectedTUs.add(tu2);
                     selectedTUs.add(tu3);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(3, bf.getTUsToDisplay().size());
-                    assertEquals(3, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu5), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
-                    assertEquals(bf.getRemovedTUs().get(2).equals(tu3), true);
+                    assertEquals(3, bf.getActiveSegs().size());
+                    assertEquals(3, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu5), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getRemovedSegs().get(2).equals(tu3), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
 
                     break;
@@ -510,37 +510,37 @@ public class BasicFileTest {
                     selectedTUs.add(tu2);
                     selectedTUs.add(tu3);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(4, bf.getTUsToDisplay().size());
-                    assertEquals(2, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu5), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu2), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu3), true);
+                    assertEquals(4, bf.getActiveSegs().size());
+                    assertEquals(2, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu5), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu2), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu3), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     break;
                 }
@@ -549,37 +549,37 @@ public class BasicFileTest {
                     selectedTUs.add(tu2);
                     selectedTUs.add(tu3);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(4, bf.getTUsToDisplay().size());
-                    assertEquals(2, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu5), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu2), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu3), true);
+                    assertEquals(4, bf.getActiveSegs().size());
+                    assertEquals(2, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu5), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu2), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu3), true);
 
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     
                     break;
@@ -590,36 +590,36 @@ public class BasicFileTest {
                     selectedTUs.add(tu2);
                     selectedTUs.add(tu3);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(3, bf.getTUsToDisplay().size());
-                    assertEquals(3, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu5), true);
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
-                    assertEquals(bf.getRemovedTUs().get(2).equals(tu3), true);
+                    assertEquals(3, bf.getActiveSegs().size());
+                    assertEquals(3, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu5), true);
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getRemovedSegs().get(2).equals(tu3), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     
                     break;
@@ -628,36 +628,36 @@ public class BasicFileTest {
                 case 6: {
                     selectedTUs.add(tu5);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(5, bf.getTUsToDisplay().size());
-                    assertEquals(0, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
+                    assertEquals(5, bf.getActiveSegs().size());
+                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     
                     break;
@@ -670,36 +670,36 @@ public class BasicFileTest {
                     selectedTUs.add(tu4);
                     selectedTUs.add(tu5);
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(1, bf.getTUsToDisplay().size());
-                    assertEquals(5, bf.getRemovedTUs().size());
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
-                    assertEquals(bf.getRemovedTUs().get(2).equals(tu3), true);
-                    assertEquals(bf.getRemovedTUs().get(3).equals(tu4), true);
-                    assertEquals(bf.getRemovedTUs().get(4).equals(tu5), true);
+                    assertEquals(1, bf.getActiveSegs().size());
+                    assertEquals(5, bf.getRemovedSegs().size());
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getRemovedSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getRemovedSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getRemovedSegs().get(4).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     
                     break;
@@ -707,36 +707,36 @@ public class BasicFileTest {
                 // if i=8 --> selectedItems is empty (but not null)
                 case 8: {
                     bf.mergeTUs(selectedTUs);
-                    assertEquals(5, bf.getTUsToDisplay().size());
-                    assertEquals(0, bf.getRemovedTUs().size());
-                    assertEquals(bf.getTUsToDisplay().get(0).equals(tu1), true);
-                    assertEquals(bf.getTUsToDisplay().get(1).equals(tu2), true);
-                    assertEquals(bf.getTUsToDisplay().get(2).equals(tu3), true);
-                    assertEquals(bf.getTUsToDisplay().get(3).equals(tu4), true);
-                    assertEquals(bf.getTUsToDisplay().get(4).equals(tu5), true);
+                    assertEquals(5, bf.getActiveSegs().size());
+                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(bf.getActiveSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getActiveSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getActiveSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getActiveSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getActiveSegs().get(4).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     
                     break;
@@ -753,40 +753,40 @@ public class BasicFileTest {
                     bf.mergeTUs(selectedTUs);
 
                     selectedTUs = new ArrayList();
-                    selectedTUs.add(bf.getTUsToDisplay().get(1));
+                    selectedTUs.add(bf.getActiveSegs().get(1));
                     selectedTUs.add(tu5);
                     bf.mergeTUs(selectedTUs);
 
-                    assertEquals(2, bf.getTUsToDisplay().size());
-                    assertEquals(6, bf.getRemovedTUs().size());
-                    assertEquals(bf.getRemovedTUs().get(0).equals(tu1), true);
-                    assertEquals(bf.getRemovedTUs().get(1).equals(tu2), true);
-                    assertEquals(bf.getRemovedTUs().get(2).equals(tu3), true);
-                    assertEquals(bf.getRemovedTUs().get(3).equals(tu4), true);
-                    assertEquals(bf.getRemovedTUs().get(5).equals(tu5), true);
+                    assertEquals(2, bf.getActiveSegs().size());
+                    assertEquals(6, bf.getRemovedSegs().size());
+                    assertEquals(bf.getRemovedSegs().get(0).equals(tu1), true);
+                    assertEquals(bf.getRemovedSegs().get(1).equals(tu2), true);
+                    assertEquals(bf.getRemovedSegs().get(2).equals(tu3), true);
+                    assertEquals(bf.getRemovedSegs().get(3).equals(tu4), true);
+                    assertEquals(bf.getRemovedSegs().get(5).equals(tu5), true);
                     BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
-                    Stream<Segment> stream1 = fileFromDB.getTUsToDisplay().stream();
-                    Stream<Segment> stream2 = bf.getTUsToDisplay().stream();
+                    Stream<Segment> stream1 = fileFromDB.getActiveSegs().stream();
+                    Stream<Segment> stream2 = bf.getActiveSegs().stream();
 
                     // is tusToDisplay from database same as in memory?
                     assertEquals(
                             stream1.allMatch(
-                                    a -> bf.getTUsToDisplay().contains(a)),
+                                    a -> bf.getActiveSegs().contains(a)),
                             true);
                     // is tusToDisplay from memory same as in database?
                     assertEquals(
                             stream2.allMatch(
-                                    a -> fileFromDB.getTUsToDisplay().contains(a)),
+                                    a -> fileFromDB.getActiveSegs().contains(a)),
                             true);
                      // is removed from databse same as in memory?
-                    assertEquals(fileFromDB.getRemovedTUs().stream()
+                    assertEquals(fileFromDB.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> bf.getRemovedTUs().contains(a)),
+                                    a -> bf.getRemovedSegs().contains(a)),
                             true);
                     // is removed from memory same as in database?
-                    assertEquals(bf.getRemovedTUs().stream()
+                    assertEquals(bf.getRemovedSegs().stream()
                             .allMatch(
-                                    a -> fileFromDB.getRemovedTUs().contains(a)),
+                                    a -> fileFromDB.getRemovedSegs().contains(a)),
                             true);
                     
                     break;

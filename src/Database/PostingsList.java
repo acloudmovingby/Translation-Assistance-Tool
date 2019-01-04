@@ -6,9 +6,8 @@
 package Database;
 
 import Files.BasicFile;
-import Files.FileList;
+import Files.Corpus;
 import Files.Segment;
-import comparator.NGramWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,23 +33,27 @@ public class PostingsList {
     }
 
     /**
-     * If TU is committed, it parses the ngrams and adds to the hash.
+     * Tokenizes a segment into ngrams and adds these to the postings list.
      *
-     * @param tu
+     * @param seg
      */
-    public void addTU(Segment tu) {
-        if (tu != null) {
-            List<String> l = makeNGrams(tu.getThai(), nGramLength);
+    public void tokenizeSegment(Segment seg) {
+        if (seg != null) {
+            List<String> l = makeNGrams(seg.getThai(), nGramLength);
             l.forEach(s -> {
-                List<Segment> oldIDs = map.get(s);
-                if (oldIDs == null) {
-                    oldIDs = new ArrayList();
-                    oldIDs.add(tu);
-                    map.put(s, oldIDs);
+                // retrieves the segments for a given nGram (s)
+                List<Segment> segList = map.get(s);
+                /*
+                If this ngram hasn't appeared in any previously seen segments, a new list is created. Otherwise, this segment is appended to the end of the list.
+                */
+                if (segList == null) {
+                    segList = new ArrayList();
+                    segList.add(seg);
+                    map.put(s, segList);
                 } else {
-                    if (!oldIDs.contains(tu)) {
-                        oldIDs.add(tu);
-                        map.put(s, oldIDs);
+                    if (!segList.contains(seg)) {
+                        segList.add(seg);
+                        //map.put(s, segList); // replaces old list
                     }
                 }
             });
@@ -59,17 +62,21 @@ public class PostingsList {
 
     public boolean addFile(BasicFile bf) {
         if (bf != null) {
-            bf.getRemovedTUs().forEach(tu -> {
-                if(tu.isCommitted()) {
-                    addTU(tu);
+            bf.getRemovedSegs().forEach(tu -> {
+                if (tu.isCommitted()) {
+                    tokenizeSegment(tu);
                 }
             });
-            bf.getTUsToDisplay().forEach(tu -> {if(tu.isCommitted()) {addTU(tu);}});
+            bf.getActiveSegs().forEach(tu -> {
+                if (tu.isCommitted()) {
+                    tokenizeSegment(tu);
+                }
+            });
         }
         return false;
     }
 
-    public void addFileList(FileList fl) {
+    public void addFileList(Corpus fl) {
         if (fl != null) {
             fl.getFiles().forEach(f -> addFile(f));
         }
@@ -105,7 +112,7 @@ public class PostingsList {
     public int getNGramLength() {
         return this.nGramLength;
     }
-    
+
     public HashMap<String, List<Segment>> getMap() {
         return map;
     }

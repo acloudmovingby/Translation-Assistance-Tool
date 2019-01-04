@@ -6,9 +6,9 @@
 package Database;
 
 import Files.BasicFile;
-import Files.FileList;
+import Files.Corpus;
 import Files.Segment;
-import JavaFX_1.MainLogic;
+import State.StateWithDatabase;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,44 +36,46 @@ public class DatabaseOperations {
      * it is replaced by the new TU. If successful, returns true. If there is a
      * SQL error, then returns false.
      *
-     * @param tu
+     * @param seg
      * @return
      */
-    public static boolean addOrUpdateTU(Segment tu) {
-        if (!MainLogic.databaseIsWritable()) {
+    public static boolean addOrUpdateSegment(Segment seg) {
+        if (!StateWithDatabase.databaseIsWritable()) {
             return false;
         } else {
-            
-            if (tu.getID() == 0) {
-                tu.setID(makeTUID());
-            }
 
-            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?)";
+            if (seg.getID() == 0) {
+                seg.setID(makeTUID());
+            }
+// OR REPLACE 
+            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
             try (Connection conn = DatabaseOperations.connect();
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, tu.getID());
+                pstmt.setDouble(1, seg.getID());
 
-                pstmt.setDouble(2, tu.getFileID());
+                pstmt.setDouble(2, seg.getFileID());
 
-                pstmt.setString(3, tu.getThai());
+                pstmt.setString(3, seg.getFileName());
 
-                pstmt.setString(4, tu.getEnglish());
+                pstmt.setString(4, seg.getThai());
+
+                pstmt.setString(5, seg.getEnglish());
 
                 // committed/removed booleans are stored as binary (0 = false, 1 = true)
-                if (tu.isCommitted()) {
-                    pstmt.setInt(5, 1);
+                if (seg.isCommitted()) {
+                    pstmt.setInt(6, 1);
                 } else {
-                    pstmt.setInt(5, 0);
+                    pstmt.setInt(6, 0);
                 }
-                pstmt.setInt(6, tu.isRemoved() ? 1 : 0);
-                
-                pstmt.setInt(7, tu.getRank());
+                pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+
+                pstmt.setInt(8, seg.getRank());
 
                 pstmt.executeUpdate();
                 return true;
             } catch (SQLException e) {
-                System.out.println("AddOrUpdateTU: " + e.getMessage());
+                System.out.println("AddOrUpdateTU(" + seg.getID() + ": " + e.getMessage());
                 return false;
             }
 
@@ -92,23 +94,46 @@ public class DatabaseOperations {
      * is an SQL error, returns false.
      */
     public static boolean addFile(BasicFile bf) {
-        if (!MainLogic.databaseIsWritable()) {
+        if (!StateWithDatabase.databaseIsWritable()) {
             return false;
         } else {
+            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
-            boolean ret = true;
+            try (Connection conn = DatabaseOperations.connect();
+                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            if (bf == null) {
+                conn.setAutoCommit(false);
+                int i = 0;
+
+                for (Segment seg : bf.getActiveSegs()) {
+
+                    if (seg.getID() == 0) {
+                        seg.setID(makeTUID());
+                    }
+
+                    pstmt.setDouble(1, seg.getID());
+                    pstmt.setDouble(2, seg.getFileID());
+                    pstmt.setString(3, seg.getFileName());
+                    pstmt.setString(4, seg.getThai());
+                    pstmt.setString(5, seg.getEnglish());
+                    // committed/removed booleans are stored as binary (0 = false, 1 = true)
+                    pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
+                    pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+                    pstmt.setInt(8, seg.getRank());
+                    pstmt.addBatch();
+                    i++;
+
+                    if (i % 1000 == 0 || i == bf.getActiveSegs().size()) {
+                        pstmt.executeBatch(); //Execute every 1000 segments.
+                    }
+                }
+                conn.commit();
+                return true;
+
+            } catch (SQLException e) {
+                System.out.println("AddFileAsBatch: " + e.getMessage());
                 return false;
             }
-            // updates fileName
-            addOrUpdateFileName(bf.getFileID(), bf.getFileName());
-
-            // adds all TUs in file to database
-            for (Segment tu : bf.getTUsToDisplay()) {
-                ret = DatabaseOperations.addOrUpdateTU(tu);
-            }
-            return ret;
         }
     }
 
@@ -121,7 +146,7 @@ public class DatabaseOperations {
      * @return True if added successfully, false if an SQLException is thrown.
      */
     public static boolean addOrUpdateFileName(double fileID, String fileName) {
-        if (!MainLogic.databaseIsWritable()) {
+        if (!StateWithDatabase.databaseIsWritable()) {
             return false;
         } else {
             String sql = "INSERT OR REPLACE INTO files(fileID, fileName) VALUES(?,?)";
@@ -151,7 +176,7 @@ public class DatabaseOperations {
 
         int fileID;
 
-        if (!MainLogic.databaseIsWritable()) {
+        if (!StateWithDatabase.databaseIsWritable()) {
             fileID = (int) (Math.random() * 100000000);
         } else {
             fileID = 0;
@@ -177,7 +202,7 @@ public class DatabaseOperations {
     private static boolean removeTU(double id) {
 
         // If database isn't active, this returns default of false;
-        if (!MainLogic.databaseIsWritable()) {
+        if (!StateWithDatabase.databaseIsWritable()) {
             return false;
         } else {
 
@@ -207,7 +232,7 @@ public class DatabaseOperations {
      *************************************************************************
      */
     public static int numberOfTUs() {
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return 0;
         } else {
             String sql = "SELECT COUNT(*) FROM corpus1;";
@@ -245,7 +270,7 @@ public class DatabaseOperations {
     public static String getFileName(double fileID) {
 
         // If database isn't active, this returns default of null;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return null;
         } else {
 
@@ -268,21 +293,21 @@ public class DatabaseOperations {
     }
 
     /**
-     * Returns the Segment object to which the specified key is mapped, or
- null if the database contains no mapping for the key.
+     * Returns the Segment object to which the specified key is mapped, or null
+     * if the database contains no mapping for the key.
      *
      * @param id
      * @return The Segment object associated with that id
      */
-    public static Segment getTU(double id) {
+    public static Segment getSegment(double id) {
 
         // If database isn't active, this returns default of null;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return null;
         } else {
 
             String idAsString = String.valueOf(id);
-            String sql = "SELECT id, fileID, thai, english, committed, removed FROM corpus1 WHERE id =" + idAsString + ";";
+            String sql = "SELECT id, fileID, fileName, thai, english, committed, removed FROM corpus1 WHERE id =" + idAsString + ";";
 
             try (Connection conn = DatabaseOperations.connect();
                     Statement stmt = conn.createStatement();
@@ -290,8 +315,8 @@ public class DatabaseOperations {
 
                 // loop through the result set
                 while (rs.next()) {
-                    Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"));
-                    return rebuildTU(rs, ret);
+                    Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
+                    return rebuildSegment(rs, ret);
                 }
                 return null;
             } catch (SQLException e) {
@@ -301,12 +326,12 @@ public class DatabaseOperations {
         }
     }
 
-    public static FileList getAllTUs() {
+    public static Corpus getAllSegments() {
 
-        FileList fList = new FileList();
+        Corpus fList = new Corpus();
 
         // If database isn't active, this returns default of null;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return fList;
         } else {
 
@@ -332,12 +357,12 @@ public class DatabaseOperations {
         BasicFile file = new BasicFile(fileID, getFileName(fileID));
 
         // If database isn't active, this returns the empty file;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return file;
         } else {
 
             String idAsString = String.valueOf(fileID);
-            String sql = "SELECT id, fileID, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";
+            String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";
 
             try (Connection conn = DatabaseOperations.connect();
                     Statement stmt = conn.createStatement();
@@ -346,12 +371,12 @@ public class DatabaseOperations {
                 // loop through the result set
                 while (rs.next()) {
 
-                    Segment tu = new Segment(file.getFileID());
-                    tu = rebuildTU(rs, tu);
-                    if (tu.isRemoved()) {
-                       file.getRemovedTUs().add(tu);
+                    Segment seg = new Segment(file.getFileID());
+                    seg = rebuildSegment(rs, seg);
+                    if (seg.isRemoved()) {
+                        file.getRemovedSegs().add(seg);
                     } else {
-                       file.getTUsToDisplay().add(tu);
+                        file.getActiveSegs().add(seg);
                     }
 
                     /*tu2.setThai(rs.getString("thai"));
@@ -395,21 +420,22 @@ public class DatabaseOperations {
      * Sets all fields on the TU except the id and fileID.
      *
      * @param rs The result set returned from the database.
-     * @param tu The Segment to be rebuilt in memory.
+     * @param seg The Segment to be rebuilt in memory.
      * @return
      * @throws SQLException
      */
-    private static Segment rebuildTU(ResultSet rs, Segment tu) throws SQLException {
+    private static Segment rebuildSegment(ResultSet rs, Segment seg) throws SQLException {
 
-        tu.setID(rs.getInt("id"));
-        tu.setThai(rs.getString("thai"));
-        tu.setEnglish(rs.getString("english"));
+        seg.setID(rs.getInt("id"));
+        seg.setFileName(rs.getString("fileName"));
+        seg.setThai(rs.getString("thai"));
+        seg.setEnglish(rs.getString("english"));
         int committedStatus = rs.getInt("committed");
-        tu.setCommitted(rs.getInt("committed") == 1);
-        tu.setRemoved(rs.getInt("removed") == 1);
-        tu.setRank(rs.getInt("rank"));
+        seg.setCommitted(rs.getInt("committed") == 1);
+        seg.setRemoved(rs.getInt("removed") == 1);
+        seg.setRank(rs.getInt("rank"));
 
-        return tu;
+        return seg;
     }
 
     /**
@@ -421,7 +447,7 @@ public class DatabaseOperations {
         ArrayList<Integer> fileIDs = new ArrayList();
 
         // If database isn't active, this returns default of null;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return fileIDs;
         } else {
 
@@ -451,7 +477,7 @@ public class DatabaseOperations {
         String sql = "SELECT id FROM corpus1 where id= ?";
 
         // If database isn't active, this returns false;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return false;
         } else {
 
@@ -501,7 +527,7 @@ public class DatabaseOperations {
     protected static boolean containsFileID(double fileID) {
 
         // If database isn't active, this returns default of false;
-        if (!MainLogic.databaseIsReadable()) {
+        if (!StateWithDatabase.databaseIsReadable()) {
             return false;
         } else {
 
@@ -556,14 +582,17 @@ public class DatabaseOperations {
     public static int makeTUID() {
         int newID = 0;
 
-        if (MainLogic.databaseIsReadable()) {
-
+        if (StateWithDatabase.databaseIsReadable()) {
+            /*
             // If id already exists or is equal to zero, it regenerates.
             while (containsFileID(newID) || newID == 0) {
                 newID = (int) (Math.random() * 100000000);
             }
             // returns the id so the BasicFile object can store it.
+             */
+
         }
+        newID = (int) (Math.random() * 100000000);
         return newID;
     }
 

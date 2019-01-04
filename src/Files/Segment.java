@@ -20,6 +20,7 @@ public class Segment {
 
     private int id;
     private int fileID;
+    private String fileName;
     
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
@@ -31,7 +32,7 @@ public class Segment {
     private int rank;
 
     public Segment(int fileID){
-        boolean isCommitted = false;
+        isCommitted = false;
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
@@ -40,14 +41,15 @@ public class Segment {
         this.fileID = fileID;
     }
     
-    public Segment(int id, int fileID){
-        boolean isCommitted = false;
+    public Segment(int id, int fileID, String fileName){
+        isCommitted = false;
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
         isRemoved = false;
         this.id = id;
         this.fileID = fileID;
+        this.fileName = fileName;
     }
 
 
@@ -143,7 +145,7 @@ public class Segment {
     }
 
     public String getFileName() {
-        return DatabaseOperations.getFileName(fileID);
+        return fileName;
     }
     
     public int getID() {
@@ -172,6 +174,10 @@ public class Segment {
 
     public void setID(int id) {
         this.id = id;
+    }
+    
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
     
     

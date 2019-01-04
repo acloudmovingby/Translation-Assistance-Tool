@@ -14,6 +14,10 @@ import java.util.List;
  * @author Chris
  */
 public class Substring {
+    
+    
+    public static int isZeroCounter;
+    public static int isNotZeroCounter;
 
     /**
      * Finds all common substrings between two strings (s1, s2) of a minimum
@@ -62,7 +66,7 @@ public class Substring {
         for (int i = 0; i < s1.length(); i++) {
             for (int j = 0; j < s2.length(); j++) {
                 if (s1.charAt(i) == s2.charAt(j)) {
-
+                       isNotZeroCounter++;
                     if (i == 0 && j == 0) {
                         subLength[0][0] = 1;
                     } else if (i == 0 && j > 0) {
@@ -75,6 +79,7 @@ public class Substring {
                         subLength[i][j] = 1;
                     }
                 } else {
+                    isZeroCounter++;
                     subLength[i][j] = 0;
                 }
             }

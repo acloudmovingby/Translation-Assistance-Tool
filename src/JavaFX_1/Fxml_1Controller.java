@@ -1,17 +1,25 @@
 package JavaFX_1;
 
+import State.StateWithDatabase;
+import Database.DatabaseOperations;
 import Files.BasicFile;
+import Files.FileBuilder;
+import Files.Corpus;
 import Files.MatchFile;
 import Files.MatchSegment;
 import Files.Segment;
+import State.Split;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -22,12 +30,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -81,16 +92,30 @@ public class Fxml_1Controller implements Initializable {
     TextField minMatchLengthField;
 
     @FXML
+    TextField searchField;
+
+    @FXML
     Label numMatches;
 
     String committedStatusColor;
     String unCommittedStatusColor;
     /**
      * Main logic of the program. Controller retrieves and sends information to
-     * main.
+     * state.
      */
-    MainLogic main;
-    MatchFile cf;
+    StateWithDatabase state;
+    MatchFile matchFile;
+    Scene scene;
+
+    final BooleanProperty commandPressed;
+    final BooleanProperty zPressed;
+    final BooleanBinding commandZPressed;
+
+    public Fxml_1Controller() {
+        this.zPressed = new SimpleBooleanProperty(false);
+        this.commandPressed = new SimpleBooleanProperty(false);
+        this.commandZPressed = commandPressed.and(zPressed);
+    }
 
     /**
      * Initializes the controller class.
@@ -101,13 +126,22 @@ public class Fxml_1Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        main = new MainLogic();
+        JavaFX_1.myControllerHandle = this;
+
+        FileBuilder fileBuilder = new FileBuilder();
+        String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
+        BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
+        Corpus corpus = DatabaseOperations.getAllSegments();
+        state = new StateWithDatabase(mainFile, corpus);
+        state.setMainFile(mainFile);
+
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
 
-        // Default minimum length for matches
         // Sets prompt text for minMatchLengthField to equal default minimum match length
-        minMatchLengthField.setPromptText(Integer.toString(main.getMinMatchLength()));
+        minMatchLengthField.setPromptText(Integer.toString(state.getMinMatchLength()));
+        // Set prompt text for search field
+        searchField.setPromptText("search...");
 
         // MAIN FILE VIEWER COLUMNS
         // id column:
@@ -126,7 +160,7 @@ public class Fxml_1Controller implements Initializable {
         thaiCol.setCellFactory(tc -> {
             TableCell<Segment, String> cell = new TableCell<>();
             Text text = new Text();
-            text.setFont(MainLogic.getThaiFont());
+            text.setFont(StateWithDatabase.getThaiFont());
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
             text.wrappingWidthProperty().bind(thaiCol.widthProperty());
@@ -134,11 +168,11 @@ public class Fxml_1Controller implements Initializable {
             cell.setEditable(true);
             return cell;
         });
-        
+
         // English column:
         EditableEnglishCellFactory cf2 = new EditableEnglishCellFactory();
-        cf2.setFont(MainLogic.getEnglishFont());
-        englishCol.setCellFactory(cf2); 
+        cf2.setFont(StateWithDatabase.getEnglishFont());
+        englishCol.setCellFactory(cf2);
         /*
         englishCol.setCellFactory(new Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>>() {
             @Override
@@ -167,7 +201,7 @@ public class Fxml_1Controller implements Initializable {
         englishCol.setOnEditCommit(new EventHandler<CellEditEvent<TUEntryBasic, String>>() {
             @Override
             public void handle(CellEditEvent<TUEntryBasic, String> t) {
-                main.englishEdited((t.getTableView().getItems().get(t.getTablePosition().getRow())),
+                state.englishEdited((t.getTableView().getItems().get(t.getTablePosition().getRow())),
                         t.getNewValue());
                 
             }
@@ -179,7 +213,7 @@ public class Fxml_1Controller implements Initializable {
             editedTU.setEnglish(e.getNewValue());
             editedTU.setCommitted(true);
             tableView.getItems().set(row, editedTU);
-            //(main.getMainFile().insertTU(0)).setThai("Something");
+            //(state.getMainFile().insertTU(0)).setThai("Something");
         }
         );
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
@@ -218,15 +252,14 @@ public class Fxml_1Controller implements Initializable {
 
         // Tags column
         // sets title at top to the name of the file
-        title.setText(main.getMainFile().getFileName());
+        title.setText(state.getMainFile().getFileName());
 
-        // binds main file to main table viewer
-        tableView.setItems(main.getMainFile().getTUsToDisplay());
+        // binds state file to state table viewer
+        tableView.setItems(state.getMainFileSegs());
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
         // COMPARE FILE VIEWER
         // Thai columns
         thaiColComp.setCellValueFactory(new PropertyValueFactory<>("thai"));
@@ -241,7 +274,6 @@ public class Fxml_1Controller implements Initializable {
                         setGraphic(null);
                         setText(null);
                         setStyle("");
-
                     } else {
                         setText(null);
                         setStyle("");
@@ -269,115 +301,25 @@ public class Fxml_1Controller implements Initializable {
         // English column
         englishColComp.setCellValueFactory(new PropertyValueFactory<>("english"));
         BasicCellFactory cf1 = new BasicCellFactory();
-        cf1.setFont(MainLogic.getEnglishFont());
+        cf1.setFont(StateWithDatabase.getEnglishFont());
         englishColComp.setCellFactory(cf1);
-        /*englishColComp.setCellFactory(tc -> {
-            TableCell<TUCompareEntry, String> cell = new TableCell<TUCompareEntry, String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item == null || empty) {
-                        setText(null);
-                        setStyle("");
-                        setGraphic(null);
-                    } else {
-                        /*
-                        setText(null);
-                        setStyle("");
-                        setGraphic(null);
-                         
-                        Text text = new Text();
-                        text.setFont(defaultEnglishFont);
-                        setGraphic(text);
-                        setPrefHeight(Control.USE_COMPUTED_SIZE);
-                        text.wrappingWidthProperty().bind(englishColComp.widthProperty());
-                        text.textProperty().bind(this.itemProperty());
-                    }
-                }
-            };
-            Text text = new Text();
-            text.setFont(defaultEnglishFont);
-            cell.setGraphic(text);
-            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-            text.wrappingWidthProperty().bind(englishColComp.widthProperty());
-            text.textProperty().bind(cell.itemProperty());
-            return cell;
-        });
-*/
-        //compareTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        //File column
-        Callback<TableColumn<MatchSegment, String>, TableCell<MatchSegment, String>> myCallBack;
-        /*
-        myCallBack = new Callback<TableColumn<TUCompareEntry, String>, TableCell<TUCompareEntry, String>>() {
-            @Override
-            public TableCell<TUCompareEntry, String> call(TableColumn<TUCompareEntry, String> param) {
-                TableCell<TUCompareEntry, String> cell = new TableCell<TUCompareEntry, String>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        if (item == null || empty) {
-
-                            setText(null);
-                            setStyle("");
-
-                        } else {
-                            TextFlow textFlow = new TextFlow();
-                            String str1 = "";
-                            for (int i = 0; i < item.length(); i++) {
-                                if (item.charAt(i) == 't') {
-                                    Text text1 = new Text(str1);
-                                    str1 = "";
-                                    text1.setFill(Color.BLUE);
-                                    textFlow.getChildren().add(text1);
-                                    Text text2 = new Text("t");
-                                    text2.setFill(Color.RED);
-                                    textFlow.getChildren().add(text2);
-                                } else if (i + 1 == item.length()) {
-                                    str1 = str1.concat(String.valueOf(item.charAt(i)));
-                                    Text text1 = new Text(str1);
-                                    str1 = "";
-                                    text1.setFill(Color.BLUE);
-                                    textFlow.getChildren().add(text1);
-                                } else {
-                                    str1 = str1.concat(String.valueOf(item.charAt(i)));
-                                }
-                            }
-                            setGraphic(textFlow);
-                        }
-                    }
-                };
-
-               
-                Text text1 = new Text();
-                text1.setFill(Color.BLUE);
-                text1.textProperty().bind(cell.itemProperty());
-                Text text2 = new Text();
-                text2.setFill(Color.RED);
-                text2.textProperty().bind(cell.itemProperty());
-
-                TextFlow textFlow = new TextFlow(text1, text2);
-                cell.setGraphic(textFlow);
-                return cell;
-            }
-
-        };
-         */
         //fileColComp.setCellFactory(myCallBack);
         fileColComp.setCellValueFactory(new PropertyValueFactory<>("fileName"));
         // Sets "score" rating for match. Currently represents the number of matching characters.
         scoreColComp.setCellValueFactory(new PropertyValueFactory<>("longestMatchLength"));
 
-        // sets initial compare file in compare table to first TU in main file viewer
-        //setCompareTable(main.getMainFile().getTUsToDisplay().get(0).toString());
+        // sets initial compare file in compare table to first TU in state file viewer
+        //setCompareTable(state.getMainFile().getActiveSegs().get(0).toString());
 
         /*
-            Makes it so when a row is selected in the main table, this renders compareTable with a new MatchFile made from the Thai String from the main table.
+            Makes it so when a row is selected in the state table, this renders compareTable with a new MatchFile made from the Thai String from the state table.
          */
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                main.newSelection(newSelection);
-                //setCompareTable(newSelection.getThai());
+                state.newSelection(newSelection);
+                if (scene == null && tableView.getScene() != null) {
+                    setScene(tableView.getScene());
+                }
             }
         }
         );
@@ -386,40 +328,45 @@ public class Fxml_1Controller implements Initializable {
         Font.getFamilies().forEach((s) -> {
             System.out.println(s);
         }); */
-        
-        // REDO
-        cf = main.getCompareFile();
-        compareTable.setItems(cf.getObservableList());
+        matchFile = state.getMatchFile();
+        compareTable.setItems(state.getMatchList());
         // binds the number of matches to length of matchList
-        cf.getObservableList().addListener((ListChangeListener) c -> {
-            setNumMatches(c.getList().size()); 
+        matchFile.getObservableList().addListener((ListChangeListener) c -> {
+            setNumMatches(c.getList().size());
         });
-        
-        
+
+        state.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
+            numMatches.setText(String.valueOf(newVal));
+        });
 
     }
 
     @FXML
     protected void minMatchLengthChanged(ActionEvent event) {
-        
-        main.setMinLength(Integer.valueOf(minMatchLengthField.getText()));
-        
+
+        state.setMinLength(Integer.valueOf(minMatchLengthField.getText()));
+
         /*
         // changes the minimum match length (retrieved from the minMatchLength field)
-        main.setMinMatchLength(Integer.valueOf(minMatchLengthField.getText()));
+        state.setMinMatchLength(Integer.valueOf(minMatchLengthField.getText()));
         // redraws the compare table
-        setCompareTable(main.getCurrentCompareString());
-        */
+        setCompareTable(state.getCurrentCompareString());
+         */
+    }
+
+    @FXML
+    protected void search(ActionEvent event) {
+        state.search(searchField.getText());
     }
 
     @FXML
     private void merge(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            main.getMainFile().mergeTUs(selectedItems);
+            state.getMainFile().mergeTUs(selectedItems);
         }
     }
-    
+
     @FXML
     private void commit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
@@ -430,19 +377,53 @@ public class Fxml_1Controller implements Initializable {
             }
         }
     }
-    
+
+    @FXML
+    private void keyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.Z) {
+            if (!zPressed.getValue()) {
+                System.out.println("z pressed");
+                
+                zPressed.set(true);
+                if (zPressed.getValue() && commandPressed.getValue()) {
+                   // state.undo();
+                }
+                event.consume();
+            }
+        } else if (event.getCode() == KeyCode.COMMAND) {
+            System.out.println("command pressed");
+            event.consume();
+            commandPressed.set(true);
+        }
+    }
+
+    @FXML
+    private void keyReleased(KeyEvent event) {
+        if (event.getCode() == KeyCode.COMMAND) {
+            System.out.println("Command released");
+            commandPressed.set(false);
+            event.consume();
+        } else if (event.getCode() == KeyCode.Z) {
+            System.out.println("z released");
+           // zPressed.set(false);
+            event.consume();
+        }
+    }
+
     @FXML
     private void split(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
-        Segment tu = selectedItems.get(0);
-        if (selectedItems != null || selectedItems.isEmpty()) {
-            main.getMainFile().splitTU(tu, 10);
+
+        if (selectedItems != null && !selectedItems.isEmpty()) {
+            state.acceptAction(new Split(selectedItems.get(0), 10));
+            //Segment seg = selectedItems.get(0);
+            //state.getMainFile().splitTU(seg, 10);
         }
     }
 
     @FXML
     private void export(ActionEvent event) {
-        main.exportCommittedTUs();
+        state.exportCommittedTUs();
     }
 
     private void setNumMatches(int num) {
@@ -496,18 +477,63 @@ public class Fxml_1Controller implements Initializable {
         while (iter.hasNext()) {
             Text text = new Text(iter.next());
             text.setFill(currentColor);
-            text.setFont(MainLogic.getThaiFont());
+            text.setFont(StateWithDatabase.getThaiFont());
             textFlow.getChildren().add(text);
             // switches current color
             currentColor = currentColor == matchColor ? nonMatchColor : matchColor;
         }
         return textFlow;
     }
+    @FXML
+    private void undo(ActionEvent event) {
+        state.undo();
+        
+    }
 
-    
+    private void setScene(Scene scene) {
+        this.scene = scene;
+
+        /*
+        commandZPressed.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean werePressed, Boolean currentlyPressed) {
+                System.out.println("changed!!");
+                if (currentlyPressed) {
+                   // state.undo();
+                } 
+            }
+        });
+        */
+
+        /*
+        this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                        @Override
+                        public void handle(KeyEvent ke) {
+                            if (ke.getCode() == KeyCode.Z) {
+                                System.out.println("z pressed");
+                                commandPressed.set(true);
+                            } else if (ke.getCode() == KeyCode.COMMAND) {
+                                System.out.println("command pressed");
+                                zPressed.set(true);
+                            }
+                        }
+                    });
+
+        this.scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+                        @Override
+                        public void handle(KeyEvent ke) {
+                            if (ke.getCode() == KeyCode.COMMAND) {
+                                System.out.println("Command released");
+                                commandPressed.set(false);
+                            } else if (ke.getCode() == KeyCode.Z) {
+                                System.out.println("z released");
+                                zPressed.set(false);
+                            }
+                        }
+                    }); */
+    }
+
 }
-
-
 
 /*
 Callback: 

@@ -5,7 +5,7 @@
  */
 package Files;
 
-import JavaFX_1.MainLogic;
+import State.StateWithDatabase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -333,7 +333,7 @@ public class MatchSegment implements Comparable<MatchSegment> {
         while (iter.hasNext()) {
             Text text = new Text(iter.next());
             text.setFill(currentColor);
-            text.setFont(MainLogic.getThaiFont());
+            text.setFont(StateWithDatabase.getThaiFont());
             textFlow.getChildren().add(text);
             // switches current color
             currentColor = currentColor == matchColor ? nonMatchColor : matchColor;

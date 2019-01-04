@@ -7,10 +7,11 @@ package comparator;
 
 import Database.PostingsList;
 import Files.BasicFile;
-import Files.FileList;
+import Files.Corpus;
 import Files.MatchSegment;
 import Files.MatchFile;
 import Files.Segment;
+import State.StateForTesting;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -25,45 +26,39 @@ public class TestMatchFinder {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BasicFile bfTest = new BasicFile();
-        Segment testSeg = bfTest.newSeg();
-        testSeg.setThai("test");
+        BasicFile mainFile = new BasicFile();
+        Segment testSeg = mainFile.newSeg();
+        testSeg.setThai("test1");
 
-        FileList fl = new FileList();
-        BasicFile bf1 = new BasicFile();
-        Segment seg1 = bf1.newSeg();
+        Corpus corpus = new Corpus();
+        BasicFile corpusFile = new BasicFile();
+        Segment seg1 = corpusFile.newSeg();
         seg1.setThai("test1");
         seg1.setCommitted(true);
-        Segment seg2 = bf1.newSeg();
+        Segment seg2 = corpusFile.newSeg();
         seg2.setThai("test2");
         seg2.setCommitted(true);
-        Segment seg3 = bf1.newSeg();
+        Segment seg3 = corpusFile.newSeg();
         seg3.setThai("test3");
         seg3.setCommitted(true);
         seg3.setRemoved(true);
-        fl.addFile(bf1);
+        corpus.addFile(corpusFile);
+        
+        StateForTesting state = new StateForTesting(mainFile, corpus);
 
-        System.out.println("filelist: " + fl.getAllCommittedTUs());
+        System.out.println("filelist: " + corpus.getAllCommittedTUs());
         PostingsList pl = new PostingsList(3);
-        pl.addFileList(fl);
-        for (Entry e : pl.getMap().entrySet()) {
+        pl.addFileList(corpus);
+        pl.getMap().entrySet().forEach((e) -> {
             System.out.println("\t" + e);
-        };
+        });
 
-        System.out.println("Matches with 'test'" + pl.getMatchingID("test"));
 
-        MatchFile mFile = MatchFinder.basicMatch2(testSeg, 3, fl);
+        MatchFile mFile = MatchFinder.basicMatch(testSeg, 4, state);
         MatchSegment me = (mFile.getObservableList()).get(0);
-        System.out.println("size = " + mFile.getObservableList().size());
-        System.out.println("me1" + me.getThai());
+        System.out.println("mFile obsList: " + mFile.getObservableList());
 
         System.out.println("*****");
-
-        System.out.println(MatchFinder.findStringMatches("aaaa", "zzzzz", 1));
-        System.out.println(MatchFinder.findStringMatches("aaaaz", "zzzzz", 1));
-        System.out.println(MatchFinder.findStringMatches("aazaaz", "zzzzz", 1));
-        System.out.println(MatchFinder.findStringMatches("aaaaz", "zzzzz", 2));
-        System.out.println(MatchFinder.findStringMatches("zzaaa", "zzzzz", 2));
 
         System.out.println("*****");
 
