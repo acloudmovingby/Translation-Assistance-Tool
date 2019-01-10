@@ -5,12 +5,12 @@
  */
 package State;
 
-import Database.PostingsList;
-import Files.BasicFile;
-import Files.Corpus;
-import Files.MatchFile;
-import Files.MatchSegment;
-import Files.Segment;
+import DataStructures.PostingsList;
+import DataStructures.BasicFile;
+import DataStructures.Corpus;
+import DataStructures.MatchList;
+import DataStructures.MatchSegment;
+import DataStructures.Segment;
 import java.util.List;
 import javafx.collections.ObservableList;
 
@@ -19,19 +19,19 @@ import javafx.collections.ObservableList;
  * @author Chris
  */
 public interface State {
+
+    UIState getUIState();
     
     
     BasicFile getMainFile();
     
     void setMainFile(BasicFile bf);
     
-    ObservableList<Segment> getMainFileSegs();
-    
     Corpus getCorpus();
     
     //void setCorpus(Corpus corpus);
     
-    MatchFile getMatchFile();
+    MatchList getMatchFile();
     
     ObservableList<MatchSegment> getMatchList();
     
@@ -52,8 +52,10 @@ public interface State {
     PostingsList getPostingsList(int k);
 
     public void search(String text);
-    
-    public void acceptAction(UserAction a);
+
+    public void resetMainFile(State priorMainFile);
+
+    public void split(Segment seg, int index);
     
     
 

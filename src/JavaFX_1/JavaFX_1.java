@@ -23,14 +23,6 @@ public class JavaFX_1 extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FXML TableView Example");
        
-        /*
-//Set up instance instead of using static load() method
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
-        Parent root = loader.load();
-        
-        //Now we have access to getController() through the instance... don't forget the type cast
-        myControllerHandle = (Fxml_1Controller)loader.getController();
-         */
        
         Pane myPane = (Pane) FXMLLoader.load(getClass().getResource("fxml_1.fxml"));
         Scene myScene = new Scene(myPane);

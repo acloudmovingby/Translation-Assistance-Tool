@@ -5,6 +5,9 @@
  */
 package Files;
 
+import DataStructures.BasicFile;
+import DataStructures.FileBuilder;
+import DataStructures.Segment;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

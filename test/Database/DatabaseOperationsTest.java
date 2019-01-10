@@ -5,8 +5,8 @@
  */
 package Database;
 
-import Files.BasicFile;
-import Files.Segment;
+import DataStructures.BasicFile;
+import DataStructures.Segment;
 import java.sql.Connection;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -121,7 +121,7 @@ public class DatabaseOperationsTest {
         // Add TU (should return true)
         System.out.println("1st Push");
         assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
-        assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
+        assertEquals(expResult, DatabaseOperations.getSegment(expResult.getID()));
        
         // Add again (should return true)
         System.out.println("2nd Push");

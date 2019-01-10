@@ -5,8 +5,8 @@
  */
 package JavaFX_1;
 
-import Files.MatchSegment;
-import Files.Segment;
+import DataStructures.MatchSegment;
+import DataStructures.Segment;
 import java.text.Format;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;

@@ -5,9 +5,9 @@
  */
 package ParseThaiLaw;
 
-import Files.BasicFile;
-import Files.FileBuilder;
-import static Files.FileBuilder.makeFileNameFromPath;
+import DataStructures.BasicFile;
+import DataStructures.FileBuilder;
+import static DataStructures.FileBuilder.makeFileNameFromPath;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

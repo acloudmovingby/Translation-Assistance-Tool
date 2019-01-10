@@ -5,8 +5,8 @@
  */
 package Database;
 
-import Files.BasicFile;
-import Files.FileBuilder;
+import DataStructures.BasicFile;
+import DataStructures.FileBuilder;
 import State.StateWithDatabase;
 import ParseThaiLaw.ThaiLawParser;
 

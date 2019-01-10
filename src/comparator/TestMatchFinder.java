@@ -5,13 +5,13 @@
  */
 package comparator;
 
-import Database.PostingsList;
-import Files.BasicFile;
-import Files.Corpus;
-import Files.MatchSegment;
-import Files.MatchFile;
-import Files.Segment;
-import State.StateForTesting;
+import DataStructures.PostingsList;
+import DataStructures.BasicFile;
+import DataStructures.Corpus;
+import DataStructures.MatchSegment;
+import DataStructures.MatchList;
+import DataStructures.Segment;
+import State.StateWithDatabase;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class TestMatchFinder {
         seg3.setRemoved(true);
         corpus.addFile(corpusFile);
         
-        StateForTesting state = new StateForTesting(mainFile, corpus);
+        StateWithDatabase state = new StateWithDatabase(mainFile, corpus);
 
         System.out.println("filelist: " + corpus.getAllCommittedTUs());
         PostingsList pl = new PostingsList(3);
@@ -54,7 +54,7 @@ public class TestMatchFinder {
         });
 
 
-        MatchFile mFile = MatchFinder.basicMatch(testSeg, 4, state);
+        MatchList mFile = MatchFinder.basicMatch(testSeg, 4, state);
         MatchSegment me = (mFile.getObservableList()).get(0);
         System.out.println("mFile obsList: " + mFile.getObservableList());
 
@@ -71,7 +71,7 @@ public class TestMatchFinder {
         MatchSegment ms4 = new MatchSegment();
         ms4.setThai("ms4");
 
-        MatchFile matchF = new MatchFile();
+        MatchList matchF = new MatchList();
         matchF.addEntry(ms1);
         matchF.addEntry(ms2);
         matchF.addEntry(ms3);

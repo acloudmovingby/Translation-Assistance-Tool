@@ -5,10 +5,10 @@
  */
 package comparator;
 
-import Database.PostingsList;
-import Files.MatchFile;
-import Files.MatchSegment;
-import Files.Segment;
+import DataStructures.PostingsList;
+import DataStructures.MatchList;
+import DataStructures.MatchSegment;
+import DataStructures.Segment;
 import State.State;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,12 +24,28 @@ public class MatchFinder {
     public MatchFinder() {
     }
 
-    public static MatchFile basicMatch(Segment seg, int minMatchLength, State state) {
+    public static MatchList basicMatch(Segment seg, int minMatchLength, State state) {
         PostingsList pl = state.getPostingsList(
                 (minMatchLength<=8 ? minMatchLength : 8));
 
-        MatchFile mf = new MatchFile();
+        MatchList ml = new MatchList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();
+        
+        // breaks seg into ngrams
+        
+        // for each ngram it creates list segs in corpus that have that ngram
+            //shd already be tested in pl test
+        
+        // checks to see if that segment has already been looked at or not
+            // shdnt need testing...
+            
+        // if not, makes boolean array of all matches of mfSeg in the corpus seg
+            // this, i believe, has already been tested 
+            
+        // if that boolean array has at least one true, then it makes a match segment
+        // 
+        
+        
 
         // makes all ngrams from seg
         List<String> nGrams = PostingsList.makeNGrams(seg.getThai(), pl.getNGramLength());
@@ -58,22 +74,22 @@ public class MatchFinder {
                         newMatch.setEnglish(s.getEnglish());
                         newMatch.setFileName(s.getFileName());
                         newMatch.setMatches(matchingChars);
-                        mf.addEntry(newMatch);
+                        ml.addEntry(newMatch);
                     }
 
                     segsAlreadyChecked.add(s);
                 }
             }
         }
-System.out.println("isZeroCounter: " + Substring.isZeroCounter + "\t isNotZeroCounter: " + Substring.isNotZeroCounter);
-        return mf;
+
+        return ml;
     }
 
-    public static MatchFile exactMatch(String text, State state) {
+    public static MatchList exactMatch(String text, State state) {
         PostingsList pl = state.getPostingsList(
                 (text.length()<=8 ? text.length() : 8));
         
-        MatchFile mf = new MatchFile();
+        MatchList mf = new MatchList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();
         
          // makes all ngrams from seg
@@ -138,8 +154,8 @@ System.out.println("isZeroCounter: " + Substring.isZeroCounter + "\t isNotZeroCo
         return ret;
     }
 
-    public MatchFile complexMatch(Segment seg) {
-        return new MatchFile();
+    public MatchList complexMatch(Segment seg) {
+        return new MatchList();
     }
 
    

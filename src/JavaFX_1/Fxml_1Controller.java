@@ -1,30 +1,23 @@
 package JavaFX_1;
 
 import State.StateWithDatabase;
-import Database.DatabaseOperations;
-import Files.BasicFile;
-import Files.FileBuilder;
-import Files.Corpus;
-import Files.MatchFile;
-import Files.MatchSegment;
-import Files.Segment;
-import State.Split;
+import DataStructures.MatchSegment;
+import DataStructures.Segment;
+import State.Dispatcher;
+import State.UIState;
+import UserActions.Split;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -99,12 +92,14 @@ public class Fxml_1Controller implements Initializable {
 
     String committedStatusColor;
     String unCommittedStatusColor;
+    
+    Dispatcher dispatcher;
+    UIState uiState;
     /**
      * Main logic of the program. Controller retrieves and sends information to
      * state.
      */
     StateWithDatabase state;
-    MatchFile matchFile;
     Scene scene;
 
     final BooleanProperty commandPressed;
@@ -127,13 +122,11 @@ public class Fxml_1Controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         JavaFX_1.myControllerHandle = this;
-
-        FileBuilder fileBuilder = new FileBuilder();
-        String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
-        BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
-        Corpus corpus = DatabaseOperations.getAllSegments();
-        state = new StateWithDatabase(mainFile, corpus);
-        state.setMainFile(mainFile);
+        
+        Initializer init = new Initializer();
+        state = init.getState();
+        uiState = init.getUIState();
+        dispatcher = init.getDispatcher();
 
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
@@ -160,7 +153,7 @@ public class Fxml_1Controller implements Initializable {
         thaiCol.setCellFactory(tc -> {
             TableCell<Segment, String> cell = new TableCell<>();
             Text text = new Text();
-            text.setFont(StateWithDatabase.getThaiFont());
+            text.setFont(UIState.getThaiFont());
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
             text.wrappingWidthProperty().bind(thaiCol.widthProperty());
@@ -171,7 +164,7 @@ public class Fxml_1Controller implements Initializable {
 
         // English column:
         EditableEnglishCellFactory cf2 = new EditableEnglishCellFactory();
-        cf2.setFont(StateWithDatabase.getEnglishFont());
+        cf2.setFont(UIState.getEnglishFont());
         englishCol.setCellFactory(cf2);
         /*
         englishCol.setCellFactory(new Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>>() {
@@ -213,7 +206,6 @@ public class Fxml_1Controller implements Initializable {
             editedTU.setEnglish(e.getNewValue());
             editedTU.setCommitted(true);
             tableView.getItems().set(row, editedTU);
-            //(state.getMainFile().insertTU(0)).setThai("Something");
         }
         );
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
@@ -255,7 +247,8 @@ public class Fxml_1Controller implements Initializable {
         title.setText(state.getMainFile().getFileName());
 
         // binds state file to state table viewer
-        tableView.setItems(state.getMainFileSegs());
+        //tableView.setItems(state.getMainFileSegs());
+        tableView.setItems(uiState.getMainFileSegs());
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -301,7 +294,7 @@ public class Fxml_1Controller implements Initializable {
         // English column
         englishColComp.setCellValueFactory(new PropertyValueFactory<>("english"));
         BasicCellFactory cf1 = new BasicCellFactory();
-        cf1.setFont(StateWithDatabase.getEnglishFont());
+        cf1.setFont(UIState.getEnglishFont());
         englishColComp.setCellFactory(cf1);
         //fileColComp.setCellFactory(myCallBack);
         fileColComp.setCellValueFactory(new PropertyValueFactory<>("fileName"));
@@ -312,7 +305,7 @@ public class Fxml_1Controller implements Initializable {
         //setCompareTable(state.getMainFile().getActiveSegs().get(0).toString());
 
         /*
-            Makes it so when a row is selected in the state table, this renders compareTable with a new MatchFile made from the Thai String from the state table.
+            Makes it so when a row is selected in the state table, this renders compareTable with a new MatchList made from the Thai String from the state table.
          */
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -328,14 +321,9 @@ public class Fxml_1Controller implements Initializable {
         Font.getFamilies().forEach((s) -> {
             System.out.println(s);
         }); */
-        matchFile = state.getMatchFile();
-        compareTable.setItems(state.getMatchList());
-        // binds the number of matches to length of matchList
-        matchFile.getObservableList().addListener((ListChangeListener) c -> {
-            setNumMatches(c.getList().size());
-        });
+        compareTable.setItems(uiState.getMatchList());
 
-        state.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
+        uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
             numMatches.setText(String.valueOf(newVal));
         });
 
@@ -405,7 +393,6 @@ public class Fxml_1Controller implements Initializable {
             event.consume();
         } else if (event.getCode() == KeyCode.Z) {
             System.out.println("z released");
-           // zPressed.set(false);
             event.consume();
         }
     }
@@ -415,19 +402,18 @@ public class Fxml_1Controller implements Initializable {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
 
         if (selectedItems != null && !selectedItems.isEmpty()) {
-            state.acceptAction(new Split(selectedItems.get(0), 10));
-            //Segment seg = selectedItems.get(0);
-            //state.getMainFile().splitTU(seg, 10);
+            // only splits if one row is selected
+            if (selectedItems.size() == 1) {
+                // sends that row to dispatcher
+                Segment seg = selectedItems.get(0);
+                dispatcher.acceptAction(new Split(selectedItems.get(0), 10));
+            }
         }
     }
 
     @FXML
     private void export(ActionEvent event) {
         state.exportCommittedTUs();
-    }
-
-    private void setNumMatches(int num) {
-        numMatches.setText(String.valueOf(num));
     }
 
     /**
@@ -477,7 +463,7 @@ public class Fxml_1Controller implements Initializable {
         while (iter.hasNext()) {
             Text text = new Text(iter.next());
             text.setFill(currentColor);
-            text.setFont(StateWithDatabase.getThaiFont());
+            text.setFont(UIState.getThaiFont());
             textFlow.getChildren().add(text);
             // switches current color
             currentColor = currentColor == matchColor ? nonMatchColor : matchColor;
@@ -486,7 +472,7 @@ public class Fxml_1Controller implements Initializable {
     }
     @FXML
     private void undo(ActionEvent event) {
-        state.undo();
+        //state.undo();
         
     }
 

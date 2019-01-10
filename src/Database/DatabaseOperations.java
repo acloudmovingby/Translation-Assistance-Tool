@@ -5,9 +5,9 @@
  */
 package Database;
 
-import Files.BasicFile;
-import Files.Corpus;
-import Files.Segment;
+import DataStructures.BasicFile;
+import DataStructures.Corpus;
+import DataStructures.Segment;
 import State.StateWithDatabase;
 import java.sql.Array;
 import java.sql.Connection;
@@ -40,9 +40,7 @@ public class DatabaseOperations {
      * @return
      */
     public static boolean addOrUpdateSegment(Segment seg) {
-        if (!StateWithDatabase.databaseIsWritable()) {
-            return false;
-        } else {
+        
 
             if (seg.getID() == 0) {
                 seg.setID(makeTUID());
@@ -79,7 +77,7 @@ public class DatabaseOperations {
                 return false;
             }
 
-        }
+        
     }
 
     /**
@@ -307,7 +305,7 @@ public class DatabaseOperations {
         } else {
 
             String idAsString = String.valueOf(id);
-            String sql = "SELECT id, fileID, fileName, thai, english, committed, removed FROM corpus1 WHERE id =" + idAsString + ";";
+            String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE id =" + idAsString + ";";
 
             try (Connection conn = DatabaseOperations.connect();
                     Statement stmt = conn.createStatement();
@@ -315,12 +313,12 @@ public class DatabaseOperations {
 
                 // loop through the result set
                 while (rs.next()) {
-                    Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
-                    return rebuildSegment(rs, ret);
+                   // Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
+                    return rebuildSegment(rs);
                 }
                 return null;
             } catch (SQLException e) {
-                System.out.println("getTU: " + e.getMessage());
+                System.out.println("getSegment: " + e.getMessage());
             }
             return null;
         }
@@ -371,43 +369,13 @@ public class DatabaseOperations {
                 // loop through the result set
                 while (rs.next()) {
 
-                    Segment seg = new Segment(file.getFileID());
-                    seg = rebuildSegment(rs, seg);
+                  //  Segment seg = new Segment(file.getFileID());
+                    Segment seg = rebuildSegment(rs);
                     if (seg.isRemoved()) {
                         file.getRemovedSegs().add(seg);
                     } else {
                         file.getActiveSegs().add(seg);
                     }
-
-                    /*tu2.setThai(rs.getString("thai"));
-                    tu2.setEnglish(rs.getString("english"));
-                    int committedStatus = rs.getInt("committed");
-                    if (committedStatus == 0) {
-                        tu2.setCommitted(false);
-                    } else if (committedStatus == 1) {
-                        tu2.setCommitted(true);
-                    }
-                    int removedStatus = rs.getInt("removed");
-                    if (removedStatus == 0) {
-                        tu2.setRemoved(false);
-                    } else if (removedStatus == 1) {
-                        tu2.setRemoved(true);
-                    }
-                    tu2.setRank(rs.getInt("rank"));
-                    
-                    
-                    /*
-                    Segment tu = new Segment(rs.getInt("id"), rs.getInt("fileID"));
-                    tu.setThai(rs.getString("thai"));
-                    tu.setEnglish(rs.getString("english"));
-                    int committedStatus = rs.getInt("committed");
-                    if (committedStatus == 0) {
-                        tu.setCommitted(false);
-                    } else if (committedStatus == 1) {
-                        tu.setCommitted(true);
-                    }
-                    file.addTUAtEnd(tu);
-                     */
                 }
             } catch (SQLException e) {
                 System.out.println("getFile: " + e.getMessage());
@@ -424,8 +392,9 @@ public class DatabaseOperations {
      * @return
      * @throws SQLException
      */
-    private static Segment rebuildSegment(ResultSet rs, Segment seg) throws SQLException {
-
+    private static Segment rebuildSegment(ResultSet rs) throws SQLException {
+ Segment seg = new Segment();
+        seg.setFileID(rs.getInt("fileID"));
         seg.setID(rs.getInt("id"));
         seg.setFileName(rs.getString("fileName"));
         seg.setThai(rs.getString("thai"));

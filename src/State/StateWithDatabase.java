@@ -6,26 +6,21 @@
 package State;
 
 import Database.DatabaseOperations;
-import Database.PostingsList;
-import Files.BasicFile;
-import Files.MatchFile;
-import Files.FileBuilder;
-import Files.Corpus;
-import Files.MatchSegment;
-import Files.Segment;
-import UndoManager.UndoManager;
+import DataStructures.PostingsList;
+import DataStructures.BasicFile;
+import DataStructures.MatchList;
+import DataStructures.Corpus;
+import DataStructures.MatchSegment;
+import DataStructures.Segment;
 import comparator.MatchFinder;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.text.Font;
 
 
 /**
@@ -39,8 +34,6 @@ public class StateWithDatabase implements State {
     private static final boolean DATABASE_IS_READABLE = true;
     private static final boolean DATABASE_IS_WRITABLE = true;
     private static final boolean REBOOT_DATABASE = false;
-    private static final Font DEFAULT_THAI_FONT = Font.font("Arial");
-    private static final Font DEFAULT_ENGLISH_FONT = Font.font("Arial");
     
     private PostingsList pl2;
     private PostingsList pl3;
@@ -55,19 +48,16 @@ public class StateWithDatabase implements State {
     /**
      * The file currently being translated.
      */
-    BasicFile mainFile;
-    
-    /**
-     * 
-     */
-    ObservableList<Segment> mainFileSegs;
+    private BasicFile mainFile;
 
     /**
      * The corpus where matches are found.
      */
     private Corpus corpus;
 
-    private MatchFile compareFile;
+    private MatchList compareFile;
+    
+    private final UIState uiState;
     
     private ObservableList<MatchSegment> matchList;
     
@@ -79,31 +69,21 @@ public class StateWithDatabase implements State {
     private int minMatchLength;
    
     private Segment segSelected;
-    
-    private UndoManager um;
    
     public StateWithDatabase(BasicFile mainFile, Corpus corpus) {
-        // constructor takes: main file, corpus (both already built)
-        // state contains: 
-                // corpus
-                // main file
-                // match file
-                // postings lists
-                // access to database stuff
-        // state needs to be started:
-                // corpus
         
         if (REBOOT_DATABASE) {
             DatabaseOperations.rebootDB();
         }
+        
+        uiState = new UIState();
+        
         // Default minimum length for matches
         minMatchLength = 10;
-        mainFileSegs = FXCollections.observableArrayList();
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
         setMainFile(mainFile);
         setCorpus(corpus);
-        um = new UndoManager();
     }
 
     @Override
@@ -115,31 +95,24 @@ public class StateWithDatabase implements State {
         return numMatches;
     }
     
-    public UndoManager getUndoManager() {
-        return um;
-    }
-    
     @Override
     public void setMainFile(BasicFile newMainFile) {
         this.mainFile = newMainFile;
         segSelected =  newMainFile.getActiveSegs().get(0);
-        mainFileSegs = newMainFile.getActiveSegs();
+        uiState.setMainFileSegs(newMainFile.getActiveSegs());
     }
     
-    public ObservableList<Segment> getMainFileSegs() {
-        return mainFileSegs;
-    }
     
     
     
      @Override
-    public MatchFile getMatchFile() {
+    public MatchList getMatchFile() {
          return compareFile;
     }
     
     @Override
     public ObservableList<MatchSegment> getMatchList() {
-        return matchList;
+        return uiState.getMatchList();
     }
     
      /**
@@ -150,7 +123,7 @@ public class StateWithDatabase implements State {
     public void newSelection(Segment selectedSeg) {
         System.out.println(selectedSeg.getThai());
         this.segSelected = selectedSeg;
-        MatchFile newMatches = findMatch(selectedSeg);
+        MatchList newMatches = findMatch(selectedSeg);
         setMatchFile(newMatches);
     }
     
@@ -291,14 +264,15 @@ public class StateWithDatabase implements State {
 
     }
     
-    private void setMatchFile(MatchFile newMatches) {
+    private void setMatchFile(MatchList newMatches) {
         compareFile = newMatches;
         setMatchList(newMatches.getObservableList());
         numMatches.set(getMatchList().size());
     }
     
     private void setMatchList(ObservableList<MatchSegment> newMatchList) {
-        matchList.setAll(newMatchList);
+        uiState.setMatchList(newMatchList);
+        //matchList.setAll(newMatchList);
     }
 
     public static boolean databaseIsReadable() {
@@ -326,11 +300,6 @@ public class StateWithDatabase implements State {
         }
 
     }
-
-    void englishEdited(Segment selectedTU, String newText) {
-        selectedTU.setEnglish(newText);
-        commit(selectedTU);
-    }
     
     public void commitSeg(Segment seg) {
         throw new UnsupportedOperationException("Not supported yet."); 
@@ -342,9 +311,9 @@ public class StateWithDatabase implements State {
     /**
      * Finds matching segments according to default match finding algorithm
      * @param seg
-     * @return MatchFile with matching segments
+     * @return MatchList with matching segments
      */
-    private MatchFile findMatch(Segment seg) {
+    private MatchList findMatch(Segment seg) {
         System.out.println("corpus size: " + corpus.getAllCommittedTUs().size());
         return MatchFinder.basicMatch(seg, minMatchLength, this);
     }
@@ -353,19 +322,8 @@ public class StateWithDatabase implements State {
     // MatchFinder makes a postingslist of length minMatchLength
     // could make postings lists for 2->8
     
-    private MatchFile findExactMatch(String str) {
+    private MatchList findExactMatch(String str) {
         return MatchFinder.exactMatch(str, this);
-    }
-    
-   
-    
-    
-    public static Font getThaiFont() {
-        return DEFAULT_THAI_FONT;
-    }
-    
-    public static Font getEnglishFont() {
-        return DEFAULT_ENGLISH_FONT;
     }
 
     @Override
@@ -374,15 +332,20 @@ public class StateWithDatabase implements State {
     }
 
     @Override
-    public void acceptAction(UserAction a) {
-        getUndoManager().pushState(this);
-        a.executeStateChange(this);
+    public UIState getUIState() {
+        return uiState;
     }
 
-    public void undo() {
-        System.out.println("here");
-         getUndoManager().undo(this);
+    @Override
+    public void resetMainFile(State priorMainFile) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void split(Segment seg, int index) {
+        getMainFile().splitTU(seg, index);
+    }
+
 
   
 

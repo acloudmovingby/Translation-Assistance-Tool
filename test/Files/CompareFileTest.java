@@ -5,6 +5,8 @@
  */
 package Files;
 
+import DataStructures.MatchSegment;
+import DataStructures.MatchList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.After;
@@ -45,7 +47,7 @@ public class CompareFileTest {
     @Test
     public void testToArray() {
         System.out.println("toArray");
-        MatchFile instance = new MatchFile();
+        MatchList instance = new MatchList();
         
         System.out.println("The first entry (การเมือง)");
         MatchSegment t = new MatchSegment();
@@ -85,21 +87,22 @@ public class CompareFileTest {
 
     
     /**
-     * Tests to make sure two TMEntries can be added to MatchFile even if they have same MatchSize
+     * Tests to make sure two TMEntries can be added to MatchList even if they have same MatchSize
      */
     @Test
     public void testAddEntry1() {
         System.out.println("addEntry1");
         
-        MatchFile instance = new MatchFile();
+        MatchList matchList = new MatchList();
         
         System.out.println("The first entry (การเมือง)");
         MatchSegment t = new MatchSegment();
         t.setThai("การเมือง");
         t.setEnglish("politics");
         t.setFileName("file1");
-        t.addMatchInterval(0, 3);
-        instance.addEntry(t);
+        t.setMatches(new boolean[] {true, true, true, false, false, false, false, false});
+   
+        matchList.addEntry(t);
          
         
         System.out.println("The second entry");
@@ -107,11 +110,10 @@ public class CompareFileTest {
         t2.setThai("การเมืองAA");
         t2.setEnglish("politics");
         t2.setFileName("file1");
-        t2.addMatchInterval(0, 4);
-        instance.addEntry(t2);
+        matchList.addEntry(t2);
         
         int expResult = 2;
-        int result = instance.getTUs().size();
+        int result = matchList.getTUs().size();
         
         assertEquals(expResult, result);
     }
@@ -123,15 +125,13 @@ public class CompareFileTest {
     public void testAddEntry2() {
         System.out.println("addEntry2");
         
-        MatchFile result = new MatchFile();
+        MatchList result = new MatchList();
         
         System.out.println("The first entry (การเมือง)");
         MatchSegment t = new MatchSegment();
         t.setThai("การเมืองCCC");
         t.setEnglish("politics");
         t.setFileName("file1");
-        t.addMatchInterval(4, 5);
-        t.addMatchInterval(6,7);
         result.addEntry(t);
          
         
@@ -140,7 +140,6 @@ public class CompareFileTest {
         t2.setThai("การเมืองAA");
         t2.setEnglish("politics");
         t2.setFileName("file1");
-        t2.addMatchInterval(0, 7);
         result.addEntry(t2);
         
         System.out.println("The third entry");
@@ -148,11 +147,10 @@ public class CompareFileTest {
         t2.setThai("การเมืองB");
         t2.setEnglish("politics");
         t2.setFileName("file1");
-        t2.addMatchInterval(1, 4);
         result.addEntry(t2);
         
       //**********************
-        MatchFile expResult = new MatchFile();
+        MatchList expResult = new MatchList();
         
         System.out.println("The first entry (การเมือง)");
         t = new MatchSegment();
@@ -168,7 +166,6 @@ public class CompareFileTest {
         t2.setThai("การเมืองB");
         t2.setEnglish("politics");
         t2.setFileName("file1");
-        t2.addMatchInterval(1, 4);
         expResult.addEntry(t2);
         
         System.out.println("The third entry");

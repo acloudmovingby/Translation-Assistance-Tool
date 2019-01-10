@@ -5,8 +5,9 @@
  */
 package Database;
 
-import Files.BasicFile;
-import Files.Segment;
+import DataStructures.PostingsList;
+import DataStructures.BasicFile;
+import DataStructures.Segment;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;

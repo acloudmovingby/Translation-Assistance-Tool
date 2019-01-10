@@ -5,6 +5,7 @@
  */
 package Files;
 
+import DataStructures.MatchSegment;
 import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
