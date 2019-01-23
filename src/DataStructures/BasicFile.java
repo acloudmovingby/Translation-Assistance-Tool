@@ -284,7 +284,6 @@ public class BasicFile {
 
         BasicFile m = (BasicFile) o;
 
-        // tests equality of all TMs within files
         if (this.getFileID() != m.getFileID()) {
             return false;
         }
@@ -293,6 +292,8 @@ public class BasicFile {
             return false;
         }
         
+        // First checks that the REMOVED SEGS length is the same, and if it is, checks the equalit of every seg in that list. 
+        // if the REMOVED SEGS list length is unequal, returns false.
         if (this.getRemovedSegs().size() == m.getRemovedSegs().size()) {
             Iterator i1 = this.getRemovedSegs().iterator();
             Iterator i2 = m.getRemovedSegs().iterator();
@@ -302,8 +303,12 @@ public class BasicFile {
                     return false;
                 }
             }
+        } else {
+            return false;
         }
         
+         // Checks that the ACTIVE SEGS length is the same, and if it is, checks the equalit of every seg in that list. 
+         // if the ACTIVE SEGS list length is unequal, returns false.
         if (this.getActiveSegs().size() == m.getActiveSegs().size()) {
             Iterator i1 = this.getActiveSegs().iterator();
             Iterator i2 = m.getActiveSegs().iterator();
@@ -313,6 +318,8 @@ public class BasicFile {
                     return false;
                 }
             }
+        } else {
+            return false;
         }
         
         return true;

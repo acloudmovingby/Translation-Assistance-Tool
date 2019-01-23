@@ -63,4 +63,8 @@ public class TestObjectBuilder {
         c.addFile(bf);
         return new StateWithDatabase(bf, c);
     }
+
+    public static Segment getTestSeg() {
+         return (new SegmentBuilder()).createSegment();
+    }
 }
