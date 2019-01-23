@@ -7,6 +7,7 @@ package Database;
 
 import DataStructures.BasicFile;
 import DataStructures.Segment;
+import DataStructures.TestObjectBuilder;
 import java.sql.Connection;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -103,12 +104,13 @@ public class DatabaseOperationsTest {
 
     
 /**
-     * Test of addTU2 method, of class DatabaseOperations.
+     * Test of addSeg method, of class DatabaseOperations.
      * By using a single connection, maybe you can avoid certain SQL errors?
      */
     @Test
-    public void testAddOrUpdateTU() {
-        System.out.println("addOrUpdateTU");
+    public void testAddOrUpdateSeg() {
+        System.out.println("addOrUpdateSeg");
+        DatabaseOperations.rebootDB();
         
         // initialize tu entry
         BasicFile bf = new BasicFile();
@@ -117,7 +119,7 @@ public class DatabaseOperationsTest {
         expResult.setEnglish("English");
         expResult.setThai("Thai");
      
-        int numOfTUsInDB = DatabaseOperations.numberOfTUs();
+        int numOfTUsInDB = DatabaseOperations.numberOfSegs();
         // Add TU (should return true)
         System.out.println("1st Push");
         assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
@@ -138,7 +140,26 @@ public class DatabaseOperationsTest {
         assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
         
         // After all these operations, there should still only be one more TU in db
-        assertEquals(numOfTUsInDB + 1, DatabaseOperations.numberOfTUs());
+        assertEquals(numOfTUsInDB + 1, DatabaseOperations.numberOfSegs());
+    }
+    
+    /**
+     *
+     */
+    @Test
+    public void testAddFile() {
+        System.out.println("addFile");
+        DatabaseOperations.rebootDB();
+        
+        BasicFile file = TestObjectBuilder.getTestFile();
+        
+        BasicFile emptyFile = new BasicFile();
+        
+        DatabaseOperations.addFile(emptyFile);
+        assertEquals(emptyFile, DatabaseOperations.getFile(emptyFile.getFileID()));
+        
+        DatabaseOperations.addFile(file);
+        assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
     }
     
     

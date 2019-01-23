@@ -5,6 +5,9 @@
  */
 package DataStructures;
 
+import State.State;
+import State.StateWithDatabase;
+
 /**
  *
  * @author Chris
@@ -33,6 +36,8 @@ public class TestObjectBuilder {
             seg5.setThai("th5");
             seg5.setEnglish("en5");
             
+            bf.setFileName("testFile");
+            
             return bf;
     }
     
@@ -42,5 +47,20 @@ public class TestObjectBuilder {
         c.addFile(getTestFile());
         c.addFile(getTestFile());
         return c;
+    }
+    
+    public static State getTestState() {
+        return new StateWithDatabase(getTestFile(), getTestCorpus());
+    }
+    
+    /**
+     * Returns a state where the main file has no segments and the corpus only contains that main file. 
+     * @return 
+     */
+    public static State getEmptyState() {
+        BasicFile bf = new BasicFile();
+        Corpus c = new Corpus();
+        c.addFile(bf);
+        return new StateWithDatabase(bf, c);
     }
 }

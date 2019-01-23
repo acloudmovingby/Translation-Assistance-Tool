@@ -7,6 +7,7 @@ package DataStructures;
 
 import Database.DatabaseOperations;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,19 @@ public class BasicFile {
         removedSegs = new ArrayList();
         fileName = "untitled";
         fileID = DatabaseOperations.createFileID(fileName);
+    }
+    
+    /**
+     * This constructor is used when transforming a BasicFile into a MainFile. Note, not a true copy, because it keeps pointers to the original file.
+     * @param file 
+     */
+    public BasicFile(BasicFile file) {
+        this.fileID = file.getFileID();
+        this.fileName = file.getFileName();
+        activeSegs = FXCollections.observableArrayList();
+        removedSegs = new ArrayList();
+        activeSegs = file.getActiveSegs();
+        removedSegs = file.getRemovedSegs();
     }
 
     /**
@@ -101,9 +115,11 @@ public class BasicFile {
      *
      * @param seg
      * @param splitIndex
-     */
+     *
     public void splitTU(Segment seg, int splitIndex) {
-        if (seg == null || splitIndex == 0 || splitIndex == seg.getThai().length()) {
+        if (seg == null 
+                || splitIndex <= 0 
+                || splitIndex >= seg.getThai().length()) {
             return;
         }
         String firstThai = seg.getThai().substring(0, splitIndex);
@@ -125,14 +141,21 @@ public class BasicFile {
         newTU2.setEnglish("");
         newTU2.setCommitted(false);
         getActiveSegs().add(index + 1, newTU2);
+        
+        /*
+        ObservableList<Segment> activeSegs1 = getActiveSegs();
+        this.removeSegs(index, index+1, activeSegs1);
+        Segment[] segsToAdd = new Segment[] {newTU1, newTU2};
+        this.addSegments(activeSegs1, Arrays.asList(segsToAdd), index);
+        
 
         //removes old TU
         removeTU(seg);
 
         // DATABASE
         realignRanks();
-    }
-
+    } 
+*/
     public void mergeTUs(List<Segment> tusToMerge) {
 
         if (tusToMerge.size() < 2) {
@@ -152,7 +175,7 @@ public class BasicFile {
             thaiSB.append(tu.getThai());
             engSB.append(tu.getEnglish());
         }
-        Segment newTU = new Segment(DatabaseOperations.makeTUID(), getFileID(), getFileName());
+        Segment newTU = new Segment(DatabaseOperations.makeSegID(), getFileID(), getFileName());
         newTU.setThai(thaiSB.toString());
         newTU.setEnglish(engSB.toString());
 
@@ -170,10 +193,10 @@ public class BasicFile {
 
     }
 
-    private void removeTU(Segment tu) {
-        tu.setRemoved(true);
-        removedSegs.add(tu);
-        activeSegs.remove(tu);
+    public void removeTU(Segment seg) {
+        seg.setRemoved(true);
+        removedSegs.add(seg);
+        activeSegs.remove(seg);
     }
     
     /**
@@ -181,7 +204,7 @@ public class BasicFile {
      * @param index
      * @param seg 
      */
-    private void insertSeg(int index, Segment seg) {
+    public void insertSeg(int index, Segment seg) {
         int priorRank;
         int nextRank;
         
@@ -209,7 +232,7 @@ public class BasicFile {
     /**
      * Changes the rank variable on all segments so that it realigns with the current list ordering. Used because SQLite cannot show order in its database, so these ranks help restore order when fetching a file from the db.
      */
-    private void realignRanks() {
+    protected void realignRanks() {
         
         
         /*
@@ -262,21 +285,37 @@ public class BasicFile {
         BasicFile m = (BasicFile) o;
 
         // tests equality of all TMs within files
-        boolean areTMsEqual = true;
-        if (this.getFileName().equals(m.getFileName()) 
-                && m.getActiveSegs().size() != this.getActiveSegs().size()) {
+        if (this.getFileID() != m.getFileID()) {
             return false;
-        } else {
-            Iterator i1 = this.getActiveSegs().iterator();
-            Iterator i2 = m.getActiveSegs().iterator();
-            while (i1.hasNext()) {
+        }
+        
+        if (!this.getFileName().equals(m.getFileName())) {
+            return false;
+        }
+        
+        if (this.getRemovedSegs().size() == m.getRemovedSegs().size()) {
+            Iterator i1 = this.getRemovedSegs().iterator();
+            Iterator i2 = m.getRemovedSegs().iterator();
+            
+            while (i1.hasNext() && i2.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
-                    areTMsEqual = false;
+                    return false;
                 }
             }
         }
-
-        return areTMsEqual;
+        
+        if (this.getActiveSegs().size() == m.getActiveSegs().size()) {
+            Iterator i1 = this.getActiveSegs().iterator();
+            Iterator i2 = m.getActiveSegs().iterator();
+            
+            while (i1.hasNext() && i2.hasNext()) {
+                if (!i1.next().equals(i2.next())) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
 
     @Override
@@ -311,5 +350,51 @@ public class BasicFile {
     
     public ArrayList<Segment> getRemovedSegs() {
         return removedSegs;
+    }
+    
+    /**
+     * Removes segments with start inclusive and end exclusive. So for hello, with (0,1), it would return ello.
+     * @param start
+     * @param end
+     * @param origList
+     * @return The original list but modified. 
+     */
+    protected List<Segment> removeSegs(int start, int end, List<Segment> origList) {
+        int numToRemove = end-start;
+        
+        for (int i=0; i<numToRemove; i++) {
+            origList.remove(start);
+        }
+        
+        return origList;
+    }
+    
+    protected List<Segment> addSegments(List<Segment> origList, List<Segment> toAdd, int index){
+        origList.addAll(index, toAdd);
+        return origList;
+    }
+    
+    protected void split2(Segment seg, int splitIndex) {
+        
+        int segIndex = this.getActiveSegs().indexOf(seg);
+        
+        // Checking for invalid input
+        if (segIndex == -1) {
+            return;
+        } 
+        
+        if (seg == null 
+                || splitIndex <= 0 
+                || splitIndex >= seg.getThai().length()) {
+            return;
+        }
+        
+        // Make new segs that will replace old seg
+        String firstThai = seg.getThai().substring(0, splitIndex);
+        String secondThai = seg.getThai().substring(splitIndex);
+        
+        
+        
+        
     }
 }

@@ -5,7 +5,6 @@
  */
 package DataStructures;
 
-import Database.DatabaseOperations;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -25,14 +24,12 @@ public class Segment {
     private StringProperty thaiProperty;
     private StringProperty englishProperty;
     
-    private boolean isCommitted;
     BooleanProperty isCommittedProperty;
     
     private boolean isRemoved;
     private int rank;
     
     public Segment() {
-      isCommitted = false;
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
@@ -42,7 +39,6 @@ public class Segment {
     }
 
     public Segment(int fileID){
-        isCommitted = false;
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
@@ -52,7 +48,6 @@ public class Segment {
     }
     
     public Segment(int id, int fileID, String fileName){
-        isCommitted = false;
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
@@ -62,9 +57,16 @@ public class Segment {
         this.fileName = fileName;
     }
     
-    
-
-
+    public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted, boolean isRemoved, int rank) {
+        this.id = id;
+        this.fileID = fileID;
+        this.fileName = fileName;
+        thaiProperty = new SimpleStringProperty("");
+        englishProperty = new SimpleStringProperty("");
+        isCommittedProperty = new SimpleBooleanProperty(isCommitted);
+        this.isRemoved = isRemoved;
+        this.rank = rank;
+    }
 
     public String getThai() {
         return thaiProperty.getValue();
@@ -115,7 +117,7 @@ public class Segment {
         hash = 41 * hash + Objects.hashCode(this.getFileID());
         hash = 41 * hash + Objects.hashCode(this.getFileName());
         hash = 41 * hash + Objects.hashCode(this.getID());
-        hash = 41 * hash + Objects.hashCode(this.isCommitted);
+        hash = 41 * hash + Objects.hashCode(this.isCommitted());
         return hash;
     }
     
@@ -143,7 +145,7 @@ public class Segment {
 
 
     public boolean isCommitted() {
-        return isCommitted;
+        return isCommittedProperty.get();
     }
 
     public BooleanProperty isCommittedProperty() {
@@ -153,7 +155,6 @@ public class Segment {
 
     public void setCommitted(boolean b) {
         isCommittedProperty.set(b);
-        isCommitted = b;
     }
 
     public String getFileName() {

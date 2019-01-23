@@ -32,8 +32,8 @@ public class DatabaseOperations {
      *************************************************************************
      */
     /**
-     * Puts the TU into the database. If a TU with that id already exists, then
-     * it is replaced by the new TU. If successful, returns true. If there is a
+     * Puts the Segment into the database. If a Segment with that id already exists, then
+     * it is replaced by the new Segment. If successful, returns true. If there is a
      * SQL error, then returns false.
      *
      * @param seg
@@ -43,11 +43,11 @@ public class DatabaseOperations {
         
 
             if (seg.getID() == 0) {
-                seg.setID(makeTUID());
+                seg.setID(makeSegID());
             }
 // OR REPLACE 
             String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
-
+            int rank = 0;
             try (Connection conn = DatabaseOperations.connect();
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setDouble(1, seg.getID());
@@ -68,12 +68,13 @@ public class DatabaseOperations {
                 }
                 pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
 
-                pstmt.setInt(8, seg.getRank());
+                pstmt.setInt(8, rank);
+                rank++;
 
                 pstmt.executeUpdate();
                 return true;
             } catch (SQLException e) {
-                System.out.println("AddOrUpdateTU(" + seg.getID() + ": " + e.getMessage());
+                System.out.println("AddOrUpdateSeg(" + seg.getID() + ": " + e.getMessage());
                 return false;
             }
 
@@ -81,14 +82,14 @@ public class DatabaseOperations {
     }
 
     /**
-     * Adds all TU entries contained in the file to the database or updates them
-     * if they already exist. If there are TU entries matching this fileID
+     * Adds all Segment entries contained in the file to the database or updates them
+     * if they already exist. If there are Segment entries matching this fileID
      * already in the database but are not in the current file, they are NOT
-     * deleted. (In other words, TU entries can be added or updated via this
+     * deleted. (In other words, Segment entries can be added or updated via this
      * method, but never removed from the database).
      *
      * @param bf
-     * @return True if all TUs are added successfully. If file is null or there
+     * @return True if all Segments are added successfully. If file is null or there
      * is an SQL error, returns false.
      */
     public static boolean addFile(BasicFile bf) {
@@ -106,7 +107,30 @@ public class DatabaseOperations {
                 for (Segment seg : bf.getActiveSegs()) {
 
                     if (seg.getID() == 0) {
-                        seg.setID(makeTUID());
+                        seg.setID(makeSegID());
+                    }
+
+                    pstmt.setDouble(1, seg.getID());
+                    pstmt.setDouble(2, seg.getFileID());
+                    pstmt.setString(3, seg.getFileName());
+                    pstmt.setString(4, seg.getThai());
+                    pstmt.setString(5, seg.getEnglish());
+                    // committed/removed booleans are stored as binary (0 = false, 1 = true)
+                    pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
+                    pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+                    pstmt.setInt(8, seg.getRank());
+                    pstmt.addBatch();
+                    i++;
+
+                    if (i % 1000 == 0 || i == bf.getActiveSegs().size()) {
+                        pstmt.executeBatch(); //Execute every 1000 segments.
+                    }
+                }
+                
+                for (Segment seg : bf.getRemovedSegs()) {
+
+                    if (seg.getID() == 0) {
+                        seg.setID(makeSegID());
                     }
 
                     pstmt.setDouble(1, seg.getID());
@@ -192,12 +216,12 @@ public class DatabaseOperations {
     }
 
     /**
-     * Removes the TU with the specified id from the database
+     * Removes the Segment with the specified id from the database
      *
      * @param id
      * @return True if removed successfully with no SQL errors.
      */
-    private static boolean removeTU(double id) {
+    private static boolean removeSeg(double id) {
 
         // If database isn't active, this returns default of false;
         if (!StateWithDatabase.databaseIsWritable()) {
@@ -216,7 +240,7 @@ public class DatabaseOperations {
                 return true;
 
             } catch (SQLException e) {
-                System.out.println("removeTU: " + e.getMessage());
+                System.out.println("removeSeg: " + e.getMessage());
                 return false;
             }
         }
@@ -229,7 +253,7 @@ public class DatabaseOperations {
      *
      *************************************************************************
      */
-    public static int numberOfTUs() {
+    public static int numberOfSegs() {
         if (!StateWithDatabase.databaseIsReadable()) {
             return 0;
         } else {
@@ -385,7 +409,7 @@ public class DatabaseOperations {
     }
 
     /**
-     * Sets all fields on the TU except the id and fileID.
+     * Sets all fields on the Segment except the id and fileID.
      *
      * @param rs The result set returned from the database.
      * @param seg The Segment to be rebuilt in memory.
@@ -393,7 +417,7 @@ public class DatabaseOperations {
      * @throws SQLException
      */
     private static Segment rebuildSegment(ResultSet rs) throws SQLException {
- Segment seg = new Segment();
+        Segment seg = new Segment();
         seg.setFileID(rs.getInt("fileID"));
         seg.setID(rs.getInt("id"));
         seg.setFileName(rs.getString("fileName"));
@@ -437,12 +461,12 @@ public class DatabaseOperations {
     }
 
     /**
-     * Sees if the specified TU id exists in the database.
+     * Sees if the specified Segment id exists in the database.
      *
-     * @param tuID
+     * @param segID
      * @return
      */
-    public static boolean containsID(int tuID) {
+    public static boolean containsID(int segID) {
         String sql = "SELECT id FROM corpus1 where id= ?";
 
         // If database isn't active, this returns false;
@@ -458,11 +482,11 @@ public class DatabaseOperations {
                 conn = DatabaseOperations.connect();
                 pstmt = conn.prepareStatement(sql);
 
-                pstmt.setInt(1, tuID);
+                pstmt.setInt(1, segID);
                 rs = pstmt.executeQuery();
                 // loop through the result set
                 while (rs.next()) {
-                    if (tuID == rs.getInt("id")) {
+                    if (segID == rs.getInt("id")) {
                         return true;
                     }
                 }
@@ -543,12 +567,12 @@ public class DatabaseOperations {
     }
 
     /**
-     * Generates a unique TU id. However, unlike createFileID, this does not ad
+     * Generates a unique Segment id. However, unlike createFileID, this does not ad
      * it to the database.
      *
      * @return
      */
-    public static int makeTUID() {
+    public static int makeSegID() {
         int newID = 0;
 
         if (StateWithDatabase.databaseIsReadable()) {

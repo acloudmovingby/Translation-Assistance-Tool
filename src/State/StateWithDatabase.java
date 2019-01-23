@@ -10,6 +10,7 @@ import DataStructures.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.MatchList;
 import DataStructures.Corpus;
+import DataStructures.MainFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import comparator.MatchFinder;
@@ -48,7 +49,7 @@ public class StateWithDatabase implements State {
     /**
      * The file currently being translated.
      */
-    private BasicFile mainFile;
+    private MainFile mainFile;
 
     /**
      * The corpus where matches are found.
@@ -82,35 +83,36 @@ public class StateWithDatabase implements State {
         minMatchLength = 10;
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
-        setMainFile(mainFile);
+        setMainFile(new MainFile(mainFile));
         setCorpus(corpus);
     }
 
     @Override
-    public BasicFile getMainFile() {
+    public MainFile getMainFile() {
         return mainFile;
+    }
+    
+    public void setMainFile(MainFile newMainFile) {
+        this.mainFile = newMainFile;
+        if (!newMainFile.getActiveSegs().isEmpty()) {
+            segSelected =  newMainFile.getActiveSegs().get(0);
+        }
+        uiState.setMainFileSegs(newMainFile.getActiveSegs());
     }
     
     public IntegerProperty getNumMatchesProperty() {
         return numMatches;
     }
     
-    @Override
-    public void setMainFile(BasicFile newMainFile) {
-        this.mainFile = newMainFile;
-        segSelected =  newMainFile.getActiveSegs().get(0);
-        uiState.setMainFileSegs(newMainFile.getActiveSegs());
-    }
+   
     
     
     
     
-     @Override
     public MatchList getMatchFile() {
          return compareFile;
     }
     
-    @Override
     public ObservableList<MatchSegment> getMatchList() {
         return uiState.getMatchList();
     }
@@ -119,7 +121,6 @@ public class StateWithDatabase implements State {
      * When a new selection is made in main file viewer.
      * @param selectedSeg 
      */
-    @Override
     public void newSelection(Segment selectedSeg) {
         System.out.println(selectedSeg.getThai());
         this.segSelected = selectedSeg;
@@ -127,7 +128,6 @@ public class StateWithDatabase implements State {
         setMatchFile(newMatches);
     }
     
-    @Override
     public int getMinMatchLength() {
         return minMatchLength;
     }
@@ -136,13 +136,11 @@ public class StateWithDatabase implements State {
      * 
      * @param minMatchLength 
      */
-    @Override
     public void setMinLength(int minMatchLength) {
         this.minMatchLength = minMatchLength;
         setMatchFile(findMatch(segSelected));
     }
     
-    @Override
     public Corpus getCorpus() {
         return corpus;
     }
@@ -232,7 +230,6 @@ public class StateWithDatabase implements State {
      /**
      * Prints the English from all committed TUs in the main file to a file. 
      */
-    @Override
     public void exportCommittedTUs() {
 
         PrintWriter out = null;
@@ -314,8 +311,11 @@ public class StateWithDatabase implements State {
      * @return MatchList with matching segments
      */
     private MatchList findMatch(Segment seg) {
-        System.out.println("corpus size: " + corpus.getAllCommittedTUs().size());
-        return MatchFinder.basicMatch(seg, minMatchLength, this);
+        if (seg == null) {
+            return new MatchList();
+        } else {
+            return MatchFinder.basicMatch(seg, minMatchLength, this);
+        }
     }
     // selection calls findMatch
     // find match tells MatchFinder to use minMatchLength
@@ -326,7 +326,6 @@ public class StateWithDatabase implements State {
         return MatchFinder.exactMatch(str, this);
     }
 
-    @Override
     public void search(String text) {
         setMatchFile(findExactMatch(text));
     }

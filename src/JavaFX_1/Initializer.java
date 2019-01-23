@@ -11,7 +11,6 @@ import DataStructures.FileBuilder;
 import Database.DatabaseOperations;
 import State.DatabaseManager;
 import State.Dispatcher;
-import State.State;
 import State.StateWithDatabase;
 import State.UIState;
 import State.UndoManager;
@@ -41,7 +40,7 @@ public class Initializer {
         // creates State object
         state = new StateWithDatabase(mainFile, corpus);
         
-        dm = new DatabaseManager(state.getMainFile());
+        dm = new DatabaseManager(state);
         d = new Dispatcher(dm, state, new UndoManager());
     }
     
