@@ -106,7 +106,8 @@ public class Segment {
                 (this.getFileID() == s.getFileID()) &&
                 (this.getFileName().equals(s.getFileName())) &&
                 (this.getID() == s.getID()) &&
-                (this.isCommitted() == s.isCommitted());
+                (this.isCommitted() == s.isCommitted()) &&
+                (this.isRemoved() == s.isRemoved());
     }
 
     @Override
@@ -118,6 +119,7 @@ public class Segment {
         hash = 41 * hash + Objects.hashCode(this.getFileName());
         hash = 41 * hash + Objects.hashCode(this.getID());
         hash = 41 * hash + Objects.hashCode(this.isCommitted());
+        hash = 41 * hash + Objects.hashCode(this.isRemoved());
         return hash;
     }
     

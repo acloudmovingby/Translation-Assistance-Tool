@@ -7,6 +7,7 @@ package Database;
 
 import DataStructures.BasicFile;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
 import java.sql.Connection;
 import org.junit.After;
@@ -151,13 +152,24 @@ public class DatabaseOperationsTest {
         System.out.println("addFile");
         DatabaseOperations.rebootDB();
         
-        BasicFile file = TestObjectBuilder.getTestFile();
         
+        // adding an empty file, checking it's the same when retrieved
         BasicFile emptyFile = new BasicFile();
-        
         DatabaseOperations.addFile(emptyFile);
         assertEquals(emptyFile, DatabaseOperations.getFile(emptyFile.getFileID()));
         
+        // adding the standard test file, checking it's the same.
+        BasicFile file = TestObjectBuilder.getTestFile();
+        DatabaseOperations.addFile(file);
+        assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
+        
+        // committing all the segs in the standard test file, checking it's the same.
+        file.commitAllTUs();
+        DatabaseOperations.addFile(file);
+        assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
+        
+        // inserting a segment, then checking it's the same when retrieved.
+        file.insertSeg(0, (new SegmentBuilder()).createSegment());
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
     }
