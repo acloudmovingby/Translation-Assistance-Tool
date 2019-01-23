@@ -169,7 +169,11 @@ public class DatabaseOperationsTest {
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
         
         // inserting a segment, then checking it's the same when retrieved.
-        file.insertSeg(0, (new SegmentBuilder()).createSegment());
+        //file.insertSeg(0, TestObjectBuilder.getTestSeg());
+        SegmentBuilder sb = new SegmentBuilder();
+        sb.setFileID(file.getFileID());
+        sb.setFileName(file.getFileName());
+        file.getActiveSegs().add(sb.createSegment());
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
     }

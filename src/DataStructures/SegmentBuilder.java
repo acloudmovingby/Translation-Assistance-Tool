@@ -5,6 +5,7 @@
  */
 package DataStructures;
 
+import Database.DatabaseOperations;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 
@@ -24,7 +25,7 @@ public class SegmentBuilder {
     private int rank;
     
     public SegmentBuilder() {
-        this.id = 0;
+        this.id = DatabaseOperations.makeSegID();
         this.fileID = 0;
         this.fileName = "";
         this.thai = "";

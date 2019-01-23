@@ -567,8 +567,7 @@ public class DatabaseOperations {
     }
 
     /**
-     * Generates a unique Segment id. However, unlike createFileID, this does not ad
-     * it to the database.
+     * Generates a random Segment id. Not guaranteed to be unique, but likely so.
      *
      * @return
      */
