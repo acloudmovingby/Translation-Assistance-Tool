@@ -7,7 +7,6 @@ package DataStructures;
 
 import Database.DatabaseOperations;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -150,7 +149,7 @@ public class BasicFile {
         
 
         //removes old TU
-        removeTU(seg);
+        removeSeg(seg);
 
         // DATABASE
         realignRanks();
@@ -193,7 +192,7 @@ public class BasicFile {
 
     }
 
-    public void removeTU(Segment seg) {
+    public void removeSeg(Segment seg) {
         seg.setRemoved(true);
         removedSegs.add(seg);
         activeSegs.remove(seg);
@@ -339,8 +338,15 @@ public class BasicFile {
         StringBuilder sb = new StringBuilder();
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
+        sb.append("ACTIVE\n\t");
 
         for (Segment tu : getActiveSegs()) {
+            sb.append(tu.toString());
+            sb.append("\n\t");
+        }
+        
+        sb.append("REMOVED\n\t");
+        for (Segment tu : getRemovedSegs()) {
             sb.append(tu.toString());
             sb.append("\n\t");
         }

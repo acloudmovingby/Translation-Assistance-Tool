@@ -125,13 +125,13 @@ public class Segment {
     
     @Override
     public String toString() {
-        return "[" + getID()  + ", " 
-                + getFileID() + ", " 
-                + getFileName()  + ", " 
-                + getRank() + ", "
-                + getThai() + ", " 
-                + getEnglish() + ", "
-                + isCommitted()  + ", " 
+        return "[id=" + getID()  + ", fid=" 
+                + getFileID() + ", fn=" 
+                + getFileName()  + ", r#=" 
+                + getRank() + ", th="
+                + getThai() + ", en=" 
+                + getEnglish() + ", c?="
+                + isCommitted()  + ", r?=" 
                 + isRemoved()  + "]";
     }
 

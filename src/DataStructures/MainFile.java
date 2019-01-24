@@ -67,7 +67,7 @@ public class MainFile extends BasicFile {
         */
 
         //removes old TU
-        removeTU(seg);
+        removeSeg(seg);
 
         // DATABASE
         realignRanks();

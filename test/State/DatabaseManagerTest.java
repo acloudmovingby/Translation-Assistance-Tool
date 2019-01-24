@@ -8,6 +8,7 @@ package State;
 import DataStructures.BasicFile;
 import DataStructures.MainFile;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class DatabaseManagerTest {
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         
         // (2)
-        // check to see that the file is the same after I we just add the file without any changes made
+        // check to see that the file is the same after just adding the file without any changes made
         int numFiles = DatabaseOperations.getAllFileIDs().size();
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
@@ -86,7 +87,7 @@ public class DatabaseManagerTest {
         // make a subtraction to the file (beg / middle / end?)
         // check to make sure changes are reflected in db
         Segment removed = mf.getActiveSegs().get(0);
-        mf.removeTU(removed);
+        mf.removeSeg(removed);
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // checks that number of files in DB are still the same
@@ -95,13 +96,14 @@ public class DatabaseManagerTest {
         // (4)
         // make several additions to the file (in the beg/middle/end)
         // checks to make sure each change is reflected in database
-        mf.getActiveSegs().add(0, removed);
+        SegmentBuilder sb = new SegmentBuilder(mf);
+        mf.getActiveSegs().add(0, sb.createSegment());
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        mf.getActiveSegs().add(2, removed);
+        mf.getActiveSegs().add(2, sb.createSegmentNewID());
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        mf.getActiveSegs().add(mf.getActiveSegs().size(), removed);
+        mf.getActiveSegs().add(mf.getActiveSegs().size(), sb.createSegmentNewID());
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // checks that number of files in DB are still the same
@@ -114,8 +116,9 @@ public class DatabaseManagerTest {
             segsToRemove.add(s);
         }
         for (Segment s : segsToRemove) {
-            mf.removeTU(s);
+            mf.removeSeg(s);
         }
+        dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         assertEquals(numFiles, DatabaseOperations.getAllFileIDs().size());
        

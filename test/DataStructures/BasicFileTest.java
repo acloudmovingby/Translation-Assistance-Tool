@@ -51,19 +51,21 @@ public class BasicFileTest {
         assertEquals(f1, f2);
         
         // added a seg to f1, so they should no longer be equals
-        f1.getActiveSegs().add(TestObjectBuilder.getTestSeg());
+        Segment newSeg = TestObjectBuilder.getTestSeg();
+        f1.getActiveSegs().add(newSeg);
         assertEquals(f1.equals(f2), false);
         
         // added the same seg to f2. Now the should be equal
-        f2.getActiveSegs().add(TestObjectBuilder.getTestSeg());
+        f2.getActiveSegs().add(newSeg);
         assertEquals(f1, f2);
         
         // Now added a seg to removedSegs in f1. Not equal
-        f1.getRemovedSegs().add(TestObjectBuilder.getTestSeg());
+        Segment removedSeg = TestObjectBuilder.getTestSeg();
+        f1.getRemovedSegs().add(removedSeg);
         assertEquals(f1.equals(f2), false);
         
         // Now added the same seg to f2's removed segs. Equal
-        f2.getRemovedSegs().add(TestObjectBuilder.getTestSeg());
+        f2.getRemovedSegs().add(removedSeg);
         assertEquals(f1, f2);
     }
 

@@ -32,65 +32,62 @@ public class DatabaseOperations {
      *************************************************************************
      */
     /**
-     * Puts the Segment into the database. If a Segment with that id already exists, then
-     * it is replaced by the new Segment. If successful, returns true. If there is a
-     * SQL error, then returns false.
+     * Puts the Segment into the database. If a Segment with that id already
+     * exists, then it is replaced by the new Segment. If successful, returns
+     * true. If there is a SQL error, then returns false.
      *
      * @param seg
      * @return
      */
     public static boolean addOrUpdateSegment(Segment seg) {
-        
 
-            if (seg.getID() == 0) {
-                seg.setID(makeSegID());
-            }
+        if (seg.getID() == 0) {
+            seg.setID(makeSegID());
+        }
 // OR REPLACE 
-            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
-            int rank = 0;
-            try (Connection conn = DatabaseOperations.connect();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, seg.getID());
+        String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
-                pstmt.setDouble(2, seg.getFileID());
+        try (Connection conn = DatabaseOperations.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDouble(1, seg.getID());
 
-                pstmt.setString(3, seg.getFileName());
+            pstmt.setDouble(2, seg.getFileID());
 
-                pstmt.setString(4, seg.getThai());
+            pstmt.setString(3, seg.getFileName());
 
-                pstmt.setString(5, seg.getEnglish());
+            pstmt.setString(4, seg.getThai());
 
-                // committed/removed booleans are stored as binary (0 = false, 1 = true)
-                if (seg.isCommitted()) {
-                    pstmt.setInt(6, 1);
-                } else {
-                    pstmt.setInt(6, 0);
-                }
-                pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+            pstmt.setString(5, seg.getEnglish());
 
-                pstmt.setInt(8, rank);
-                rank++;
-
-                pstmt.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                System.out.println("AddOrUpdateSeg(" + seg.getID() + ": " + e.getMessage());
-                return false;
+            // committed/removed booleans are stored as binary (0 = false, 1 = true)
+            if (seg.isCommitted()) {
+                pstmt.setInt(6, 1);
+            } else {
+                pstmt.setInt(6, 0);
             }
+            pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
 
-        
+            pstmt.setInt(8, seg.getRank());
+
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("AddOrUpdateSeg(" + seg.getID() + ": " + e.getMessage());
+            return false;
+        }
+
     }
 
     /**
-     * Adds all Segment entries contained in the file to the database or updates them
-     * if they already exist. If there are Segment entries matching this fileID
-     * already in the database but are not in the current file, they are NOT
-     * deleted. (In other words, Segment entries can be added or updated via this
-     * method, but never removed from the database).
+     * Adds all Segment entries contained in the file to the database or updates
+     * them if they already exist. If there are Segment entries matching this
+     * fileID already in the database but are not in the current file, they are
+     * NOT deleted. (In other words, Segment entries can be added or updated via
+     * this method, but never removed from the database).
      *
      * @param bf
-     * @return True if all Segments are added successfully. If file is null or there
-     * is an SQL error, returns false.
+     * @return True if all Segments are added successfully. If file is null or
+     * there is an SQL error, returns false.
      */
     public static boolean addFile(BasicFile bf) {
         if (!StateWithDatabase.databaseIsWritable()) {
@@ -102,6 +99,12 @@ public class DatabaseOperations {
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
                 conn.setAutoCommit(false);
+
+                // this makes sure that the segments in the file, when retrieved from the db, can be ordered in the proper order.
+                // simply increments by 1 on each segment. 
+                int rank = 0;
+                // keeps count of the number of segs added so that the SQL can run a batch transaction (which is much more efficient than individual transactions).
+                // when i=1000, or at the last segment, the SQL is then run as one batch transaction.
                 int i = 0;
 
                 for (Segment seg : bf.getActiveSegs()) {
@@ -118,15 +121,19 @@ public class DatabaseOperations {
                     // committed/removed booleans are stored as binary (0 = false, 1 = true)
                     pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
                     pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
-                    pstmt.setInt(8, seg.getRank());
+                    pstmt.setInt(8, rank);
                     pstmt.addBatch();
+                    rank++;
                     i++;
 
                     if (i % 1000 == 0 || i == bf.getActiveSegs().size()) {
                         pstmt.executeBatch(); //Execute every 1000 segments.
                     }
                 }
-                
+
+                // resetting counters
+                i = 0;
+                rank = 0;
                 for (Segment seg : bf.getRemovedSegs()) {
 
                     if (seg.getID() == 0) {
@@ -141,11 +148,12 @@ public class DatabaseOperations {
                     // committed/removed booleans are stored as binary (0 = false, 1 = true)
                     pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
                     pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
-                    pstmt.setInt(8, seg.getRank());
+                    pstmt.setInt(8, rank);
                     pstmt.addBatch();
+                    rank++;
                     i++;
 
-                    if (i % 1000 == 0 || i == bf.getActiveSegs().size()) {
+                    if (i % 1000 == 0 || i == bf.getRemovedSegs().size()) {
                         pstmt.executeBatch(); //Execute every 1000 segments.
                     }
                 }
@@ -337,7 +345,7 @@ public class DatabaseOperations {
 
                 // loop through the result set
                 while (rs.next()) {
-                   // Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
+                    // Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
                     return rebuildSegment(rs);
                 }
                 return null;
@@ -393,7 +401,7 @@ public class DatabaseOperations {
                 // loop through the result set
                 while (rs.next()) {
 
-                  //  Segment seg = new Segment(file.getFileID());
+                    // Segment seg = new Segment(file.getFileID());
                     Segment seg = rebuildSegment(rs);
                     if (seg.isRemoved()) {
                         file.getRemovedSegs().add(seg);
@@ -567,7 +575,8 @@ public class DatabaseOperations {
     }
 
     /**
-     * Generates a random Segment id. Not guaranteed to be unique, but likely so.
+     * Generates a random Segment id. Not guaranteed to be unique, but likely
+     * so.
      *
      * @return
      */

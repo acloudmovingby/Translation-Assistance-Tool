@@ -168,15 +168,23 @@ public class DatabaseOperationsTest {
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
         
-        // inserting a segment, then checking it's the same when retrieved.
-        //file.insertSeg(0, TestObjectBuilder.getTestSeg());
+        // inserting a segment, then checking the file's the same when retrieved.
         SegmentBuilder sb = new SegmentBuilder();
         sb.setFileID(file.getFileID());
         sb.setFileName(file.getFileName());
         file.getActiveSegs().add(sb.createSegment());
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
+        
+        // removing a segment, then checking the file's the same when retrieved.
+        Segment removedSeg = file.getActiveSegs().remove(file.getActiveSegs().size()-1);
+        removedSeg.setRemoved(true);
+        file.getRemovedSegs().add(removedSeg);
+        DatabaseOperations.addFile(file);
+        assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
     }
+    
+    
     
     
   
