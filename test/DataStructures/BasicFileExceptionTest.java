@@ -51,6 +51,7 @@ public class BasicFileExceptionTest {
             System.out.println("Exception thrown! " + e);
         }
         
+        System.out.println(bf);
     }
     
 }

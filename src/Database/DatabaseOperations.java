@@ -93,6 +93,7 @@ public class DatabaseOperations {
         if (!StateWithDatabase.databaseIsWritable()) {
             return false;
         } else {
+            DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
             String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
             try (Connection conn = DatabaseOperations.connect();

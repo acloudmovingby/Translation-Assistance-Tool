@@ -13,10 +13,14 @@ import State.StateWithDatabase;
  * @author Chris
  */
 public class TestObjectBuilder {
+    
+    /**
+     * Creates a file with id=101, and a fileName of "TestFile". It contains 5 segments, with the Thai/English text fields as follows: "th1" / "en1", "th2"/"en2" etc... Other than that, the segments have default values (random id, rank=0, not committed, not removed). 
+     * @return 
+     */
     public static BasicFile getTestFile() {
-        BasicFile bf = new BasicFile();
-        
-        bf.setFileName("testFile");
+        BasicFile bf = new BasicFile(101, "TestFile");
+       
       
             SegmentBuilder sb = new SegmentBuilder(bf);
             sb.setThai("th1");

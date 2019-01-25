@@ -41,6 +41,16 @@ public class FileBuilder {
         BasicFile bf = new BasicFile();
         
         for (int i = 0; i < th.length; i++) {
+            SegmentBuilder sb = new SegmentBuilder(bf);
+            sb.setThai(th[i]);
+            if (i < en.length) {
+                sb.setEnglish(en[i]);
+            } else {
+                sb.setEnglish("");
+            }
+            bf.addSeg(sb.createSegment());
+            
+            /*
             Segment e = bf.newSeg();
             e.setThai(th[i]);
             if (i < en.length) {
@@ -48,6 +58,7 @@ public class FileBuilder {
             } else {
                 e.setEnglish("");
             }
+            */
         }
         
         return bf;

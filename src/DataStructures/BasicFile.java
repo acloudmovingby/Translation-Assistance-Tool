@@ -80,9 +80,9 @@ public class BasicFile {
      * @param seg 
      */
     public void addSeg(Segment seg) {
-        // this is bad programming, but will be replaced in time!
-        // this just makes sure the Segment was constructed carefully.
-        // in the future, BasicFile/Segment will be designed in a way that this can't happen
+        // these exceptions are bad programming practice, but will be replaced in time!
+        // this just makes sure the Segment was constructed correctly.
+        // in the future, BasicFile/Segment will be designed in a way that an illegal argument can't be made
         if (seg.getFileID() != getFileID() ||
                 !seg.getFileName().equals(getFileName()) ||
                 seg.isRemoved()) {

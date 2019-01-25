@@ -61,8 +61,8 @@ public class Segment {
         this.id = id;
         this.fileID = fileID;
         this.fileName = fileName;
-        thaiProperty = new SimpleStringProperty("");
-        englishProperty = new SimpleStringProperty("");
+        thaiProperty = new SimpleStringProperty(thai);
+        englishProperty = new SimpleStringProperty(english);
         isCommittedProperty = new SimpleBooleanProperty(isCommitted);
         this.isRemoved = isRemoved;
         this.rank = rank;
