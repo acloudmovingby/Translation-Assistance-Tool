@@ -113,15 +113,18 @@ public class DatabaseOperationsTest {
         System.out.println("addOrUpdateSeg");
         DatabaseOperations.rebootDB();
         
-        // initialize tu entry
+        // make the file
         BasicFile bf = new BasicFile();
-        Segment expResult = bf.newSeg();
-        expResult.setCommitted(false);
-        expResult.setEnglish("English");
-        expResult.setThai("Thai");
+        
+        // add a segment
+        SegmentBuilder sb = new SegmentBuilder(bf);
+        sb.setThai("Thai");
+        sb.setEnglish("English");
+        Segment expResult = sb.createSegment();
+        bf.addSeg(expResult);
      
         int numOfTUsInDB = DatabaseOperations.numberOfSegs();
-        // Add TU (should return true)
+        // Add seg (should return true)
         System.out.println("1st Push");
         assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
         assertEquals(expResult, DatabaseOperations.getSegment(expResult.getID()));
@@ -137,10 +140,10 @@ public class DatabaseOperationsTest {
         assertEquals(false, DatabaseOperations.getSegment(expResult.getID()).equals(expResult));
         assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
         
-        // When you get the TU from the db, it should have the updated value. 
+        // When you get the seg from the db, it should have the updated value. 
         assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
         
-        // After all these operations, there should still only be one more TU in db
+        // After all these operations, there should still only be one more seg in db
         assertEquals(numOfTUsInDB + 1, DatabaseOperations.numberOfSegs());
     }
     
