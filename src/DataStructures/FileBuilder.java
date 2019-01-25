@@ -5,7 +5,6 @@
  */
 package DataStructures;
 
-import Database.DatabaseOperations;
 import ParseThaiLaw.TMXResourceBundle;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -21,7 +20,7 @@ import java.util.Iterator;
 public class FileBuilder {
 
     /**
-     * Takes a thai and english text and splits into segments based on line
+     * Takes two strings (thai and english) and splits into segments based on line
      * breaks. Both texts must have equal number of line breaks or it throws an
      * IllegalArgumentException.
      *
@@ -49,16 +48,6 @@ public class FileBuilder {
                 sb.setEnglish("");
             }
             bf.addSeg(sb.createSegment());
-            
-            /*
-            Segment e = bf.newSeg();
-            e.setThai(th[i]);
-            if (i < en.length) {
-                e.setEnglish(en[i]);
-            } else {
-                e.setEnglish("");
-            }
-            */
         }
         
         return bf;
@@ -125,9 +114,10 @@ public class FileBuilder {
         
         // iterates down each list, adding them together as TUs
         while (iterThai.hasNext() && iterEnglish.hasNext()) {
-            Segment e = bf.newSeg();
-            e.setThai(iterThai.next());
-            e.setEnglish(iterEnglish.next());
+            SegmentBuilder sb = new SegmentBuilder(bf);
+            sb.setThai(iterThai.next());
+            sb.setEnglish(iterEnglish.next());
+            bf.addSeg(sb.createSegment());
         }
         
         return bf;
@@ -167,10 +157,12 @@ public class FileBuilder {
         
         for (String s : thaiBundle.keySet()) {
             if (engBundle.containsKey(s)) {
-                Segment tu = bf.newSeg();
-                tu.setThai(thaiBundle.getString(s));
-                tu.setEnglish(engBundle.getString(s));
-                tu.setCommitted(true);
+                SegmentBuilder sb = new SegmentBuilder(bf);
+                sb.setThai(thaiBundle.getString(s));
+                sb.setEnglish(engBundle.getString(s));
+                sb.setCommitted(true);
+                bf.addSeg(sb.createSegment());
+                
             }
         }
         
