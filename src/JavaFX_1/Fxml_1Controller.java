@@ -351,7 +351,7 @@ public class Fxml_1Controller implements Initializable {
     private void merge(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            state.getMainFile().mergeTUs(selectedItems);
+            state.getMainFile().mergeSegs(selectedItems);
         }
     }
 

@@ -46,15 +46,15 @@ public class PostingsListTest {
      * Test of tokenizeSegment method, of class PostingsList.
      */
     @Test
-    public void testParseTU() {
-        System.out.println("parseTU");
+    public void testParseseg() {
+        System.out.println("parseseg");
          // 3-gram postings list
         PostingsList pl1 = new PostingsList(3);
         
-        // no TUs have been parsed yet, so returns empty list.
+        // no segs have been parsed yet, so returns empty list.
         assertEquals(true, pl1.getMatchingID("null").isEmpty());
         
-         // create TU
+         // create seg
         BasicFile bf1 = new BasicFile();
         Segment tu1 = bf1.newSeg();
         tu1.setThai("Abcabcdddd");
@@ -103,10 +103,10 @@ public class PostingsListTest {
         System.out.println("getMatchingID");
         
         
-        // test if no TU has been added
+        // test if no seg has been added
         // test if an ngram of improper length is queried
-        // test if one TU has been added, should return that id
-        // test if two TUs have been added, should return:
+        // test if one seg has been added, should return that id
+        // test if two segs have been added, should return:
             // both ids for ngrams that match both
             // one id for ngram that matches one
         //   
@@ -114,39 +114,39 @@ public class PostingsListTest {
         // 3-gram postings list
         PostingsList pl1 = new PostingsList(3);
         
-        // no TUs have been parsed yet, so returns empty list.
+        // no segs have been parsed yet, so returns empty list.
         assertEquals(true, pl1.getMatchingID("null").isEmpty());
         
-        // test 1 TU
+        // test 1 seg
         BasicFile bf1 = new BasicFile();
-        Segment tu1 = bf1.newSeg();
-        tu1.setThai("Abcabcdddd");
-        pl1.tokenizeSegment(tu1);
-        assertEquals(tu1, pl1.getMatchingID("abc").get(0));
+        Segment seg1 = bf1.newSeg();
+        seg1.setThai("Abcabcdddd");
+        pl1.tokenizeSegment(seg1);
+        assertEquals(seg1, pl1.getMatchingID("abc").get(0));
         
-        // test reparsing TU (shouldn't change results)
-        pl1.tokenizeSegment(tu1);
+        // test reparsing seg (shouldn't change results)
+        pl1.tokenizeSegment(seg1);
         assertEquals(1, pl1.getMatchingID("abc").size());
         
-        // test adding 2nd TU
-        Segment tu2 = bf1.newSeg();
-        tu2.setThai("Abcabcdeee");
-        pl1.tokenizeSegment(tu2);
+        // test adding 2nd Seg
+        Segment seg2 = bf1.newSeg();
+        seg2.setThai("Abcabcdeee");
+        pl1.tokenizeSegment(seg2);
         List<Segment> expResult = new ArrayList();
-        expResult.add(tu1);
-        expResult.add(tu2);
+        expResult.add(seg1);
+        expResult.add(seg2);
         List<Segment> result = pl1.getMatchingID("abc");
         assertEquals(expResult, result);
         
-        // test uniqueness of 2nd TU
+        // test uniqueness of 2nd Seg
         expResult = new ArrayList();
-        expResult.add(tu2);
+        expResult.add(seg2);
         result = pl1.getMatchingID("eee");
         assertEquals(expResult, result);
         
-        // test uniquness of 1st TU
+        // test uniquness of 1st Seg
         expResult = new ArrayList();
-        expResult.add(tu1);
+        expResult.add(seg1);
         result = pl1.getMatchingID("ddd");
         assertEquals(expResult, result);
     }

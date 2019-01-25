@@ -5,9 +5,6 @@
  */
 package DataStructures;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -67,6 +64,14 @@ public class BasicFileTest {
         // Now added the same seg to f2's removed segs. Equal
         f2.getRemovedSegs().add(removedSeg);
         assertEquals(f1, f2);
+    }
+    
+    /**
+     * Test of newSeg method, of class BasicFile.
+     */
+    @Test
+    public void testAddSeg() {
+        
     }
 
    

@@ -9,34 +9,37 @@ import State.State;
 import State.StateWithDatabase;
 
 /**
- *
+ * Creates various objects to make testing easier. 
  * @author Chris
  */
 public class TestObjectBuilder {
     public static BasicFile getTestFile() {
         BasicFile bf = new BasicFile();
+        
+        bf.setFileName("testFile");
       
-            Segment seg1 = bf.newSeg();
-            seg1.setThai("th1");
-            seg1.setEnglish("en1");
+            SegmentBuilder sb = new SegmentBuilder(bf);
+            sb.setThai("th1");
+            sb.setEnglish("en1");
+            bf.addSeg(sb.createSegment());
 
-            Segment seg2 = bf.newSeg();
-            seg2.setThai("th2");
-            seg2.setEnglish("en2");
+            sb.setThai("th2");
+            sb.setEnglish("en2");
+            bf.addSeg(sb.createSegmentNewID());
 
-            Segment seg3 = bf.newSeg();
-            seg3.setThai("th3");
-            seg3.setEnglish("en3");
+            sb.setThai("th3");
+            sb.setEnglish("en3");
+            bf.addSeg(sb.createSegmentNewID());
 
-            Segment seg4 = bf.newSeg();
-            seg4.setThai("th4");
-            seg4.setEnglish("en4");
+            sb.setThai("th4");
+            sb.setEnglish("en4");
+            bf.addSeg(sb.createSegmentNewID());
 
-            Segment seg5 = bf.newSeg();
-            seg5.setThai("th5");
-            seg5.setEnglish("en5");
+            sb.setThai("th5");
+            sb.setEnglish("en5");
+            bf.addSeg(sb.createSegmentNewID());
             
-            bf.setFileName("testFile");
+            
             
             return bf;
     }

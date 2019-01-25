@@ -47,7 +47,7 @@ public class MainFileTest {
     }
     
      /**
-     * Test of mergeTUs method, of class BasicFile.
+     * Test of mergeSegs method, of class BasicFile.
      */
     @Test
     public void testSplitTUs() {
@@ -302,7 +302,7 @@ public class MainFileTest {
 
      
     /**
-     * Test of mergeTUs method, of class BasicFile.
+     * Test of mergeSegs method, of class BasicFile.
      */
     @Test
     public void testMergeTUs() {
@@ -343,7 +343,7 @@ public class MainFileTest {
                     // if i=0 --> 'merge' first seg (no change)
 
                     selectedSegs.add(seg1);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(5, bf.getActiveSegs().size());
                     assertEquals(0, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
@@ -359,7 +359,7 @@ public class MainFileTest {
                     // if i=1 --> merge first two
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(4, bf.getActiveSegs().size());
                     assertEquals(2, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(1).equals(seg3), true);
@@ -374,7 +374,7 @@ public class MainFileTest {
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(3, bf.getActiveSegs().size());
                     assertEquals(3, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(1).equals(seg4), true);
@@ -391,7 +391,7 @@ public class MainFileTest {
                     // if i=3 --> merge tu2-tu3
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(4, bf.getActiveSegs().size());
                     assertEquals(2, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
@@ -407,7 +407,7 @@ public class MainFileTest {
                 case 4: {
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(4, bf.getActiveSegs().size());
                     assertEquals(2, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
@@ -425,7 +425,7 @@ public class MainFileTest {
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(3, bf.getActiveSegs().size());
                     assertEquals(3, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(1).equals(seg4), true);
@@ -441,7 +441,7 @@ public class MainFileTest {
                 // if i=6 --> merge only end (no difference)
                 case 6: {
                     selectedSegs.add(seg5);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(5, bf.getActiveSegs().size());
                     assertEquals(0, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
@@ -461,7 +461,7 @@ public class MainFileTest {
                     selectedSegs.add(seg3);
                     selectedSegs.add(seg4);
                     selectedSegs.add(seg5);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(1, bf.getActiveSegs().size());
                     assertEquals(5, bf.getRemovedSegs().size());
                     assertEquals(bf.getRemovedSegs().get(0).equals(seg1), true);
@@ -476,7 +476,7 @@ public class MainFileTest {
                 }
                 // if i=8 --> selectedItems is empty (but not null)
                 case 8: {
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
                     assertEquals(5, bf.getActiveSegs().size());
                     assertEquals(0, bf.getRemovedSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
@@ -493,13 +493,13 @@ public class MainFileTest {
                     // merges seg1 and seg2
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
 
                     //merges seg3 and seg4
                     selectedSegs = new ArrayList();
                     selectedSegs.add(seg3);
                     selectedSegs.add(seg4);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
 
                     // at this point the file should have three segments in activeSegs
                     // the first two segs are the result of the prior merges
@@ -508,7 +508,7 @@ public class MainFileTest {
                     selectedSegs = new ArrayList();
                     selectedSegs.add(bf.getActiveSegs().get(1));
                     selectedSegs.add(seg5);
-                    bf.mergeTUs(selectedSegs);
+                    bf.mergeSegs(selectedSegs);
 
                     // this should result in the file now only having two active segs
                     assertEquals(2, bf.getActiveSegs().size());

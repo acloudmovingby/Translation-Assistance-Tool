@@ -76,14 +76,34 @@ public class BasicFile {
     }
 
     /**
+     * Adds the segment to the end of the activeSegs list in BasicFile. Later this will be changed, but currently the seg must follow the following conditions: fileID/fileName must match this file and the seg should not be "removed."
+     * @param seg 
+     */
+    public void addSeg(Segment seg) {
+        // this is bad programming, but will be replaced in time!
+        // this just makes sure the Segment was constructed carefully.
+        // in the future, BasicFile/Segment will be designed in a way that this can't happen
+        if (seg.getFileID() != getFileID() ||
+                !seg.getFileName().equals(getFileName()) ||
+                seg.isRemoved()) {
+            throw new IllegalArgumentException();
+        } else {
+            getActiveSegs().add(seg);
+        }
+    }
+    
+    /**
      * Helper method to add new seg to the various lists.
      *
      * @param seg
      */
     private void addTUAtEnd(Segment seg) {
+        // if it's removed, add it to the list
+        // isn't necessary as the higher methods should be deciding where to add the seg
         if (seg.isRemoved()) {
             removedSegs.add(seg);
         } else {
+            // all of this is just setting the rank. otherwise its jsut adding it to the end of active segs
             ObservableList<Segment> dispTUs = getActiveSegs();
             int newRank;
             if (dispTUs.isEmpty()) {
@@ -101,7 +121,7 @@ public class BasicFile {
      * ************************************************************************************
      *
      *
-     * METHODS FOR CHANGING EXISTING TUS - removing, inserting, merging, and
+     * METHODS FOR CHANGING EXISTING SEGS - removing, inserting, merging, and
      * splitting TUs
      *
      *
@@ -155,7 +175,7 @@ public class BasicFile {
         realignRanks();
     } 
 */
-    public void mergeTUs(List<Segment> tusToMerge) {
+    public void mergeSegs(List<Segment> tusToMerge) {
 
         if (tusToMerge.size() < 2) {
             return;
