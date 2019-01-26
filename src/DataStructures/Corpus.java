@@ -28,14 +28,14 @@ public class Corpus {
         return files;
     }
 
-    public ArrayList<Segment> getAllCommittedTUs() {
+    public ArrayList<Segment> getAllCommittedSegs() {
         ArrayList<Segment> aList = new ArrayList();
 
         files.stream().forEach(f -> {
             aList.addAll(f.getActiveSegs());
             aList.addAll(f.getRemovedSegs());
         });
-        aList.removeIf(tu -> !tu.isCommitted());
+        aList.removeIf(seg -> !seg.isCommitted());
 
         return aList;
     }

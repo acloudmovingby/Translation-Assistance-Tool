@@ -8,6 +8,7 @@ package Files;
 import DataStructures.BasicFile;
 import DataStructures.FileBuilder;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,10 +53,10 @@ public class FileFactoryTest {
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
-        Segment e = expResult.newSeg();
-        e.setThai(thai);
-        e.setEnglish(english);
-        //expResult.addEntry(e);
+        SegmentBuilder sb = new SegmentBuilder(expResult);
+        sb.setThai(thai);
+        sb.setEnglish(english);
+        expResult.addSeg(sb.createSegment());
         
         assertEquals(expResult, result);
     }
@@ -72,10 +73,10 @@ public class FileFactoryTest {
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
-        Segment e = expResult.newSeg();
-        e.setThai(thai);
-        e.setEnglish(english);
-        //expResult.addEntry(e);
+        SegmentBuilder sb = new SegmentBuilder(expResult);
+        sb.setThai(thai);
+        sb.setEnglish(english);
+        expResult.addSeg(sb.createSegment());
         
         assertEquals(expResult, result);
     }
@@ -92,15 +93,16 @@ public class FileFactoryTest {
         BasicFile result = instance.buildBasicParse(thai, english);
         
         BasicFile expResult = new BasicFile();
-        Segment e = expResult.newSeg();
-        e.setThai("การเมือง");
-        e.setEnglish("politics");
-        //expResult.addEntry(e);
+        
+        SegmentBuilder sb = new SegmentBuilder(expResult);
+        sb.setThai("การเมือง");
+        sb.setEnglish("politics");
+        expResult.addSeg(sb.createSegment());
+        
+        sb.setThai("ของประเทศไทย");
+        sb.setEnglish("of Thailand");
+        expResult.addSeg(sb.createSegmentNewID());
             
-        e = expResult.newSeg();
-        e.setThai("ของประเทศไทย");
-        e.setEnglish("of Thailand");
-       // expResult.addEntry(e);
            
         
         System.out.println("result is: \n" + result);

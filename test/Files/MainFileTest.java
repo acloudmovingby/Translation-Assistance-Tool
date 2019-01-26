@@ -8,12 +8,9 @@ package Files;
 import DataStructures.BasicFile;
 import DataStructures.MainFile;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import Database.DatabaseOperations;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
-import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -57,30 +54,35 @@ public class MainFileTest {
             MainFile mf = new MainFile(new BasicFile());
 
             // makes 5 segments
-            Segment seg1 = mf.newSeg();
-            seg1.setID(DatabaseOperations.makeSegID());
-            seg1.setThai("th1");
-            seg1.setEnglish("en1");
-
-            Segment seg2 = mf.newSeg();
-            seg2.setID(DatabaseOperations.makeSegID());
-            seg2.setThai("th2");
-            seg2.setEnglish("en2");
-
-            Segment seg3 = mf.newSeg();
-            seg3.setID(DatabaseOperations.makeSegID());
-            seg3.setThai("th3");
-            seg3.setEnglish("en3");
-
-            Segment seg4 = mf.newSeg();
-            seg4.setID(DatabaseOperations.makeSegID());
-            seg4.setThai("th4");
-            seg4.setEnglish("en4");
-
-            Segment seg5 = mf.newSeg();
-            seg5.setID(DatabaseOperations.makeSegID());
-            seg5.setThai("th5");
-            seg5.setEnglish("en5");
+            SegmentBuilder sb = new SegmentBuilder(mf);
+            sb.setThai("th1");
+            sb.setEnglish("en1");
+            Segment seg1 = sb.createSegment();
+            mf.addSeg(seg1);
+            
+            sb = new SegmentBuilder(mf);
+            sb.setThai("th2");
+            sb.setEnglish("en2");
+            Segment seg2 = sb.createSegment();
+            mf.addSeg(seg2);
+            
+            sb = new SegmentBuilder(mf);
+            sb.setThai("th3");
+            sb.setEnglish("en3");
+            Segment seg3 = sb.createSegment();
+            mf.addSeg(seg3);
+            
+            sb = new SegmentBuilder(mf);
+            sb.setThai("th4");
+            sb.setEnglish("en4");
+            Segment seg4 = sb.createSegment();
+            mf.addSeg(seg4);
+            
+            sb = new SegmentBuilder(mf);
+            sb.setThai("th5");
+            sb.setEnglish("en5");
+            Segment seg5 = sb.createSegment();
+            mf.addSeg(seg5);
 
             DatabaseOperations.addFile(mf);
             Segment selectedTU;
@@ -91,7 +93,7 @@ public class MainFileTest {
                     // if null input (nothing selected)
                     selectedTU = null;
                     splitIndex = 0;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     assertEquals(5, mf.getActiveSegs().size());
                     assertEquals(0, mf.getRemovedSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).equals(seg1), true);
@@ -120,7 +122,7 @@ public class MainFileTest {
                     // if split index is at 0 (nothing happens)
                     selectedTU = seg1;
                     splitIndex = 0;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     assertEquals(5, mf.getActiveSegs().size());
                     assertEquals(0, mf.getRemovedSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).equals(seg1), true);
@@ -149,7 +151,7 @@ public class MainFileTest {
                     // if split index is at end (nothing happens)
                     selectedTU = seg1;
                     splitIndex = seg1.getThai().length();
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     assertEquals(5, mf.getActiveSegs().size());
                     assertEquals(0, mf.getRemovedSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).equals(seg1), true);
@@ -178,7 +180,10 @@ public class MainFileTest {
                     // if split index is in middle
                     selectedTU = seg1;
                     splitIndex = 1;
-                    mf.splitTU(selectedTU, splitIndex);
+                    System.out.println("seg1: " + seg1);
+                    System.out.println("mf before: " + mf);
+                    mf.splitSeg(selectedTU, splitIndex);
+                    System.out.println("mf after: " + mf);
                     assertEquals(6, mf.getActiveSegs().size());
                     assertEquals(1, mf.getRemovedSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).getThai(), "t");
@@ -197,10 +202,10 @@ public class MainFileTest {
                     // two TUs are split
                     selectedTU = seg1;
                     splitIndex = 1;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     selectedTU = seg5;
                     splitIndex = 1;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     
                     // asserts lists same length
                     assertEquals(7, mf.getActiveSegs().size());
@@ -230,10 +235,10 @@ public class MainFileTest {
                     // if first child of a split TU is then split
                     selectedTU = seg1;
                     splitIndex = 2;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     selectedTU = mf.getActiveSegs().get(0);
                     splitIndex = 1;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     
                      // asserts lists same length
                     assertEquals(7, mf.getActiveSegs().size());
@@ -261,10 +266,10 @@ public class MainFileTest {
                     // if second child of a split TU is then split
                     selectedTU = seg1;
                     splitIndex = 1;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     selectedTU = mf.getActiveSegs().get(1);
                     splitIndex = 1;
-                    mf.splitTU(selectedTU, splitIndex);
+                    mf.splitSeg(selectedTU, splitIndex);
                     
                      // asserts lists same length
                     assertEquals(7, mf.getActiveSegs().size());

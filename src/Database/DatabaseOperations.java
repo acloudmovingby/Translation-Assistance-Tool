@@ -8,6 +8,7 @@ package Database;
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import State.StateWithDatabase;
 import java.sql.Array;
 import java.sql.Connection;
@@ -426,18 +427,19 @@ public class DatabaseOperations {
      * @throws SQLException
      */
     private static Segment rebuildSegment(ResultSet rs) throws SQLException {
-        Segment seg = new Segment();
-        seg.setFileID(rs.getInt("fileID"));
-        seg.setID(rs.getInt("id"));
-        seg.setFileName(rs.getString("fileName"));
-        seg.setThai(rs.getString("thai"));
-        seg.setEnglish(rs.getString("english"));
+        
+        SegmentBuilder sb = new SegmentBuilder();
+        sb.setFileID(rs.getInt("fileID"));
+        sb.setID(rs.getInt("id"));
+        sb.setFileName(rs.getString("fileName"));
+        sb.setThai(rs.getString("thai"));
+        sb.setEnglish(rs.getString("english"));
         int committedStatus = rs.getInt("committed");
-        seg.setCommitted(rs.getInt("committed") == 1);
-        seg.setRemoved(rs.getInt("removed") == 1);
-        seg.setRank(rs.getInt("rank"));
+        sb.setCommitted(rs.getInt("committed") == 1);
+        sb.setRemoved(rs.getInt("removed") == 1);
+        sb.setRank(rs.getInt("rank"));
 
-        return seg;
+        return sb.createSegment();
     }
 
     /**

@@ -8,6 +8,7 @@ package Database;
 import DataStructures.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -56,13 +57,14 @@ public class PostingsListTest {
         
          // create seg
         BasicFile bf1 = new BasicFile();
-        Segment tu1 = bf1.newSeg();
-        tu1.setThai("Abcabcdddd");
-        pl1.tokenizeSegment(tu1);
+        SegmentBuilder sb = new SegmentBuilder(bf1);
+        sb.setThai("Abcabcdddd");
+        Segment seg1 = sb.createSegment();
+        pl1.tokenizeSegment(seg1);
         
         // set up expResult and result lists
         List<Segment> expResult = new ArrayList();
-        expResult.add(tu1);
+        expResult.add(seg1);
         List<Segment> result;
         
         // all these ngrams should now be stored in PostingsList
@@ -119,8 +121,11 @@ public class PostingsListTest {
         
         // test 1 seg
         BasicFile bf1 = new BasicFile();
-        Segment seg1 = bf1.newSeg();
-        seg1.setThai("Abcabcdddd");
+        SegmentBuilder sb = new SegmentBuilder(bf1);
+        sb.setThai("Abcabcdddd");
+        
+        
+        Segment seg1 = sb.createSegment();
         pl1.tokenizeSegment(seg1);
         assertEquals(seg1, pl1.getMatchingID("abc").get(0));
         
@@ -128,9 +133,10 @@ public class PostingsListTest {
         pl1.tokenizeSegment(seg1);
         assertEquals(1, pl1.getMatchingID("abc").size());
         
-        // test adding 2nd Seg
-        Segment seg2 = bf1.newSeg();
-        seg2.setThai("Abcabcdeee");
+        // test adding 2nd Seg'
+        sb = new SegmentBuilder(bf1);
+        sb.setThai("Abcabcdeee");
+        Segment seg2 = sb.createSegment();
         pl1.tokenizeSegment(seg2);
         List<Segment> expResult = new ArrayList();
         expResult.add(seg1);

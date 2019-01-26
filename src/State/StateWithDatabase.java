@@ -342,7 +342,7 @@ public class StateWithDatabase implements State {
 
     @Override
     public void split(Segment seg, int index) {
-        getMainFile().splitTU(seg, index);
+        getMainFile().splitSeg(seg, index);
     }
 
 
