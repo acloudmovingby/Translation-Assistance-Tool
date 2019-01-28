@@ -10,6 +10,7 @@ import DataStructures.MatchList;
 import DataStructures.Corpus;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import State.State;
 import State.StateWithDatabase;
 import org.junit.After;
@@ -56,9 +57,12 @@ public class MatchFinderTest {
         // the Thai text in corpusSeg1 is "test"
         Corpus corpus = new Corpus();
         BasicFile bf1 = new BasicFile();
-        Segment corpusSeg1 = bf1.newSeg();
-        corpusSeg1.setThai("test");
-        corpusSeg1.setCommitted(true);
+        
+        SegmentBuilder sb = new SegmentBuilder(bf1);
+        sb.setThai("test");
+        sb.setCommitted(true);
+        Segment corpusSeg1 = sb.createSegment();
+        bf1.addSeg(corpusSeg1);
         corpus.addFile(bf1);
         State state = new StateWithDatabase(bf1, corpus);
         
@@ -66,8 +70,10 @@ public class MatchFinderTest {
         // mainFileSeg has Thai text of "test"
         // this represents a segment that is selected in main file for which the user wants to see matches
         BasicFile bf2 = new BasicFile();
-        Segment mainFileSeg = bf2.newSeg();
-        mainFileSeg.setThai("test");
+        sb = new SegmentBuilder(bf2);
+        sb.setThai("test");
+        Segment mainFileSeg = sb.createSegment();
+        bf2.addSeg(mainFileSeg);
         
         // We run mainFileSeg through MatchFinder, 
         // minMatchLength is 3
@@ -79,19 +85,23 @@ public class MatchFinderTest {
         // give our corpus file another segment: corpusSeg2
         // corpusSeg2 has Thai text of "aaeestcc"
         // running MatchFinder again should now return both corpusSegs
-        Segment corpusSeg2 = bf1.newSeg();
-        corpusSeg2.setThai("aaestcc");
-        corpusSeg2.setCommitted(true);
+        sb = new SegmentBuilder(bf1);
+        sb.setThai("aaestcc");
+        sb.setCommitted(true);
+        Segment corpusSeg2 = sb.createSegment();
+        bf1.addSeg(corpusSeg2);
         state = new StateWithDatabase(bf1, corpus);
+        
         mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
         assertEquals(2, mList.getObservableList().size());
         assertEquals("test", mList.getObservableList().get(0).getThai());
         assertEquals("aaestcc", mList.getObservableList().get(1).getThai());
         
         // test that seg3 isn't returned
-        Segment seg3 = bf1.newSeg();
-        seg3.setThai("tepstflip");
-        seg3.setCommitted(true);
+        sb.setThai("tepstflip");
+        sb.setCommitted(true);
+        Segment seg3 = sb.createSegmentNewID();
+        bf1.addSeg(seg3);
         state = new StateWithDatabase(bf1, corpus);
         mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
         assertEquals(2, mList.getObservableList().size());

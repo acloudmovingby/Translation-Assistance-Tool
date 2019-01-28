@@ -310,36 +310,38 @@ public class MainFileTest {
      * Test of mergeSegs method, of class BasicFile.
      */
     @Test
-    public void testMergeTUs() {
+    public void testMergeSegs() {
         DatabaseOperations.rebootDB();
         for (int i = 0; i < 10; i++) {
             BasicFile bf = new BasicFile();
 
             // makes 5 segments
-            Segment seg1 = bf.newSeg();
-            seg1.setID(DatabaseOperations.makeSegID());
-            seg1.setThai("t1");
-            seg1.setEnglish("e1");
+            SegmentBuilder sb = new SegmentBuilder(bf);
+            sb.setThai("t1");
+            sb.setEnglish("e1");
+            Segment seg1 = sb.createSegment();
+            bf.addSeg(seg1);
 
-            Segment seg2 = bf.newSeg();
-            seg2.setID(DatabaseOperations.makeSegID());
-            seg2.setThai("t2");
-            seg2.setEnglish("e2");
+            sb.setThai("t2");
+            sb.setEnglish("e2");
+            Segment seg2 = sb.createSegmentNewID();
+            bf.addSeg(seg2);
 
-            Segment seg3 = bf.newSeg();
-            seg3.setID(DatabaseOperations.makeSegID());
-            seg3.setThai("t3");
-            seg3.setEnglish("e3");
+            
+            sb.setThai("t3");
+            sb.setEnglish("e3");
+            Segment seg3 = sb.createSegmentNewID();
+            bf.addSeg(seg3);
 
-            Segment seg4 = bf.newSeg();
-            seg4.setID(DatabaseOperations.makeSegID());
-            seg4.setThai("t4");
-            seg4.setEnglish("e4");
+            sb.setThai("t4");
+            sb.setEnglish("e4");
+            Segment seg4 = sb.createSegmentNewID();
+            bf.addSeg(seg4);
 
-            Segment seg5 = bf.newSeg();
-            seg5.setID(DatabaseOperations.makeSegID());
-            seg5.setThai("t5");
-            seg5.setEnglish("e5");
+            sb.setThai("t5");
+            sb.setEnglish("e5");
+            Segment seg5 = sb.createSegmentNewID();
+            bf.addSeg(seg5);
 
             DatabaseOperations.addFile(bf);
             ArrayList<Segment> selectedSegs = new ArrayList();
@@ -542,31 +544,33 @@ public class MainFileTest {
     public void testChangeThai() {
         BasicFile bf = new BasicFile();
 
-        // makes two copies of 5 TUs
-        Segment tu1 = bf.newSeg();
-        tu1.setID(DatabaseOperations.makeSegID());
-        tu1.setThai("t1");
-        tu1.setEnglish("e1");
+            // makes 5 segments
+            SegmentBuilder sb = new SegmentBuilder(bf);
+            sb.setThai("t1");
+            sb.setEnglish("e1");
+            Segment seg1 = sb.createSegment();
+            bf.addSeg(seg1);
 
-        Segment tu2 = bf.newSeg();
-        tu2.setID(DatabaseOperations.makeSegID());
-        tu2.setThai("t2");
-        tu2.setEnglish("e2");
+            sb.setThai("t2");
+            sb.setEnglish("e2");
+            Segment seg2 = sb.createSegmentNewID();
+            bf.addSeg(seg2);
 
-        Segment tu3 = bf.newSeg();
-        tu3.setID(DatabaseOperations.makeSegID());
-        tu3.setThai("t3");
-        tu3.setEnglish("e3");
+            
+            sb.setThai("t3");
+            sb.setEnglish("e3");
+            Segment seg3 = sb.createSegmentNewID();
+            bf.addSeg(seg3);
 
-        Segment tu4 = bf.newSeg();
-        tu4.setID(DatabaseOperations.makeSegID());
-        tu4.setThai("t4");
-        tu4.setEnglish("e4");
+            sb.setThai("t4");
+            sb.setEnglish("e4");
+            Segment seg4 = sb.createSegmentNewID();
+            bf.addSeg(seg4);
 
-        Segment tu5 = bf.newSeg();
-        tu5.setID(DatabaseOperations.makeSegID());
-        tu5.setThai("t5");
-        tu5.setEnglish("e5");
+            sb.setThai("t5");
+            sb.setEnglish("e5");
+            Segment seg5 = sb.createSegmentNewID();
+            bf.addSeg(seg5);
 
         ArrayList<Segment> selectedTUs = new ArrayList();
     }

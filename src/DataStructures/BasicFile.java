@@ -65,16 +65,6 @@ public class BasicFile {
         removedSegs = new ArrayList();
     }
 
-    public Segment newSeg() {
-        // makes id that matches this file and assigns the fileid
-        Segment newSeg = new Segment(0, getFileID(), fileName);
-        // adds to end of lists
-        addTUAtEnd(newSeg);
-        // returns the Seg so it can be modified by the user (i.e. Thai/English can be added)
-      
-        return newSeg;
-    }
-
     /**
      * Adds the segment to the end of the activeSegs list in BasicFile. Later this will be changed, but currently the seg must follow the following conditions: fileID/fileName must match this file and the seg should not be "removed."
      * @param seg 
@@ -84,37 +74,14 @@ public class BasicFile {
         // this just makes sure the Segment was constructed correctly.
         // in the future, BasicFile/Segment will be designed in a way that an illegal argument can't be made
         if (seg.getFileID() != getFileID() ||
-                !seg.getFileName().equals(getFileName()) ||
-                seg.isRemoved()) {
+                !seg.getFileName().equals(getFileName())) {
             throw new IllegalArgumentException();
         } else {
             getActiveSegs().add(seg);
         }
     }
     
-    /**
-     * Helper method to add new seg to the various lists.
-     *
-     * @param seg
-     */
-    private void addTUAtEnd(Segment seg) {
-        // if it's removed, add it to the list
-        // isn't necessary as the higher methods should be deciding where to add the seg
-        if (seg.isRemoved()) {
-            removedSegs.add(seg);
-        } else {
-            // all of this is just setting the rank. otherwise its jsut adding it to the end of active segs
-            ObservableList<Segment> dispTUs = getActiveSegs();
-            int newRank;
-            if (dispTUs.isEmpty()) {
-                newRank = Integer.MIN_VALUE + 8192;
-            } else {
-                newRank = 8192 + dispTUs.get(dispTUs.size()-1).getRank();
-            }
-            dispTUs.add(seg);
-            seg.setRank(newRank);
-        }
-    }
+    
     
 
     /**
@@ -180,11 +147,11 @@ public class BasicFile {
         if (tusToMerge.size() < 2) {
             return;
         }
+        int firstIndex = this.getActiveSegs().indexOf(tusToMerge.get(0));
 
         // Add to removed list
         for (Segment tu : tusToMerge) {
-            tu.setRemoved(true);
-            this.getRemovedSegs().add(tu);
+            removeSeg(tu);
         }
 
         // Build new TU 
@@ -194,26 +161,22 @@ public class BasicFile {
             thaiSB.append(tu.getThai());
             engSB.append(tu.getEnglish());
         }
-        Segment newTU = new Segment(DatabaseOperations.makeSegID(), getFileID(), getFileName());
-        newTU.setThai(thaiSB.toString());
-        newTU.setEnglish(engSB.toString());
+        
+        SegmentBuilder sb = new SegmentBuilder(this);
+        sb.setThai(thaiSB.toString());
+        sb.setEnglish(engSB.toString());
+        Segment newSeg = sb.createSegment();
 
         // Remove old TUs from display list
-        int firstIndex = this.getActiveSegs().indexOf(tusToMerge.get(0));
+        
         int size = tusToMerge.size();
-        for (int i = 0; i < size; i++) {
-            getActiveSegs().remove(firstIndex);
-        }
 
         // Insert new TU
-        insertSeg(firstIndex, newTU);
-        //getTUsToDisplay().add(firstIndex, newSeg);
-        //realignRanks();
-
+        insertSeg(firstIndex, newSeg);
     }
 
     public void removeSeg(Segment seg) {
-        seg.setRemoved(true);
+        //seg.setRemoved(true);
         removedSegs.add(seg);
         activeSegs.remove(seg);
     }
@@ -228,7 +191,7 @@ public class BasicFile {
         int nextRank;
         
         if (index == getActiveSegs().size() || getActiveSegs().isEmpty()) {
-            addTUAtEnd(seg);
+            this.addSeg(seg);
             return;
         } else if (index == 0) {
             priorRank = Integer.MIN_VALUE;

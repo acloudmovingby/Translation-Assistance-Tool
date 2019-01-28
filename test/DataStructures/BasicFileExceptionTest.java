@@ -41,15 +41,7 @@ public class BasicFileExceptionTest {
             System.out.println("Exception thrown! " + e);
         }
         
-        // makes sure an exception is thrown when a "removed" segment is added
-        try {
-            sb = new SegmentBuilder(bf);
-            sb.setRemoved(true);
-            bf.addSeg(sb.createSegmentNewID());
-        }
-        catch (IllegalArgumentException e) {
-            System.out.println("Exception thrown! " + e);
-        }
+        
         
         System.out.println(bf);
     }

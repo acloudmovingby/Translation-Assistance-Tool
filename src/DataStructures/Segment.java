@@ -26,14 +26,12 @@ public class Segment {
     
     BooleanProperty isCommittedProperty;
     
-    private boolean isRemoved;
     private int rank;
     
     public Segment() {
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
-        isRemoved = false;
         this.id = 0;
         this.fileID = 0;  
     }
@@ -42,7 +40,6 @@ public class Segment {
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
-        isRemoved = false;
         this.id = 0;
         this.fileID = fileID;
     }
@@ -51,20 +48,18 @@ public class Segment {
         thaiProperty = new SimpleStringProperty("");
         englishProperty = new SimpleStringProperty("");
         isCommittedProperty = new SimpleBooleanProperty(false);
-        isRemoved = false;
         this.id = id;
         this.fileID = fileID;
         this.fileName = fileName;
     }
     
-    public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted, boolean isRemoved, int rank) {
+    public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted, int rank) {
         this.id = id;
         this.fileID = fileID;
         this.fileName = fileName;
         thaiProperty = new SimpleStringProperty(thai);
         englishProperty = new SimpleStringProperty(english);
         isCommittedProperty = new SimpleBooleanProperty(isCommitted);
-        this.isRemoved = isRemoved;
         this.rank = rank;
     }
 
@@ -106,8 +101,7 @@ public class Segment {
                 (this.getFileID() == s.getFileID()) &&
                 (this.getFileName().equals(s.getFileName())) &&
                 (this.getID() == s.getID()) &&
-                (this.isCommitted() == s.isCommitted()) &&
-                (this.isRemoved() == s.isRemoved());
+                (this.isCommitted() == s.isCommitted());
     }
 
     @Override
@@ -119,7 +113,6 @@ public class Segment {
         hash = 41 * hash + Objects.hashCode(this.getFileName());
         hash = 41 * hash + Objects.hashCode(this.getID());
         hash = 41 * hash + Objects.hashCode(this.isCommitted());
-        hash = 41 * hash + Objects.hashCode(this.isRemoved());
         return hash;
     }
     
@@ -131,8 +124,7 @@ public class Segment {
                 + getRank() + ", th="
                 + getThai() + ", en=" 
                 + getEnglish() + ", c?="
-                + isCommitted()  + ", r?=" 
-                + isRemoved()  + "]";
+                + isCommitted() + "]";
     }
 
 
@@ -169,14 +161,6 @@ public class Segment {
     
     public int getFileID() {
         return fileID;
-    }
-
-    public void setRemoved(boolean b) {
-        isRemoved = b;
-    }
-    
-    public boolean isRemoved() {
-        return isRemoved;
     }
 
     public int getRank() {

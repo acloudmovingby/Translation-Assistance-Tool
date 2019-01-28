@@ -19,7 +19,6 @@ public class SegmentBuilder {
     private String thai;
     private String english;
     private boolean isCommitted;
-    private boolean isRemoved;
     private int rank;
     
     /**
@@ -32,7 +31,6 @@ public class SegmentBuilder {
         this.thai = "";
         this.english = "";
         this.isCommitted = false;
-        this.isRemoved = false;
         this.rank = 0;
     }
     
@@ -47,7 +45,6 @@ public class SegmentBuilder {
         this.thai = s.getThai();
         this.english = s.getEnglish();
         this.isCommitted = s.isCommitted();
-        this.isRemoved = s.isRemoved();
         this.rank = s.getRank();
     }
     
@@ -62,7 +59,6 @@ public class SegmentBuilder {
         this.thai = "";
         this.english = "";
         this.isCommitted = false;
-        this.isRemoved = false;
         this.rank = 0;
     }
     
@@ -71,7 +67,7 @@ public class SegmentBuilder {
      * @return 
      */
     public Segment createSegment() {
-        return new Segment(id, fileID, fileName, thai, english, isCommitted, isRemoved, rank);
+        return new Segment(id, fileID, fileName, thai, english, isCommitted, rank);
     }
     
     /**
@@ -80,7 +76,7 @@ public class SegmentBuilder {
      */
     public Segment createSegmentNewID() {
         this.id = DatabaseOperations.makeSegID();
-        return new Segment(id, fileID, fileName, thai, english, isCommitted, isRemoved, rank);
+        return new Segment(id, fileID, fileName, thai, english, isCommitted, rank);
     }
     
     public void setID(int id) {
@@ -105,10 +101,6 @@ public class SegmentBuilder {
     
     public void setCommitted(boolean isCommitted) {
         this.isCommitted = isCommitted;
-    }
-    
-    public void setRemoved(boolean isRemoved) {
-        this.isRemoved = isRemoved;
     }
     
     public void setRank(int rank) {

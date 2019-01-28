@@ -36,7 +36,9 @@ public class DatabaseOperations {
      * Puts the Segment into the database. If a Segment with that id already
      * exists, then it is replaced by the new Segment. If successful, returns
      * true. If there is a SQL error, then returns false.
-     *
+     * 
+     * Note, using this method makes the segment out of the context of a File, so this method assumes it is not "removed" (the removed value is set to 0, false).
+     * For this reason, segs should probably added in the context of a file. 
      * @param seg
      * @return
      */
@@ -66,7 +68,8 @@ public class DatabaseOperations {
             } else {
                 pstmt.setInt(6, 0);
             }
-            pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+            // removed variable set to 0 (false)
+            pstmt.setInt(7, 0);
 
             pstmt.setInt(8, seg.getRank());
 
@@ -122,7 +125,7 @@ public class DatabaseOperations {
                     pstmt.setString(5, seg.getEnglish());
                     // committed/removed booleans are stored as binary (0 = false, 1 = true)
                     pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
-                    pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+                    pstmt.setInt(7, 0);
                     pstmt.setInt(8, rank);
                     pstmt.addBatch();
                     rank++;
@@ -149,7 +152,7 @@ public class DatabaseOperations {
                     pstmt.setString(5, seg.getEnglish());
                     // committed/removed booleans are stored as binary (0 = false, 1 = true)
                     pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
-                    pstmt.setInt(7, seg.isRemoved() ? 1 : 0);
+                    pstmt.setInt(7, 1);
                     pstmt.setInt(8, rank);
                     pstmt.addBatch();
                     rank++;
@@ -405,7 +408,8 @@ public class DatabaseOperations {
 
                     // Segment seg = new Segment(file.getFileID());
                     Segment seg = rebuildSegment(rs);
-                    if (seg.isRemoved()) {
+                    // if "removed" == 1 (which means "true"), then it is put in removed segs.
+                    if (rs.getInt("removed") == 1) {
                         file.getRemovedSegs().add(seg);
                     } else {
                         file.getActiveSegs().add(seg);
@@ -436,7 +440,6 @@ public class DatabaseOperations {
         sb.setEnglish(rs.getString("english"));
         int committedStatus = rs.getInt("committed");
         sb.setCommitted(rs.getInt("committed") == 1);
-        sb.setRemoved(rs.getInt("removed") == 1);
         sb.setRank(rs.getInt("rank"));
 
         return sb.createSegment();

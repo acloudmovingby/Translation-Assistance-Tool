@@ -65,7 +65,7 @@ public class SegmentBuilderTest {
     public void testConstructorFromSegment() {
         System.out.println("ConstructorFromSegment");
         // int id, int fileID, String fileName, String thai, String english, boolean isCommitted, boolean isRemoved, int rank)
-        Segment s = new Segment(202, 23002, "TheFileName", "TheThai", "TheEnglish", false, false, 1);
+        Segment s = new Segment(202, 23002, "TheFileName", "TheThai", "TheEnglish", false, 1);
         SegmentBuilder sb = new SegmentBuilder(s);
         
         Segment result = sb.createSegment();
@@ -75,7 +75,6 @@ public class SegmentBuilderTest {
         assertEquals(result.getThai(), "TheThai");
         assertEquals(result.getEnglish(), "TheEnglish");
         assertEquals(result.isCommitted(), false);
-        assertEquals(result.isRemoved(), false);
         assertEquals(result.getRank(), 1);
     }
 
@@ -93,7 +92,6 @@ public class SegmentBuilderTest {
         sb.setThai("This is Thai");
         sb.setEnglish("This is English");
         sb.setCommitted(true);
-        sb.setRemoved(true);
         sb.setRank(22);
         
         Segment result = sb.createSegment();
@@ -103,7 +101,6 @@ public class SegmentBuilderTest {
         assertEquals(result.getThai(), "This is Thai");
         assertEquals(result.getEnglish(), "This is English");
         assertEquals(result.isCommitted(), true);
-        assertEquals(result.isRemoved(), true);
         assertEquals(result.getRank(), 22);
         
         
@@ -121,7 +118,6 @@ public class SegmentBuilderTest {
         sb.setThai("This is Thai");
         sb.setEnglish("This is English");
         sb.setCommitted(true);
-        sb.setRemoved(true);
         sb.setRank(22);
         
         Segment result = sb.createSegment();
@@ -131,7 +127,6 @@ public class SegmentBuilderTest {
         assertEquals(result.getThai(), "This is Thai");
         assertEquals(result.getEnglish(), "This is English");
         assertEquals(result.isCommitted(), true);
-        assertEquals(result.isRemoved(), true);
         assertEquals(result.getRank(), 22);
         
         // creates an identical segment except with a different id
@@ -142,7 +137,6 @@ public class SegmentBuilderTest {
         assertEquals(result.getThai(), "This is Thai");
         assertEquals(result.getEnglish(), "This is English");
         assertEquals(result.isCommitted(), true);
-        assertEquals(result.isRemoved(), true);
         assertEquals(result.getRank(), 22);
     }
 
