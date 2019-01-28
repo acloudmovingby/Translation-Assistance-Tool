@@ -44,10 +44,7 @@ public class DatabaseOperations {
      */
     public static boolean addOrUpdateSegment(Segment seg) {
 
-        if (seg.getID() == 0) {
-            seg.setID(makeSegID());
-        }
-// OR REPLACE 
+        
         String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
         try (Connection conn = DatabaseOperations.connect();
@@ -114,9 +111,6 @@ public class DatabaseOperations {
 
                 for (Segment seg : bf.getActiveSegs()) {
 
-                    if (seg.getID() == 0) {
-                        seg.setID(makeSegID());
-                    }
 
                     pstmt.setDouble(1, seg.getID());
                     pstmt.setDouble(2, seg.getFileID());
@@ -140,10 +134,6 @@ public class DatabaseOperations {
                 i = 0;
                 rank = 0;
                 for (Segment seg : bf.getRemovedSegs()) {
-
-                    if (seg.getID() == 0) {
-                        seg.setID(makeSegID());
-                    }
 
                     pstmt.setDouble(1, seg.getID());
                     pstmt.setDouble(2, seg.getFileID());

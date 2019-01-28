@@ -24,7 +24,7 @@ public class EditEnglish implements Action {
 
     @Override
     public void execute(State state) {
-        //state.changeEnglish(seg, newEnglishText);
+        state.changeEnglish(seg, newEnglishText);
     }
     
 }

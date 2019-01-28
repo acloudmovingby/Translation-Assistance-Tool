@@ -203,6 +203,7 @@ public class Fxml_1Controller implements Initializable {
         englishCol.setOnEditCommit(e -> {
             int row = e.getTablePosition().getRow();
             Segment editedTU = tableView.getItems().get(row);
+            
             editedTU.setEnglish(e.getNewValue());
             editedTU.setCommitted(true);
             tableView.getItems().set(row, editedTU);

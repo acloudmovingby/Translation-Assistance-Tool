@@ -345,6 +345,11 @@ public class StateWithDatabase implements State {
         getMainFile().splitSeg(seg, index);
     }
 
+    @Override
+    public void changeEnglish(Segment seg, String newEnglishText) {
+        //getMainFile().getActiveSegs().
+    }
+
 
   
 

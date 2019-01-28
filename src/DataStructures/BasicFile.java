@@ -199,6 +199,7 @@ public class BasicFile {
             priorRank = getActiveSegs().get(index-1).getRank();
         }
         
+        /*
         nextRank = getActiveSegs().get(index).getRank();
         int newRank = (nextRank+priorRank)/2;
         seg.setRank(newRank);
@@ -208,6 +209,7 @@ public class BasicFile {
             System.out.println("Ranks realigned");
             realignRanks();
         }
+        */
 
     }
 

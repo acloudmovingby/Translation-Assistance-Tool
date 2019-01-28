@@ -25,5 +25,7 @@ public interface State {
     PostingsList getPostingsList(int nGramLength);
     
     public MainFile getMainFile();
+
+    public void changeEnglish(Segment seg, String newEnglishText);
     
 }
