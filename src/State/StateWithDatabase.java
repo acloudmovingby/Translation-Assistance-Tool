@@ -188,7 +188,7 @@ public class StateWithDatabase implements State {
      /**
      * Prints the English from all committed TUs in the main file to a file. 
      */
-    public void exportCommittedTUs() {
+    public void exportCommittedSegs() {
 
         PrintWriter out = null;
         
@@ -313,14 +313,9 @@ public class StateWithDatabase implements State {
         }
         
         Segment newSeg = getMainFile().editEnglish(seg, newEnglishText);
-        // remove old seg from postings list
         
-        //List<PostingsList> plList = getAllPLs();
-        
-        
-        // add new seg to postings list
-
-        
+        plm.removeSegment(seg); // remove old segment
+        plm.addSegment(newSeg); // add new segment
         
     }
 

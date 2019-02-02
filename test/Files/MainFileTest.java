@@ -9,6 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.MainFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
+import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import java.util.ArrayList;
 import org.junit.After;
@@ -541,38 +542,16 @@ public class MainFileTest {
      * Test of changeThai method, of class BasicFile.
      */
     @Test
-    public void testChangeThai() {
-        BasicFile bf = new BasicFile();
-
-            // makes 5 segments
-            SegmentBuilder sb = new SegmentBuilder(bf);
-            sb.setThai("t1");
-            sb.setEnglish("e1");
-            Segment seg1 = sb.createSegment();
-            bf.addSeg(seg1);
-
-            sb.setThai("t2");
-            sb.setEnglish("e2");
-            Segment seg2 = sb.createSegmentNewID();
-            bf.addSeg(seg2);
-
-            
-            sb.setThai("t3");
-            sb.setEnglish("e3");
-            Segment seg3 = sb.createSegmentNewID();
-            bf.addSeg(seg3);
-
-            sb.setThai("t4");
-            sb.setEnglish("e4");
-            Segment seg4 = sb.createSegmentNewID();
-            bf.addSeg(seg4);
-
-            sb.setThai("t5");
-            sb.setEnglish("e5");
-            Segment seg5 = sb.createSegmentNewID();
-            bf.addSeg(seg5);
-
-        ArrayList<Segment> selectedTUs = new ArrayList();
+    public void testEditEnglish() {
+        MainFile mf = new MainFile(TestObjectBuilder.getTestFile());
+        int originalSize = mf.getActiveSegs().size();
+        
+        Segment s = mf.getActiveSegs().get(0);
+        
+        mf.editEnglish(s, "001");
+        
+        assertEquals("001", mf.getActiveSegs().get(0).getEnglish());
+        assertEquals(originalSize, mf.getActiveSegs().size());
     }
     
     /**
@@ -590,4 +569,5 @@ public class MainFileTest {
         
         
     }
+
 }

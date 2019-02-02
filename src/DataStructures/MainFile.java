@@ -82,6 +82,7 @@ public class MainFile extends BasicFile {
      * @return The new segment or null if seg does not exist in the activeSegs list of this file.
      */
     public Segment editEnglish(Segment seg, String newEnglishText) {
+        
         // checks if seg exists
         if (!getActiveSegs().contains(seg)) {
             return null;

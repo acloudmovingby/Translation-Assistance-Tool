@@ -414,7 +414,7 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     private void export(ActionEvent event) {
-        state.exportCommittedTUs();
+        state.exportCommittedSegs();
     }
 
     /**

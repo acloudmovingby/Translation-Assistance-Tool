@@ -113,4 +113,5 @@ public class TestObjectBuilder {
         State state = new StateWithDatabase(f, c);
         return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
     }
+    
 }
