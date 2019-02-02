@@ -40,8 +40,13 @@ public class Corpus {
         return aList;
     }
 
-    public boolean contains(String fileName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean contains(BasicFile file) {
+        for (BasicFile f : getFiles()) {
+            if (file.equals(f)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public BasicFile getFile(String fileName) {

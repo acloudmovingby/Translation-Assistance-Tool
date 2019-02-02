@@ -44,7 +44,7 @@ public class PostingsListTest {
     }
 
     /**
-     * Test of tokenizeSegment method, of class PostingsList.
+     * Test of addSegment method, of class PostingsList.
      */
     @Test
     public void testParseseg() {
@@ -55,12 +55,13 @@ public class PostingsListTest {
         // no segs have been parsed yet, so returns empty list.
         assertEquals(true, pl1.getMatchingID("null").isEmpty());
         
-         // create seg
+         // create seg1 in file bf1; add seg to PostingsList
         BasicFile bf1 = new BasicFile();
         SegmentBuilder sb = new SegmentBuilder(bf1);
         sb.setThai("Abcabcdddd");
+        sb.setCommitted(true);
         Segment seg1 = sb.createSegment();
-        pl1.tokenizeSegment(seg1);
+        pl1.addSegment(seg1);
         
         // set up expResult and result lists
         List<Segment> expResult = new ArrayList();
@@ -119,42 +120,88 @@ public class PostingsListTest {
         // no segs have been parsed yet, so returns empty list.
         assertEquals(true, pl1.getMatchingID("null").isEmpty());
         
-        // test 1 seg
+        // construct seg1
         BasicFile bf1 = new BasicFile();
         SegmentBuilder sb = new SegmentBuilder(bf1);
         sb.setThai("Abcabcdddd");
-        
-        
+        sb.setCommitted(true);
         Segment seg1 = sb.createSegment();
-        pl1.tokenizeSegment(seg1);
+        
+        // add seg1
+        pl1.addSegment(seg1);
         assertEquals(seg1, pl1.getMatchingID("abc").get(0));
         
         // test reparsing seg (shouldn't change results)
-        pl1.tokenizeSegment(seg1);
+        pl1.addSegment(seg1);
         assertEquals(1, pl1.getMatchingID("abc").size());
         
-        // test adding 2nd Seg'
+        // construct seg2
         sb = new SegmentBuilder(bf1);
         sb.setThai("Abcabcdeee");
+        sb.setCommitted(true);
         Segment seg2 = sb.createSegment();
-        pl1.tokenizeSegment(seg2);
+        
+        // add seg2
+        pl1.addSegment(seg2);
+        List<Segment> result = pl1.getMatchingID("abc"); // both seg1 and seg2 should be returned (both segs have "abc" in them)
         List<Segment> expResult = new ArrayList();
         expResult.add(seg1);
-        expResult.add(seg2);
-        List<Segment> result = pl1.getMatchingID("abc");
+        expResult.add(seg2); 
+        assertEquals(expResult, result);
+        
+         // test uniquness of 1st Seg
+        expResult = new ArrayList();
+        expResult.add(seg1);
+        result = pl1.getMatchingID("ddd"); // only seg1 should contain this ngram
         assertEquals(expResult, result);
         
         // test uniqueness of 2nd Seg
         expResult = new ArrayList();
         expResult.add(seg2);
-        result = pl1.getMatchingID("eee");
+        result = pl1.getMatchingID("eee"); // only seg2 should contain this ngram
         assertEquals(expResult, result);
         
-        // test uniquness of 1st Seg
+        
+        // test removing seg2
+        // after we remove seg2, query for "abc" should only return seg1 and query for "eee" should return empty list
+        pl1.removeSegment(seg2);
+        result = pl1.getMatchingID("abc");// only seg1 should contain this ngram now
         expResult = new ArrayList();
         expResult.add(seg1);
-        result = pl1.getMatchingID("ddd");
-        assertEquals(expResult, result);
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("eee"); // no ngrams now contain "eee" so this is empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        
+        // test removing seg1
+        pl1.removeSegment(seg1);
+        result = pl1.getMatchingID("abc");// shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("ddd");// also shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("eee");// also shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("");// shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        
+        // test removing seg1 (which has already been removed). Nothing should change and no exceptions thrown
+        pl1.removeSegment(seg1);
+        result = pl1.getMatchingID("abc");// shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("ddd");// also shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("eee");// also shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
+        result = pl1.getMatchingID("");// shd return empty list
+        expResult = new ArrayList();
+        assertEquals(expResult, result); 
     }
 
     

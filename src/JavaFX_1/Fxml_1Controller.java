@@ -206,7 +206,7 @@ public class Fxml_1Controller implements Initializable {
             
             editedTU.setEnglish(e.getNewValue());
             editedTU.setCommitted(true);
-            tableView.getItems().set(row, editedTU);
+            tableView.getItems().set(row, editedTU); 
         }
         );
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));

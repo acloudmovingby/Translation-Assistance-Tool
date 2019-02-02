@@ -36,5 +36,9 @@ public class Dispatcher {
     
     public UIState getUIState() {
         return state.getUIState();
-    }      
+    }     
+    
+    public State getState() {
+        return state;
+    }
 }

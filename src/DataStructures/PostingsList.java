@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Parses Segment into ngrams to be stored/retrieved from database.
+ * Parses the thai text in Segments into ngrams (length of ngram specified in PostingsList constructor). 
  *
  * @author Chris
  */
@@ -33,23 +33,23 @@ public class PostingsList {
     }
 
     /**
-     * Tokenizes a segment into ngrams and adds these to the postings list.
+     * Tokenizes a segment into ngrams and adds these to the postings list. If the segment is not committed, it is NOT added to the postings list.
      *
      * @param seg
      */
-    public void tokenizeSegment(Segment seg) {
-        if (seg != null) {
-            List<String> l = makeNGrams(seg.getThai(), nGramLength);
-            l.forEach(s -> {
-                // retrieves the segments for a given nGram (s)
-                List<Segment> segList = map.get(s);
+    public void addSegment(Segment seg) {
+        if (seg != null && seg.isCommitted()) {
+            List<String> ngrams = makeNGrams(seg.getThai(), nGramLength);
+            ngrams.forEach(ngram -> {
+                // retrieves the segments for a given nGram
+                List<Segment> segList = map.get(ngram);
                 /*
                 If this ngram hasn't appeared in any previously seen segments, a new list is created. Otherwise, this segment is appended to the end of the list.
                 */
                 if (segList == null) {
                     segList = new ArrayList();
                     segList.add(seg);
-                    map.put(s, segList);
+                    map.put(ngram, segList);
                 } else {
                     if (!segList.contains(seg)) {
                         segList.add(seg);
@@ -62,21 +62,21 @@ public class PostingsList {
 
     public boolean addFile(BasicFile bf) {
         if (bf != null) {
-            bf.getRemovedSegs().forEach(tu -> {
-                if (tu.isCommitted()) {
-                    tokenizeSegment(tu);
+            bf.getRemovedSegs().forEach(seg -> {
+                if (seg.isCommitted()) {
+                    addSegment(seg);
                 }
             });
-            bf.getActiveSegs().forEach(tu -> {
-                if (tu.isCommitted()) {
-                    tokenizeSegment(tu);
+            bf.getActiveSegs().forEach(seg -> {
+                if (seg.isCommitted()) {
+                    addSegment(seg);
                 }
             });
         }
         return false;
     }
 
-    public void addFileList(Corpus fl) {
+    public void addCorpus(Corpus fl) {
         if (fl != null) {
             fl.getFiles().forEach(f -> addFile(f));
         }
@@ -116,5 +116,37 @@ public class PostingsList {
     public HashMap<String, List<Segment>> getMap() {
         return map;
     }
+    
+    /**
+     * Removes the ngrams associated with the specified Segment from the postings list. If the PostingsList does not contain this segment, nothing changes.
+     * @param seg 
+     */
+    public void removeSegment(Segment seg) {
+        List<String> ngrams = makeNGrams(seg.getThai(), nGramLength);
+        ngrams.forEach(ngram -> {
+            List<Segment> listOfSegs = map.get(ngram);
+            if (listOfSegs != null) {
+                listOfSegs.remove(seg);
+            }
+        });
+    }
 
+    @Override
+    public boolean equals(Object o) {
+         if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof PostingsList)) {
+            return false;
+        }
+
+        PostingsList pl = (PostingsList) o;
+        
+        if (this.map.equals(pl.getMap())) {
+            return false;
+        }
+        
+        return true;
+    }
 }

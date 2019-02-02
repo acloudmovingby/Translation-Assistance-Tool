@@ -36,16 +36,12 @@ public class StateWithDatabase implements State {
     private static final boolean DATABASE_IS_WRITABLE = true;
     private static final boolean REBOOT_DATABASE = false;
     
-    private PostingsList pl2;
-    private PostingsList pl3;
-    private PostingsList pl4;
-    private PostingsList pl5;
-    private PostingsList pl6;
-    private PostingsList pl7;
-    private PostingsList pl8;
+
+    /**
+     * The object that handles the making of ngrams for faster search.
+     */
+    private final PostingsListManager plm;
     
-
-
     /**
      * The file currently being translated.
      */
@@ -80,11 +76,24 @@ public class StateWithDatabase implements State {
         uiState = new UIState();
         
         // Default minimum length for matches
-        minMatchLength = 10;
+        minMatchLength = 5;
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
+        
+        
+        // makes sure mainfile is actually a part of corpus
+        // if not, it adds mainFile to corpus
+        if (!corpus.contains(mainFile)) {
+            corpus.addFile(mainFile);
+        }
+        
         setMainFile(new MainFile(mainFile));
-        setCorpus(corpus);
+        
+        plm = new PostingsListManager(corpus);
+        
+        
+        //setCorpus(corpus);
+        compareFile = findMatch(segSelected);
     }
 
     @Override
@@ -92,7 +101,7 @@ public class StateWithDatabase implements State {
         return mainFile;
     }
     
-    public void setMainFile(MainFile newMainFile) {
+    public final void setMainFile(MainFile newMainFile) {
         this.mainFile = newMainFile;
         if (!newMainFile.getActiveSegs().isEmpty()) {
             segSelected =  newMainFile.getActiveSegs().get(0);
@@ -103,11 +112,6 @@ public class StateWithDatabase implements State {
     public IntegerProperty getNumMatchesProperty() {
         return numMatches;
     }
-    
-   
-    
-    
-    
     
     public MatchList getMatchFile() {
          return compareFile;
@@ -145,58 +149,11 @@ public class StateWithDatabase implements State {
         return corpus;
     }
     
-    private void setCorpus(Corpus corpus) {
-        this.corpus = corpus;
-        
-        long initial = System.nanoTime();
-        pl2 = new PostingsList(2);
-        pl2.addFileList(corpus);
-        long after = System.nanoTime();
-        System.out.println("after 2: " + (after-initial));
-        initial = after;
-        
-        pl3 = new PostingsList(3);
-        pl3.addFileList(corpus);
-        after = System.nanoTime();
-        System.out.println("after 3: " + (after-initial));
-        initial = after;
-        
-        pl4 = new PostingsList(4);
-        pl4.addFileList(corpus);
-        after = System.nanoTime();
-        System.out.println("after 4: " + (after-initial));
-        initial = after;
-        
-        pl5 = new PostingsList(5);
-        pl5.addFileList(corpus);
-        after = System.nanoTime();
-        System.out.println("after 5: " + (after-initial));
-        initial = after;
-        
-        pl6 = new PostingsList(6);
-        pl6.addFileList(corpus);
-        after = System.nanoTime();
-        System.out.println("after 6: " + (after-initial));
-        initial = after;
-        
-        pl7 = new PostingsList(7);
-        pl7.addFileList(corpus);
-        after = System.nanoTime();
-        System.out.println("after 7: " + (after-initial));
-        initial = after;
-        
-        pl8 = new PostingsList(8);
-        pl8.addFileList(corpus);
-        after = System.nanoTime();
-        System.out.println("after 8: " + (after-initial));
-        initial = after;
-        
-        compareFile = findMatch(segSelected);
-    }
-    
     @Override
     public PostingsList getPostingsList(int nGramLength) {
-        PostingsList pl;
+        return plm.getPostingsList(nGramLength);
+        
+        /*PostingsList pl;
         switch (nGramLength) {
             case 2:
                 pl = pl2;
@@ -221,10 +178,11 @@ public class StateWithDatabase implements State {
                 break;
             default:
                 pl = new PostingsList(nGramLength);
-                pl.addFileList(getCorpus());
+                pl.addCorpus(getCorpus());
                 break;
         }
         return pl;
+        */
     }
     
      /**
@@ -317,10 +275,6 @@ public class StateWithDatabase implements State {
             return MatchFinder.basicMatch(seg, minMatchLength, this);
         }
     }
-    // selection calls findMatch
-    // find match tells MatchFinder to use minMatchLength
-    // MatchFinder makes a postingslist of length minMatchLength
-    // could make postings lists for 2->8
     
     private MatchList findExactMatch(String str) {
         return MatchFinder.exactMatch(str, this);
@@ -345,10 +299,31 @@ public class StateWithDatabase implements State {
         getMainFile().splitSeg(seg, index);
     }
 
+    /**
+     * Changes the English text of the specified segment if that segment actually exists in the main file. If it doesn't exist, nothing happens. It replaces that seg with a new seg (because Segment is immutable), so further calls on this method will do nothing. 
+     * @param seg
+     * @param newEnglishText 
+     */
     @Override
-    public void changeEnglish(Segment seg, String newEnglishText) {
-        //getMainFile().getActiveSegs().
+    public void editEnglish(Segment seg, String newEnglishText) {
+        
+        // if main file does not contain seg in its activeSegs list, then method simply returns.
+        if (!getMainFile().getActiveSegs().contains(seg)) {
+            return;
+        }
+        
+        Segment newSeg = getMainFile().editEnglish(seg, newEnglishText);
+        // remove old seg from postings list
+        
+        //List<PostingsList> plList = getAllPLs();
+        
+        
+        // add new seg to postings list
+
+        
+        
     }
+
 
 
   

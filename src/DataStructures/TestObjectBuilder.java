@@ -5,8 +5,11 @@
  */
 package DataStructures;
 
+import State.DatabaseManager;
+import State.Dispatcher;
 import State.State;
 import State.StateWithDatabase;
+import State.UndoManager;
 
 /**
  * Creates various objects to make testing easier. 
@@ -15,7 +18,8 @@ import State.StateWithDatabase;
 public class TestObjectBuilder {
     
     /**
-     * Creates a file with id=101, and a fileName of "TestFile". It contains 5 segments, with the Thai/English text fields as follows: "th1" / "en1", "th2"/"en2" etc... Other than that, the segments have default values (random id, rank=0, not committed, not removed). 
+     * Creates a file with id=101, and a fileName of "TestFile". It contains 5 segments, with the Thai/English text fields as follows: "th1" / "en1", "th2"/"en2" etc... Other than that, the segments have default values (random id, rank=0, not committed). 
+     * Note, none of the segments are "committed"
      * @return 
      */
     public static BasicFile getTestFile() {
@@ -48,6 +52,12 @@ public class TestObjectBuilder {
             return bf;
     }
     
+    /**
+     * Makes a corpus composed of 3 files, which while different objects, are all exactly equal to the file that comes out of getTestFile();
+     * These files, if you run .equals comparing them, will return true.
+     * NO SEGMENTS ARE COMMITTED.
+     * @return 
+     */
     public static Corpus getTestCorpus() {
         Corpus c = new Corpus();
         c.addFile(getTestFile());
@@ -56,6 +66,21 @@ public class TestObjectBuilder {
         return c;
     }
     
+    /**
+     * Same as getTestCorpus(), except all segs in corpus are committed.
+     * @return 
+     */
+    public static Corpus getCommittedTestCorpus() {
+        Corpus c = getTestCorpus();
+        for (BasicFile f : c.getFiles()) {
+            f.commitAllSegs();
+        }
+        return c;
+    }
+    /**
+     * State composed of the corpus from getTestCorpus() and a main file from getTestFile(). 
+     * @return 
+     */
     public static State getTestState() {
         return new StateWithDatabase(getTestFile(), getTestCorpus());
     }
@@ -73,5 +98,19 @@ public class TestObjectBuilder {
 
     public static Segment getTestSeg() {
          return (new SegmentBuilder()).createSegment();
+    }
+    
+    /**
+     * Returns a dispatcher wrapped around the state from getTestState();
+     * @return 
+     */
+    public static Dispatcher getTestDispatcher() {
+        State state = getTestState();
+        return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
+    }
+    
+    public static Dispatcher getDispatcher(Corpus c, BasicFile f) {
+        State state = new StateWithDatabase(f, c);
+        return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
     }
 }

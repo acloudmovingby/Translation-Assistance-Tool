@@ -24,7 +24,7 @@ public class BuildCorpus {
             String thaiFile1 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Thai Book 3-AUTO.txt";
             String engFile1 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Eng Book 3-SQ.txt";
             BasicFile file1 = (new ThaiLawParser(thaiFile1, engFile1)).makeFile();
-            file1.commitAllTUs();
+            file1.commitAllSegs();
             //DatabaseOperations.addFile(file1);
             DatabaseOperations.addFile(file1);
             //file1.setFileName("Civil and Commercial Code: Book 3");
@@ -32,14 +32,14 @@ public class BuildCorpus {
             String thaiFile2 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Thai Book 2.txt";
             String engFile2 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Eng Book 2-1.txt";
             BasicFile file2 = (new ThaiLawParser(thaiFile2, engFile2)).makeFile();
-            file2.commitAllTUs();
+            file2.commitAllSegs();
             //DatabaseOperations.addFile(file2);
             DatabaseOperations.addFile(file2);
 
             String thaiFile3 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Thai Book 1TXT2.txt";
             String engFile3 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/SampleEnglishLaw1.txt";
             BasicFile file3 = (new ThaiLawParser(thaiFile3, engFile3)).makeFile();
-            file3.commitAllTUs();
+            file3.commitAllSegs();
             //DatabaseOperations.addFile(file3);
             DatabaseOperations.addFile(file3);
 */

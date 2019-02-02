@@ -167,7 +167,7 @@ public class DatabaseOperationsTest {
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
         
         // committing all the segs in the standard test file, checking it's the same.
-        file.commitAllTUs();
+        file.commitAllSegs();
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
         

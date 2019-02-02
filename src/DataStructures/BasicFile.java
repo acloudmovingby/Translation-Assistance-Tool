@@ -187,6 +187,7 @@ public class BasicFile {
      * @param seg 
      */
     public void insertSeg(int index, Segment seg) {
+        /*
         int priorRank;
         int nextRank;
         
@@ -199,17 +200,19 @@ public class BasicFile {
             priorRank = getActiveSegs().get(index-1).getRank();
         }
         
-        /*
+        
         nextRank = getActiveSegs().get(index).getRank();
         int newRank = (nextRank+priorRank)/2;
         seg.setRank(newRank);
-        getActiveSegs().add(index, seg);
+        
         
         if (nextRank-priorRank < 2) {
             System.out.println("Ranks realigned");
             realignRanks();
-        }
-        */
+        } */
+        
+        
+        getActiveSegs().add(index, seg);
 
     }
 
@@ -248,9 +251,9 @@ public class BasicFile {
         DatabaseOperations.addOrUpdateFileName(fileID, fileName);
     }
 
-    public void commitAllTUs() {
-        for (Segment tu : getActiveSegs()) {
-            tu.setCommitted(true);
+    public void commitAllSegs() {
+        for (Segment seg : getActiveSegs()) {
+            seg.setCommitted(true);
             // DATABASE
             //DatabaseOperations.addOrUpdateSegment(tu);
         }

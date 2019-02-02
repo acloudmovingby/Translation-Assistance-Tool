@@ -26,6 +26,6 @@ public interface State {
     
     public MainFile getMainFile();
 
-    public void changeEnglish(Segment seg, String newEnglishText);
+    public void editEnglish(Segment seg, String newEnglishText);
     
 }

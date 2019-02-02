@@ -15,14 +15,6 @@ public class MainFile extends BasicFile {
     
     public MainFile(BasicFile file) {
         super(file);
-        /*
-        // Actual segs displayed to the user while translating this file.
-    private ObservableList<Segment> activeSegs;
-    // Any segs that had been removed. They still might appear in match queries if they had been commited
-    private ArrayList<Segment> removedSegs;
-    private String fileName;
-    private final int fileID;
-        */
     }
     
     /**
@@ -80,6 +72,34 @@ public class MainFile extends BasicFile {
 
         // Realigns ranks
         realignRanks();
+    }
+
+    /**
+     * Replaces the specified segment with a new one (with new id) where its English text field has been changed as specified. This then returns the newly created segment.
+     * Note that the old seg will now be placed in the "removedSegs" list of this main file. IMPORTANT: if the seg does not exist in the file, then this returns null).
+     * @param seg
+     * @param newEnglishText
+     * @return The new segment or null if seg does not exist in the activeSegs list of this file.
+     */
+    public Segment editEnglish(Segment seg, String newEnglishText) {
+        // checks if seg exists
+        if (!getActiveSegs().contains(seg)) {
+            return null;
+        } 
+        
+        // gets index of where seg is located
+        int index = getActiveSegs().indexOf(seg);
+        
+        SegmentBuilder sb = new SegmentBuilder(seg);
+        sb.setEnglish(newEnglishText);
+        Segment newSeg = sb.createSegmentNewID();
+        
+        // replaces old seg with new seg
+        getActiveSegs().set(index, newSeg);
+        // adds old seg to the "removed" list
+        getRemovedSegs().add(seg);
+        
+        return newSeg;
     }
     
     
