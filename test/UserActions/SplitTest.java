@@ -5,6 +5,11 @@
  */
 package UserActions;
 
+import DataStructures.BasicFile;
+import DataStructures.Corpus;
+import DataStructures.Segment;
+import DataStructures.TestObjectBuilder;
+import State.Dispatcher;
 import State.State;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,11 +49,39 @@ public class SplitTest {
     @Test
     public void testExecute() {
         System.out.println("execute");
-        State state = null;
-        Split instance = null;
-        instance.execute(state);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // create test objects
+        Corpus c = TestObjectBuilder.getCommittedTestCorpus();
+        BasicFile mainFile = c.getFiles().get(0);
+        Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+       
+        
+        
+        // get first segment of mainfile
+        Segment firstSegment = d.getState().getMainFile().getActiveSegs().get(0);
+        
+        
+        // Split with 0 index
+        d.acceptAction(new Split(firstSegment, 0));
+        // check that the UI result is correct, that the English of that first segment has in fact changed
+        assertEquals("th1", d.getUIState().getMainFileSegs().get(0).getThai());
+        assertEquals(5, d.getUIState().getMainFileSegs().size());
+        // confirm postings lists are unchanged
+        assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size());
+        
+        
+        
+        
+        // Split with middle index
+        d.acceptAction(new Split(firstSegment, 1));
+        // check that the UI result is correct, that the English of that first segment has in fact changed
+        assertEquals("t", d.getUIState().getMainFileSegs().get(0).getThai());
+        assertEquals(6, d.getUIState().getMainFileSegs().size());
+        System.out.println(c);
+        
+        // confirm postings lists changed
+        assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size()); // even though the segment was removed, it was committed so it should stay in pl
+        assertEquals(3, d.getState().getPostingsList(2).getMatchingID("h1").size());
+        assertEquals(0, d.getState().getPostingsList(4).getMatchingID("th11").size());
     }
     
 }

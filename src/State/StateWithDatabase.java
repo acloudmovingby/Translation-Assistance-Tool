@@ -299,26 +299,12 @@ public class StateWithDatabase implements State {
         getMainFile().splitSeg(seg, index);
     }
 
-    /**
-     * Changes the English text of the specified segment if that segment actually exists in the main file. If it doesn't exist, nothing happens. It replaces that seg with a new seg (because Segment is immutable), so further calls on this method will do nothing. 
-     * @param seg
-     * @param newEnglishText 
-     */
-    @Override
-    public void editEnglish(Segment seg, String newEnglishText) {
-        
-        // if main file does not contain seg in its activeSegs list, then method simply returns.
-        if (!getMainFile().getActiveSegs().contains(seg)) {
-            return;
-        }
-        
-        Segment newSeg = getMainFile().editEnglish(seg, newEnglishText);
-        
-        plm.removeSegment(seg); // remove old segment
-        plm.addSegment(newSeg); // add new segment
-        
-    }
+   
 
+    @Override
+    public PostingsListManager getPostingsListManager() {
+        return plm;
+    }
 
 
   

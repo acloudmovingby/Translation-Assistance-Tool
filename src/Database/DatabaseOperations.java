@@ -119,6 +119,7 @@ public class DatabaseOperations {
                     pstmt.setString(5, seg.getEnglish());
                     // committed/removed booleans are stored as binary (0 = false, 1 = true)
                     pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
+                    // removed is set to "false"
                     pstmt.setInt(7, 0);
                     pstmt.setInt(8, rank);
                     pstmt.addBatch();
@@ -142,6 +143,7 @@ public class DatabaseOperations {
                     pstmt.setString(5, seg.getEnglish());
                     // committed/removed booleans are stored as binary (0 = false, 1 = true)
                     pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
+                    // removed is set  to "true"
                     pstmt.setInt(7, 1);
                     pstmt.setInt(8, rank);
                     pstmt.addBatch();

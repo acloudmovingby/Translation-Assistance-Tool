@@ -546,12 +546,18 @@ public class MainFileTest {
         MainFile mf = new MainFile(TestObjectBuilder.getTestFile());
         int originalSize = mf.getActiveSegs().size();
         
+        // original segment and its english text
         Segment s = mf.getActiveSegs().get(0);
+        String origEng = s.getEnglish();
         
-        mf.editEnglish(s, "001");
+        // replacing the old segment with a new one with changed english
+        Segment newSegment = mf.editEnglish(s, "001");
         
+        assertEquals(origEng, s.getEnglish());
         assertEquals("001", mf.getActiveSegs().get(0).getEnglish());
         assertEquals(originalSize, mf.getActiveSegs().size());
+        assertEquals(newSegment.getEnglish(), "001");
+        assertEquals(newSegment, mf.getActiveSegs().get(0));
     }
     
     /**

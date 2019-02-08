@@ -5,7 +5,8 @@
  */
 package DataStructures;
 
-import javafx.collections.ObservableList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,14 +25,15 @@ public class MainFile extends BasicFile {
      *
      * @param seg
      * @param splitIndex
+     * @return The newly created segments. Returns null if the split fails (index out of bounds or segment doesn't actually exist in this file). 
      */
-    public void splitSeg(Segment seg, int splitIndex) {
+    public List<Segment> splitSeg(Segment seg, int splitIndex) {
         // if the seg is null or is not in the list of active segs, return
         // if the split index is out of bounds, return
         if (seg == null 
                 || splitIndex <= 0 
                 || splitIndex >= seg.getThai().length()) {
-            return;
+            return null;
         }
         
         // This makes sure that the selected seg is actually in the active segs list.
@@ -44,7 +46,7 @@ public class MainFile extends BasicFile {
             }
         }
         if (!isInActiveSegs) {
-            return;
+            return null;
         }
             
         // splits the Thai text into two parts, splitting at the splitIndex
@@ -67,11 +69,17 @@ public class MainFile extends BasicFile {
         Segment newSeg2 = sb.createSegmentNewID();
         getActiveSegs().add(index + 1, newSeg2);
         
-        //removes old TU
+        //removes old seg
         removeSeg(seg);
 
         // Realigns ranks
         realignRanks();
+        
+        List<Segment> retList = new ArrayList();
+        retList.add(newSeg1);
+        retList.add(newSeg2);
+                
+        return retList;
     }
 
     /**
@@ -90,7 +98,6 @@ public class MainFile extends BasicFile {
         
         // gets index of where seg is located
         int index = getActiveSegs().indexOf(seg);
-        
         SegmentBuilder sb = new SegmentBuilder(seg);
         sb.setEnglish(newEnglishText);
         Segment newSeg = sb.createSegmentNewID();

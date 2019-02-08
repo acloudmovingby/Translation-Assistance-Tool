@@ -57,10 +57,8 @@ public class EditEnglishTest {
         Corpus c = TestObjectBuilder.getCommittedTestCorpus();
         BasicFile mainFile = c.getFiles().get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
-        PostingsList pl3 = d.getState().getPostingsList(3); // gets postings list for this state for ngrams of length 3
+       
         
-        assertEquals(new ArrayList(), pl3.getMatchingID("new")); // no segments have this ngram
-        assertEquals(3, pl3.getMatchingID("th1").size()); // 3 segments should contain the ngram "th1"
         
         // get first segment of mainfile
         Segment firstSegment = d.getState().getMainFile().getActiveSegs().get(0);
@@ -68,9 +66,7 @@ public class EditEnglishTest {
         d.acceptAction(new EditEnglish(firstSegment, "new English"));
         // check that the UI result is correct, that the English of that first segment has in fact changed
         assertEquals("new English", d.getUIState().getMainFileSegs().get(0).getEnglish());
-        // check that the postings list has changed
-        assertEquals(2, pl3.getMatchingID("th1").size()); // only 2 segs now match "th1"
-        assertEquals(1, pl3.getMatchingID("new").size()); // 1 seg matches "new"
+        
         
         // try it with the last segment
         ObservableList<Segment> mainFileSegs = d.getUIState().getMainFileSegs();
@@ -79,15 +75,7 @@ public class EditEnglishTest {
         d.acceptAction(new EditEnglish(lastSegment, "new English 2"));
         // check that the last segment has in fact changed
         assertEquals("new English 2", mainFileSegs.get(mainFileSegs.size()-1).getEnglish());
-        // check the postings list
-        assertEquals(2, pl3.getMatchingID("th5").size()); // only 1 seg now matches "th1"
-        assertEquals(2, pl3.getMatchingID("new").size()); // 2 seg match "new"
         
-        /*
-        Match Finder tests
-        */
-        
-
         
     }
     

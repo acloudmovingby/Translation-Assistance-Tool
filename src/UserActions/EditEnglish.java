@@ -24,7 +24,14 @@ public class EditEnglish implements Action {
 
     @Override
     public void execute(State state) {
-        state.editEnglish(seg, newEnglishText);
+        // if main file does not contain seg in its activeSegs list, then method simply returns.
+        if (!state.getMainFile().getActiveSegs().contains(seg)) {
+            return;
+        }
+        
+        Segment newSeg = state.getMainFile().editEnglish(seg, newEnglishText);
+        
+        //state.editEnglish(seg, newEnglishText);
     }
     
 }
