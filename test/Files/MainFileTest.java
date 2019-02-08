@@ -360,7 +360,7 @@ public class MainFileTest {
                     assertEquals(bf.getActiveSegs().get(3).equals(seg4), true);
                     assertEquals(bf.getActiveSegs().get(4).equals(seg5), true);
 
-                    BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
+                    //BasicFile fileFromDB = DatabaseOperations.getFile(bf.getFileID());
                     break;
                 }
                 case 1: {
