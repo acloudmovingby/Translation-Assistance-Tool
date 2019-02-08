@@ -306,7 +306,45 @@ public class StateWithDatabase implements State {
         return plm;
     }
 
+    /**
+     * Takes the "oldSeg" from the MainFile's active segs list and replaces it. If MF's active segs list does not contain the specified Segment, it returns false and nothing changes. If it does, the MainFile and PostingsListManager adjust appropriately. 
+     * @param oldSeg
+     * @param newSeg 
+     * @return  True if seg exists in MF active. False if not.
+     */
+    @Override
+    public boolean replaceSeg(Segment oldSeg, Segment newSeg) {
+        
+        ObservableList<Segment> mfActiveSegs = getMainFile().getActiveSegs();
+        // checks to make sure oldSeg exists in MainFile active segs
+        if (!mfActiveSegs.contains(oldSeg)) {
+            return false;
+        } else {
+            int index = mfActiveSegs.indexOf(oldSeg);
+            // replaces the oldSeg with the newSeg at that index
+            mfActiveSegs.set(index, newSeg);
+            // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displaye on screen
+            getMainFile().getRemovedSegs().add(oldSeg);
+            
+            //adjusts Postings Lists
+            PostingsListManager plManager = getPostingsListManager();
+            //plManager.removeSegment(oldSeg); // not necessary actually, because if a seg was committed, even if it is now no longer visible in the file being edited, it should still be stored as a possible match
+            plManager.addSegment(newSeg);
+            
+            return true;
+        }
+    }
 
+    /**
+     * Adds the segment to the MainFile at the specified index and then adds it to the postings lists
+     * @param insertIndex
+     * @param seg 
+     */
+    @Override
+    public void addSeg(int insertIndex, Segment seg) {
+        getMainFile().getActiveSegs().add(insertIndex, seg);
+        getPostingsListManager().addSegment(seg);
+    }
   
 
     

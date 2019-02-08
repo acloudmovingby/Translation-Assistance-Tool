@@ -14,6 +14,7 @@ import DataStructures.TestObjectBuilder;
 import State.Dispatcher;
 import State.State;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -76,6 +77,9 @@ public class EditEnglishTest {
         // check that the last segment has in fact changed
         assertEquals("new English 2", mainFileSegs.get(mainFileSegs.size()-1).getEnglish());
         
+        // check that PostingsList hasn't changed (the old seg is still stored, but the new one is not, because it reverts to uncommitted).
+        assertEquals(3, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("th1").size());
+        assertEquals(0, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("new").size());
         
     }
     

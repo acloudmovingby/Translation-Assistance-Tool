@@ -78,7 +78,7 @@ public class SplitTest {
         assertEquals(6, d.getUIState().getMainFileSegs().size());
         System.out.println(c);
         
-        // confirm postings lists changed
+        // confirm postings lists 
         assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size()); // even though the segment was removed, it was committed so it should stay in pl
         assertEquals(3, d.getState().getPostingsList(2).getMatchingID("h1").size());
         assertEquals(0, d.getState().getPostingsList(4).getMatchingID("th11").size());

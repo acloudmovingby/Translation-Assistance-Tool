@@ -28,4 +28,14 @@ public interface State {
 
     public PostingsListManager getPostingsListManager();
     
+    /**
+     * Takes the "oldSeg" from the MainFile's active segs list and replaces it. If MF's active segs list does not contain the specified Segment, it returns false and nothing changes. If it does, the MainFile and PostingsListManager adjust appropriately. 
+     * @param oldSeg
+     * @param newSeg 
+     * @return  True if seg exists in MF active. False if not.
+     */
+    public boolean replaceSeg(Segment oldSeg, Segment newSeg);
+
+    public void addSeg(int i, Segment newSeg2);
+    
 }

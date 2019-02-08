@@ -6,6 +6,7 @@
 package UserActions;
 
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import State.State;
 
 /**
@@ -24,14 +25,13 @@ public class EditEnglish implements Action {
 
     @Override
     public void execute(State state) {
-        // if main file does not contain seg in its activeSegs list, then method simply returns.
-        if (!state.getMainFile().getActiveSegs().contains(seg)) {
-            return;
-        }
         
-        Segment newSeg = state.getMainFile().editEnglish(seg, newEnglishText);
+        SegmentBuilder sb = new SegmentBuilder(seg);
+        sb.setEnglish(newEnglishText);
+        sb.setCommitted(false); // because it has new English, it is now made uncommitted
+        Segment newSeg = sb.createSegmentNewID();
         
-        //state.editEnglish(seg, newEnglishText);
+        state.replaceSeg(seg, newSeg);
     }
     
 }
