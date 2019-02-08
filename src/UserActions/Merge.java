@@ -5,17 +5,25 @@
  */
 package UserActions;
 
+import DataStructures.Segment;
 import State.State;
+import java.util.List;
 
 /**
  *
  * @author Chris
  */
 public class Merge implements Action {
+    
+    private final List<Segment> segsToMerge;
+
+    public Merge(List<Segment> segsToMerge) {
+       this.segsToMerge = segsToMerge;
+    }
 
     @Override
     public void execute(State state) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }

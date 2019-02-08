@@ -81,14 +81,14 @@ public class EditEnglishTest {
         d.acceptAction(new EditEnglish(lastSegment, "new English 2"));
         // check that the last segment has in fact changed
         assertEquals("new English 2", mainFileSegs.get(mainFileSegs.size()-1).getEnglish());
+        // check that the db is updated
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         
         // check that PostingsList hasn't changed (the old seg is still stored, but the new one is not, because it reverts to uncommitted).
         assertEquals(3, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("th1").size());
         assertEquals(0, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("new").size());
         
         
-        // check that file is same in database
-        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
     }
     
 }

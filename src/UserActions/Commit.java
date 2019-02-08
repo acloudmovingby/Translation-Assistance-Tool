@@ -31,7 +31,7 @@ public class Commit implements Action {
         } else {
             SegmentBuilder sb = new SegmentBuilder(seg);
             sb.setCommitted(true);
-            state.replaceSeg(seg, sb.createSegment());
+            state.replaceSeg(seg, sb.createSegmentNewID());
         }
     }
     

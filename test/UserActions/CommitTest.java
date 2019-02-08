@@ -5,6 +5,13 @@
  */
 package UserActions;
 
+import DataStructures.BasicFile;
+import DataStructures.Corpus;
+import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
+import DataStructures.TestObjectBuilder;
+import Database.DatabaseOperations;
+import State.Dispatcher;
 import State.State;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,12 +50,76 @@ public class CommitTest {
      */
     @Test
     public void testExecute() {
-        System.out.println("execute");
-        State state = null;
-        Commit instance = null;
-        instance.execute(state);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // create test objects
+        Corpus c = TestObjectBuilder.getIdenticalCorpus();
+        BasicFile mainFile = c.getFiles().get(0);
+        Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+
+        /* COMMIT FIRST SEGMENT */
+        // gets first segment of MainFile
+        Segment firstSegment = d.getState().getMainFile().getActiveSegs().get(0);
+        // run the action
+        d.acceptAction(new Commit(firstSegment));
+        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        /* COMMIT THIRD SEGMENT */
+        // gets third segment of mainfile
+        Segment thirdSegment = d.getState().getMainFile().getActiveSegs().get(2);
+        // run the action
+        d.acceptAction(new Commit(thirdSegment));
+        // check that only the 3rd segment in the UIState is committed
+        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        /* COMMIT LAST SEGMENT */
+        // gets third segment of mainfile
+        Segment lastSegment = d.getState().getMainFile().getActiveSegs().get(4);
+        // run the action
+        d.acceptAction(new Commit(lastSegment));
+        // check that only the 3rd segment in the UIState is committed
+        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        /* RE-COMMIT FIRST SEGMENT */
+        // gets third segment of mainfile
+        Segment firstSegAgain = d.getState().getMainFile().getActiveSegs().get(0);
+        // run the action
+        d.acceptAction(new Commit(firstSegAgain));
+        // check that nothing changed
+        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        /* COMMIT NON-EXISTENT SEGMENT */
+        // makes a copy of the 4th segment, but assigns a new id
+        Segment fakeFourthSeg = (new SegmentBuilder(d.getState().getMainFile().getActiveSegs().get(3))).createSegmentNewID();
+        // run the action
+        d.acceptAction(new Commit(fakeFourthSeg));
+        // check that 4th segment is not committed
+        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        /* TEST DATABASE IS NOW CORRECT*/
     }
     
 }
