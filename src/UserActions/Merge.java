@@ -48,6 +48,7 @@ public class Merge implements Action {
                     !segsToMerge.get(k).equals(mfActiveSegs.get(i))) {
                 return;
             }
+            k++;
         }
        
         
