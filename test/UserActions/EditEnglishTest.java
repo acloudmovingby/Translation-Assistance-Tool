@@ -11,6 +11,7 @@ import DataStructures.MainFile;
 import DataStructures.PostingsList;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
+import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.State;
 import java.util.ArrayList;
@@ -67,6 +68,10 @@ public class EditEnglishTest {
         d.acceptAction(new EditEnglish(firstSegment, "new English"));
         // check that the UI result is correct, that the English of that first segment has in fact changed
         assertEquals("new English", d.getUIState().getMainFileSegs().get(0).getEnglish());
+        // get file back from Database and check that it's the same
+        //System.out.println("mainFile = " + mainFile);
+        //System.out.println("mainFile = " + DatabaseOperations.getFile(mainFile.getFileID()));
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         
         
         // try it with the last segment
@@ -81,6 +86,9 @@ public class EditEnglishTest {
         assertEquals(3, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("th1").size());
         assertEquals(0, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("new").size());
         
+        
+        // check that file is same in database
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
     }
     
 }

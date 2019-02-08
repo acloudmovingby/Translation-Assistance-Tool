@@ -9,6 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
+import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.State;
 import org.junit.After;
@@ -67,7 +68,7 @@ public class SplitTest {
         assertEquals(5, d.getUIState().getMainFileSegs().size());
         // confirm postings lists are unchanged
         assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size());
-        
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         
         
         
@@ -82,6 +83,9 @@ public class SplitTest {
         assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size()); // even though the segment was removed, it was committed so it should stay in pl
         assertEquals(3, d.getState().getPostingsList(2).getMatchingID("h1").size());
         assertEquals(0, d.getState().getPostingsList(4).getMatchingID("th11").size());
+        
+        // assert changes have been made to database correctly
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
     }
     
 }

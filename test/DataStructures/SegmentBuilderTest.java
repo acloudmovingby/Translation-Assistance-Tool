@@ -43,15 +43,15 @@ public class SegmentBuilderTest {
     @Test
     public void testConstructorFromFile() {
         System.out.println("ConstructorFromFile");
-        // test file id=101, fileName = "TestFile"
         // see TestObjectBuilder class for details
         BasicFile bf = TestObjectBuilder.getTestFile();
+        int fileID = bf.getFileID();
         SegmentBuilder sb = new SegmentBuilder(bf);
         sb.setThai("hope this works");
         sb.setEnglish("it really should");
         
         Segment result = sb.createSegment();
-        assertEquals(101, result.getFileID());
+        assertEquals(fileID, result.getFileID());
         assertEquals("TestFile", result.getFileName());
         
         assertEquals("it really should", result.getEnglish());

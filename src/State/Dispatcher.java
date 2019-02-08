@@ -12,12 +12,12 @@ import UserActions.Action;
  * @author Chris
  */
 public class Dispatcher {
-    final DatabaseManager db;
+    final DatabaseManager dm;
     final State state;
     final UndoManager um;
     
     public Dispatcher(DatabaseManager db, State state, UndoManager um) {
-        this.db = db;
+        this.dm = db;
         this.state = state;
         this.um = um;
     }
@@ -25,13 +25,13 @@ public class Dispatcher {
     public void acceptAction(Action a) {
         um.push(state); // current state is stored for undo functionality
         a.execute(state); //action executes, affecting state
-        db.push(state); // new state is pushed to database
+        dm.push(state); // new state is pushed to database
     }
     
     public void undo() {
         State priorMainFile = um.pop();
         state.resetMainFile(priorMainFile);
-        db.push(state); // new state is pushed to database
+        dm.push(state); // new state is pushed to database
     }
     
     public UIState getUIState() {
@@ -40,5 +40,9 @@ public class Dispatcher {
     
     public State getState() {
         return state;
+    }
+    
+    public DatabaseManager getDM() {
+        return dm;
     }
 }

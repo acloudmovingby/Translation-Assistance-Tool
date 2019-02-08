@@ -5,6 +5,7 @@
  */
 package DataStructures;
 
+import Database.DatabaseOperations;
 import State.DatabaseManager;
 import State.Dispatcher;
 import State.State;
@@ -18,12 +19,12 @@ import State.UndoManager;
 public class TestObjectBuilder {
     
     /**
-     * Creates a file with id=101, and a fileName of "TestFile". It contains 5 segments, with the Thai/English text fields as follows: "th1" / "en1", "th2"/"en2" etc... Other than that, the segments have default values (random id, rank=0, not committed). 
+     * Creates a file with a random id, and a fileName of "TestFile". It contains 5 segments, with the Thai/English text fields as follows: "th1" / "en1", "th2"/"en2" etc... Other than that, the segments have default values (random id, rank=0, not committed). 
      * Note, none of the segments are "committed"
      * @return 
      */
     public static BasicFile getTestFile() {
-        BasicFile bf = new BasicFile(101, "TestFile");
+        BasicFile bf = new BasicFile(DatabaseOperations.createFileID("TestFile"), "TestFile");
        
       
             SegmentBuilder sb = new SegmentBuilder(bf);
