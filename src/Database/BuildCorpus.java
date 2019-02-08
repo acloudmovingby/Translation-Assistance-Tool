@@ -7,7 +7,7 @@ package Database;
 
 import DataStructures.BasicFile;
 import DataStructures.FileBuilder;
-import State.StateWithDatabase;
+import State.State;
 import ParseThaiLaw.ThaiLawParser;
 
 /**
@@ -17,7 +17,7 @@ import ParseThaiLaw.ThaiLawParser;
 public class BuildCorpus {
 
     public static void build() {
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             System.out.println("Database not active. Corpus not built.");
         } else {
 

@@ -9,7 +9,6 @@ import Database.DatabaseOperations;
 import State.DatabaseManager;
 import State.Dispatcher;
 import State.State;
-import State.StateWithDatabase;
 import State.UndoManager;
 
 /**
@@ -81,7 +80,7 @@ public class TestObjectBuilder {
      * @return 
      */
     public static State getTestState() {
-        return new StateWithDatabase(getTestFile(), getTestCorpus());
+        return new State(getTestFile(), getTestCorpus());
     }
     
     /**
@@ -92,7 +91,7 @@ public class TestObjectBuilder {
         BasicFile bf = new BasicFile();
         Corpus c = new Corpus();
         c.addFile(bf);
-        return new StateWithDatabase(bf, c);
+        return new State(bf, c);
     }
 
     public static Segment getTestSeg() {
@@ -109,7 +108,7 @@ public class TestObjectBuilder {
     }
     
     public static Dispatcher getDispatcher(Corpus c, BasicFile f) {
-        State state = new StateWithDatabase(f, c);
+        State state = new State(f, c);
         return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
     }
     

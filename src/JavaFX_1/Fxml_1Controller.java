@@ -1,6 +1,6 @@
 package JavaFX_1;
 
-import State.StateWithDatabase;
+import State.State;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import State.Dispatcher;
@@ -99,7 +99,7 @@ public class Fxml_1Controller implements Initializable {
      * Main logic of the program. Controller retrieves and sends information to
      * state.
      */
-    StateWithDatabase state;
+    State state;
     Scene scene;
 
     final BooleanProperty commandPressed;

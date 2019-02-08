@@ -12,7 +12,7 @@ import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;
-import State.StateWithDatabase;
+import State.State;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,7 +64,7 @@ public class MatchFinderTest {
         Segment corpusSeg1 = sb.createSegment();
         bf1.addSeg(corpusSeg1);
         corpus.addFile(bf1);
-        State state = new StateWithDatabase(bf1, corpus);
+        State state = new State(bf1, corpus);
         
         // makes a second file with 1 segment: mainFileSeg
         // mainFileSeg has Thai text of "test"
@@ -90,7 +90,7 @@ public class MatchFinderTest {
         sb.setCommitted(true);
         Segment corpusSeg2 = sb.createSegment();
         bf1.addSeg(corpusSeg2);
-        state = new StateWithDatabase(bf1, corpus);
+        state = new State(bf1, corpus);
         
         mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
         assertEquals(2, mList.getObservableList().size());
@@ -102,7 +102,7 @@ public class MatchFinderTest {
         sb.setCommitted(true);
         Segment seg3 = sb.createSegmentNewID();
         bf1.addSeg(seg3);
-        state = new StateWithDatabase(bf1, corpus);
+        state = new State(bf1, corpus);
         mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
         assertEquals(2, mList.getObservableList().size());
         assertEquals("test", mList.getObservableList().get(0).getThai());

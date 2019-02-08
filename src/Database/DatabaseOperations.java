@@ -9,7 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
-import State.StateWithDatabase;
+import State.State;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -91,7 +91,7 @@ public class DatabaseOperations {
      * there is an SQL error, returns false.
      */
     public static boolean addFile(BasicFile bf) {
-        if (!StateWithDatabase.databaseIsWritable()) {
+        if (!State.databaseIsWritable()) {
             return false;
         } else {
             DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
@@ -173,7 +173,7 @@ public class DatabaseOperations {
      * @return True if added successfully, false if an SQLException is thrown.
      */
     public static boolean addOrUpdateFileName(double fileID, String fileName) {
-        if (!StateWithDatabase.databaseIsWritable()) {
+        if (!State.databaseIsWritable()) {
             return false;
         } else {
             String sql = "INSERT OR REPLACE INTO files(fileID, fileName) VALUES(?,?)";
@@ -203,7 +203,7 @@ public class DatabaseOperations {
 
         int fileID;
 
-        if (!StateWithDatabase.databaseIsWritable()) {
+        if (!State.databaseIsWritable()) {
             fileID = (int) (Math.random() * 100000000);
         } else {
             fileID = 0;
@@ -229,7 +229,7 @@ public class DatabaseOperations {
     private static boolean removeSeg(double id) {
 
         // If database isn't active, this returns default of false;
-        if (!StateWithDatabase.databaseIsWritable()) {
+        if (!State.databaseIsWritable()) {
             return false;
         } else {
 
@@ -259,7 +259,7 @@ public class DatabaseOperations {
      *************************************************************************
      */
     public static int numberOfSegs() {
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return 0;
         } else {
             String sql = "SELECT COUNT(*) FROM corpus1;";
@@ -297,7 +297,7 @@ public class DatabaseOperations {
     public static String getFileName(double fileID) {
 
         // If database isn't active, this returns default of null;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return null;
         } else {
 
@@ -329,7 +329,7 @@ public class DatabaseOperations {
     public static Segment getSegment(double id) {
 
         // If database isn't active, this returns default of null;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return null;
         } else {
 
@@ -358,7 +358,7 @@ public class DatabaseOperations {
         Corpus fList = new Corpus();
 
         // If database isn't active, this returns default of null;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return fList;
         } else {
 
@@ -384,7 +384,7 @@ public class DatabaseOperations {
         BasicFile file = new BasicFile(fileID, getFileName(fileID));
 
         // If database isn't active, this returns the empty file;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return file;
         } else {
 
@@ -446,7 +446,7 @@ public class DatabaseOperations {
         ArrayList<Integer> fileIDs = new ArrayList();
 
         // If database isn't active, this returns default of null;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return fileIDs;
         } else {
 
@@ -476,7 +476,7 @@ public class DatabaseOperations {
         String sql = "SELECT id FROM corpus1 where id= ?";
 
         // If database isn't active, this returns false;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return false;
         } else {
 
@@ -526,7 +526,7 @@ public class DatabaseOperations {
     protected static boolean containsFileID(double fileID) {
 
         // If database isn't active, this returns default of false;
-        if (!StateWithDatabase.databaseIsReadable()) {
+        if (!State.databaseIsReadable()) {
             return false;
         } else {
 
@@ -581,7 +581,7 @@ public class DatabaseOperations {
     public static int makeSegID() {
         int newID = 0;
 
-        if (StateWithDatabase.databaseIsReadable()) {
+        if (State.databaseIsReadable()) {
             /*
             // If id already exists or is equal to zero, it regenerates.
             while (containsFileID(newID) || newID == 0) {
