@@ -38,4 +38,6 @@ public interface State {
 
     public void addSeg(int i, Segment newSeg2);
     
+    public boolean removeSeg(Segment seg);
+    
 }

@@ -48,8 +48,6 @@ public class TestObjectBuilder {
             sb.setEnglish("en5");
             bf.addSeg(sb.createSegmentNewID());
             
-            
-            
             return bf;
     }
     

@@ -6,6 +6,7 @@
 package UserActions;
 
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import State.State;
 
 /**
@@ -23,6 +24,15 @@ public class Commit implements Action {
     @Override
     public void execute(State state) {
         //state.commit(seg);
+        
+        // if the seg is already committed, then do nothing. 
+        if (seg.isCommitted()) {
+            return;
+        } else {
+            SegmentBuilder sb = new SegmentBuilder(seg);
+            sb.setCommitted(true);
+            state.replaceSeg(seg, sb.createSegment());
+        }
     }
     
 }

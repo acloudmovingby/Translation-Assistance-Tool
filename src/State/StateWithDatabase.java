@@ -307,7 +307,7 @@ public class StateWithDatabase implements State {
     }
 
     /**
-     * Takes the "oldSeg" from the MainFile's active segs list and replaces it. If MF's active segs list does not contain the specified Segment, it returns false and nothing changes. If it does, the MainFile and PostingsListManager adjust appropriately. 
+     * Takes the "oldSeg" from the MainFile's active segs list and replaces it. If MF's active segs list does not contain the specified Segment, it returns false and nothing changes. If it does, the MainFile and PostingsListManager adjust appropriately. The old segment is NOT removed from PostingsList if it had been committed. If the new Segment is committed, it will be added to the postings lists.This mehtod does NOT check to see if ids are different or same, or any other relationship between the old and new seg, it merely replaces it if it exists in activeSegs of the main file.
      * @param oldSeg
      * @param newSeg 
      * @return  True if seg exists in MF active. False if not.
@@ -323,7 +323,7 @@ public class StateWithDatabase implements State {
             int index = mfActiveSegs.indexOf(oldSeg);
             // replaces the oldSeg with the newSeg at that index
             mfActiveSegs.set(index, newSeg);
-            // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displaye on screen
+            // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
             getMainFile().getRemovedSegs().add(oldSeg);
             
             //adjusts Postings Lists
@@ -345,6 +345,31 @@ public class StateWithDatabase implements State {
         getMainFile().getActiveSegs().add(insertIndex, seg);
         getPostingsListManager().addSegment(seg);
     }
+
+    @Override
+    public boolean removeSeg(Segment seg) {
+        ObservableList<Segment> mfActiveSegs = getMainFile().getActiveSegs();
+        // checks to make sure oldSeg exists in MainFile active segs
+        if (!mfActiveSegs.contains(seg)) {
+            return false;
+        } else {
+            // removes from active segs
+            mfActiveSegs.remove(seg);
+            // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
+            getMainFile().getRemovedSegs().add(seg);
+            
+            // postings lists not changed:
+            // if segment had been committed, we still want it stored
+            // if segment had not been committed, it won't exist in postings lists anyways. 
+            
+            return true;
+        }
+    }
+    
+    
+    
+    
+    
   
 
     
