@@ -31,6 +31,7 @@ public class EditThai implements Action {
         } else {
             SegmentBuilder sb = new SegmentBuilder(seg);
             sb.setThai(newThaiText);
+            sb.setCommitted(false);
             Segment newSeg = sb.createSegmentNewID();
             
             state.replaceSeg(seg, newSeg);
