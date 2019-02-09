@@ -45,10 +45,10 @@ public class MainFileTest {
     }
     
      /**
-     * Test of mergeSegs method, of class BasicFile.
+     * Test of splitSegs method, of class BasicFile.
      */
     @Test
-    public void testSplitTUs() {
+    public void testSplitSegs() {
         DatabaseOperations.rebootDB();
         for (int i=0; i<8; i++) {
             

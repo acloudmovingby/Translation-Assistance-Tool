@@ -6,6 +6,7 @@
 package UserActions;
 
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import State.State;
 
 /**
@@ -15,16 +16,25 @@ import State.State;
 public class EditThai implements Action {
     
     Segment seg;
-    String newEnglish;
+    String newThaiText;
     
-    EditThai(Segment seg, String newEnglish) {
+    EditThai(Segment seg, String newThaiText) {
         this.seg = seg;
-        this.newEnglish = newEnglish;
+        this.newThaiText = newThaiText;
     }
 
     @Override
     public void execute(State state) {
-        //state.changeThai(seg, newEnglish);
+        
+        if (!state.getMainFile().getActiveSegs().contains(seg)) {
+            return; // if the seg doesn't exist in the file, then this Action should do nothing
+        } else {
+            SegmentBuilder sb = new SegmentBuilder(seg);
+            sb.setThai(newThaiText);
+            Segment newSeg = sb.createSegmentNewID();
+            
+            state.replaceSeg(seg, newSeg);
+        }
     }
     
 }
