@@ -48,6 +48,11 @@ public class BasicFile {
         this.fileName = file.getFileName();
         activeSegs = FXCollections.observableArrayList();
         removedSegs = new ArrayList();
+        /*for (Segment s : file.getActiveSegs()) {
+            SegmentBuilder sb = new SegmentBuilder(s);
+            Segment segCopy = sb.createSegment();
+            activeSegs.add(segCopy);
+        }*/
         activeSegs = file.getActiveSegs();
         removedSegs = file.getRemovedSegs();
     }
@@ -64,6 +69,8 @@ public class BasicFile {
         activeSegs = FXCollections.observableArrayList();
         removedSegs = new ArrayList();
     }
+    
+    
 
     /**
      * Adds the segment to the end of the activeSegs list in BasicFile. Later this will be changed, but currently the seg must follow the following conditions: fileID/fileName must match this file and the seg should not be "removed."

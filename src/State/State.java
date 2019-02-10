@@ -50,7 +50,7 @@ public class State {
     /**
      * The corpus where matches are found.
      */
-    private Corpus corpus;
+    private final Corpus corpus;
 
     private MatchList compareFile;
     
@@ -80,14 +80,18 @@ public class State {
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
         
-        
+        this.corpus = corpus;
+        corpus.removeFile(mainFile);
+        MainFile mf = new MainFile(mainFile);
+        corpus.addFile(mf);
+        /*
         // makes sure mainfile is actually a part of corpus
         // if not, it adds mainFile to corpus
         if (!corpus.contains(mainFile)) {
             corpus.addFile(mainFile);
-        }
+        }*/
         
-        setMainFile(new MainFile(mainFile));
+        setMainFile(mf);
         
         plm = new PostingsListManager(corpus);
         
@@ -294,8 +298,6 @@ public class State {
     public void split(Segment seg, int index) {
         getMainFile().splitSeg(seg, index);
     }
-
-   
 
     public PostingsListManager getPostingsListManager() {
         return plm;

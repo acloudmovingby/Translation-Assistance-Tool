@@ -20,7 +20,7 @@ public class DeleteTable {
      * Deletes the TU entry table. 
      *
      */
-    private static void deleteTUTable() {
+    private static void deleteSegsTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:database1.db";
 
@@ -57,7 +57,7 @@ public class DeleteTable {
     }
     
     public static void deleteAllTables() {
-        deleteTUTable();
+        deleteSegsTable();
         deleteFileTable();
     }
 }

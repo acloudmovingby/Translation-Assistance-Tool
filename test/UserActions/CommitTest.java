@@ -51,9 +51,15 @@ public class CommitTest {
     @Test
     public void testExecute() {
         // create test objects
+        // corpus has nothing committed 
         Corpus c = TestObjectBuilder.getIdenticalCorpus();
-        BasicFile mainFile = c.getFiles().get(0);
+        c.getFiles().get(1).commitAllSegs();
+        BasicFile mainFile = TestObjectBuilder.getIdenticalFile();
+                //c.getFiles().get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+        
+        // initially no segs are committed, so 0 segs have the word "Thai" in them
+        assertEquals(5, d.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         /* COMMIT FIRST SEGMENT */
         // gets first segment of MainFile
@@ -66,6 +72,8 @@ public class CommitTest {
         assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(false, d.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        assertEquals(6, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        
         
         /* COMMIT THIRD SEGMENT */
         // gets third segment of mainfile
@@ -79,6 +87,7 @@ public class CommitTest {
         assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(false, d.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        assertEquals(7, d.getState().getPostingsList(4).getMatchingID("Thai").size());
         
         /* COMMIT LAST SEGMENT */
         // gets third segment of mainfile
@@ -92,6 +101,7 @@ public class CommitTest {
         assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        assertEquals(8, d.getState().getPostingsList(4).getMatchingID("Thai").size());
         
         /* RE-COMMIT FIRST SEGMENT */
         // gets third segment of mainfile
@@ -105,6 +115,7 @@ public class CommitTest {
         assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        assertEquals(8, d.getState().getPostingsList(4).getMatchingID("Thai").size());
         
         /* COMMIT NON-EXISTENT SEGMENT */
         // makes a copy of the 4th segment, but assigns a new id
@@ -118,8 +129,8 @@ public class CommitTest {
         assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        assertEquals(8, d.getState().getPostingsList(4).getMatchingID("Thai").size());
         
-        /* TEST DATABASE IS NOW CORRECT*/
     }
     
 }

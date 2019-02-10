@@ -5,6 +5,8 @@
  */
 package State;
 
+import DataStructures.BasicFile;
+
 /**
  *
  * @author Chris
@@ -12,11 +14,15 @@ package State;
 public class UndoManager {
 
     void push(State state) {
-        // not yet implemented
+        BasicFile save = state.getMainFile();
+        // make copies of active segs and remove segs
     }
 
     State pop() {
-        // not yet implemented
+        // take everything in state's active segs an put it in removed segs
+        // add the stored removed segs to that list
+        // add the stored actives to the active list
+        
         return null;
     }
     

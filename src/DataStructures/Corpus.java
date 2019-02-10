@@ -39,6 +39,15 @@ public class Corpus {
 
         return aList;
     }
+    
+    /**
+     * Removes the file from the corpus. 
+     * @param bf
+     * @return
+     */
+    public boolean removeFile(BasicFile bf) {
+        return getFiles().remove(bf);
+    }
 
     public boolean contains(BasicFile file) {
         for (BasicFile f : getFiles()) {
@@ -61,4 +70,6 @@ public class Corpus {
         });
         return sb.toString();
     }
+    
+    
 }
