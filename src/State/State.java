@@ -95,9 +95,11 @@ public class State {
         
         plm = new PostingsListManager(corpus);
         
-        
+        System.out.println("are they equal?" + mf.equals(mainFile));
+        mf.equals(mainFile);
         //setCorpus(corpus);
         compareFile = findMatch(segSelected);
+        
     }
 
 

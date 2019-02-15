@@ -57,6 +57,7 @@ public class CommitTest {
         BasicFile mainFile = TestObjectBuilder.getIdenticalFile();
                 //c.getFiles().get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+        mainFile = d.getState().getMainFile();
         
         // initially no segs are committed, so 0 segs have the word "Thai" in them
         assertEquals(5, d.getState().getPostingsList(4).getMatchingID("Thai").size());

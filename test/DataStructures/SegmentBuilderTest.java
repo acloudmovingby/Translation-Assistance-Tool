@@ -76,6 +76,8 @@ public class SegmentBuilderTest {
         assertEquals(result.getEnglish(), "TheEnglish");
         assertEquals(result.isCommitted(), false);
         assertEquals(result.getRank(), 1);
+        
+        assertEquals(s, result);
     }
 
     /**

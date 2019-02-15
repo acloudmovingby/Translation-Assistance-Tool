@@ -54,6 +54,7 @@ public class SplitTest {
         Corpus c = TestObjectBuilder.getCommittedTestCorpus();
         BasicFile mainFile = c.getFiles().get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+        mainFile = d.getState().getMainFile();
        
         
         

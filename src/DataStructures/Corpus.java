@@ -71,5 +71,17 @@ public class Corpus {
         return sb.toString();
     }
     
+    /**
+     * Returns the total number of segs (both in removed and active lists) in all files of the corpus.
+     * @return 
+     */
+    public int numTotalSegs() {
+        int numSegs = 0;
+        for (BasicFile bf : getFiles()) {
+            numSegs = numSegs + bf.getActiveSegs().size();
+            numSegs = numSegs + bf.getRemovedSegs().size();
+        }
+        return numSegs;
+    }
     
 }

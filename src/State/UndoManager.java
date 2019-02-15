@@ -6,19 +6,27 @@
 package State;
 
 import DataStructures.BasicFile;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  *
  * @author Chris
  */
 public class UndoManager {
+    
+    private final Deque stateStack;
+    
+    public UndoManager() {
+        stateStack = new ArrayDeque();
+    }
 
-    void push(State state) {
+    protected void push(State state) {
         BasicFile save = state.getMainFile();
         // make copies of active segs and remove segs
     }
 
-    State pop() {
+    protected State pop() {
         // take everything in state's active segs an put it in removed segs
         // add the stored removed segs to that list
         // add the stored actives to the active list

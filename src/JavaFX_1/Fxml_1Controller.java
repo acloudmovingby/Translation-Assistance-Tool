@@ -166,40 +166,6 @@ public class Fxml_1Controller implements Initializable {
         EditableEnglishCellFactory cf2 = new EditableEnglishCellFactory();
         cf2.setFont(UIState.getEnglishFont());
         englishCol.setCellFactory(cf2);
-        /*
-        englishCol.setCellFactory(new Callback<TableColumn<TUEntryBasic, String>, TableCell<TUEntryBasic, String>>() {
-            @Override
-            public TableCell<TUEntryBasic, String> call(TableColumn<TUEntryBasic, String> tc) {
-                TextFieldTableCell<TUEntryBasic, String> cell = new TextFieldTableCell(new StringConverter() {
-
-                    @Override
-                    public String toString(Object t) {
-                        if (t != null) {
-                            return t.toString();
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    public Object fromString(String string) {
-                        return string;
-                    }
-                });
-                return cell;
-            }
-        });
-
-        /*
-        englishCol.setOnEditCommit(new EventHandler<CellEditEvent<TUEntryBasic, String>>() {
-            @Override
-            public void handle(CellEditEvent<TUEntryBasic, String> t) {
-                state.englishEdited((t.getTableView().getItems().get(t.getTablePosition().getRow())),
-                        t.getNewValue());
-                
-            }
-        });
-         */
         englishCol.setOnEditCommit(e -> {
             int row = e.getTablePosition().getRow();
             Segment editedTU = tableView.getItems().get(row);
@@ -332,15 +298,7 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     protected void minMatchLengthChanged(ActionEvent event) {
-
         state.setMinLength(Integer.valueOf(minMatchLengthField.getText()));
-
-        /*
-        // changes the minimum match length (retrieved from the minMatchLength field)
-        state.setMinMatchLength(Integer.valueOf(minMatchLengthField.getText()));
-        // redraws the compare table
-        setCompareTable(state.getCurrentCompareString());
-         */
     }
 
     @FXML

@@ -62,4 +62,13 @@ public class PostingsListManager {
         pl.addCorpus(corpus);
         return pl;
     }
+    
+    public int size() {
+        int ret = 0;
+        for (PostingsList pl : plList) {
+            ret = ret + pl.getMap().size();
+        }
+        return ret;
+    }
+    
 }

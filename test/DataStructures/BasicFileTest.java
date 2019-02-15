@@ -67,10 +67,13 @@ public class BasicFileTest {
     }
     
     /**
-     * Test of newSeg method, of class BasicFile.
+     * Tests that constructing a BasicFile based on another BasicFile actually makes two entirely distinct objects (no pointers to the other).
      */
     @Test
-    public void testAddSeg() {
+    public void testCopyFile() {
+        BasicFile testFile = TestObjectBuilder.getTestFile();
+        BasicFile testFileCopy = new BasicFile(testFile);
+        
         
     }
 

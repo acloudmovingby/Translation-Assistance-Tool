@@ -77,6 +77,19 @@ public class TestObjectBuilder {
     }
     
     /**
+     * Returns a file with one segment in it. The segment is not committed and not removed. 
+     * @return 
+     */
+    public static BasicFile getOneSegFile() {
+        BasicFile bf = new BasicFile();
+        SegmentBuilder sb = new SegmentBuilder(bf);
+        sb.setThai("thai");
+        sb.setEnglish("english");
+        bf.addSeg(sb.createSegment());
+        return bf;
+    }
+    
+    /**
      * Makes a corpus composed of 3 files (like getTestCorpus), but each file is an "identical" file where all 5 segments are identical. See gettIdenticalFile(). NO SEGMENTS ARE COMMITTED.
      * @return 
      */
@@ -139,6 +152,18 @@ public class TestObjectBuilder {
         c.addFile(bf);
         return new State(bf, c);
     }
+    
+    /**
+     * Returns a state where the main file has 1 segment and the corpus only
+     * contains that main file. That segment is not committed. (note, this file is identical to the file produced by method getOneSegFile())
+     *
+     * @return a state with a single file with a single segment
+     */
+    public static State getOneSegState() {
+        Corpus c = new Corpus();
+        return new State(getOneSegFile(), c);
+    }
+    
 
     public static Segment getTestSeg() {
         return (new SegmentBuilder()).createSegment();
