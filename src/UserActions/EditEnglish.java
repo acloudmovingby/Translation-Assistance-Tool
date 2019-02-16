@@ -18,7 +18,7 @@ public class EditEnglish implements Action {
     private final Segment seg; 
     private final String newEnglishText;
     
-    EditEnglish(Segment seg, String newEnglishText) {
+    public EditEnglish(Segment seg, String newEnglishText) {
         this.seg = seg;
         this.newEnglishText = newEnglishText;
     }

@@ -18,7 +18,7 @@ public class EditThai implements Action {
     Segment seg;
     String newThaiText;
     
-    EditThai(Segment seg, String newThaiText) {
+    public EditThai(Segment seg, String newThaiText) {
         this.seg = seg;
         this.newThaiText = newThaiText;
     }
