@@ -17,7 +17,7 @@ public class Commit implements Action {
     
     private final Segment seg; 
     
-    Commit(Segment seg) {
+    public Commit(Segment seg) {
         this.seg = seg;
     }
 

@@ -5,6 +5,7 @@
  */
 package State;
 
+import DataStructures.MainFile;
 import UserActions.Action;
 
 /**
@@ -29,8 +30,8 @@ public class Dispatcher {
     }
     
     public void undo() {
-        State priorMainFile = um.pop();
-        state.resetMainFile(priorMainFile);
+        MainFile priorMainFile = um.popPriorMainFile();
+        state.restorePriorMainFile(priorMainFile);
         dm.push(state); // new state is pushed to database
     }
     

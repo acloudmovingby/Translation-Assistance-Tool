@@ -293,8 +293,8 @@ public class State {
         return uiState;
     }
 
-    public void resetMainFile(State priorMainFile) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void restorePriorMainFile(MainFile priorMainFile) {
+         
     }
 
     public void split(Segment seg, int index) {

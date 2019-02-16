@@ -8,7 +8,7 @@ package State;
 import DataStructures.MainFile;
 
 /**
- * Records critical properties of a State object (given at StateCopier construction) which can then be compared later against other states.
+ * Records critical properties of a State object which can then be compared later against a given State (the same State object or a different one).
  * Currently checks the size of all postings lists, the total number of segs in the corpus, and the equality of the main file.
  * @author Chris
  */

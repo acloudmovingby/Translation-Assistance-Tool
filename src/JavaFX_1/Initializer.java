@@ -25,34 +25,21 @@ public class Initializer {
     private final State state;
     private final DatabaseManager dm;
     
-    protected Initializer() {
-        // retrieves all files previously stored in database
-        Corpus corpus = DatabaseOperations.getAllSegments();
-        
-        // builds a main file from some random Thai document
-        FileBuilder fileBuilder = new FileBuilder();
-        String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
-        BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
-        
-        // adds main file to corpus
-        corpus.addFile(mainFile);
-        
-        // creates State object
+    public Initializer(BasicFile mainFile, Corpus corpus) {
         state = new State(mainFile, corpus);
-        
         dm = new DatabaseManager(state);
         d = new Dispatcher(dm, state, new UndoManager());
     }
     
-    protected UIState getUIState() {
+    public UIState getUIState() {
         return state.getUIState();
     }
     
-    protected Dispatcher getDispatcher() {
+    public Dispatcher getDispatcher() {
         return d;
     }
         
-    protected State getState() {
+    public State getState() {
         return state;
     }
     

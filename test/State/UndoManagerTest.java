@@ -5,7 +5,11 @@
  */
 package State;
 
+import DataStructures.Corpus;
+import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
+import JavaFX_1.Initializer;
+import UserActions.Commit;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,8 +23,10 @@ import static org.junit.Assert.*;
  */
 public class UndoManagerTest {
     
-    State emptyState;
-    State state1;
+    Dispatcher emptyStateDispatcher;
+    Dispatcher oneSegStateDispatcher;
+    Dispatcher simpleStateDispatcher;
+    int lastSegIndex;
     
     public UndoManagerTest() {
     }
@@ -35,8 +41,18 @@ public class UndoManagerTest {
     
     @Before
     public void setUp() {
-        emptyState = TestObjectBuilder.getEmptyState();
-        state1 = TestObjectBuilder.getTestState();
+        State emptyState = TestObjectBuilder.getEmptyState();
+        Initializer emptyStateInit = new Initializer(emptyState.getMainFile(), emptyState.getCorpus());
+        emptyStateDispatcher = emptyStateInit.getDispatcher();
+        
+        State oneSegState = TestObjectBuilder.getOneSegState();
+        Initializer oneSegStateInit = new Initializer(oneSegState.getMainFile(), oneSegState.getCorpus());
+        oneSegStateDispatcher = oneSegStateInit.getDispatcher();
+        
+        State simpleState = TestObjectBuilder.getTestState();
+        Initializer simpleStateInit = new Initializer(simpleState.getMainFile(), simpleState.getCorpus());
+        simpleStateDispatcher = simpleStateInit.getDispatcher();
+        lastSegIndex = simpleState.getMainFile().getActiveSegs().size()-1;
     }
     
     @After
@@ -44,30 +60,90 @@ public class UndoManagerTest {
     }
 
     /**
-     * Test of push method, of class UndoManager.
+     * Tests running undo on states where no action has ever been performed.
      */
     @Test
-    public void testPush() {
-        System.out.println("push");
-        State state = null;
-        UndoManager instance = new UndoManager();
-        instance.push(state);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of pop method, of class UndoManager.
-     */
-    @Test
-    public void testPop() {
-        System.out.println("pop");
-        UndoManager instance = new UndoManager();
-        State expResult = null;
-        State result = instance.pop();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testNoActionUndo() {
+        // empty state
+        StateCopier emptyStateCopy = new StateCopier(emptyStateDispatcher.getState());
+        emptyStateDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyStateDispatcher.getState()));
+        
+        // one segment state
+        StateCopier oneSegStateCopy = new StateCopier(oneSegStateDispatcher.getState());
+        oneSegStateDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegStateDispatcher.getState()));
+        
+        // generic, simple state
+        StateCopier simpleStateCopy = new StateCopier(simpleStateDispatcher.getState());
+        simpleStateDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleStateDispatcher.getState())); 
+        
     }
     
+    /**
+     * Tests running undo on states after a Commit action was performed
+     */
+    @Test
+    public void testUndoCommit() {
+        // empty state
+        StateCopier emptyStateCopy = new StateCopier(emptyStateDispatcher.getState());
+        emptyStateDispatcher.acceptAction(new Commit(TestObjectBuilder.getTestSeg()));
+        emptyStateDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyStateDispatcher.getState()));
+        
+        // one segment state
+        // commit the only segment in the main file
+        StateCopier oneSegStateCopy = new StateCopier(oneSegStateDispatcher.getState());
+        Segment onlyExistantSeg = oneSegStateDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegStateDispatcher.acceptAction(new Commit(onlyExistantSeg));
+        oneSegStateDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegStateDispatcher.getState()));
+        
+        // generic, simple state
+        // commit the first seg, undo
+        // commit the last seg, undo
+        StateCopier simpleStateCopy = new StateCopier(simpleStateDispatcher.getState());
+        Segment firstSeg = oneSegStateDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegStateDispatcher.acceptAction(new Commit(firstSeg));
+        simpleStateDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleStateDispatcher.getState())); 
+        Segment lastSeg = oneSegStateDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        oneSegStateDispatcher.acceptAction(new Commit(lastSeg));
+        simpleStateDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleStateDispatcher.getState())); 
+    }
+    
+    /**
+     * Tests running undo on states after an EditThai action was performed
+     */
+    @Test
+    public void testUndoEditThai() {
+        // empty state
+        StateCopier emptyStateCopy = new StateCopier(emptyStateDispatcher.getState());
+        //emptyStateDispatcher.acceptAction(new EditThai(TestObjectBuilder.getTestSeg()));
+        emptyStateDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyStateDispatcher.getState()));
+        
+        // one segment state
+        // commit the only segment in the main file
+        StateCopier oneSegStateCopy = new StateCopier(oneSegStateDispatcher.getState());
+        Segment onlyExistantSeg = oneSegStateDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegStateDispatcher.acceptAction(new Commit(onlyExistantSeg));
+        oneSegStateDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegStateDispatcher.getState()));
+        
+        // generic, simple state
+        // commit the first seg, undo
+        // commit the last seg, undo
+        StateCopier simpleStateCopy = new StateCopier(simpleStateDispatcher.getState());
+        Segment firstSeg = oneSegStateDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegStateDispatcher.acceptAction(new Commit(firstSeg));
+        simpleStateDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleStateDispatcher.getState())); 
+        Segment lastSeg = oneSegStateDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        oneSegStateDispatcher.acceptAction(new Commit(lastSeg));
+        simpleStateDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleStateDispatcher.getState())); 
+    }
 }

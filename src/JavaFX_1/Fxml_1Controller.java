@@ -1,8 +1,12 @@
 package JavaFX_1;
 
+import DataStructures.BasicFile;
+import DataStructures.Corpus;
+import DataStructures.FileBuilder;
 import State.State;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
+import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.UIState;
 import UserActions.Split;
@@ -123,7 +127,15 @@ public class Fxml_1Controller implements Initializable {
 
         JavaFX_1.myControllerHandle = this;
         
-        Initializer init = new Initializer();
+        // retrieves all files previously stored in database
+        Corpus corpus = DatabaseOperations.getAllSegments();
+        
+        // builds a main file from some random Thai document
+        FileBuilder fileBuilder = new FileBuilder();
+        String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
+        BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
+        
+        Initializer init = new Initializer(mainFile, corpus);
         state = init.getState();
         uiState = init.getUIState();
         dispatcher = init.getDispatcher();
