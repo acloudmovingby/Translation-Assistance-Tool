@@ -62,7 +62,7 @@ public class PostingsList {
 
     public boolean addFile(BasicFile bf) {
         if (bf != null) {
-            bf.getRemovedSegs().forEach(seg -> {
+            bf.getHiddenSegs().forEach(seg -> {
                 if (seg.isCommitted()) {
                     addSegment(seg);
                 }

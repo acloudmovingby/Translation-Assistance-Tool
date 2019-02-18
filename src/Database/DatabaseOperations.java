@@ -134,7 +134,7 @@ public class DatabaseOperations {
                 // resetting counters
                 i = 0;
                 rank = 0;
-                for (Segment seg : bf.getRemovedSegs()) {
+                for (Segment seg : bf.getHiddenSegs()) {
 
                     pstmt.setDouble(1, seg.getID());
                     pstmt.setDouble(2, seg.getFileID());
@@ -150,7 +150,7 @@ public class DatabaseOperations {
                     rank++;
                     i++;
 
-                    if (i % 1000 == 0 || i == bf.getRemovedSegs().size()) {
+                    if (i % 1000 == 0 || i == bf.getHiddenSegs().size()) {
                         pstmt.executeBatch(); //Execute every 1000 segments.
                     }
                 }
@@ -226,7 +226,7 @@ public class DatabaseOperations {
      * @param id
      * @return True if removed successfully with no SQL errors.
      */
-    private static boolean removeSeg(double id) {
+    public static boolean removeSeg(double id) {
 
         // If database isn't active, this returns default of false;
         if (!State.databaseIsWritable()) {
@@ -402,7 +402,7 @@ public class DatabaseOperations {
                     Segment seg = rebuildSegment(rs);
                     // if "removed" == 1 (which means "true"), then it is put in removed segs.
                     if (rs.getInt("removed") == 1) {
-                        file.getRemovedSegs().add(seg);
+                        file.getHiddenSegs().add(seg);
                     } else {
                         file.getActiveSegs().add(seg);
                     }

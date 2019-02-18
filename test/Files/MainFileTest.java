@@ -96,7 +96,7 @@ public class MainFileTest {
                     splitIndex = 0;
                     mf.splitSeg(selectedTU, splitIndex);
                     assertEquals(5, mf.getActiveSegs().size());
-                    assertEquals(0, mf.getRemovedSegs().size());
+                    assertEquals(0, mf.getHiddenSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mf.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mf.getActiveSegs().get(2).equals(seg3), true);
@@ -111,11 +111,11 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().stream()
                             .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedSegs().stream()
-                            .allMatch(a -> mf.getRemovedSegs().contains(a)), 
+                    assertEquals(fileFromDB.getHiddenSegs().stream()
+                            .allMatch(a -> mf.getHiddenSegs().contains(a)), 
                             true);
-                    assertEquals(mf.getRemovedSegs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
+                    assertEquals(mf.getHiddenSegs().stream()
+                            .allMatch(a -> fileFromDB.getHiddenSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -125,7 +125,7 @@ public class MainFileTest {
                     splitIndex = 0;
                     mf.splitSeg(selectedTU, splitIndex);
                     assertEquals(5, mf.getActiveSegs().size());
-                    assertEquals(0, mf.getRemovedSegs().size());
+                    assertEquals(0, mf.getHiddenSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mf.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mf.getActiveSegs().get(2).equals(seg3), true);
@@ -140,11 +140,11 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().stream()
                             .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedSegs().stream()
-                            .allMatch(a -> mf.getRemovedSegs().contains(a)), 
+                    assertEquals(fileFromDB.getHiddenSegs().stream()
+                            .allMatch(a -> mf.getHiddenSegs().contains(a)), 
                             true);
-                    assertEquals(mf.getRemovedSegs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
+                    assertEquals(mf.getHiddenSegs().stream()
+                            .allMatch(a -> fileFromDB.getHiddenSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -154,7 +154,7 @@ public class MainFileTest {
                     splitIndex = seg1.getThai().length();
                     mf.splitSeg(selectedTU, splitIndex);
                     assertEquals(5, mf.getActiveSegs().size());
-                    assertEquals(0, mf.getRemovedSegs().size());
+                    assertEquals(0, mf.getHiddenSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mf.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mf.getActiveSegs().get(2).equals(seg3), true);
@@ -169,11 +169,11 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().stream()
                             .allMatch(a -> fileFromDB.getActiveSegs().contains(a)), 
                             true);
-                    assertEquals(fileFromDB.getRemovedSegs().stream()
-                            .allMatch(a -> mf.getRemovedSegs().contains(a)), 
+                    assertEquals(fileFromDB.getHiddenSegs().stream()
+                            .allMatch(a -> mf.getHiddenSegs().contains(a)), 
                             true);
-                    assertEquals(mf.getRemovedSegs().stream()
-                            .allMatch(a -> fileFromDB.getRemovedSegs().contains(a)), 
+                    assertEquals(mf.getHiddenSegs().stream()
+                            .allMatch(a -> fileFromDB.getHiddenSegs().contains(a)), 
                             true);
                     break;
                 }
@@ -186,7 +186,7 @@ public class MainFileTest {
                     mf.splitSeg(selectedTU, splitIndex);
                     System.out.println("mf after: " + mf);
                     assertEquals(6, mf.getActiveSegs().size());
-                    assertEquals(1, mf.getRemovedSegs().size());
+                    assertEquals(1, mf.getHiddenSegs().size());
                     assertEquals(mf.getActiveSegs().get(0).getThai(), "t");
                     assertEquals(mf.getActiveSegs().get(1).getThai(), "h1");
                     assertEquals(mf.getActiveSegs().get(0).getEnglish(), "en1");
@@ -195,7 +195,7 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().get(3).equals(seg3), true);
                     assertEquals(mf.getActiveSegs().get(4).equals(seg4), true);
                     assertEquals(mf.getActiveSegs().get(5).equals(seg5), true);
-                    assertEquals(mf.getRemovedSegs().get(0).equals(seg1), true);
+                    assertEquals(mf.getHiddenSegs().get(0).equals(seg1), true);
                     
                     break;
                 }
@@ -210,7 +210,7 @@ public class MainFileTest {
                     
                     // asserts lists same length
                     assertEquals(7, mf.getActiveSegs().size());
-                    assertEquals(2, mf.getRemovedSegs().size());
+                    assertEquals(2, mf.getHiddenSegs().size());
                     
                     // asserts Thai/English split properly
                     assertEquals(mf.getActiveSegs().get(0).getThai(), "t");
@@ -226,8 +226,8 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().get(2).equals(seg2), true);
                     assertEquals(mf.getActiveSegs().get(3).equals(seg3), true);
                     assertEquals(mf.getActiveSegs().get(4).equals(seg4), true);
-                    assertEquals(mf.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(mf.getRemovedSegs().get(1).equals(seg5), true);
+                    assertEquals(mf.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(mf.getHiddenSegs().get(1).equals(seg5), true);
                     
                      
                     break;
@@ -243,7 +243,7 @@ public class MainFileTest {
                     
                      // asserts lists same length
                     assertEquals(7, mf.getActiveSegs().size());
-                    assertEquals(2, mf.getRemovedSegs().size());
+                    assertEquals(2, mf.getHiddenSegs().size());
                     
                     // asserts Thai/English split properly
                     assertEquals(mf.getActiveSegs().get(0).getThai(), "t");
@@ -258,7 +258,7 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().get(4), seg3);
                     assertEquals(mf.getActiveSegs().get(5), seg4);
                     assertEquals(mf.getActiveSegs().get(6), seg5);
-                    assertEquals(mf.getRemovedSegs().get(0), seg1);
+                    assertEquals(mf.getHiddenSegs().get(0), seg1);
                     
                     
                     break;
@@ -274,7 +274,7 @@ public class MainFileTest {
                     
                      // asserts lists same length
                     assertEquals(7, mf.getActiveSegs().size());
-                    assertEquals(2, mf.getRemovedSegs().size());
+                    assertEquals(2, mf.getHiddenSegs().size());
                     
                     // asserts Thai/English split properly
                     assertEquals(mf.getActiveSegs().get(0).getThai(), "t");
@@ -289,7 +289,7 @@ public class MainFileTest {
                     assertEquals(mf.getActiveSegs().get(4), seg3);
                     assertEquals(mf.getActiveSegs().get(5), seg4);
                     assertEquals(mf.getActiveSegs().get(6), seg5);
-                    assertEquals(mf.getRemovedSegs().get(0), seg1);
+                    assertEquals(mf.getHiddenSegs().get(0), seg1);
                     
                  
                     break;
@@ -353,7 +353,7 @@ public class MainFileTest {
                     selectedSegs.add(seg1);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(5, bf.getActiveSegs().size());
-                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(0, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(bf.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg3), true);
@@ -369,12 +369,12 @@ public class MainFileTest {
                     selectedSegs.add(seg2);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(4, bf.getActiveSegs().size());
-                    assertEquals(2, bf.getRemovedSegs().size());
+                    assertEquals(2, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(1).equals(seg3), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(bf.getActiveSegs().get(3).equals(seg5), true);
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg2), true);
                     break;
                 }
                 case 2: {
@@ -384,12 +384,12 @@ public class MainFileTest {
                     selectedSegs.add(seg3);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(3, bf.getActiveSegs().size());
-                    assertEquals(3, bf.getRemovedSegs().size());
+                    assertEquals(3, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(1).equals(seg4), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg5), true);
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(bf.getRemovedSegs().get(2).equals(seg3), true);
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(2).equals(seg3), true);
 
               
 
@@ -401,12 +401,12 @@ public class MainFileTest {
                     selectedSegs.add(seg3);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(4, bf.getActiveSegs().size());
-                    assertEquals(2, bf.getRemovedSegs().size());
+                    assertEquals(2, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(bf.getActiveSegs().get(3).equals(seg5), true);
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg2), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg3), true);
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg3), true);
 
                   
                     break;
@@ -417,12 +417,12 @@ public class MainFileTest {
                     selectedSegs.add(seg3);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(4, bf.getActiveSegs().size());
-                    assertEquals(2, bf.getRemovedSegs().size());
+                    assertEquals(2, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(bf.getActiveSegs().get(3).equals(seg5), true);
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg2), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg3), true);
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg3), true);
 
                     
                     
@@ -435,12 +435,12 @@ public class MainFileTest {
                     selectedSegs.add(seg3);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(3, bf.getActiveSegs().size());
-                    assertEquals(3, bf.getRemovedSegs().size());
+                    assertEquals(3, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(1).equals(seg4), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg5), true);
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(bf.getRemovedSegs().get(2).equals(seg3), true);
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(2).equals(seg3), true);
                     
                     
                     
@@ -451,7 +451,7 @@ public class MainFileTest {
                     selectedSegs.add(seg5);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(5, bf.getActiveSegs().size());
-                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(0, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(bf.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg3), true);
@@ -471,12 +471,12 @@ public class MainFileTest {
                     selectedSegs.add(seg5);
                     bf.mergeSegs(selectedSegs);
                     assertEquals(1, bf.getActiveSegs().size());
-                    assertEquals(5, bf.getRemovedSegs().size());
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(bf.getRemovedSegs().get(2).equals(seg3), true);
-                    assertEquals(bf.getRemovedSegs().get(3).equals(seg4), true);
-                    assertEquals(bf.getRemovedSegs().get(4).equals(seg5), true);
+                    assertEquals(5, bf.getHiddenSegs().size());
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(2).equals(seg3), true);
+                    assertEquals(bf.getHiddenSegs().get(3).equals(seg4), true);
+                    assertEquals(bf.getHiddenSegs().get(4).equals(seg5), true);
                     
                     
                     
@@ -486,7 +486,7 @@ public class MainFileTest {
                 case 8: {
                     bf.mergeSegs(selectedSegs);
                     assertEquals(5, bf.getActiveSegs().size());
-                    assertEquals(0, bf.getRemovedSegs().size());
+                    assertEquals(0, bf.getHiddenSegs().size());
                     assertEquals(bf.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(bf.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(bf.getActiveSegs().get(2).equals(seg3), true);
@@ -520,12 +520,12 @@ public class MainFileTest {
 
                     // this should result in the file now only having two active segs
                     assertEquals(2, bf.getActiveSegs().size());
-                    assertEquals(6, bf.getRemovedSegs().size());
-                    assertEquals(bf.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(bf.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(bf.getRemovedSegs().get(2).equals(seg3), true);
-                    assertEquals(bf.getRemovedSegs().get(3).equals(seg4), true);
-                    assertEquals(bf.getRemovedSegs().get(5).equals(seg5), true);
+                    assertEquals(6, bf.getHiddenSegs().size());
+                    assertEquals(bf.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(bf.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(bf.getHiddenSegs().get(2).equals(seg3), true);
+                    assertEquals(bf.getHiddenSegs().get(3).equals(seg4), true);
+                    assertEquals(bf.getHiddenSegs().get(5).equals(seg5), true);
                     
                     
                     

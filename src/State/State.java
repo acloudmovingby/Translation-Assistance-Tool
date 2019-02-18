@@ -322,7 +322,7 @@ public class State {
             // replaces the oldSeg with the newSeg at that index
             mfActiveSegs.set(index, newSeg);
             // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
-            getMainFile().getRemovedSegs().add(oldSeg);
+            getMainFile().getHiddenSegs().add(oldSeg);
             
             //adjusts Postings Lists
             PostingsListManager plManager = getPostingsListManager();
@@ -352,7 +352,7 @@ public class State {
             // removes from active segs
             mfActiveSegs.remove(seg);
             // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
-            getMainFile().getRemovedSegs().add(seg);
+            getMainFile().getHiddenSegs().add(seg);
             
             // postings lists not changed:
             // if segment had been committed, we still want it stored

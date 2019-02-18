@@ -182,7 +182,7 @@ public class DatabaseOperationsTest {
         // removing a segment, then checking the file's the same when retrieved.
         Segment removedSeg = file.getActiveSegs().remove(file.getActiveSegs().size()-1);
         //removedSeg.setRemoved(true);
-        file.getRemovedSegs().add(removedSeg);
+        file.getHiddenSegs().add(removedSeg);
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
     }

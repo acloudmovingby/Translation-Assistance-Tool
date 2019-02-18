@@ -87,7 +87,7 @@ public class DatabaseManagerTest {
         // make a subtraction to the file (beg / middle / end?)
         // check to make sure changes are reflected in db
         Segment removed = mf.getActiveSegs().get(0);
-        mf.removeSeg(removed);
+        mf.hideSeg(removed);
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // checks that number of files in DB are still the same
@@ -116,13 +116,39 @@ public class DatabaseManagerTest {
             segsToRemove.add(s);
         }
         for (Segment s : segsToRemove) {
-            mf.removeSeg(s);
+            mf.hideSeg(s);
         }
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         assertEquals(numFiles, DatabaseOperations.getAllFileIDs().size());
        
         
+    }
+    
+    /**
+     * If the segs in the main file are removed from both active/removed lists, the db should then remove those rows from the db.
+     */
+    @Test
+    public void testDeleteSegsBeforeBackup() {
+        // have a file, make sure it's backed up
+        State state = TestObjectBuilder.getTestState();
+        MainFile mainFile = state.getMainFile();
+        DatabaseManager dm = new DatabaseManager(state);
+        
+        SegmentBuilder sb = new SegmentBuilder(mainFile);
+        mainFile.getHiddenSegs().add(sb.createSegment());
+        dm.push(state);
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        // delete all active segs in mf
+        mainFile.getActiveSegs().clear();
+        dm.push(state);
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
+        
+        // delete all removed segs in mf
+        mainFile.getHiddenSegs().clear();
+        dm.push(state);
+        assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
     }
     
 }

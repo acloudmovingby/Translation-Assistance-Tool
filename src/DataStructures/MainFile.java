@@ -69,11 +69,8 @@ public class MainFile extends BasicFile {
         Segment newSeg2 = sb.createSegmentNewID();
         getActiveSegs().add(index + 1, newSeg2);
         
-        //removes old seg
-        removeSeg(seg);
-
-        // Realigns ranks
-        realignRanks();
+        //hides old seg
+        hideSeg(seg);
         
         List<Segment> retList = new ArrayList();
         retList.add(newSeg1);
@@ -105,7 +102,7 @@ public class MainFile extends BasicFile {
         // replaces old seg with new seg
         getActiveSegs().set(index, newSeg);
         // adds old seg to the "removed" list
-        getRemovedSegs().add(seg);
+        getHiddenSegs().add(seg);
         
         return newSeg;
     }

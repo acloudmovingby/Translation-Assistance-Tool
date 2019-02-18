@@ -33,7 +33,7 @@ public class Corpus {
 
         files.stream().forEach(f -> {
             aList.addAll(f.getActiveSegs());
-            aList.addAll(f.getRemovedSegs());
+            aList.addAll(f.getHiddenSegs());
         });
         aList.removeIf(seg -> !seg.isCommitted());
 
@@ -79,7 +79,7 @@ public class Corpus {
         int numSegs = 0;
         for (BasicFile bf : getFiles()) {
             numSegs = numSegs + bf.getActiveSegs().size();
-            numSegs = numSegs + bf.getRemovedSegs().size();
+            numSegs = numSegs + bf.getHiddenSegs().size();
         }
         return numSegs;
     }

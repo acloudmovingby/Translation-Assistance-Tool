@@ -58,11 +58,11 @@ public class BasicFileTest {
         
         // Now added a seg to removedSegs in f1. Not equal
         Segment removedSeg = TestObjectBuilder.getTestSeg();
-        f1.getRemovedSegs().add(removedSeg);
+        f1.getHiddenSegs().add(removedSeg);
         assertEquals(f1.equals(f2), false);
         
         // Now added the same seg to f2's removed segs. Equal
-        f2.getRemovedSegs().add(removedSeg);
+        f2.getHiddenSegs().add(removedSeg);
         assertEquals(f1, f2);
     }
     

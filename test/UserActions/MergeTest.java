@@ -76,7 +76,7 @@ public class MergeTest {
                     selectedSegs.add(seg1);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(5, mainFile.getActiveSegs().size());
-                    assertEquals(0, mainFile.getRemovedSegs().size());
+                    assertEquals(0, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg3), true);
@@ -92,12 +92,12 @@ public class MergeTest {
                     selectedSegs.add(seg2);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(4, mainFile.getActiveSegs().size());
-                    assertEquals(2, mainFile.getRemovedSegs().size());
+                    assertEquals(2, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg3), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(3).equals(seg5), true);
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg2), true);
                     
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -109,12 +109,12 @@ public class MergeTest {
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(3, mainFile.getActiveSegs().size());
-                    assertEquals(3, mainFile.getRemovedSegs().size());
+                    assertEquals(3, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg5), true);
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(mainFile.getRemovedSegs().get(2).equals(seg3), true);
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(2).equals(seg3), true);
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -125,12 +125,12 @@ public class MergeTest {
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(4, mainFile.getActiveSegs().size());
-                    assertEquals(2, mainFile.getRemovedSegs().size());
+                    assertEquals(2, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(3).equals(seg5), true);
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg2), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg3), true);
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg3), true);
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -141,12 +141,12 @@ public class MergeTest {
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(4, mainFile.getActiveSegs().size());
-                    assertEquals(2, mainFile.getRemovedSegs().size());
+                    assertEquals(2, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(3).equals(seg5), true);
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg2), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg3), true);
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg3), true);
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -158,12 +158,12 @@ public class MergeTest {
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(3, mainFile.getActiveSegs().size());
-                    assertEquals(3, mainFile.getRemovedSegs().size());
+                    assertEquals(3, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg5), true);
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(mainFile.getRemovedSegs().get(2).equals(seg3), true);
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(2).equals(seg3), true);
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -173,7 +173,7 @@ public class MergeTest {
                     selectedSegs.add(seg5);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(5, mainFile.getActiveSegs().size());
-                    assertEquals(0, mainFile.getRemovedSegs().size());
+                    assertEquals(0, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg3), true);
@@ -192,12 +192,12 @@ public class MergeTest {
                     selectedSegs.add(seg5);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(1, mainFile.getActiveSegs().size());
-                    assertEquals(5, mainFile.getRemovedSegs().size());
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(mainFile.getRemovedSegs().get(2).equals(seg3), true);
-                    assertEquals(mainFile.getRemovedSegs().get(3).equals(seg4), true);
-                    assertEquals(mainFile.getRemovedSegs().get(4).equals(seg5), true);
+                    assertEquals(5, mainFile.getHiddenSegs().size());
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(2).equals(seg3), true);
+                    assertEquals(mainFile.getHiddenSegs().get(3).equals(seg4), true);
+                    assertEquals(mainFile.getHiddenSegs().get(4).equals(seg5), true);
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -206,7 +206,7 @@ public class MergeTest {
                 case 8: {
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(5, mainFile.getActiveSegs().size());
-                    assertEquals(0, mainFile.getRemovedSegs().size());
+                    assertEquals(0, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg3), true);
@@ -240,12 +240,12 @@ public class MergeTest {
 
                     // this should result in the file now only having two active segs
                     assertEquals(2, mainFile.getActiveSegs().size());
-                    assertEquals(6, mainFile.getRemovedSegs().size());
-                    assertEquals(mainFile.getRemovedSegs().get(0).equals(seg1), true);
-                    assertEquals(mainFile.getRemovedSegs().get(1).equals(seg2), true);
-                    assertEquals(mainFile.getRemovedSegs().get(2).equals(seg3), true);
-                    assertEquals(mainFile.getRemovedSegs().get(3).equals(seg4), true);
-                    assertEquals(mainFile.getRemovedSegs().get(5).equals(seg5), true);
+                    assertEquals(6, mainFile.getHiddenSegs().size());
+                    assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
+                    assertEquals(mainFile.getHiddenSegs().get(1).equals(seg2), true);
+                    assertEquals(mainFile.getHiddenSegs().get(2).equals(seg3), true);
+                    assertEquals(mainFile.getHiddenSegs().get(3).equals(seg4), true);
+                    assertEquals(mainFile.getHiddenSegs().get(5).equals(seg5), true);
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
@@ -260,7 +260,7 @@ public class MergeTest {
                     d.acceptAction(new Merge(selectedSegs));
                     
                     assertEquals(5, mainFile.getActiveSegs().size());
-                    assertEquals(0, mainFile.getRemovedSegs().size());
+                    assertEquals(0, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg2), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg3), true);

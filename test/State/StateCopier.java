@@ -6,6 +6,7 @@
 package State;
 
 import DataStructures.MainFile;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Records critical properties of a State object which can then be compared later against a given State (the same State object or a different one).
@@ -30,6 +31,15 @@ public class StateCopier {
      * @return 
      */
     public boolean compare(State s) {
+        
+        /*
+        the segment was committed and then not removed from plm
+        */
+        
+        assertEquals(numSegsInCorpus, s.getCorpus().numTotalSegs());
+        assertEquals(mainFileCopy, s.getMainFile());
+        assertEquals(postingsListSize, s.getPostingsListManager().size());
+        
         return postingsListSize==s.getPostingsListManager().size() 
                 && numSegsInCorpus == s.getCorpus().numTotalSegs()
                 && mainFileCopy.equals(s.getMainFile());
