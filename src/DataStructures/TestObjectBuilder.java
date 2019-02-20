@@ -77,7 +77,7 @@ public class TestObjectBuilder {
     }
     
     /**
-     * Returns a file with one segment in it. The segment is not committed and not removed. 
+     * Returns a file with one segment in it. The segment is not committed and hidden. 
      * @return 
      */
     public static BasicFile getOneSegFile() {

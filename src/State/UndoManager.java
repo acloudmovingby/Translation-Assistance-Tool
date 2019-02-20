@@ -50,13 +50,12 @@ public class UndoManager {
             mainFileInState.getActiveSegs().add(s);
         }
         
-        // replace all removed segs
+        // replace all hidden segs
         mainFileInState.getHiddenSegs().clear();
         for (Segment s : previousMainFile.getHiddenSegs()) {
             mainFileInState.getHiddenSegs().add(s);
         }
         
-        // need to make distinction between hidden and removed
         
         
        

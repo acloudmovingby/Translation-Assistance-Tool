@@ -34,13 +34,14 @@ public class DatabaseManager {
         if (mf.getFileID() == priorBackup.getFileID()) {
             // after updating/adding segs, then any segs that are now missing need to be removed.
             if (DatabaseOperations.addFile(mf)) {
-                findMissingSegs(mf, priorBackup).forEach((s) -> {
+                findMissingSegs(priorBackup, mf).forEach((s) -> {
                     DatabaseOperations.removeSeg(s.getID());
                 });
             }
         } else {
             throw new IllegalArgumentException("MainFile does not match the one registered with DatabaseManager at construction.");
         }
+        
     }
 
     /*

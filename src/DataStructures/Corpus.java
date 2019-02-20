@@ -72,7 +72,7 @@ public class Corpus {
     }
     
     /**
-     * Returns the total number of segs (both in removed and active lists) in all files of the corpus.
+     * Returns the total number of segs (both hidden and active) in all files of the corpus.
      * @return 
      */
     public int numTotalSegs() {

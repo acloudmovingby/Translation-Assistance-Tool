@@ -81,7 +81,7 @@ public class MainFile extends BasicFile {
 
     /**
      * Replaces the specified segment with a new one (with new id) where its English text field has been changed as specified. This then returns the newly created segment.
-     * Note that the old seg will now be placed in the "removedSegs" list of this main file. IMPORTANT: if the seg does not exist in the file, then this returns null).
+     * Note that the old seg will now be placed in the "hiddenSegs" list of this main file. IMPORTANT: if the seg does not exist in the file, then this returns null).
      * @param seg
      * @param newEnglishText
      * @return The new segment or null if seg does not exist in the activeSegs list of this file.

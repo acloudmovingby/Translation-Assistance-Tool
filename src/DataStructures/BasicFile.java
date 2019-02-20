@@ -25,7 +25,7 @@ public class BasicFile {
 
     // Actual segs displayed to the user while translating this file.
     private ObservableList<Segment> activeSegs;
-    // Any segs that had been removed. They still might appear in match queries if they had been commited
+    // Any segs that had been hidden. They still might appear in match queries if they had been commited
     private ArrayList<Segment> hiddenSegs;
     private String fileName;
     private final int fileID;
