@@ -18,6 +18,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -332,18 +333,8 @@ public class State {
             return true;
         }
     }
-
-    /**
-     * Adds the segment to the MainFile at the specified index and then adds it to the postings lists
-     * @param insertIndex
-     * @param seg 
-     */
-    public void addSeg(int insertIndex, Segment seg) {
-        getMainFile().getActiveSegs().add(insertIndex, seg);
-        getPostingsListManager().addSegment(seg);
-    }
-
-    public boolean removeSeg(Segment seg) {
+    
+     public boolean removeSeg(Segment seg) {
         ObservableList<Segment> mfActiveSegs = getMainFile().getActiveSegs();
         // checks to make sure oldSeg exists in MainFile active segs
         if (!mfActiveSegs.contains(seg)) {
@@ -361,7 +352,61 @@ public class State {
             return true;
         }
     }
+
+    /**
+     * Adds the segment to the MainFile at the specified index and then adds it to the postings lists
+     * @param insertIndex
+     * @param seg 
+     */
+    public void addSeg(int insertIndex, Segment seg) {
+        getMainFile().getActiveSegs().add(insertIndex, seg);
+        getPostingsListManager().addSegment(seg);
+    }
+
+   
     
+    /**
+     * If seg is either an active or hidden seg in the main file, it removes it. If the seg does not exist in the file, then it returns false.
+     * @param seg
+     * @return 
+     */
+    public boolean removeSeg2(Segment seg) {
+        ObservableList<Segment> activeSegs = getMainFile().getActiveSegs();
+        ArrayList<Segment> hiddenSegs = getMainFile().getHiddenSegs();
+        
+        if (activeSegs.contains(seg)) {
+            // removes from active and from plm
+            activeSegs.remove(seg);
+            getPostingsListManager().removeSegment(seg);
+            return true;
+        } else if (hiddenSegs.contains(seg)) {
+            // removes from hidden and from plm
+            hiddenSegs.remove(seg);
+            getPostingsListManager().removeSegment(seg);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Adds the segment to the main file's list of hidden segs. If this file already contains the seg as an active seg, this throws an IllegalArgumentException.
+     * @param seg
+     * @return 
+     */
+    public void addToHidden(Segment seg) {
+         ObservableList<Segment> activeSegs = getMainFile().getActiveSegs();
+        ArrayList<Segment> hiddenSegs = getMainFile().getHiddenSegs();
+        
+        if (activeSegs.contains(seg)) {
+            throw new IllegalArgumentException("A seg cannot be 'hidden' if it's already active. Remove seg from file first.");
+        } else {
+            if (! hiddenSegs.contains(seg)) {
+                hiddenSegs.add(seg);
+                getPostingsListManager().addSegment(seg);
+            }
+        }
+    }
     
     
     

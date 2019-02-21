@@ -42,7 +42,7 @@ public class BasicFile {
     }
     
     /**
-     * This constructor is used when transforming a BasicFile into a MainFile. Note, not a true copy, because it keeps pointers to the original file.
+     * This constructor is used when transforming a BasicFile into a MainFile. All seg ids will be identical, but they are distinct objects in distinct lists (this is a deep copy of bf).
      * @param file 
      */
     public BasicFile(BasicFile file) {
@@ -196,7 +196,7 @@ public class BasicFile {
         }
         
         // First checks that the hidden segs length is the same, and if it is, checks the equalit of every seg in that list. 
-        // if the REMOVED SEGS list length is unequal, returns false.
+        // if the hidden segs list length is unequal, returns false.
         if (this.getHiddenSegs().size() == m.getHiddenSegs().size()) {
             Iterator i1 = this.getHiddenSegs().iterator();
             Iterator i2 = m.getHiddenSegs().iterator();
@@ -249,7 +249,7 @@ public class BasicFile {
             sb.append("\n\t");
         }
         
-        sb.append("REMOVED\n\t");
+        sb.append("HIDDEN\n\t");
         for (Segment tu : getHiddenSegs()) {
             sb.append(tu.toString());
             sb.append("\n\t");
@@ -269,6 +269,10 @@ public class BasicFile {
         return hiddenSegs;
     }
     
+    /**
+     * Returns all segs from the file, both hidden and active.
+     * @return 
+     */
     public List<Segment> getAllSegs() {
         
         ArrayList<Segment> ret = new ArrayList();

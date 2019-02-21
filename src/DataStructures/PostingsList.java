@@ -13,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Parses the thai text in Segments into ngrams (length of ngram specified in PostingsList constructor). 
+ * Parses the thai text in Segments into ngrams (length of ngram specified in
+ * PostingsList constructor).
  *
  * @author Chris
  */
@@ -33,7 +34,8 @@ public class PostingsList {
     }
 
     /**
-     * Tokenizes a segment into ngrams and adds these to the postings list. If the segment is not committed, it is NOT added to the postings list.
+     * Tokenizes a segment into ngrams and adds these to the postings list. If
+     * the segment is not committed, it is NOT added to the postings list.
      *
      * @param seg
      */
@@ -45,7 +47,7 @@ public class PostingsList {
                 List<Segment> segList = map.get(ngram);
                 /*
                 If this ngram hasn't appeared in any previously seen segments, a new list is created. Otherwise, this segment is appended to the end of the list.
-                */
+                 */
                 if (segList == null) {
                     segList = new ArrayList();
                     segList.add(seg);
@@ -116,24 +118,35 @@ public class PostingsList {
     public HashMap<String, List<Segment>> getMap() {
         return map;
     }
-    
+
     /**
-     * Removes the ngrams associated with the specified Segment from the postings list. If the PostingsList does not contain this segment, nothing changes.
-     * @param seg 
+     * Removes the ngrams associated with the specified Segment from the
+     * postings list. If the PostingsList does not contain this segment, nothing
+     * changes.
+     *
+     * @param seg
      */
     public void removeSegment(Segment seg) {
         List<String> ngrams = makeNGrams(seg.getThai(), nGramLength);
+
+        List<String> nonExistentNgrams = new ArrayList();
+
         ngrams.forEach(ngram -> {
-            List<Segment> listOfSegs = map.get(ngram);
+            List<Segment> listOfSegs = getMap().get(ngram);
             if (listOfSegs != null) {
                 listOfSegs.remove(seg);
+
+                // if there are no longer any segments matching, the ngram is removed from the pl entirely
+                if (listOfSegs.isEmpty()) {
+                    getMap().remove(ngram);
+                }
             }
         });
     }
 
     @Override
     public boolean equals(Object o) {
-         if (o == this) {
+        if (o == this) {
             return true;
         }
 
@@ -142,11 +155,11 @@ public class PostingsList {
         }
 
         PostingsList pl = (PostingsList) o;
-        
+
         if (this.map.equals(pl.getMap())) {
             return false;
         }
-        
+
         return true;
     }
 }

@@ -63,6 +63,10 @@ public class PostingsListManager {
         return pl;
     }
     
+    /**
+     * Returns the size of all postings lists stored in this PostingsListManager. The size of a postings list is equivalent to the number of distinct ngrams it has stored in its hash table (where key is the ngram and value is the list of segs with that ngram).
+     * @return 
+     */
     public int size() {
         int ret = 0;
         for (PostingsList pl : plList) {

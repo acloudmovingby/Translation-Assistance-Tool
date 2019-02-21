@@ -443,7 +443,7 @@ public class Fxml_1Controller implements Initializable {
     }
     @FXML
     private void undo(ActionEvent event) {
-        //state.undo();
+        dispatcher.undo();
         
     }
 

@@ -32,9 +32,6 @@ public class StateCopier {
      */
     public boolean compare(State s) {
         
-        /*
-        the segment was committed and then not removed from plm
-        */
         
         assertEquals(numSegsInCorpus, s.getCorpus().numTotalSegs());
         assertEquals(mainFileCopy, s.getMainFile());

@@ -71,12 +71,25 @@ public class BasicFileTest {
      */
     @Test
     public void testCopyFile() {
+        // NOT FINISHED
         BasicFile testFile = TestObjectBuilder.getTestFile();
         BasicFile testFileCopy = new BasicFile(testFile);
         
         
     }
 
+    @Test
+    public void testGetAllSegs() {
+        BasicFile testFile = TestObjectBuilder.getTestFile();
+        assertEquals(5, testFile.getAllSegs().size());
+        
+        SegmentBuilder sb = new SegmentBuilder(testFile);
+        testFile.getHiddenSegs().add(sb.createSegment());
+        assertEquals(6, testFile.getAllSegs().size());
+        
+        testFile.getActiveSegs().add(sb.createSegmentNewID());
+        assertEquals(7, testFile.getAllSegs().size());
+    }
    
     
 }

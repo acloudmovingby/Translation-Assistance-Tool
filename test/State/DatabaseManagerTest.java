@@ -145,7 +145,7 @@ public class DatabaseManagerTest {
         dm.push(state);
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         
-        // delete all removed segs in mf
+        // delete all hidden segs in mf
         mainFile.getHiddenSegs().clear();
         dm.push(state);
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));

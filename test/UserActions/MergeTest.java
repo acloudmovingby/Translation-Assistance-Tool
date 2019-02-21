@@ -88,11 +88,16 @@ public class MergeTest {
                 }
                 case 1: {
                     // if i=1 --> merge first two
+                    StringBuilder sb = new StringBuilder(seg1.getThai());
+                    sb.append(seg2.getThai()); // combine the Thai from both segs
+                    
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
+                    
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(4, mainFile.getActiveSegs().size());
                     assertEquals(2, mainFile.getHiddenSegs().size());
+                    assertEquals(sb.toString(), d.getUIState().getMainFileSegs().get(0).getThai());
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg3), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(3).equals(seg5), true);

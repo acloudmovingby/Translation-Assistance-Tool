@@ -17,26 +17,30 @@ import java.util.List;
  */
 public class DatabaseManager {
     
-    MainFile priorBackup;
+    MainFile previousMainFile;
     
     public DatabaseManager(State state) {
-        priorBackup = new MainFile(state.getMainFile());
-        DatabaseOperations.addFile(priorBackup);
+        previousMainFile = new MainFile(state.getMainFile());
+        DatabaseOperations.addFile(previousMainFile);
     }
      
     protected void push(State state) {
         backupMainFile(state.getMainFile());
     }
     
-    protected void backupMainFile(MainFile mf) {
+    protected void backupMainFile(MainFile currentMainFile) {
         
-        // if the priorBackup matches the one that DatabaseManager was originally asssigned, then back it up
-        if (mf.getFileID() == priorBackup.getFileID()) {
+        // if the previousMainFile matches the one that DatabaseManager was originally asssigned, then back it up
+        if (currentMainFile.getFileID() == previousMainFile.getFileID()) {
             // after updating/adding segs, then any segs that are now missing need to be removed.
-            if (DatabaseOperations.addFile(mf)) {
-                findMissingSegs(priorBackup, mf).forEach((s) -> {
+            if (DatabaseOperations.addFile(currentMainFile)) {
+                findMissingSegs(previousMainFile, currentMainFile).forEach((s) -> {
                     DatabaseOperations.removeSeg(s.getID());
                 });
+                
+                // reassigns the currentMainFile to be the "previous" main file
+                // makes deep copy (so no pointers pointing to something that could be changed)
+                previousMainFile = new MainFile(currentMainFile);
             }
         } else {
             throw new IllegalArgumentException("MainFile does not match the one registered with DatabaseManager at construction.");
@@ -45,12 +49,12 @@ public class DatabaseManager {
     }
 
     /*
-     Finds what segments existed in priorMainFile that now don't exist in newMainFile.
+     Finds what segments existed in priorMainFile that now don't exist in currentMainFile.
     Returns this as a list.
     */
-    private List<Segment> findMissingSegs(MainFile priorMainFile, MainFile newMainFile) {
-        // if it exists in priorbackup, but doesn't exist in mf, then add to list
-        List<Segment> mainFileSegs = newMainFile.getAllSegs();
+    private List<Segment> findMissingSegs(MainFile priorMainFile, MainFile currentMainFile) {
+        // if it exists in priorbackup, but doesn't exist in mf, then add to 'missing segs' list
+        List<Segment> mainFileSegs = currentMainFile.getAllSegs();
         List<Segment> missingSegs = new ArrayList();
         
         priorMainFile.getAllSegs().stream()

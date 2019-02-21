@@ -103,8 +103,7 @@ public class TestObjectBuilder {
 
     /**
      * Makes a corpus composed of 3 files, which while different objects, are
-     * all exactly equal to the file that comes out of getTestFile(); These
-     * files, if you run .equals comparing them, will return true. NO SEGMENTS
+     * all exactly equal to the file that comes out of getTestFile() (though they will have distinct file ids). NO SEGMENTS
      * ARE COMMITTED.
      *
      * @return
@@ -118,7 +117,7 @@ public class TestObjectBuilder {
     }
 
     /**
-     * Same as getTestCorpus(), except all segs in corpus are committed.
+     * Same as getTestCorpus(), except all segments in corpus are COMMITTED.
      *
      * @return
      */
@@ -128,6 +127,18 @@ public class TestObjectBuilder {
             f.commitAllSegs();
         }
         return c;
+    }
+    
+    /**
+     * Same as getTestState(), except ALL SEGS (in corpus and main file) are COMMITTED.
+     *
+     * @return
+     */
+    public static State getCommittedTestState() {
+        BasicFile mainFile = getTestFile();
+        mainFile.commitAllSegs();
+        
+        return new State(mainFile, getCommittedTestCorpus());
     }
 
     /**
