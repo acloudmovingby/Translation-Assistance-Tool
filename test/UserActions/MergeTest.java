@@ -109,12 +109,18 @@ public class MergeTest {
                 }
                 case 2: {
                     // if i=2 --> merge first three
+                    StringBuilder sb = new StringBuilder(seg1.getThai());
+                    sb.append(seg2.getThai());
+                    sb.append(seg3.getThai());// combine the Thai from the three segs
+                    
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(3, mainFile.getActiveSegs().size());
                     assertEquals(3, mainFile.getHiddenSegs().size());
+                    assertEquals(sb.toString(), d.getUIState().getMainFileSegs().get(0).getThai());
+                    assertEquals(seg4.getThai(), d.getUIState().getMainFileSegs().get(1).getThai());
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg5), true);
                     assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
@@ -126,11 +132,17 @@ public class MergeTest {
                 }
                 case 3: {
                     // if i=3 --> merge tu2-tu3
+                    StringBuilder sb = new StringBuilder(seg2.getThai());
+                    sb.append(seg3.getThai());
+                    
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(4, mainFile.getActiveSegs().size());
                     assertEquals(2, mainFile.getHiddenSegs().size());
+                    assertEquals(sb.toString(), d.getUIState().getMainFileSegs().get(1).getThai());
+                    assertEquals(seg1.getThai(), d.getUIState().getMainFileSegs().get(0).getThai());
+                    assertEquals(seg4.getThai(), d.getUIState().getMainFileSegs().get(2).getThai());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(3).equals(seg5), true);
@@ -142,6 +154,7 @@ public class MergeTest {
                 }
                 // if i=4 --> merge 1-3
                 case 4: {
+                    
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));

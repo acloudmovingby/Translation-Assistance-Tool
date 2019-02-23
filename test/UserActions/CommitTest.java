@@ -134,4 +134,12 @@ public class CommitTest {
         
     }
     
+    /**
+     * Tests when Commit is used on multiple segments
+     */
+    @Test
+    public void testMultipleCommit() {
+        // NOT FINISHED
+    }
+    
 }

@@ -8,31 +8,43 @@ package UserActions;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
+ * Commits one or more segments in the MainFile. 
  * @author Chris
  */
 public class Commit implements Action {
-    
-    private final Segment seg; 
-    
+
+    //private final Segment seg; 
+    private final List<Segment> segList;
+
     public Commit(Segment seg) {
-        this.seg = seg;
+        segList = new ArrayList();
+        segList.add(Segment.getDeepCopy(seg));
+    }
+
+    public Commit(List<Segment> segList) {
+        List<Segment> listCopy = new ArrayList();
+        segList.forEach((s) -> {listCopy.add(Segment.getDeepCopy(s));});
+        this.segList = listCopy;
     }
 
     @Override
     public void execute(State state) {
-        //state.commit(seg);
-        
-        // if the seg is already committed, then do nothing. 
-        if (seg.isCommitted()) {
-            return;
-        } else {
-            SegmentBuilder sb = new SegmentBuilder(seg);
-            sb.setCommitted(true);
-            state.replaceSeg(seg, sb.createSegmentNewID());
+
+        for (Segment seg : segList) {
+            // if the seg is already committed, then do nothing. 
+            if (seg.isCommitted()) {
+                return;
+            } else {
+                SegmentBuilder sb = new SegmentBuilder(seg);
+                sb.setCommitted(true);
+                state.replaceSeg(seg, sb.createSegmentNewID());
+            }
         }
+
     }
-    
+
 }

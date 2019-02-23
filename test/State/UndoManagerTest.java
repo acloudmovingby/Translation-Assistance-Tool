@@ -401,28 +401,38 @@ public class UndoManagerTest {
     public void testUndoMergeAndSplit() {
         
         // "save" the committed state
-        StateCopier committedStateCopy = new StateCopier(simpleCommittedStateDispatcher.getState());
+        StateCopier state1Copy = new StateCopier(simpleCommittedStateDispatcher.getState());
         MainFile mf = simpleCommittedStateDispatcher.getState().getMainFile();
         
         // merge first two segments
-        
         Segment firstSeg = simpleCommittedStateDispatcher.getUIState().getMainFileSegs().get(0);
         Segment secondSeg = simpleCommittedStateDispatcher.getUIState().getMainFileSegs().get(1);
         simpleCommittedStateDispatcher.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
+        StateCopier state2Copy = new StateCopier(simpleCommittedStateDispatcher.getState());
         
         // commit this newly merged segment
         Segment mergeResult = simpleCommittedStateDispatcher.getUIState().getMainFileSegs().get(0);
         simpleCommittedStateDispatcher.acceptAction(new Commit(mergeResult));
+        StateCopier state3Copy = new StateCopier(simpleCommittedStateDispatcher.getState());
         
         // split the newly merged segment
         Segment commitResult = simpleCommittedStateDispatcher.getUIState().getMainFileSegs().get(0);
         simpleCommittedStateDispatcher.acceptAction(new Split(commitResult, 1));
+        StateCopier state4Copy = new StateCopier(simpleCommittedStateDispatcher.getState());
         
-        // undo three times, then compare with the "saved" version
+        // commit the newly split segment
+        Segment splitResult = simpleCommittedStateDispatcher.getUIState().getMainFileSegs().get(0);
+        simpleCommittedStateDispatcher.acceptAction(new Split(splitResult, 1));
+        
+        // undo three times, comparing each time with the saved states and the database
         simpleCommittedStateDispatcher.undo();
+        assertEquals(true, state4Copy.compare(simpleCommittedStateDispatcher.getState()));
+        assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         simpleCommittedStateDispatcher.undo();
+        assertEquals(true, state1Copy.compare(simpleCommittedStateDispatcher.getState())); 
+        assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         simpleCommittedStateDispatcher.undo();
-        assertEquals(true, committedStateCopy.compare(simpleCommittedStateDispatcher.getState())); 
+        assertEquals(true, state1Copy.compare(simpleCommittedStateDispatcher.getState())); 
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
     /*

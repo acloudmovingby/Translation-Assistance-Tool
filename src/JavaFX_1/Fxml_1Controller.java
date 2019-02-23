@@ -9,6 +9,8 @@ import DataStructures.Segment;
 import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.UIState;
+import UserActions.Commit;
+import UserActions.Merge;
 import UserActions.Split;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -322,18 +325,27 @@ public class Fxml_1Controller implements Initializable {
     private void merge(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            state.getMainFile().mergeSegs(selectedItems);
+            dispatcher.acceptAction(new Merge(selectedItems));
         }
     }
 
     @FXML
     private void commit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        ObservableList<Segment> copyOfSelectedItems = FXCollections.observableArrayList();
         //TUEntryBasic selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (selectedItems != null) {
-            for (Segment tu : selectedItems) {
-                tu.setCommitted(true);
-            }
+            
+            dispatcher.acceptAction(new Commit(selectedItems));
+            /*
+            selectedItems.forEach((s) -> {
+                copyOfSelectedItems.add(Segment.getDeepCopy(s));
+            });
+            
+            copyOfSelectedItems.forEach((s) -> {
+                dispatcher.acceptAction(new Commit(s));
+            });
+            */
         }
     }
 

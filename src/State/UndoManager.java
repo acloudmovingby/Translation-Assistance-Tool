@@ -28,15 +28,11 @@ public class UndoManager {
     protected void push(State state) {
         priorMainFiles.offerFirst(new MainFile(state.getMainFile()));
     }
-
+    
     /**
-     * Returns the prior mainFile stored in UndoManager's stack. If no prior main files are in the stack, returns null.
-     * @return 
+     * Changes the state, replacing the segments in the main file with the last stored version. Does not change the mainFile object.
+     * @param state 
      */
-    protected MainFile popPriorMainFile() {
-        return priorMainFiles.pollFirst();
-    }
-
     protected void restorePriorMainFile(State state) {
         // if no prior states have been stored, do nothing
         if (priorMainFiles.isEmpty()) {
@@ -50,11 +46,24 @@ public class UndoManager {
         
         
         ////////
-        List<Segment> allCurrentSegs = mainFileInState.getAllSegs();
-        ObservableList<Segment> previousActiveSegs = previousMainFile.getActiveSegs();
-        ArrayList<Segment> previousHiddenSegs = previousMainFile.getHiddenSegs();
+        
+        List<Segment> allCurrentSegs = new ArrayList();
+        for (Segment s : mainFileInState.getAllSegs()) {
+            allCurrentSegs.add(Segment.getDeepCopy(s));
+        }
+        
+        List<Segment> previousActiveSegs = new ArrayList();
+        for (Segment s : previousMainFile.getActiveSegs()) {
+            previousActiveSegs.add(Segment.getDeepCopy(s));
+        }
+        
+        ArrayList<Segment> previousHiddenSegs = new ArrayList();
+        for (Segment s : previousMainFile.getHiddenSegs()) {
+            previousHiddenSegs.add(Segment.getDeepCopy(s));
+        }
         
         // removes all segs from main file
+        
         allCurrentSegs.forEach(s -> {state.removeSeg2(s);});
         
         // rebuild active segs

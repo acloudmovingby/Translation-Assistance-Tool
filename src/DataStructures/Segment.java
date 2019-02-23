@@ -62,6 +62,16 @@ public class Segment {
         isCommittedProperty = new SimpleBooleanProperty(isCommitted);
         this.rank = rank;
     }
+    
+    /**
+     * Convenience method to return a deep copy of a Segment. Equivalent to using createSegment() in SegmentBuilder
+     * @param s
+     * @return 
+     */
+    public static Segment getDeepCopy(Segment s) {
+        SegmentBuilder sb = new SegmentBuilder(s);
+        return sb.createSegment();
+    }
 
     public String getThai() {
         return thaiProperty.getValue();
