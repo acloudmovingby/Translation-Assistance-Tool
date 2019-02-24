@@ -11,10 +11,10 @@ import State.State;
 import ParseThaiLaw.ThaiLawParser;
 
 /**
- *
+ * Deletes and recreates the database named "database1.db". Then it builds a corpus from several Thai legal documents and adds to this database. 
  * @author Chris
  */
-public class BuildCorpus {
+public class RebootDatabaseAndBuildCorpus {
 
     public static void build() {
         if (!State.databaseIsReadable()) {

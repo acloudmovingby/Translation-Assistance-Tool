@@ -569,7 +569,7 @@ public class DatabaseOperations {
     public static void rebootDB() {
         DeleteTable.deleteAllTables();
         CreateTable.createTables();
-        BuildCorpus.build();
+        RebootDatabaseAndBuildCorpus.build();
     }
 
     /**

@@ -27,7 +27,7 @@ public class StateCopier {
     
     /**
      * Checks to see if the given state has the same properties as the state that was given to StateCopier at construction.
-     * @param s
+     * @param s 
      * @return 
      */
     public boolean compare(State s) {

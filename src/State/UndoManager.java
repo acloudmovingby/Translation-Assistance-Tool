@@ -30,7 +30,7 @@ public class UndoManager {
     }
     
     /**
-     * Changes the state, replacing the segments in the main file with the last stored version. Does not change the mainFile object.
+     * Changes the state, replacing the segments in the main file with the last stored version. Does not change the mainFile object itself, but rather operates through the State object's access methods (addSegment, addToHidden, removeSegment). This ensures UndoManager doesn't have to worry about what data in State depends on the MF (such as the postings lists) and the state updates those automatically.  
      * @param state 
      */
     protected void restorePriorMainFile(State state) {
@@ -73,23 +73,8 @@ public class UndoManager {
         
         // rebuild hidden segs
         for (int i=0; i<previousHiddenSegs.size(); i++) {
-            state.addSeg(i, previousHiddenSegs.get(i));
+            state.addToHidden(previousHiddenSegs.get(i));
         }
-        
-        ///////////
-        
-        /*
-        // replace all active segs
-        mainFileInState.getActiveSegs().clear();
-        for (Segment s : previousMainFile.getActiveSegs()) {
-        mainFileInState.getActiveSegs().add(s);
-        }
-        // replace all hidden segs
-        mainFileInState.getHiddenSegs().clear();
-        for (Segment s : previousMainFile.getHiddenSegs()) {
-        mainFileInState.getHiddenSegs().add(s);
-        }
-         */
        
     }
     

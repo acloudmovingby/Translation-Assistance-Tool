@@ -96,7 +96,6 @@ public class State {
         
         plm = new PostingsListManager(corpus);
         
-        System.out.println("are they equal?" + mf.equals(mainFile));
         mf.equals(mainFile);
         //setCorpus(corpus);
         compareFile = findMatch(segSelected);
@@ -354,7 +353,7 @@ public class State {
     }
 
     /**
-     * Adds the segment to the MainFile at the specified index and then adds it to the postings lists
+     * Adds the segment to the MainFile at the specified index and then adds it to the postings lists. If the file already contains this seg as an active seg (i.e. it's the same object instance), it still adds it. However, if the seg exists as a removed seg, it does not add it and instead throws an exception. 
      * @param insertIndex
      * @param seg 
      */
@@ -390,7 +389,7 @@ public class State {
     }
     
     /**
-     * Adds the segment to the main file's list of hidden segs. If this file already contains the seg as an active seg, this throws an IllegalArgumentException.
+     * Adds the segment to the main file's list of hidden segs. If the seg already exists in the file as a hidden seg, it will still add it again. If this file already contains the seg as an active seg, this throws an IllegalArgumentException.
      * @param seg
      * @return 
      */
