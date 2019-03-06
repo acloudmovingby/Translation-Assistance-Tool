@@ -17,6 +17,10 @@ public class MainFile extends BasicFile {
     public MainFile(BasicFile file) {
         super(file);
     }
+
+    public MainFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     /**
      * Splits a segment into two pieces. The second segment begins with the character at

@@ -130,8 +130,7 @@ public class Segment {
     public String toString() {
         return "[id=" + getID()  + ", fid=" 
                 + getFileID() + ", fn=" 
-                + getFileName()  + ", r#=" 
-                + getRank() + ", th="
+                + getFileName()  + ", th="
                 + getThai() + ", en=" 
                 + getEnglish() + ", c?="
                 + isCommitted() + "]";

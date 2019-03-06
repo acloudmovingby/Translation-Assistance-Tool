@@ -143,7 +143,7 @@ public class TestObjectBuilder {
 
     /**
      * State composed of the corpus from getTestCorpus() and a main file from
-     * getTestFile().
+     * getTestFile(). No segments are committed.
      *
      * @return
      */
@@ -195,4 +195,72 @@ public class TestObjectBuilder {
         return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
     }
 
+    /**
+     * State composed of the corpus from getTestCorpus() and a main file from getTestFile(). The mainFile also has 3 segs added to the hidden segs list. All segs (both in main file and in corpus) are committed.
+     * @return 
+     */
+    public static State getComplexState() {
+        BasicFile mainFile = getTestFile();
+        SegmentBuilder sb = new SegmentBuilder(mainFile);
+        sb.setThai("thHidden1");
+        sb.setEnglish("enHidden1");
+        mainFile.getHiddenSegs().add(sb.createSegment());
+        sb.setThai("thHidden2");
+        sb.setEnglish("enHidden2");
+        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
+        sb.setThai("thHidden3");
+        sb.setEnglish("enHidden3");
+        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
+        
+        return new State(mainFile, getTestCorpus());
+    }
+    
+    /**
+     * Takes a state and returns it exactly as it is, except with all segs in the corpus committed. THE MAIN FILE IS NOT CHANGED. Because the corpus can contain the main file, this method assures that the committed status of any segs in the main file are not affected. It does this by copying the MainFile before re-adding it using the MainFile constructor MainFile(BasicFile). Note, the segs committed will have the same id, but will not be the same objects.  
+     * @param s
+     * @return 
+     */
+    public static State commitAllCorpus(State s) {
+        Corpus c = s.getCorpus();
+        MainFile mf = s.getMainFile();
+        MainFile mfCopy = new MainFile(mf);
+        
+        c.commitAllFiles();
+        
+        return new State(mfCopy, c);
+        
+    }
+    
+    /**
+     * Takes a state and returns it exactly as it is, except with all segs in the mainFile committed. Segs in other files are not affected. The method used is commitAllSegs in mainFile, which, at the time of writing this comment, mutates the seg instead of replacing it.  
+     * @param s
+     * @return 
+     */
+    public static State commitAllMainFile(State s) {
+        Corpus c = s.getCorpus();
+        MainFile mf = s.getMainFile();
+        mf.commitAllSegs();
+        
+        return new State(mf, c);
+    }
+    /*
+    * State composed of the corpus from getTestCorpus() and a main file from getTestFile(). The mainFile also has 3 segs added to the hidden segs list. All segs (both in main file and in corpus) are committed.
+    */
+    public static State getCommittedComplexState() {
+        BasicFile mainFile = getTestFile();
+        SegmentBuilder sb = new SegmentBuilder(mainFile);
+        sb.setThai("thHidden1");
+        sb.setEnglish("enHidden1");
+        mainFile.getHiddenSegs().add(sb.createSegment());
+        sb.setThai("thHidden2");
+        sb.setEnglish("enHidden2");
+        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
+        sb.setThai("thHidden3");
+        sb.setEnglish("enHidden3");
+        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
+        
+        mainFile.commitAllSegs();
+        
+        return new State(mainFile, getCommittedTestCorpus());
+    }
 }

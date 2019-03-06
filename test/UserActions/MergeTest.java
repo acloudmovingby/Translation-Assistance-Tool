@@ -8,11 +8,9 @@ package UserActions;
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
 import DataStructures.Segment;
-import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
-import State.State;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -175,8 +173,9 @@ public class MergeTest {
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
-                    assertEquals(3, mainFile.getActiveSegs().size());
-                    assertEquals(3, mainFile.getHiddenSegs().size());
+                    assertEquals(3, d.getState().getMainFile().getActiveSegs().size());
+                    assertEquals(3, d.getState().getMainFile().getHiddenSegs().size());
+                    assertEquals("th1th2th3", mainFile.getActiveSegs().get(0).getThai());
                     assertEquals(mainFile.getActiveSegs().get(1).equals(seg4), true);
                     assertEquals(mainFile.getActiveSegs().get(2).equals(seg5), true);
                     assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
@@ -201,7 +200,7 @@ public class MergeTest {
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
                 }
-                // if i=7 --> merge all tus
+                // if i=7 --> merge all segs
                 case 7: {
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);

@@ -167,11 +167,12 @@ public class BasicFile {
         DatabaseOperations.addOrUpdateFileName(fileID, fileName);
     }
 
+    /**
+     * Currently mutates the segment instead of replacing it. 
+     */
     public void commitAllSegs() {
         for (Segment seg : getActiveSegs()) {
             seg.setCommitted(true);
-            // DATABASE
-            //DatabaseOperations.addOrUpdateSegment(tu);
         }
     }
 

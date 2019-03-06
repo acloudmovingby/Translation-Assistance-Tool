@@ -6,7 +6,6 @@
 package DataStructures;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
@@ -82,6 +81,15 @@ public class Corpus {
             numSegs = numSegs + bf.getHiddenSegs().size();
         }
         return numSegs;
+    }
+    
+    /**
+     * Commits segment of every file in corpus. 
+     */
+    public void commitAllFiles() {
+        for (BasicFile f : getFiles()) {
+            f.commitAllSegs();
+        }
     }
     
 }

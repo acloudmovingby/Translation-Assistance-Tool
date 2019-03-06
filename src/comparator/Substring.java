@@ -5,7 +5,6 @@
  */
 package comparator;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,9 +87,8 @@ public class Substring {
     }
     
     /**
-     * Finds which characters in s2 could be part of a common substring between s1 and s2 of a minimum length.
-     * Note following conditions: a single substring in s1 could map to multiple
-     * substrings in s2. 
+     * Finds substrings of a minimum length in s2 that are also substrings in s1. This is returned as a boolean array of length s2 where true indicates it is a common substring.
+     * Note that a single substring in s1 could map to multiple substrings in s2. 
      * @param s1
      * @param s2
      * @param minLength

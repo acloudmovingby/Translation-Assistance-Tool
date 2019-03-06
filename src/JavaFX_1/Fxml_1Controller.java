@@ -135,6 +135,8 @@ public class Fxml_1Controller implements Initializable {
         
         // builds a main file from some random Thai document
         FileBuilder fileBuilder = new FileBuilder();
+        //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
+        //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
         
@@ -353,7 +355,6 @@ public class Fxml_1Controller implements Initializable {
     private void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.Z) {
             if (!zPressed.getValue()) {
-                System.out.println("z pressed");
                 
                 zPressed.set(true);
                 if (zPressed.getValue() && commandPressed.getValue()) {
@@ -362,7 +363,6 @@ public class Fxml_1Controller implements Initializable {
                 event.consume();
             }
         } else if (event.getCode() == KeyCode.COMMAND) {
-            System.out.println("command pressed");
             event.consume();
             commandPressed.set(true);
         }
@@ -371,11 +371,9 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     private void keyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.COMMAND) {
-            System.out.println("Command released");
             commandPressed.set(false);
             event.consume();
         } else if (event.getCode() == KeyCode.Z) {
-            System.out.println("z released");
             event.consume();
         }
     }
@@ -461,45 +459,6 @@ public class Fxml_1Controller implements Initializable {
 
     private void setScene(Scene scene) {
         this.scene = scene;
-
-        /*
-        commandZPressed.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean werePressed, Boolean currentlyPressed) {
-                System.out.println("changed!!");
-                if (currentlyPressed) {
-                   // state.undo();
-                } 
-            }
-        });
-        */
-
-        /*
-        this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                        @Override
-                        public void handle(KeyEvent ke) {
-                            if (ke.getCode() == KeyCode.Z) {
-                                System.out.println("z pressed");
-                                commandPressed.set(true);
-                            } else if (ke.getCode() == KeyCode.COMMAND) {
-                                System.out.println("command pressed");
-                                zPressed.set(true);
-                            }
-                        }
-                    });
-
-        this.scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                        @Override
-                        public void handle(KeyEvent ke) {
-                            if (ke.getCode() == KeyCode.COMMAND) {
-                                System.out.println("Command released");
-                                commandPressed.set(false);
-                            } else if (ke.getCode() == KeyCode.Z) {
-                                System.out.println("z released");
-                                zPressed.set(false);
-                            }
-                        }
-                    }); */
     }
 
 }

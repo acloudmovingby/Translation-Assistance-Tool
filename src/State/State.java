@@ -132,7 +132,6 @@ public class State {
      * @param selectedSeg 
      */
     public void newSelection(Segment selectedSeg) {
-        System.out.println(selectedSeg.getThai());
         this.segSelected = selectedSeg;
         MatchList newMatches = findMatch(selectedSeg);
         setMatchFile(newMatches);
@@ -209,8 +208,6 @@ public class State {
                     out.println(tu.getEnglish());
                 }
             }
-
-            System.out.println("Done");
 
         } catch (IOException e) {
 
