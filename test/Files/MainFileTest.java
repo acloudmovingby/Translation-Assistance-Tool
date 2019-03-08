@@ -309,7 +309,7 @@ public class MainFileTest {
      
     /**
      * Test of mergeSegs method, of class BasicFile.
-     */
+     *
     @Test
     public void testMergeSegs() {
         DatabaseOperations.rebootDB();
@@ -536,7 +536,7 @@ public class MainFileTest {
             }
 
         }
-    }
+    }*/
 
     /**
      * Test of changeThai method, of class BasicFile.
@@ -560,20 +560,5 @@ public class MainFileTest {
         assertEquals(newSegment, mf.getActiveSegs().get(0));
     }
     
-    /**
-     * Tests the split method, but more thoroughly than the test above. 
-     */
-    @Test
-    public void testSplit2() {
-        
-        // empty file --> nothing should happen regardless of split args
-        BasicFile f = new BasicFile();
-        
-        // non-empty file, but seg is not in file --> nothing happens
-        
-        // all possibilities where first seg is split
-        
-        
-    }
 
 }

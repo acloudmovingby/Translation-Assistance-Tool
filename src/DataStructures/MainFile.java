@@ -32,7 +32,7 @@ public class MainFile extends BasicFile {
      * @return The newly created segments. Returns null if the split fails (index out of bounds or segment doesn't actually exist in this file). 
      */
     public List<Segment> splitSeg(Segment seg, int splitIndex) {
-        // if the seg is null or is not in the list of active segs, return
+        // if the segmen is null or is not in the list of active segs, return
         // if the split index is out of bounds, return
         if (seg == null 
                 || splitIndex <= 0 
@@ -40,7 +40,7 @@ public class MainFile extends BasicFile {
             return null;
         }
         
-        // This makes sure that the selected seg is actually in the active segs list.
+        // This makes sure that the selected segment is actually in the active segs list.
         // we use == to make sure it's the exact same object (the .equals method for Segments compares the value of the fields, not identity of the object)
         // if two segs have same field values (including id) but are not the same object, this method (splitSeg) will not work correctly
         boolean isInActiveSegs = false;
@@ -60,14 +60,14 @@ public class MainFile extends BasicFile {
         // retrieves index of the segment to be split (the old segment)
         int index = getActiveSegs().indexOf(seg);
 
-        // creates first new seg and inserts
+        // creates first new segment and inserts
         SegmentBuilder sb = new SegmentBuilder(this);
         sb.setThai(firstThai);
         sb.setEnglish(seg.getEnglish());
         Segment newSeg1 = sb.createSegment();
         getActiveSegs().add(index, newSeg1);
 
-        // creates second new seg and inserts
+        // creates second new segment and inserts
         sb.setThai(secondThai);
         sb.setEnglish("");
         Segment newSeg2 = sb.createSegmentNewID();
@@ -85,27 +85,27 @@ public class MainFile extends BasicFile {
 
     /**
      * Replaces the specified segment with a new one (with new id) where its English text field has been changed as specified. This then returns the newly created segment.
-     * Note that the old seg will now be placed in the "hiddenSegs" list of this main file. IMPORTANT: if the seg does not exist in the file, then this returns null).
+     * Note that the old segment will now be placed in the "hiddenSegs" list of this main file. IMPORTANT: if the segment does not exist in the file, then this returns null).
      * @param seg
      * @param newEnglishText
-     * @return The new segment or null if seg does not exist in the activeSegs list of this file.
+     * @return The new segment or null if segment does not exist in the activeSegs list of this file.
      */
     public Segment editEnglish(Segment seg, String newEnglishText) {
         
-        // checks if seg exists
+        // checks if segment exists
         if (!getActiveSegs().contains(seg)) {
             return null;
         } 
         
-        // gets index of where seg is located
+        // gets index of where segment is located
         int index = getActiveSegs().indexOf(seg);
         SegmentBuilder sb = new SegmentBuilder(seg);
         sb.setEnglish(newEnglishText);
         Segment newSeg = sb.createSegmentNewID();
         
-        // replaces old seg with new seg
+        // replaces old segment with new seg
         getActiveSegs().set(index, newSeg);
-        // adds old seg to the "removed" list
+        // adds old segment to the "removed" list
         getHiddenSegs().add(seg);
         
         return newSeg;

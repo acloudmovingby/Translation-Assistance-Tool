@@ -16,8 +16,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * A basic file that stores a list of TMBasicEntry's, which each contain just a
- * Thai and an English field.
+ * A list of Segments, some active, some hidden.
+ * 
+ * Active Segments are what the user actually sees while translating. Hidden Segments may be committed (and thus available for match search), but are not seen by the user upon opening the file. 
  *
  * @author Chris
  */
@@ -42,7 +43,9 @@ public class BasicFile {
     }
     
     /**
-     * This constructor is used when transforming a BasicFile into a MainFile. All seg ids will be identical, but they are distinct objects in distinct lists (this is a deep copy of bf).
+     * Constructor creating a deep copy of another file. 
+     * 
+     * One use of this constructor is to transform a BasicFile into a MainFile. All segment ids will be identical, but they are distinct objects in distinct lists.
      * @param file 
      */
     public BasicFile(BasicFile file) {
@@ -66,6 +69,8 @@ public class BasicFile {
     }
 
     /**
+     * Constructor for an empty file with the specified id and name.
+     * 
      * Used when rebuilding a file from the database.
      *
      * @param fileID
@@ -81,7 +86,7 @@ public class BasicFile {
     
 
     /**
-     * Adds the segment to the end of the activeSegs list in BasicFile. Throws an IllegalArgumentException if: (1) fileID/fileName do not match this file or (2) the seg is "hidden"
+     * Adds the segment to the end of the activeSegs list in BasicFile. Throws an IllegalArgumentException if: (1) fileID/fileName do not match this file or (2) the segment is "hidden"
      * @param seg 
      */
     public void addSeg(Segment seg) {
@@ -95,68 +100,11 @@ public class BasicFile {
             getActiveSegs().add(seg);
         }
     }
-    
-    
-    
-
-    /**
-     * ************************************************************************************
-     *
-     *
-     * METHODS FOR CHANGING EXISTING SEGS - removing, inserting, merging, and
-     * splitting TUs
-     *
-     *
-     *********************************************************************************
-     */
-
-    public void mergeSegs(List<Segment> tusToMerge) {
-
-        if (tusToMerge.size() < 2) {
-            return;
-        }
-        int firstIndex = this.getActiveSegs().indexOf(tusToMerge.get(0));
-
-        // Add to hidden list
-        for (Segment tu : tusToMerge) {
-            hideSeg(tu);
-        }
-
-        // Build new TU 
-        StringBuilder thaiSB = new StringBuilder();
-        StringBuilder engSB = new StringBuilder();
-        for (Segment tu : tusToMerge) {
-            thaiSB.append(tu.getThai());
-            engSB.append(tu.getEnglish());
-        }
-        
-        SegmentBuilder sb = new SegmentBuilder(this);
-        sb.setThai(thaiSB.toString());
-        sb.setEnglish(engSB.toString());
-        Segment newSeg = sb.createSegment();
-
-        
-        int size = tusToMerge.size();
-
-        // Insert new TU
-        insertSeg(firstIndex, newSeg);
-    }
 
     public void hideSeg(Segment seg) {
         hiddenSegs.add(seg);
         activeSegs.remove(seg);
     }
-    
-    /**
-     * Adds the segment at the proper index in activeSegs and sets its rank accordingly
-     * @param index
-     * @param seg 
-     */
-    public void insertSeg(int index, Segment seg) {
-        getActiveSegs().add(index, seg);
-    }
-
- 
 
     public String getFileName() {
         return fileName;
@@ -196,7 +144,7 @@ public class BasicFile {
             return false;
         }
         
-        // First checks that the hidden segs length is the same, and if it is, checks the equalit of every seg in that list. 
+        // First checks that the hidden segs length is the same, and if it is, checks the equalit of every segment in that list. 
         // if the hidden segs list length is unequal, returns false.
         if (this.getHiddenSegs().size() == m.getHiddenSegs().size()) {
             Iterator i1 = this.getHiddenSegs().iterator();
@@ -211,7 +159,7 @@ public class BasicFile {
             return false;
         }
         
-         // Checks that the ACTIVE SEGS length is the same, and if it is, checks the equalit of every seg in that list. 
+         // Checks that the ACTIVE SEGS length is the same, and if it is, checks the equalit of every segment in that list. 
          // if the ACTIVE SEGS list length is unequal, returns false.
         if (this.getActiveSegs().size() == m.getActiveSegs().size()) {
             Iterator i1 = this.getActiveSegs().iterator();
@@ -232,9 +180,10 @@ public class BasicFile {
     @Override
     public int hashCode() {
         int hash = 3;
+        hash = 11 * hash + Objects.hashCode(getFileID());
         hash = 23 * hash + Objects.hashCode(getActiveSegs());
-        // hash = 23 * hash + this.NUM_FIELDS;
-        hash = 23 * hash + Objects.hashCode(getFileName());
+        hash = 17 * hash + Objects.hashCode(getHiddenSegs());
+        hash = 51 * hash + Objects.hashCode(getFileName());
         return hash;
     }
 
@@ -276,41 +225,11 @@ public class BasicFile {
      */
     public List<Segment> getAllSegs() {
         
-        ArrayList<Segment> ret = new ArrayList();
         Stream<Segment> streamA = getActiveSegs().stream();
         Stream<Segment> streamR = getHiddenSegs().stream();
         Stream<Segment> allSegsStream = Stream.concat(streamA, streamR);
         
         return allSegsStream.collect(Collectors.toList());
     }
-  
     
-    protected List<Segment> addSegments(List<Segment> origList, List<Segment> toAdd, int index){
-        origList.addAll(index, toAdd);
-        return origList;
-    }
-    
-    protected void split2(Segment seg, int splitIndex) {
-        
-        int segIndex = this.getActiveSegs().indexOf(seg);
-        
-        // Checking for invalid input
-        if (segIndex == -1) {
-            return;
-        } 
-        
-        if (seg == null 
-                || splitIndex <= 0 
-                || splitIndex >= seg.getThai().length()) {
-            return;
-        }
-        
-        // Make new segs that will replace old seg
-        String firstThai = seg.getThai().substring(0, splitIndex);
-        String secondThai = seg.getThai().substring(splitIndex);
-        
-        
-        
-        
-    }
 }
