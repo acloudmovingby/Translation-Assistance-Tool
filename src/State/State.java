@@ -5,6 +5,7 @@
  */
 package State;
 
+import comparator.PostingsListManager;
 import Database.DatabaseOperations;
 import DataStructures.PostingsList;
 import DataStructures.BasicFile;
@@ -13,7 +14,8 @@ import DataStructures.Corpus;
 import DataStructures.MainFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import comparator.MatchFinder;
+import comparator.MatchFinderCoreAlgorithm;
+import comparator.MatchManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,6 +46,11 @@ public class State {
     private final PostingsListManager plm;
     
     /**
+     * Handles the searching and caching of matches. 
+     */
+    private final MatchManager matchManager;
+    
+    /**
      * The file currently being translated.
      */
     private MainFile mainFile;
@@ -57,9 +64,7 @@ public class State {
     
     private final UIState uiState;
     
-    private ObservableList<MatchSegment> matchList;
-    
-    private IntegerProperty numMatches;
+    private final ObservableList<MatchSegment> matchList;
 
     /**
      * The minimum length for matching substrings shown in compare table viewer.
@@ -79,29 +84,25 @@ public class State {
         // Default minimum length for matches
         minMatchLength = 5;
         matchList = FXCollections.observableArrayList();
-        numMatches = new SimpleIntegerProperty(0);
         
         this.corpus = corpus;
+        
+        // the following code ensures that the file selected as main file is in fact in the corpus
         corpus.removeFile(mainFile);
         MainFile mf = new MainFile(mainFile);
         corpus.addFile(mf);
-        /*
-        // makes sure mainfile is actually a part of corpus
-        // if not, it adds mainFile to corpus
-        if (!corpus.contains(mainFile)) {
-            corpus.addFile(mainFile);
-        }*/
         
         setMainFile(mf);
         
         plm = new PostingsListManager(corpus);
+        matchManager = new MatchManager(this);
+        
         
         mf.equals(mainFile);
-        //setCorpus(corpus);
         compareFile = findMatch(segSelected);
         
+        
     }
-
 
     public MainFile getMainFile() {
         return mainFile;
@@ -113,10 +114,6 @@ public class State {
             segSelected =  newMainFile.getActiveSegs().get(0);
         }
         uiState.setMainFileSegs(newMainFile.getActiveSegs());
-    }
-    
-    public IntegerProperty getNumMatchesProperty() {
-        return numMatches;
     }
     
     public MatchList getMatchFile() {
@@ -147,6 +144,7 @@ public class State {
      */
     public void setMinLength(int minMatchLength) {
         this.minMatchLength = minMatchLength;
+        matchManager.minMatchLengthChanged(minMatchLength);
         setMatchFile(findMatch(segSelected));
     }
     
@@ -156,41 +154,10 @@ public class State {
     
     public PostingsList getPostingsList(int nGramLength) {
         return plm.getPostingsList(nGramLength);
-        
-        /*PostingsList pl;
-        switch (nGramLength) {
-            case 2:
-                pl = pl2;
-                break;
-            case 3:
-                pl = pl3;
-                break;
-            case 4:
-                pl = pl4;
-                break;
-            case 5:
-                pl = pl5;
-                break;
-            case 6:
-                pl = pl6;
-                break;
-            case 7:
-                pl = pl7;
-                break;
-            case 8:
-                pl = pl8;
-                break;
-            default:
-                pl = new PostingsList(nGramLength);
-                pl.addCorpus(getCorpus());
-                break;
-        }
-        return pl;
-        */
     }
     
      /**
-     * Prints the English from all committed TUs in the main file to a file. 
+     * Exports to an external .txt file all the English from all committed Segs in the main file. 
      */
     public void exportCommittedSegs() {
 
@@ -223,13 +190,7 @@ public class State {
     
     private void setMatchFile(MatchList newMatches) {
         compareFile = newMatches;
-        setMatchList(newMatches.getObservableList());
-        numMatches.set(getMatchList().size());
-    }
-    
-    private void setMatchList(ObservableList<MatchSegment> newMatchList) {
-        uiState.setMatchList(newMatchList);
-        //matchList.setAll(newMatchList);
+        uiState.setMatchList(newMatches.getMatchSegments());
     }
 
     public static boolean databaseIsReadable() {
@@ -239,31 +200,10 @@ public class State {
     public static boolean databaseIsWritable() {
         return DATABASE_IS_WRITABLE;
     }
-
-    // NOT WORKING AS ORIGINALLY DID (DOESN'T RESET MATCH LIST)
-    private void commit(Segment selectedTU) {
-        // Changes the committed status of this TU
-        if (selectedTU != null) {
-            selectedTU.setCommitted(true);
-
-            // Finds all matches with this newly committed TU
-            //OrigComparator c = new OrigComparator(getCurrentCompareString(), selectedTU, getMinMatchLength());
-            /* adds these matches to the current compareFile.
-            for (MatchSegment tu : c.getMatchFile().getObservableList()) {
-                compareFile.addEntry(tu);
-            }
-*/
-            // DATABASE
-        }
-
-    }
     
     public void commitSeg(Segment seg) {
         throw new UnsupportedOperationException("Not supported yet."); 
     }
-    
-    
-   
     
     /**
      * Finds matching segments according to default match finding algorithm
@@ -274,12 +214,12 @@ public class State {
         if (seg == null) {
             return new MatchList();
         } else {
-            return MatchFinder.basicMatch(seg, minMatchLength, this);
+            return matchManager.basicMatch(seg, this);
         }
     }
     
     private MatchList findExactMatch(String str) {
-        return MatchFinder.exactMatch(str, this);
+        return MatchFinderCoreAlgorithm.exactMatch(str, this);
     }
 
     public void search(String text) {
@@ -323,7 +263,7 @@ public class State {
             
             //adjusts Postings Lists
             PostingsListManager plManager = getPostingsListManager();
-            //plManager.removeSegment(oldSeg); // not necessary actually, because if a seg was committed, even if it is now no longer visible in the file being edited, it should still be stored as a possible match
+            //plManager.removeSegmentFromMatches(oldSeg); // not necessary actually, because if a seg was committed, even if it is now no longer visible in the file being edited, it should still be stored as a possible match
             plManager.addSegment(newSeg);
             
             return true;
@@ -378,7 +318,8 @@ public class State {
         } else if (hiddenSegs.contains(seg)) {
             // removes from hidden and from plm
             hiddenSegs.remove(seg);
-            getPostingsListManager().removeSegment(seg);
+            //matchManager.removeSegmentFromMatches(seg);
+            //getPostingsListManager().removeSegmentFromMatches(seg);
             return true;
         } else {
             return false;

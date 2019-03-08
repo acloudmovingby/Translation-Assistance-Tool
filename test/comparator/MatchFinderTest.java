@@ -46,7 +46,7 @@ public class MatchFinderTest {
     }
 
     /**
-     * Test of basicMatch method, of class MatchFinder.
+     * Test of basicMatch method, of class MatchFinderCoreAlgorithm.
      */
     @Test
     public void testBasicMatch() {
@@ -75,16 +75,16 @@ public class MatchFinderTest {
         Segment mainFileSeg = sb.createSegment();
         bf2.addSeg(mainFileSeg);
         
-        // We run mainFileSeg through MatchFinder, 
+        // We run mainFileSeg through MatchFinderCoreAlgorithm, 
         // minMatchLength is 3
         // it should return 1 matching segment (i.e. corpusSeg1)
-        MatchList mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
-        MatchSegment ms = (mList.getObservableList()).get(0);
+        MatchList mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, 3, state);
+        MatchSegment ms = (mList.getMatchSegments()).get(0);
         assertEquals("test", ms.getThai());
       
         // give our corpus file another segment: corpusSeg2
         // corpusSeg2 has Thai text of "aaeestcc"
-        // running MatchFinder again should now return both corpusSegs
+        // running MatchFinderCoreAlgorithm again should now return both corpusSegs
         sb = new SegmentBuilder(bf1);
         sb.setThai("aaestcc");
         sb.setCommitted(true);
@@ -92,10 +92,10 @@ public class MatchFinderTest {
         bf1.addSeg(corpusSeg2);
         state = new State(bf1, corpus);
         
-        mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
-        assertEquals(2, mList.getObservableList().size());
-        assertEquals("test", mList.getObservableList().get(0).getThai());
-        assertEquals("aaestcc", mList.getObservableList().get(1).getThai());
+        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, 3, state);
+        assertEquals(2, mList.getMatchSegments().size());
+        assertEquals("test", mList.getMatchSegments().get(0).getThai());
+        assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());
         
         // test that seg3 isn't returned
         sb.setThai("tepstflip");
@@ -103,15 +103,15 @@ public class MatchFinderTest {
         Segment seg3 = sb.createSegmentNewID();
         bf1.addSeg(seg3);
         state = new State(bf1, corpus);
-        mList = MatchFinder.basicMatch(mainFileSeg, 3, state);
-        assertEquals(2, mList.getObservableList().size());
-        assertEquals("test", mList.getObservableList().get(0).getThai());
-        assertEquals("aaestcc", mList.getObservableList().get(1).getThai());
+        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, 3, state);
+        assertEquals(2, mList.getMatchSegments().size());
+        assertEquals("test", mList.getMatchSegments().get(0).getThai());
+        assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());
     }
     
 
     /**
-     * Test of exactMatch method, of class MatchFinder.
+     * Test of exactMatch method, of class MatchFinderCoreAlgorithm.
      */
     @Test
     public void testExactMatch() {
@@ -121,13 +121,13 @@ public class MatchFinderTest {
     }
 
     /**
-     * Test of complexMatch method, of class MatchFinder.
+     * Test of complexMatch method, of class MatchFinderCoreAlgorithm.
      */
     @Test
     public void testComplexMatch() {
         System.out.println("complexMatch");
         Segment seg = null;
-        MatchFinder instance = new MatchFinder();
+        MatchFinderCoreAlgorithm instance = new MatchFinderCoreAlgorithm();
         MatchList expResult = null;
         MatchList result = instance.complexMatch(seg);
         assertEquals(expResult, result);

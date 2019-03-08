@@ -77,7 +77,7 @@ public class TestObjectBuilder {
     }
     
     /**
-     * Returns a file with one segment in it. The segment is not committed and hidden. 
+     * Returns a file with one segment in it. The segment is not committed and not hidden. 
      * @return 
      */
     public static BasicFile getOneSegFile() {
@@ -90,7 +90,7 @@ public class TestObjectBuilder {
     }
     
     /**
-     * Makes a corpus composed of 3 files (like getTestCorpus), but each file is an "identical" file where all 5 segments are identical. See gettIdenticalFile(). NO SEGMENTS ARE COMMITTED.
+     * Makes a corpus composed of 3 files (like getTestCorpus), but each file is an "identical" file where all 5 segments are identical. See gettIdenticalFile(). No segments are committed.
      * @return 
      */
     public static Corpus getIdenticalCorpus() {

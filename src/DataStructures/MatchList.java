@@ -14,35 +14,24 @@ import javafx.collections.ObservableList;
 
 public class MatchList {
     
-    ObservableList<MatchSegment> observableList;
-    //private final int NUM_FIELDS;
+    private final ObservableList<MatchSegment> matchSegList;
     private String fileName;
     
     public MatchList() {
-        observableList = FXCollections.observableArrayList();
+        matchSegList = FXCollections.observableArrayList();
         fileName = "default";
     }
     
-    public void addEntry(MatchSegment t) {
-       observableList.add(t);
+    /**
+     * Retrieves the MatchSegments stored in this MatchList.
+     * @return 
+     */
+    public ObservableList<MatchSegment> getMatchSegments() {
+        return matchSegList;
     }
     
-    /*
-    public void addEntry(String thai, String english, String fileName, ArrayList<int[]> matchIntervals) {
-        MatchSegment a = new MatchSegment();
-        
-        a.setThai(thai);
-        a.setEnglish(english);
-        for (int[] ia : matchIntervals) {
-            a.addMatchInterval(ia[0], ia[1]);
-        }
-        a.setFileName("POLITICS");
-        ts.add(a.getCopy());
-    }*/
-    
-    public ArrayList<MatchSegment> getTUs() {
-        sort();
-        return (new ArrayList(observableList));
+    public void addEntry(MatchSegment t) {
+       matchSegList.add(t);
     }
    
     public String getFileName() {
@@ -60,7 +49,7 @@ public class MatchList {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (MatchSegment tu : observableList) {
+        for (MatchSegment tu : matchSegList) {
             sb.append(tu.toString());
             sb.append("\n\t");
         }
@@ -81,13 +70,13 @@ public class MatchList {
         
          // tests equality of all TMs within files
         boolean areTMsEqual = true;
-        if (m.getTUs().size() != this.getTUs().size()) {
+        if (m.getMatchSegments().size() != this.getMatchSegments().size()) {
             return false;
         } else {
             sort();
             m.sort();
-            Iterator i1 = this.getTUs().iterator();
-            Iterator i2 = m.getTUs().iterator();
+            Iterator i1 = this.getMatchSegments().iterator();
+            Iterator i2 = m.getMatchSegments().iterator();
             while (i1.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
                     areTMsEqual = false;
@@ -103,22 +92,20 @@ public class MatchList {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.observableList);
+        hash = 67 * hash + Objects.hashCode(this.matchSegList);
         hash = 67 * hash + Objects.hashCode(this.fileName);
         return hash;
     }
 
     private void sort() {
-        observableList.sort(null);
+        matchSegList.sort(null);
     }
 
-    public ObservableList<MatchSegment> getObservableList() {
-        return observableList;
+    public void removeEntry(MatchSegment toRemove) {
+        matchSegList.remove(toRemove);
     }
 
-    public Object[][] toArray() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 
     
     

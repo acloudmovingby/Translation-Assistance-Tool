@@ -8,7 +8,7 @@ package DataStructures;
 import Database.DatabaseOperations;
 
 /**
- * Helps build Segments (which are mostly immutable). The Segment properties can be set optionally, but the default values are as follows: id=random integer; fileID=0; fileName = "", Thai = "", English = "", isCommitted=false, isRemoved=false, rank=0
+ * Helps build Segments (which are immutable). The Segment properties can be set optionally, but the default values are as follows: id=random integer; fileID=0; fileName = "", Thai = "", English = "", isCommitted=false
  * @author Chris
  */
 public class SegmentBuilder {

@@ -252,7 +252,13 @@ public class SubstringTest {
         expResult = new boolean[] {true, true, true, true, true, true, true};
         assertEquals(Substring.arrayConverter(expResult), 
                 Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
-       
+        
+        s1 = "ababaabb";
+        s2 = "bbaabbcababab";
+        minLength = 2;
+        expResult = new boolean[] {true, true, true, true, true, true, false, true, true, true, true, true, true};
+         assertEquals(Substring.arrayConverter(expResult), 
+                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
         
         /*
         This test represents possible problems where behavior is currently not defined: complex overlapping substrings

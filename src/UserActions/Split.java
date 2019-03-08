@@ -7,9 +7,7 @@ package UserActions;
 
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
-import State.PostingsListManager;
 import State.State;
-import java.util.List;
 import javafx.collections.ObservableList;
 
 /**

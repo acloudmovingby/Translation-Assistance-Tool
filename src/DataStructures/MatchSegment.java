@@ -24,74 +24,24 @@ import javafx.scene.text.TextFlow;
  */
 public class MatchSegment implements Comparable<MatchSegment> {
 
-    private ArrayList<int[]> matchIntervals;
+    private final Segment seg;
     private boolean[] matches;
-    private StringProperty fileName;
-    private StringProperty thaiProperty;
-    private StringProperty englishProperty;
-    boolean isCommitted;
-    private BooleanProperty isCommittedProperty;
+    private final StringProperty fileName;
+    private final StringProperty thaiProperty;
+    private final StringProperty englishProperty;
+    private final BooleanProperty isCommittedProperty;
     int matchSize;
     int longestMatchLength;
     // The Thai text represented as a TextFlow object
     TextFlow tFlow;
 
-    public MatchSegment() {
-        isCommitted = true;
+    public MatchSegment(Segment s) {
+        this.seg = s;
         isCommittedProperty = new SimpleBooleanProperty(true);
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
         fileName = new SimpleStringProperty();
-        
     }
-    
-    
-    /**
-     * Inclusive match interval. For example, if the string is "abcd" and the match is "bc" then startIndex=1, endIndex=2.
-     * @param startIndex Beginning of match.
-     * @param endIndex End of match (inclusive).
-     */
-    public void addMatchInterval(int startIndex, int endIndex) {
-        if (startIndex > endIndex) {
-            throw new IllegalArgumentException("first number must be less than or equal to second");
-        }
-        
-        if (startIndex<0 || startIndex>=getThai().length() || endIndex<1 || endIndex>=getThai().length()) {
-            throw new IllegalArgumentException("Impossible match interval");
-        }
-        
-        //records over which characters there are matches
-        matchIntervals.add(new int[] {startIndex, endIndex});
-        for (int i=startIndex; i<=endIndex; i++) {
-            matches[i] = true;
-        }
-        
-        setMatchSize();
-        setLongestMatchLength();
-
-    }
-
-    public ArrayList<int[]> getMatchIntervals() {
-        return matchIntervals;
-    }
-    
-    /**
-     * The intervals representing matches in string Thai are represented here.
-     * @return 
-     */
-    public int[][] getMatchIntervalsArray() {
-        int[][] ret = new int[matchIntervals.size()][];
-        for (int i=0; i<matchIntervals.size(); i++) {
-            ret[i] = new int[matchIntervals.get(i).length];
-            System.arraycopy(matchIntervals.get(i), 0, ret[i], 0, matchIntervals.get(i).length);
-        }
-        return ret;
-    }
-    
-    final void setMatchIntervals(ArrayList<int[]> matchIntervals) {
-        this.matchIntervals = matchIntervals;
-    }
-    
 
     public String getFileName() {
         return fileName.getValue();
@@ -133,17 +83,6 @@ public class MatchSegment implements Comparable<MatchSegment> {
         this.matches = matches;
     }
     
-    // not necessary
-    private void setMatchSize() {
-        matchSize = 0;
-        for (boolean b : matches) {
-            if (b == true) {
-                matchSize++;
-            }
-        }
-        
-    }
-    
     public int getMatchSize() {
         matchSize = 0;
         for (boolean b : matches) {
@@ -182,22 +121,6 @@ public class MatchSegment implements Comparable<MatchSegment> {
         boolean cond4 = m.getMatchSize() == getMatchSize();
         
         return cond1 && cond2 && cond3 && cond4;
-    }
-
-    private boolean deepCompare(ArrayList<int[]> list1, ArrayList<int[]> list2) {
-        
-        if (list1.size() != list2.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < list1.size(); i++) {
-            if (!Arrays.equals(list1.get(i), list2.get(i))) {
-                
-                return false;
-            }
-
-        }
-        return true;
     }
 
     @Override
@@ -246,11 +169,10 @@ public class MatchSegment implements Comparable<MatchSegment> {
 
     public void setCommitted(boolean b) {
          isCommittedProperty.set(b);
-         isCommitted = b;
     }
 
     public boolean isCommitted() {
-        return isCommitted;
+        return isCommittedProperty.get();
     }
     
     public BooleanProperty isCommittedProperty() {
@@ -338,6 +260,15 @@ public class MatchSegment implements Comparable<MatchSegment> {
             currentColor = currentColor == matchColor ? nonMatchColor : matchColor;
         }
         return textFlow;
+    }
+
+    /**
+     * Gets the segment that this MatchSegment represents (i.e. where in the corpus the match was found).
+     * 
+     * @return 
+     */
+    public Segment getSegment() {
+        return seg;
     }
 
 }

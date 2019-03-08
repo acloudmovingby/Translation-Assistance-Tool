@@ -8,7 +8,7 @@ package UserActions;
 import State.State;
 
 /**
- *
+ * Represents a user action that directly affects segments in the main file. They are sent by the {@link Controller} to the Dispatcher.
  * @author Chris
  */
 public interface Action {
