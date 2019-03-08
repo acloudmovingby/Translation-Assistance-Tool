@@ -5,7 +5,6 @@
  */
 package DataStructures;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 import javafx.collections.FXCollections;

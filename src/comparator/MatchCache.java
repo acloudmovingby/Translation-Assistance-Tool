@@ -62,7 +62,6 @@ public class MatchCache {
         if (seg.isCommitted()) {
             for (Entry<Segment, MatchList> e : matchCache.entrySet()) {
                 Segment segInMainFile = e.getKey();
-                MatchList matchList = e.getValue();
                 MatchFinderCoreAlgorithm.getSingleSegmentMatch(segInMainFile, seg, currentMinMatchLength);
             }
         }

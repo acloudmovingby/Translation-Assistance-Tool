@@ -5,12 +5,10 @@
  */
 package UserActions;
 
-import DataStructures.MainFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javafx.collections.ObservableList;
 
@@ -55,7 +53,8 @@ public class Merge implements Action {
 
             // remove the old segments
             for (Segment s : segsToMerge) {
-                state.removeSeg(s);
+                state.removeSeg2(s);
+                state.addToHidden(s);
             }
         }
 

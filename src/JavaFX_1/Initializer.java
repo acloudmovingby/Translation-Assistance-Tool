@@ -7,8 +7,6 @@ package JavaFX_1;
 
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
-import DataStructures.FileBuilder;
-import Database.DatabaseOperations;
 import State.DatabaseManager;
 import State.Dispatcher;
 import State.State;

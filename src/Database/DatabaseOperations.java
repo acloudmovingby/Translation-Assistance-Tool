@@ -10,7 +10,6 @@ import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

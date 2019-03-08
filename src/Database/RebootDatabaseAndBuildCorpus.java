@@ -6,7 +6,6 @@
 package Database;
 
 import DataStructures.BasicFile;
-import DataStructures.FileBuilder;
 import State.State;
 import ParseThaiLaw.ThaiLawParser;
 

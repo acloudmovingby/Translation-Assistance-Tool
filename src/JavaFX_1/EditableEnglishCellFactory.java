@@ -5,7 +5,6 @@
  */
 package JavaFX_1;
 
-import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import java.text.Format;
 import javafx.geometry.Pos;

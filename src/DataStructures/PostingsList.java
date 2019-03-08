@@ -5,9 +5,6 @@
  */
 package DataStructures;
 
-import DataStructures.BasicFile;
-import DataStructures.Corpus;
-import DataStructures.Segment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

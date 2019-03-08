@@ -21,9 +21,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
@@ -64,7 +61,6 @@ public class State {
     
     private final UIState uiState;
     
-    private final ObservableList<MatchSegment> matchList;
 
     /**
      * The minimum length for matching substrings shown in compare table viewer.
@@ -83,7 +79,6 @@ public class State {
         
         // Default minimum length for matches
         minMatchLength = 5;
-        matchList = FXCollections.observableArrayList();
         
         this.corpus = corpus;
         

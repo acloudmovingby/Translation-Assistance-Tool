@@ -6,7 +6,6 @@
 package JavaFX_1;
 
 import DataStructures.MatchSegment;
-import DataStructures.Segment;
 import java.text.Format;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
@@ -71,7 +70,7 @@ public class BasicCellFactory
                     setText(null);
                     setGraphic(null);
                 } else { 
-                    text = new Text(item.toString());
+                    text = new Text(item);
                     text.setFont(font);
                     text.wrappingWidthProperty().bind(p.widthProperty().subtract(5));
                     setGraphic(text);

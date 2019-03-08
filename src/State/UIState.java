@@ -19,9 +19,9 @@ import javafx.scene.text.Font;
  */
 public class UIState {
 
-    ObservableList<Segment> mainFileSegs;
-    ObservableList<MatchSegment> matchList;
-    IntegerProperty numMatches;
+    private ObservableList<Segment> mainFileSegs;
+    private final ObservableList<MatchSegment> matchList;
+    private final IntegerProperty numMatches;
     private static final Font DEFAULT_THAI_FONT = Font.font("Arial");
     private static final Font DEFAULT_ENGLISH_FONT = Font.font("Arial");
     
@@ -52,7 +52,7 @@ public class UIState {
         return matchList;
     }
 
-    void setMatchList(ObservableList<MatchSegment> newMatchList) {
+    protected void setMatchList(ObservableList<MatchSegment> newMatchList) {
         matchList.setAll(newMatchList);
         setNumMatches(getMatchList().size());
     }

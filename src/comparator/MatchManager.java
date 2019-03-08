@@ -8,24 +8,12 @@ package comparator;
 import DataStructures.MatchList;
 import DataStructures.Segment;
 import State.State;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 /**
  * Caches matches found. Because MatchLists are retrieved whenever the user selects a new cell and because finding matches is quite expensive, they should be cached (also because JavaFX can change selection quite unexpectedly at times). When the minimum match length is change, however, the cache is cleared. 
  * @author Chris
  */
 public class MatchManager {
-    
-    /*
-    TO DO:
-    (1) put minMatchLength in UIState
-    (2) make so this is passed state, not initialized with it
-    (3) put a MatchManager object in State initializer
-    (4) make sure when minMatchLength is caned, tis is cae
-    (5) look at PLM and make sure it's same as this for updating
-    (6) make call methods like PLM, insert (or combine into one tin)
-    */
     
     private final MatchCache cache;
     

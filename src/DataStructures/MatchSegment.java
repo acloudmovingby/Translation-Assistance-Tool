@@ -7,7 +7,6 @@ package DataStructures;
 
 import State.UIState;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
