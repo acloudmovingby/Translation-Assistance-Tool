@@ -334,20 +334,9 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     private void commit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
-        ObservableList<Segment> copyOfSelectedItems = FXCollections.observableArrayList();
-        //TUEntryBasic selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (selectedItems != null) {
             
             dispatcher.acceptAction(new Commit(selectedItems));
-            /*
-            selectedItems.forEach((s) -> {
-                copyOfSelectedItems.add(Segment.getDeepCopy(s));
-            });
-            
-            copyOfSelectedItems.forEach((s) -> {
-                dispatcher.acceptAction(new Commit(s));
-            });
-            */
         }
     }
 

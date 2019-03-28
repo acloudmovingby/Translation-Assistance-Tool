@@ -243,8 +243,9 @@ public class TestObjectBuilder {
         
         return new State(mf, c);
     }
-    /*
+    /**
     * State composed of the corpus from getTestCorpus() and a main file from getTestFile(). The mainFile also has 3 segs added to the hidden segs list. All segs (both in main file and in corpus) are committed.
+     * @return 
     */
     public static State getCommittedComplexState() {
         BasicFile mainFile = getTestFile();

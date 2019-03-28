@@ -31,13 +31,7 @@ public class MatchManager {
      * @return 
      */
     public MatchList basicMatch(Segment seg, State state) {
-        // If this matchlist has been cached, it returns the cached value. Otherwise, it computes the matchlist and adds to the cache.
-        MatchList m = cache.getCachedMatchList(seg);
-        if (m == null) {
-            m = MatchFinderCoreAlgorithm.basicMatch(seg, state.getMinMatchLength(), state);
-            cache.cacheMatchList(seg, m);
-        }
-        return m;
+        return cache.getMatchList(seg, state);
     }
     
     /**
@@ -45,23 +39,22 @@ public class MatchManager {
      */
     public void minMatchLengthChanged(int minMatchLength) {
         cache.minMatchLengthChanged(minMatchLength);
-        
     }
     
     /**
      * This ensures that when a segment is added to the state that, if it is committed, it will show up in future match searches. 
      */
     public void includeSegmentInMatches(Segment seg) {
-        cache.addSegment(seg);
         plm.addSegment(seg);
+        cache.addSegment(seg);
     }
     
     /**
      * Ensures that when a segment is removed from the state that, if it was committed, will no longer show up in match searches.
      */
     public void removeSegmentFromMatches(Segment seg) {
-        cache.removeSegment(seg);        
         plm.removeSegment(seg);
+        cache.removeSegment(seg);        
     }
     
 }

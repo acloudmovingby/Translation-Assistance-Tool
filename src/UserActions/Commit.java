@@ -37,15 +37,12 @@ public class Commit implements Action {
 
         for (Segment seg : segList) {
             // if the seg is already committed, then do nothing. 
-            if (seg.isCommitted()) {
-                return;
-            } else {
+            if (!seg.isCommitted()) {
                 SegmentBuilder sb = new SegmentBuilder(seg);
                 sb.setCommitted(true);
                 state.replaceSeg(seg, sb.createSegmentNewID());
             }
         }
-
     }
 
 }

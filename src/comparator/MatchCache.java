@@ -8,15 +8,16 @@ package comparator;
 import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
+import State.State;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 /**
  * Caches MatchLists so they don't have to be recomputed.
  *
- * Changes to the main file during program runtime may affect the matches in the
- * cached MatchLists (which are expensive to recompute). These changes might
- * include removing segments or committing/uncommitting them. Thus there are
+ * Finding the matches is expensive, hence why they are cached here. In addition, changes to the main file during program runtime may affect the matches in the
+ * cached MatchLists (which are expensive to recompute entirely). These changes might
+ * include removing segments or committing/uncommitting them from the main file. Thus there are
  * methods provided to add or remove individual segments from the matchlists
  * cached here so the whole corpus does not have to be re-searched.
  *
@@ -37,21 +38,6 @@ public class MatchCache {
     }
 
     /**
-     * Retrieves the cached MatchList for the specified Segment or null if none
-     * is cached.
-     *
-     * @param seg
-     * @return
-     */
-    protected MatchList getCachedMatchList(Segment seg) {
-        return matchCache.get(seg);
-    }
-
-    protected void cacheMatchList(Segment seg, MatchList m) {
-        matchCache.put(seg, m);
-    }
-
-    /**
      * If the given segment matches any segments in the main file (whose matchlists have been cached), it adds this segment as well to those matchlists.
      * 
      * If the segment is not committed, no changes are made. 
@@ -59,6 +45,19 @@ public class MatchCache {
      * @param seg 
      */
     protected void addSegment(Segment seg) {
+        
+        // have some previously cached segment
+        // add null
+        // add a segment that is empty
+        // add a segment that has no overlap with the cached seg (but same min length)
+        // add a segment that has an overlap with it
+        // double add segments that match (ensure matchlist contains, not necessarily in any specific order)
+        
+        /*
+        Other to do:
+            - verify how I do the minMatchLength is involved in this
+            - 
+        */
         if (seg.isCommitted()) {
             for (Entry<Segment, MatchList> e : matchCache.entrySet()) {
                 Segment segInMainFile = e.getKey();
@@ -89,9 +88,18 @@ public class MatchCache {
                 if (toRemove != null) {
                     currentMatchList.removeEntry(toRemove);
                 }
-                //MatchFinderCoreAlgorithm.getSingleSegmentMatch(seg, seg, 0)
             }
         } 
+    }
+
+    protected MatchList getMatchList(Segment seg, State state) {
+        MatchList m = matchCache.get(seg);
+        if (m == null) {
+            m = MatchFinderCoreAlgorithm.basicMatch(seg, state);
+            matchCache.put(seg, m);
+        }
+        
+        return m;
     }
 
 }

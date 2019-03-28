@@ -78,7 +78,8 @@ public class MatchFinderTest {
         // We run mainFileSeg through MatchFinderCoreAlgorithm, 
         // minMatchLength is 3
         // it should return 1 matching segment (i.e. corpusSeg1)
-        MatchList mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, 3, state);
+        state.setMinLength(3);
+        MatchList mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state);
         MatchSegment ms = (mList.getMatchSegments()).get(0);
         assertEquals("test", ms.getThai());
       
@@ -92,7 +93,8 @@ public class MatchFinderTest {
         bf1.addSeg(corpusSeg2);
         state = new State(bf1, corpus);
         
-        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, 3, state);
+        state.setMinLength(3);
+        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state);
         assertEquals(2, mList.getMatchSegments().size());
         assertEquals("test", mList.getMatchSegments().get(0).getThai());
         assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());
@@ -103,7 +105,8 @@ public class MatchFinderTest {
         Segment seg3 = sb.createSegmentNewID();
         bf1.addSeg(seg3);
         state = new State(bf1, corpus);
-        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, 3, state);
+        state.setMinLength(3);
+        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state);
         assertEquals(2, mList.getMatchSegments().size());
         assertEquals("test", mList.getMatchSegments().get(0).getThai());
         assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());

@@ -65,7 +65,6 @@ public class BasicFile {
             Segment segCopy = sb.createSegment();
             hiddenSegs.add(segCopy);
         } 
-        
     }
 
     /**

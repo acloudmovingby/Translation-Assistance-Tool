@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package DataStructures;
 
 import java.util.Iterator;
@@ -10,7 +5,12 @@ import java.util.Objects;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-
+/**
+ * Represents all the matches in the corpus for a given Segment. 
+ * 
+ * It stores these matches as a list of MatchSegments, which store additional information in addition to Segment, such as the number of characters matching.
+ * @author Chris
+ */
 public class MatchList {
     
     private final ObservableList<MatchSegment> matchSegList;
