@@ -9,6 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.MatchList;
 import DataStructures.Corpus;
 import DataStructures.MatchSegment;
+import DataStructures.PostingsList;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;
@@ -79,7 +80,9 @@ public class MatchFinderTest {
         // minMatchLength is 3
         // it should return 1 matching segment (i.e. corpusSeg1)
         state.setMinLength(3);
-        MatchList mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state);
+        PostingsList pl = state.getPostingsList(
+                (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
+        MatchList mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
         MatchSegment ms = (mList.getMatchSegments()).get(0);
         assertEquals("test", ms.getThai());
       
@@ -94,7 +97,9 @@ public class MatchFinderTest {
         state = new State(bf1, corpus);
         
         state.setMinLength(3);
-        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state);
+        pl = state.getPostingsList(
+                (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
+        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
         assertEquals(2, mList.getMatchSegments().size());
         assertEquals("test", mList.getMatchSegments().get(0).getThai());
         assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());
@@ -106,7 +111,9 @@ public class MatchFinderTest {
         bf1.addSeg(seg3);
         state = new State(bf1, corpus);
         state.setMinLength(3);
-        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state);
+        pl = state.getPostingsList(
+                (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
+        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
         assertEquals(2, mList.getMatchSegments().size());
         assertEquals("test", mList.getMatchSegments().get(0).getThai());
         assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());

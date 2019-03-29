@@ -33,11 +33,9 @@ public class MatchFinderCoreAlgorithm {
      * @param state The state whose corpus you are searching for a match.
      * @return A MatchList that contain MatchSegments indicating where in the Segments are common substrings.
      */
-    public static MatchList basicMatch(Segment source, State state) {
-        int minMatchLength = state.getMinMatchLength();
-        // if a min matchLength is greater than 8, it simply looks at ngrams of length 8
-        PostingsList pl = state.getPostingsList(
-                (minMatchLength<=8 ? minMatchLength : 8));
+    public static MatchList basicMatch(Segment source, int minMatchLength, PostingsList pl) {
+       
+        
 
         MatchList ml = new MatchList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();

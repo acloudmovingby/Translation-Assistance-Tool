@@ -13,8 +13,9 @@ import java.util.List;
 
 /**
  * Manages the postings lists that store the corpus as ngrams of various length.
+ * 
  * This object makes it easier for other parts of the program to retrieve or
- * update these postingslists as neede.
+ * update these postingslists as needed.
  *
  * @author Chris
  */

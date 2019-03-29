@@ -6,6 +6,7 @@
 package comparator;
 
 import DataStructures.MatchList;
+import DataStructures.PostingsList;
 import DataStructures.Segment;
 import State.State;
 
@@ -31,14 +32,22 @@ public class MatchManager {
      * @return 
      */
     public MatchList basicMatch(Segment seg, State state) {
-        return cache.getMatchList(seg, state);
+        MatchList m = cache.getMatchList(seg, state);
+        if (m == null) {
+            // if a min matchLength is greater than 8, it simply looks at ngrams of length 8
+            PostingsList pl = state.getPostingsList(
+                (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
+            m = MatchFinderCoreAlgorithm.basicMatch(seg, state.getMinMatchLength(), pl);
+            cache.addMatchList(seg, m);
+        }
+        return m;
     }
     
     /**
      * Clears the match cache (because the minimum match length has changed).
      */
-    public void minMatchLengthChanged(int minMatchLength) {
-        cache.minMatchLengthChanged(minMatchLength);
+    public void minMatchLengthChanged(int newMinLength) {
+        cache.minMatchLengthChanged(newMinLength);
     }
     
     /**

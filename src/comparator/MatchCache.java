@@ -38,7 +38,7 @@ public class MatchCache {
     }
 
     /**
-     * If the given segment matches any segments in the main file (whose matchlists have been cached), it adds this segment as well to those matchlists.
+     * If the given segment matches any segments in the main file (whose matchlists have been cached), it then adds this segment to those matchlists.
      * 
      * If the segment is not committed, no changes are made. 
      * 
@@ -92,14 +92,29 @@ public class MatchCache {
         } 
     }
 
+    /**
+     * Retrieves the MatchList for a given source segment from the main file or null if no MatchList was cached.
+     * @param seg
+     * @param state
+     * @return MatchList or null if no cached list.
+     */
     protected MatchList getMatchList(Segment seg, State state) {
         MatchList m = matchCache.get(seg);
-        if (m == null) {
-            m = MatchFinderCoreAlgorithm.basicMatch(seg, state);
-            matchCache.put(seg, m);
-        }
+        
         
         return m;
+    }
+    
+    /**
+     * Stores the MatchList for the given seg in the cache.
+     * 
+     * If the seg already is present in the cache, then the old MatchList is replaced by the new one (m).
+     * 
+     * @param seg A source segment (from the main file).
+     * @param m The MatchList representing the matches associated with seg.
+     */
+    protected void addMatchList(Segment seg, MatchList m) {
+        matchCache.put(seg, m);
     }
 
 }
