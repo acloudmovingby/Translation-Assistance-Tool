@@ -133,7 +133,6 @@ public class State {
      */
     public void setMinLength(int minMatchLength) {
         this.minMatchLength = minMatchLength;
-        matchManager.minMatchLengthChanged(minMatchLength);
         setMatchFile(findMatch(segSelected));
     }
     
@@ -227,7 +226,11 @@ public class State {
         getMainFile().splitSeg(seg, index);
     }
 
-    public PostingsListManager getPostingsListManager() {
+    /**
+     * Required by StateCopier class for testing purpose only.
+     * @return 
+     */
+    protected PostingsListManager getPostingsListManager() {
         return matchManager.getPLM();
     }
 
@@ -251,9 +254,7 @@ public class State {
             getMainFile().getHiddenSegs().add(oldSeg);
             
             //adjusts Postings Lists
-            PostingsListManager plManager = getPostingsListManager();
-            //plManager.removeSegmentFromMatches(oldSeg); // not necessary actually, because if a seg was committed, even if it is now no longer visible in the file being edited, it should still be stored as a possible match
-            plManager.addSegment(newSeg);
+            matchManager.includeSegmentInMatches(newSeg);
             
             return true;
         }
@@ -285,7 +286,7 @@ public class State {
      */
     public void addSeg(int insertIndex, Segment seg) {
         getMainFile().getActiveSegs().add(insertIndex, seg);
-        getPostingsListManager().addSegment(seg);
+        matchManager.includeSegmentInMatches(seg);
     }
 
    
@@ -302,7 +303,7 @@ public class State {
         if (activeSegs.contains(seg)) {
             // removes from active and from plm
             activeSegs.remove(seg);
-            getPostingsListManager().removeSegment(seg);
+            matchManager.removeSegmentFromMatches(seg);
             return true;
         } else if (hiddenSegs.contains(seg)) {
             // removes from hidden and from plm
@@ -329,7 +330,7 @@ public class State {
         } else {
             if (! hiddenSegs.contains(seg)) {
                 hiddenSegs.add(seg);
-                getPostingsListManager().addSegment(seg);
+                matchManager.includeSegmentInMatches(seg);
             }
         }
     }

@@ -85,8 +85,8 @@ public class EditEnglishTest {
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         
         // check that PostingsList hasn't changed (the old seg is still stored, but the new one is not, because it reverts to uncommitted).
-        assertEquals(3, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("th1").size());
-        assertEquals(0, d.getState().getPostingsListManager().getPostingsList(3).getMatchingID("new").size());
+        assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size());
+        assertEquals(0, d.getState().getPostingsList(3).getMatchingID("new").size());
         
         
     }

@@ -11,6 +11,7 @@ import DataStructures.Segment;
 import State.State;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * Caches MatchLists so they don't have to be recomputed.
@@ -26,6 +27,7 @@ import java.util.Map.Entry;
 public class MatchCache {
 
     private final HashMap<Segment, MatchList> matchCache;
+    
     private int currentMinMatchLength;
 
     protected MatchCache() {
@@ -98,10 +100,10 @@ public class MatchCache {
      * @param seg
      * @return MatchList or null if no cached list.
      */
-    protected MatchList getMatchList(Segment seg) {
+    protected Optional<MatchList> getMatchList(Segment seg) {
         MatchList m = matchCache.get(seg);
         
-        return m;
+        return Optional.ofNullable(m);
     }
     
     /**
