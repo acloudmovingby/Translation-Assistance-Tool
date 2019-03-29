@@ -31,13 +31,13 @@ public class MatchManager {
      * @param state
      * @return 
      */
-    public MatchList basicMatch(Segment seg, State state) {
-        MatchList m = cache.getMatchList(seg, state);
+    public MatchList basicMatch(Segment seg, int minMatchLength) {
+        MatchList m = cache.getMatchList(seg);
         if (m == null) {
             // if a min matchLength is greater than 8, it simply looks at ngrams of length 8
-            PostingsList pl = state.getPostingsList(
-                (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
-            m = MatchFinderCoreAlgorithm.basicMatch(seg, state.getMinMatchLength(), pl);
+            PostingsList pl = plm.getPostingsList(
+                (minMatchLength<=8 ? minMatchLength : 8));
+            m = MatchFinderCoreAlgorithm.basicMatch(seg, minMatchLength, pl);
             cache.addMatchList(seg, m);
         }
         return m;
@@ -64,6 +64,10 @@ public class MatchManager {
     public void removeSegmentFromMatches(Segment seg) {
         plm.removeSegment(seg);
         cache.removeSegment(seg);        
+    }
+
+    public PostingsListManager getPLM() {
+        return plm;
     }
     
 }

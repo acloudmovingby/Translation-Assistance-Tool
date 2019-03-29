@@ -56,7 +56,7 @@ public class MatchCacheTest {
         }
         
         System.out.println("hey");
-        System.out.println(mCache.getMatchList(committedState.getMainFile().getActiveSegs().get(0), committedState));
+        System.out.println(mCache.getMatchList(committedState.getMainFile().getActiveSegs().get(0)));
         
     }
     

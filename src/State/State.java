@@ -36,11 +36,6 @@ public class State {
     private static final boolean DATABASE_IS_WRITABLE = true;
     private static final boolean REBOOT_DATABASE = false;
     
-
-    /**
-     * The object that handles the making of ngrams for faster search.
-     */
-    private final PostingsListManager plm;
     
     /**
      * Handles the searching and caching of matches. 
@@ -89,7 +84,6 @@ public class State {
         
         setMainFile(mf);
         
-        plm = new PostingsListManager(corpus);
         matchManager = new MatchManager(this);
         
         
@@ -148,7 +142,7 @@ public class State {
     }
     
     public PostingsList getPostingsList(int nGramLength) {
-        return plm.getPostingsList(nGramLength);
+        return matchManager.getPLM().getPostingsList(nGramLength);
     }
     
      /**
@@ -209,7 +203,7 @@ public class State {
         if (seg == null) {
             return new MatchList();
         } else {
-            return matchManager.basicMatch(seg, this);
+            return matchManager.basicMatch(seg, getMinMatchLength());
         }
     }
     
@@ -234,7 +228,7 @@ public class State {
     }
 
     public PostingsListManager getPostingsListManager() {
-        return plm;
+        return matchManager.getPLM();
     }
 
     /**

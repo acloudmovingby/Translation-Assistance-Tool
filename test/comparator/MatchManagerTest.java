@@ -45,15 +45,6 @@ public class MatchManagerTest {
      */
     @Test
     public void testBasicMatch() {
-        System.out.println("basicMatch");
-        Segment seg = null;
-        State state = null;
-        MatchManager instance = null;
-        MatchList expResult = null;
-        MatchList result = instance.basicMatch(seg, state);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -63,12 +54,6 @@ public class MatchManagerTest {
      */
     @Test
     public void testMinMatchLengthChanged() {
-        System.out.println("minMatchLengthChanged");
-        int minMatchLength = 0;
-        MatchManager instance = null;
-        instance.minMatchLengthChanged(minMatchLength);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -77,12 +62,6 @@ public class MatchManagerTest {
      */
     @Test
     public void testIncludeSegmentInMatches() {
-        System.out.println("includeSegmentInMatches");
-        Segment seg = null;
-        MatchManager instance = null;
-        instance.includeSegmentInMatches(seg);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -90,12 +69,6 @@ public class MatchManagerTest {
      */
     @Test
     public void testRemoveSegmentFromMatches() {
-        System.out.println("removeSegmentFromMatches");
-        Segment seg = null;
-        MatchManager instance = null;
-        instance.removeSegmentFromMatches(seg);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
     
 }

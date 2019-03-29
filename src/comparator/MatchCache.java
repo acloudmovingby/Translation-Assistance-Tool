@@ -94,13 +94,12 @@ public class MatchCache {
 
     /**
      * Retrieves the MatchList for a given source segment from the main file or null if no MatchList was cached.
+     * 
      * @param seg
-     * @param state
      * @return MatchList or null if no cached list.
      */
-    protected MatchList getMatchList(Segment seg, State state) {
+    protected MatchList getMatchList(Segment seg) {
         MatchList m = matchCache.get(seg);
-        
         
         return m;
     }
