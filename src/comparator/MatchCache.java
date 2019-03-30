@@ -8,10 +8,11 @@ package comparator;
 import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import State.State;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Caches MatchLists so they don't have to be recomputed.
@@ -27,45 +28,9 @@ import java.util.Optional;
 public class MatchCache {
 
     private final HashMap<Segment, MatchList> matchCache;
-    
-    private int currentMinMatchLength;
 
     protected MatchCache() {
         matchCache = new HashMap();
-    }
-
-    protected void minMatchLengthChanged(int minMatchLength) {
-        this.currentMinMatchLength = minMatchLength;
-        matchCache.clear();
-    }
-
-    /**
-     * If the given segment matches any segments in the main file (whose matchlists have been cached), it then adds this segment to those matchlists.
-     * 
-     * If the segment is not committed, no changes are made. 
-     * 
-     * @param seg 
-     */
-    protected void addSegment(Segment seg) {
-        
-        // have some previously cached segment
-        // add null
-        // add a segment that is empty
-        // add a segment that has no overlap with the cached seg (but same min length)
-        // add a segment that has an overlap with it
-        // double add segments that match (ensure matchlist contains, not necessarily in any specific order)
-        
-        /*
-        Other to do:
-            - verify how I do the minMatchLength is involved in this
-            - 
-        */
-        if (seg.isCommitted()) {
-            for (Entry<Segment, MatchList> e : matchCache.entrySet()) {
-                Segment segInMainFile = e.getKey();
-                MatchFinderCoreAlgorithm.getSingleSegmentMatch(segInMainFile, seg, currentMinMatchLength);
-            }
-        }
     }
 
     /**
@@ -74,6 +39,9 @@ public class MatchCache {
      */
     protected void removeSegment(Segment seg) {
 
+        // this conditional just ensures that not all MatchLists are needlessly searched. A non-committed Segment should not appear in any MatchLists.
+        // if the MatchLists were formed incorrectly (i.e. with non-committed Segments), then this would obviously fail as well. 
+        // Note: Segments are immutable, so assuming MatchLists were formed correctly, this should always be correct.
         if (seg.isCommitted()) {
             
             for (Entry<Segment, MatchList> e : matchCache.entrySet()) {
@@ -92,17 +60,17 @@ public class MatchCache {
                 }
             }
         } 
+        
     }
 
     /**
-     * Retrieves the MatchList for a given source segment from the main file or null if no MatchList was cached.
+     * Retrieves the MatchList for a given source segment from the main file or an empty Optional if no MatchLists are cached as such.
      * 
      * @param seg
-     * @return MatchList or null if no cached list.
+     * @return Optional containing a MatchList or an empty Optional if no list has been cached.
      */
     protected Optional<MatchList> getMatchList(Segment seg) {
         MatchList m = matchCache.get(seg);
-        
         return Optional.ofNullable(m);
     }
     
@@ -116,6 +84,43 @@ public class MatchCache {
      */
     protected void addMatchList(Segment seg, MatchList m) {
         matchCache.put(seg, m);
+    }
+    
+    /**
+     * Adds the specified MatchSegment to the MatchList of the specified Segment.
+     * 
+     * If no MatchList is cached, then this creates a new one with matchSeg as its only member. If the MatchSegment already exists in the MatchList, then this does not change the MatchList.
+     * @param seg The source Segment.
+     * @param matchSeg 
+     */
+    protected void addMatch(Segment seg, MatchSegment matchSeg) {
+        MatchList matchList = matchCache.get(seg);
+        
+        if (matchList == null) {
+            matchList = new MatchList();
+            matchList.addEntry(matchSeg);
+            matchCache.put(seg, matchList);
+        }
+        
+        if (!matchList.getMatchSegments().contains(matchSeg)) {
+            matchList.addEntry(matchSeg);
+        }
+    }
+
+    /**
+     * Applies the provided matching algorithm against all source Segments stored in the cache and updates their MatchLists if a match is found.
+     * 
+     * More precisely: The supplied function should return an Optional wrapping a MatchSegment. If for a given source segment the match algorithm supplies a non-empty Optional, then it adds the MatchSegment contained in the Optional into the MatchList for that source segment.
+     * 
+     * @param target
+     * @param matchAlgorithm 
+     */
+    protected void updateMatchLists(Function<Segment, Optional<MatchSegment>> matchAlgorithm) {
+        matchCache.forEach((sourceSeg, matchList) -> {
+            // if returned Optional contains a MatchSegment (i.e. a match was found), it adds it to the matchList
+            matchAlgorithm.apply(sourceSeg).
+                    ifPresent(matchSeg -> matchList.addEntry(matchSeg));
+        });
     }
 
 }

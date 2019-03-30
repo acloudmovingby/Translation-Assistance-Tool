@@ -14,7 +14,7 @@ import DataStructures.Corpus;
 import DataStructures.MainFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import comparator.MatchFinderCoreAlgorithm;
+import comparator.MatchFindingAlgorithms;
 import comparator.MatchManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -207,7 +207,7 @@ public class State {
     }
     
     private MatchList findExactMatch(String str) {
-        return MatchFinderCoreAlgorithm.exactMatch(str, this);
+        return MatchFindingAlgorithms.exactMatch(str, this);
     }
 
     public void search(String text) {

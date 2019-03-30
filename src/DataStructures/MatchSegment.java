@@ -23,6 +23,9 @@ import javafx.scene.text.TextFlow;
  */
 public class MatchSegment implements Comparable<MatchSegment> {
 
+    /**
+     * Represents the segment from the corpus with which a match was found (the "target" segment in a match).
+     */
     private final Segment seg;
     private boolean[] matches;
     private final StringProperty fileName;
@@ -34,8 +37,8 @@ public class MatchSegment implements Comparable<MatchSegment> {
     // The Thai text represented as a TextFlow object
     TextFlow tFlow;
 
-    public MatchSegment(Segment s) {
-        this.seg = s;
+    public MatchSegment(Segment targetSeg) {
+        this.seg = targetSeg;
         isCommittedProperty = new SimpleBooleanProperty(true);
         thaiProperty = new SimpleStringProperty();
         englishProperty = new SimpleStringProperty();
@@ -114,10 +117,11 @@ public class MatchSegment implements Comparable<MatchSegment> {
 
         MatchSegment m = (MatchSegment) o;
       
-        boolean cond1 = m.getThai().equals(getThai());
-        boolean cond2 = m.getEnglish().equals(getEnglish());
-        boolean cond3 = m.getFileName().equals(getFileName());
-        boolean cond4 = m.getMatchSize() == getMatchSize();
+        boolean cond1 = m.getMatchSize() == getMatchSize();
+        boolean cond2 = m.getFileName().equals(getFileName());
+        boolean cond3 = m.getThai().equals(getThai());
+        boolean cond4 = m.getEnglish().equals(getEnglish());
+        
         
         return cond1 && cond2 && cond3 && cond4;
     }

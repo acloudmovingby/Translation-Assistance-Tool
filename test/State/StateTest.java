@@ -7,15 +7,9 @@ package State;
 
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
-import DataStructures.MainFile;
-import DataStructures.MatchList;
-import DataStructures.MatchSegment;
-import DataStructures.PostingsList;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
-import javafx.beans.property.IntegerProperty;
-import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

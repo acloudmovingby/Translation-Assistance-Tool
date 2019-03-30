@@ -49,15 +49,6 @@ public class MatchCacheTest {
     @Test
     public void testMinLengthChangedEquals() {
         
-        MatchCache mCache = new MatchCache();
-        
-        for (Segment s : committedState.getMainFile().getActiveSegs()) {
-            mCache.addSegment(s);
-        }
-        
-        System.out.println("hey");
-        System.out.println(mCache.getMatchList(committedState.getMainFile().getActiveSegs().get(0)));
-        
     }
     
     /**

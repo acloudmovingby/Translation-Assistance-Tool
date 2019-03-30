@@ -82,7 +82,7 @@ public class MatchFinderTest {
         state.setMinLength(3);
         PostingsList pl = state.getPostingsList(
                 (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
-        MatchList mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
+        MatchList mList = MatchFindingAlgorithms.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
         MatchSegment ms = (mList.getMatchSegments()).get(0);
         assertEquals("test", ms.getThai());
       
@@ -99,7 +99,7 @@ public class MatchFinderTest {
         state.setMinLength(3);
         pl = state.getPostingsList(
                 (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
-        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
+        mList = MatchFindingAlgorithms.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
         assertEquals(2, mList.getMatchSegments().size());
         assertEquals("test", mList.getMatchSegments().get(0).getThai());
         assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());
@@ -113,7 +113,7 @@ public class MatchFinderTest {
         state.setMinLength(3);
         pl = state.getPostingsList(
                 (state.getMinMatchLength()<=8 ? state.getMinMatchLength() : 8));
-        mList = MatchFinderCoreAlgorithm.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
+        mList = MatchFindingAlgorithms.basicMatch(mainFileSeg, state.getMinMatchLength(), pl);
         assertEquals(2, mList.getMatchSegments().size());
         assertEquals("test", mList.getMatchSegments().get(0).getThai());
         assertEquals("aaestcc", mList.getMatchSegments().get(1).getThai());
@@ -137,7 +137,7 @@ public class MatchFinderTest {
     public void testComplexMatch() {
         System.out.println("complexMatch");
         Segment seg = null;
-        MatchFinderCoreAlgorithm instance = new MatchFinderCoreAlgorithm();
+        MatchFindingAlgorithms instance = new MatchFindingAlgorithms();
         MatchList expResult = null;
         MatchList result = instance.complexMatch(seg);
         assertEquals(expResult, result);
