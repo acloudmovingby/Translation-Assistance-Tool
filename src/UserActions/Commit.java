@@ -26,7 +26,7 @@ public class Commit implements Action {
     }
 
     public Commit(List<Segment> segList) {
-        // NEED TO DEFENSIVELY COPY because JavaFX always as seecte ses ist point back to activeSegsList in main ie (thus causing concurrent modification issues). 
+        // NEED TO DEFENSIVELY COPY because JavaFX always has seglist list point back to activeSegsList in main file (thus causing concurrent modification issues). 
         List<Segment> listCopy = new ArrayList();
         segList.forEach((s) -> {listCopy.add(Segment.getDeepCopy(s));});
         this.segList = listCopy;

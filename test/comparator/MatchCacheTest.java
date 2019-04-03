@@ -5,14 +5,19 @@
  */
 package comparator;
 
+import DataStructures.MatchList;
+import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import DataStructures.TestObjectBuilder;
-import State.State;
+import DataStructures.SegmentBuilder;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.function.Function;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -20,13 +25,41 @@ import org.junit.Test;
  */
 public class MatchCacheTest {
     
-    State committedState;
+    /**
+     * 
+     * These represent what is stored in the cache. They are injected using the MatchCache constructor to make for easy testing. 
+     * IMPORTANT: These do not actually represent what is a valid match. They are just various combinations formed to make testing easier with a minimum of test objects (in case the implementation ever changes). These "matches" are nonsensical and do not represent an actual match made by the program's matching algorithm. They are only for testing MatchCache behavior.
+     * AandB means the key=segA and the value is a MatchList whose contents are a MatchSegment pointing to SegB.
+     */
+    
+    Segment segA; 
+    Segment segB;
+    MatchSegment matchSegA;
+    MatchSegment matchSegB;
+    HashMap<Segment, MatchList> emptyHash; // no matches cached
+    HashMap<Segment, MatchList> singlePairingEmptyList; // Contains a seg/matchlist pairing but the matchlist is empty (as if all the matchSegments had been removed by uncommitting them).
+    HashMap<Segment, MatchList> singlePairingMatchA; // Contains a single Segment/MatchList pairing and the MatchList contains matchSegA
+    HashMap<Segment, MatchList> singlePairingMatchB; // Contains a single Segment/MatchList pairing but the MatchList contains matchSegB
+    HashMap<Segment, MatchList> singlePairingMatchAB; // Contains a single Segment/Matchlist pairing and the MatchList contains both matchSegA and matchSegB
+    MatchCache cache;
+    
+    
+    /**
+     * This Function, regardless of input, will return a "match", i.e. an Optional containing MatchSegment matchSegA.
+     */
+    Function<Segment, Optional<MatchSegment>> alwaysMatchesSegA;
+    
+    /**
+     * This Function, regardless of input, will return an empty Optional (i.e. no "match").
+     */
+    Function<Segment, Optional<MatchSegment>> neverMatches;
     
     public MatchCacheTest() {
     }
     
     @BeforeClass
     public static void setUpClass() {
+        
     }
     
     @AfterClass
@@ -35,83 +68,149 @@ public class MatchCacheTest {
     
     @Before
     public void setUp() {
-        committedState = TestObjectBuilder.getCommittedTestState();
+        
+        
+        // Create Segments
+        SegmentBuilder sb = new SegmentBuilder();
+        sb.setThai("AAAA");
+        segA = sb.createSegment();
+        sb = new SegmentBuilder();
+        sb.setThai("BBBB");
+        segB = sb.createSegmentNewID();
+        
+        // Create associated MatchSegments
+        matchSegA = new MatchSegment(segA);
+        matchSegB = new MatchSegment(segB);
+        
+        // Create MatchLists
+        MatchList listWithA = new MatchList();
+        listWithA.addEntry(matchSegA);
+        MatchList listWithB = new MatchList();
+        listWithB.addEntry(matchSegB);
+        MatchList listWithAB = new MatchList();
+        listWithAB.addEntry(matchSegA);
+        listWithAB.addEntry(matchSegB);
+        
+        // Create all HashMaps to inject into MatchCache
+        emptyHash = new HashMap();
+        singlePairingEmptyList = new HashMap();
+        singlePairingEmptyList.put(segA, new MatchList());
+        singlePairingMatchA = new HashMap();
+        singlePairingMatchA.put(segA, listWithA);
+        singlePairingMatchB = new HashMap();
+        singlePairingMatchB.put(segA, listWithB);
+        singlePairingMatchAB = new HashMap();
+        singlePairingMatchAB.put(segA, listWithAB);
+        
+        cache = new MatchCache();
+        
+        alwaysMatchesSegA = ((a) -> {
+            return Optional.of(new MatchSegment(segA));
+        });
+        
+        neverMatches = ((a) -> Optional.empty());
     }
     
     @After
     public void tearDown() {
     }
-
+    
     /**
-     * Test to make sure nothing changes if the minimum length is "changed" to the same length;
      * 
      */
     @Test
-    public void testMinLengthChangedEquals() {
+    public void testEquality() {
+        cache = new MatchCache();
+        MatchCache testCache = new MatchCache();
+        assertEquals(cache, testCache);
         
-    }
-    
-    /**
-     * Test to of what happens when you increase the minimum length.
-     * 
-     */
-    @Test
-    public void testMinLengthChangedIncrease() {
+        cache = new MatchCache(singlePairingEmptyList);
+        testCache = new MatchCache(singlePairingEmptyList);
+        assertEquals(cache, testCache);
         
+        cache = new MatchCache(singlePairingMatchAB);
+        testCache = new MatchCache(singlePairingMatchAB);
+        assertEquals(cache, testCache);
+        
+        cache = new MatchCache(singlePairingMatchAB);
+        testCache = new MatchCache(singlePairingMatchAB);
+        assertEquals(cache, testCache);
+        
+        cache = new MatchCache(singlePairingEmptyList);
+        testCache = new MatchCache(singlePairingMatchAB);
+        assertEquals(false, cache.equals(testCache));
     }
-
+    
     /**
-     * Test of what happens when you decrease the minimum length.
-     */
-    @Test
-    public void testMinLengthDecreased() {
-    }
-
-    /**
-     * Tests adding a segment that has no common substrings with any of the segments whose matchlists are stored in the cache.
      * 
-     * In other words, no changes should happen to any of the match lists.
      */
     @Test
-    public void testAddSegmentNoMatch() {
+    public void testNewlyConstructedMatchCache() {
+        assertEquals(Optional.empty(), cache.getMatchList(segA));
+        cache.removeSegment(segA);
+        assertEquals(cache, new MatchCache());
+        
+        // If there are no matchlists cached, then committing a new seg can't change any MatchLists
+        cache.updateMatchLists(neverMatches);
+        assertEquals(cache, new MatchCache());
+        cache.updateMatchLists(alwaysMatchesSegA);
+        assertEquals(cache, new MatchCache());
     }
 
     /**
-     * Tests adding a segment that has common substrings with some segments in the main file, but none of which reach the current minimum match length.
-     * This should end up not changing any of the match lists (assuming the min match length is also not changed).
+     * Tests a MatchCache where an empty hashmap was injected. Same behavior as testNewlyConstructedMatchCache()
      */
     @Test
-    public void testAddSegmentNotLongEnough() {
+    public void testEmptyCache() {
+        cache = new MatchCache(emptyHash);
+        assertEquals(Optional.empty(), cache.getMatchList(segA));
+        cache.removeSegment(segA);
+        assertEquals(cache, new MatchCache());
+        
+        // If there are no matchlists cached, then committing a new seg can't change any MatchLists
+        cache.updateMatchLists(neverMatches);
+        assertEquals(cache, new MatchCache());
+        cache.updateMatchLists(alwaysMatchesSegA);
+        assertEquals(cache, new MatchCache());
     }
     
     /**
-     * Tests adding a segment that has common substrings with some segments in the main file, some of which are at least the current minimum match length.
-     * This will change some of those match lists, affecting those where the match length exceeds the current minimum.
+     * Tests when a match is successful but the MatchList is currently empty. 
+     * 
      */
     @Test
-    public void testAddSegmentLongEnough() {
-    }
-    
-    /**
-     * Tests adding a segment that makes no change initially (because the matches are too short), but then after the min match length is reduced, now that segment appears on the MatchLists.
-     */
-    @Test
-    public void testAddSegThenChangeLength() {
+    public void testMatchAndEmpty() {
+        cache = new MatchCache(singlePairingEmptyList);
+        // ensures that when a match is found, the matchsegment is correctly added to the MatchList.
+        cache.updateMatchLists(alwaysMatchesSegA);
+        assertEquals(true, cache.getMatchList(segA).get().getMatchSegments().contains(matchSegA));
+        assertEquals(1, cache.getMatchList(segA).get().getMatchSegments().size());
     }
 
     /**
-     * Tests removing a segment from the committed corpus that shouldn't affect any of the MatchLists because it isn't currently contained in any of them.
+     * When a match is found but the MatchList already contains MatchSegA, and thus nothing changes.
      */
-    @Test
-    public void testRemoveSegmentNoChange() {
+     @Test
+    public void testMatchContainsA() {
+        cache = new MatchCache(singlePairingMatchA);
+        cache.updateMatchLists(alwaysMatchesSegA);
+        assertEquals(true, cache.getMatchList(segA).get().getMatchSegments().contains(matchSegA));
+        assertEquals(1, cache.getMatchList(segA).get().getMatchSegments().size());
     }
     
     /**
-     * Tests removing a segment from the committed corpus that does affect some of the MatchLists because some do currently contain that segment.
+     * When a match is found but the MatchList doesn't yet contain MatchSegA, it then adds it to the MatchList.
      */
-    @Test
-    public void testRemoveSegmentCausesChange() {
+     @Test
+    public void testMatchDoesntContainA() {
+        cache = new MatchCache(singlePairingMatchB);
+        cache.updateMatchLists(alwaysMatchesSegA);
+        assertEquals(true, cache.getMatchList(segA).get().getMatchSegments().contains(matchSegA));
+        assertEquals(2, cache.getMatchList(segA).get().getMatchSegments().size());
     }
+   
+    
+    
     
     
     

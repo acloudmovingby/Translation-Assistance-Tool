@@ -264,4 +264,5 @@ public class TestObjectBuilder {
         
         return new State(mainFile, getCommittedTestCorpus());
     }
+    
 }

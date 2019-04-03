@@ -18,7 +18,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 /**
- *
+ * This class represents a match between a source Segment in the MainFile and a target segment from the corpus. 
+ * 
+ * The source Segment is not stored in the Segment, but the target Segment and its properties are.
+ * 
+ * 
  * @author Chris
  */
 public class MatchSegment implements Comparable<MatchSegment> {
@@ -27,11 +31,29 @@ public class MatchSegment implements Comparable<MatchSegment> {
      * Represents the segment from the corpus with which a match was found (the "target" segment in a match).
      */
     private final Segment seg;
-    private boolean[] matches;
+    /**
+     * Represents where in the seg's Thai property there are matches. Length is equal to seg.getThai().length()
+     */
+    private boolean[] charsPartOfSubstring;
+    /**
+     * The name of the file this segment exists in.
+     */
     private final StringProperty fileName;
+    /**
+     * The Thai text of the match (the target Segment).
+     */
     private final StringProperty thaiProperty;
+    /**
+     * The English text of the match (the target Segment).
+     */
     private final StringProperty englishProperty;
+    /**
+     * The committed status of the match (the target Segment)
+     */
     private final BooleanProperty isCommittedProperty;
+    /**
+     * How many characters total form a match.
+     */
     int matchSize;
     int longestMatchLength;
     // The Thai text represented as a TextFlow object
@@ -40,9 +62,10 @@ public class MatchSegment implements Comparable<MatchSegment> {
     public MatchSegment(Segment targetSeg) {
         this.seg = targetSeg;
         isCommittedProperty = new SimpleBooleanProperty(true);
-        thaiProperty = new SimpleStringProperty();
-        englishProperty = new SimpleStringProperty();
-        fileName = new SimpleStringProperty();
+        thaiProperty = new SimpleStringProperty(seg.getThai());
+        englishProperty = new SimpleStringProperty(seg.getEnglish());
+        fileName = new SimpleStringProperty(seg.getFileName());
+        charsPartOfSubstring = new boolean[thaiProperty.get().length()];
     }
 
     public String getFileName() {
@@ -63,8 +86,8 @@ public class MatchSegment implements Comparable<MatchSegment> {
     
     public void setThai(String thai) {
        thaiProperty.set(thai);
-        matches = new boolean[getThai().length()];
-        for (boolean b : matches) {
+        charsPartOfSubstring = new boolean[getThai().length()];
+        for (boolean b : charsPartOfSubstring) {
             b = false;
         }
     }
@@ -78,16 +101,16 @@ public class MatchSegment implements Comparable<MatchSegment> {
     }
 
     public boolean[] getMatches() {
-        return matches;
+        return charsPartOfSubstring;
     }
     
     public void setMatches(boolean[] matches) {
-        this.matches = matches;
+        this.charsPartOfSubstring = matches;
     }
     
     public int getMatchSize() {
         matchSize = 0;
-        for (boolean b : matches) {
+        for (boolean b : charsPartOfSubstring) {
             if (b == true) {
                 matchSize++;
             }
@@ -185,7 +208,7 @@ public class MatchSegment implements Comparable<MatchSegment> {
     private void setLongestMatchLength() {
         int longestLength = 0;
         int currentLength = 0;
-        for (boolean b : matches) {
+        for (boolean b : charsPartOfSubstring) {
             if (b==false) {
                 longestLength = currentLength>longestLength ? currentLength : longestLength;
                 currentLength = 0;

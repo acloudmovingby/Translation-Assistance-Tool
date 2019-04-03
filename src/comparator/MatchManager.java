@@ -45,10 +45,14 @@ public class MatchManager {
      * segment.
      *
      * @param seg
-     * @param state
+     * @param minMatchLength
      * @return
      */
     public MatchList basicMatch(Segment seg, int minMatchLength) {
+        PostingsList pl = plm.getPostingsList(
+                    (minMatchLength <= 8 ? minMatchLength : 8));
+        return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
+        /*
         MatchCache cache = getBasicMatchCache(minMatchLength);
         Optional<MatchList> o = cache.getMatchList(seg);
         return o.orElseGet(() -> {
@@ -57,12 +61,11 @@ public class MatchManager {
             MatchList m = MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
             cache.addMatchList(seg, m);
             return m;
-        });
+        });*/
     }
 
     /**
-     * This ensures that when a segment is added to the state that, if it is
-     * committed, it will show up in future match searches.
+     * Notifies MatchManager that a segment should now be included in match searches. (e.g., because it was committed, restored to the MainFile after undo, etc.)
      */
     public void includeSegmentInMatches(Segment newSeg) {
         plm.addSegment(newSeg);
@@ -78,8 +81,7 @@ public class MatchManager {
     }
 
     /**
-     * Ensures that when a segment is removed from the state that, if it was
-     * committed, will no longer show up in match searches.
+     * Notifies MatchManager that a segment should no longer be included in match searches. (either because it was uncommitted or it was removed).
      *
      * Removes the segment from both the PostingsListManager and from all
      * currently cached MatchLists.
