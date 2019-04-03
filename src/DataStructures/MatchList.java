@@ -1,6 +1,7 @@
 package DataStructures;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,6 +21,7 @@ public class MatchList {
         matchSegList = FXCollections.observableArrayList();
         fileName = "default";
     }
+    
     
     /**
      * Retrieves the MatchSegments stored in this MatchList.

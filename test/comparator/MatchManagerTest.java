@@ -5,17 +5,42 @@
  */
 package comparator;
 
+import DataStructures.MatchList;
+import DataStructures.MatchSegment;
+import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
+import java.util.Arrays;
+import java.util.HashSet;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Chris
  */
 public class MatchManagerTest {
+    
+    MatchManager matchManager;
+    
+    Segment segA;
+    Segment segB;
+    Segment segAB;
+    
+    // The pool of segs that can be searched in matches.
+    HashSet<Segment> emptySet;
+    HashSet<Segment> hasSegA;
+    HashSet<Segment> hasSegB;
+    HashSet<Segment> hasSegAandB;
+    
+    // possible results for match searches
+    MatchList emptyML;
+    MatchList matchWithA;
+    MatchList matchWithB;
+    MatchList matchWithAandB;
     
     public MatchManagerTest() {
     }
@@ -30,6 +55,32 @@ public class MatchManagerTest {
     
     @Before
     public void setUp() {
+        SegmentBuilder sb = new SegmentBuilder();
+        sb.setThai("AAAA");
+        segA = sb.createSegment();
+        
+        sb = new SegmentBuilder();
+        sb.setThai("BBBB");
+        segB = sb.createSegmentNewID();
+        
+        sb = new SegmentBuilder();
+        sb.setThai("AAAABBBB");
+        segAB = sb.createSegmentNewID();
+        
+        
+        emptySet = new HashSet();
+        hasSegA = new HashSet(Arrays.asList(segA));
+        hasSegB = new HashSet(Arrays.asList(segB));
+        hasSegAandB = new HashSet(Arrays.asList(segA, segB));
+        
+        emptyML = new MatchList();
+        matchWithA = new MatchList();
+        matchWithA.addEntry(new MatchSegment(segA));
+        matchWithB = new MatchList();
+        matchWithB.addEntry(new MatchSegment(segB));
+        matchWithAandB = new MatchList();
+        matchWithAandB.addEntry(new MatchSegment(segA));
+        matchWithAandB.addEntry(new MatchSegment(segB));
     }
     
     @After
@@ -37,34 +88,139 @@ public class MatchManagerTest {
     }
 
     /**
-     * Test of basicMatch method, of class MatchManager.
+     * Tests basicMatch in a MatchManager holding ZERO committed segments
      */
     @Test
-    public void testBasicMatch() {
+    public void testGetWithEmptyMatchManager() {
+        matchManager = new MatchManager(emptySet);
+        assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
     }
 
     /**
-     * Test of minMatchLengthChanged method, of class MatchManager.
-     *  Makes sure that when the match length is changed, that the MatchLists change accordingly.
-     * Test if the min length is shortened (MatchLists should grow bigger) as well as if it's lengthened (MatchLists become smaller).
+     * Tests basicMatch in a MatchManager holding ONE committed segment
      */
     @Test
-    public void testMinMatchLengthChanged() {
-    }
-
-    /**
-     * Test of includeSegmentInMatches method, of class MatchManager.
-     * It tests this in 4 ways: first, by adding a segment that doesn't affect matchlists (one case where matches exist but the length is not sufficient, and the second case where no match exists). Second, by adding a segment that does affect the matchlists. Third, by re-adding that segment to make sure no duplicates are created. And lastly, by adding an "empty" segment to make sure no bugs are created by this.
-     */
-    @Test
-    public void testIncludeSegmentInMatches() {
-    }
-
-    /**
-     * Test of removeSegmentFromMatches method, of class MatchManager.
-     */
-    @Test
-    public void testRemoveSegmentFromMatches() {
+    public void testGetOneCommittedSeg() {
+        matchManager = new MatchManager(hasSegA);
+        // test if no match should be expected
+        assertEquals(new MatchList(), matchManager.basicMatch(segB, 3));
+        // test if match should be expected
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
     }
     
+    /**
+     * Tests basicMatch in a MatchManager holding TWO committed segments
+     */
+    @Test
+    public void testGetTwoCommittedSegs() {
+        matchManager = new MatchManager(hasSegAandB);
+        // segA should match with segA
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        // segB will match with segB
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        // segAB will match with both
+        assertEquals(matchWithAandB, matchManager.basicMatch(segAB, 3));
+        assertEquals(2, matchManager.basicMatch(segAB, 3).getMatchSegments().size());
+    }
+    
+    /**
+     * Tests adding a segments to the pool of searchable segments where the MatchManager currently holds ZERO committed segments.
+     */
+    @Test
+    public void testAddSegToEmptyMatchManager() {
+        matchManager = new MatchManager(emptySet);
+        assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
+        
+        matchManager.includeSegmentInMatches(segA);
+        assertEquals(new MatchList(), matchManager.basicMatch(segB, 3));
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+    }
+    
+    /**
+     * Tests adding a segments to the pool of searchable segments where the MatchManager currently holds ONE committed segments.
+     */
+    @Test
+    public void testAddSegWithOneCommittedSegment() {
+        matchManager = new MatchManager(hasSegA);
+        // test if no match should be expected
+        assertEquals(new MatchList(), matchManager.basicMatch(segB, 3));
+        // test if match should be expected
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        
+        matchManager.includeSegmentInMatches(segB);
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        // segB will match with segB
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        // segAB will match with both
+        assertEquals(matchWithAandB, matchManager.basicMatch(segAB, 3));
+        assertEquals(2, matchManager.basicMatch(segAB, 3).getMatchSegments().size());
+    }
+    
+    /**
+     * Tests removing a segment from the pool of searchable segments when the MatchManager currently holds ZERO committed segments.
+     * Essentially makes sure no errors are thrown.
+     */
+    @Test
+    public void testRemoveSegWhenMatchManagerEmpty() {
+        matchManager = new MatchManager(emptySet);
+        assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
+        
+        matchManager.removeSegmentFromMatches(segA);
+        assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
+    }
+    
+    /**
+     * Tests removing a segment from the pool of searchable segments when the MatchManager currently holds ONE committed segment.
+     */
+    @Test
+    public void testRemoveSegWhenMatchManagerHasOneSeg() {
+        matchManager = new MatchManager(hasSegA);
+        
+        // try "removing" segB. Nothing changes.
+        matchManager.removeSegmentFromMatches(segB);
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        
+        // remove segA. Now the MatchManager has now committed segs to search for matches
+        matchManager.removeSegmentFromMatches(segA);
+        assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
+    }
+    
+    /**
+     * Tests removing a segment from the pool of searchable segments when the MatchManager currently holds TWO committed segment.
+     */
+    @Test
+    public void testRemoveSegWhenMatchManagerHasTwoSegs() {
+        matchManager = new MatchManager(hasSegAandB);
+        
+        // try "removing" segAB. Nothing changes.
+        matchManager.removeSegmentFromMatches(segAB);
+        assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
+        
+        // remove segA. Searching for matches with segA will return nothing, but with segB will still return a match
+        matchManager.removeSegmentFromMatches(segA);
+        assertEquals(emptyML, matchManager.basicMatch(segA, 3));
+        assertEquals(matchWithB, matchManager.basicMatch(segB, 3));
+        assertEquals(matchWithB, matchManager.basicMatch(segAB, 3));
+    }
+    
+    /**
+     * Tests removing several segments from the pool of searchable segments.
+     */
+    @Test
+    public void testConsecutiveRemovals() {
+        matchManager = new MatchManager(hasSegAandB);
+        
+        // remove segA. Searching for matches with segA will return nothing, but with segB will still return a match
+        matchManager.removeSegmentFromMatches(segA);
+        assertEquals(emptyML, matchManager.basicMatch(segA, 3));
+        assertEquals(matchWithB, matchManager.basicMatch(segB, 3));
+        assertEquals(matchWithB, matchManager.basicMatch(segAB, 3));
+        
+        // remove segB. Now all basicMatch calls will return an empty match list
+        matchManager.removeSegmentFromMatches(segB);
+        assertEquals(emptyML, matchManager.basicMatch(segA, 3));
+        assertEquals(emptyML, matchManager.basicMatch(segB, 3));
+        assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
+    }
+        
 }

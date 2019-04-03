@@ -5,12 +5,14 @@
  */
 package comparator;
 
+import DataStructures.Corpus;
 import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.PostingsList;
 import DataStructures.Segment;
 import State.State;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -37,6 +39,12 @@ public class MatchManager {
 
     public MatchManager(State state) {
         plm = new PostingsListManager(state.getCorpus());
+        basicMatchCaches = new HashMap();
+    }
+    
+    
+    public MatchManager(HashSet<Segment> segsToSearchInMatches) {
+        plm = new PostingsListManager(new Corpus());
         basicMatchCaches = new HashMap();
     }
 
