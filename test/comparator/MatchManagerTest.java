@@ -9,6 +9,7 @@ import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
 import org.junit.After;
@@ -42,6 +43,7 @@ public class MatchManagerTest {
     MatchList matchWithB;
     MatchList matchWithAandB;
     
+    
     public MatchManagerTest() {
     }
     
@@ -57,14 +59,17 @@ public class MatchManagerTest {
     public void setUp() {
         SegmentBuilder sb = new SegmentBuilder();
         sb.setThai("AAAA");
+        sb.setCommitted(true);
         segA = sb.createSegment();
         
         sb = new SegmentBuilder();
         sb.setThai("BBBB");
+        sb.setCommitted(true);
         segB = sb.createSegmentNewID();
         
         sb = new SegmentBuilder();
         sb.setThai("AAAABBBB");
+        sb.setCommitted(true);
         segAB = sb.createSegmentNewID();
         
         
@@ -73,14 +78,25 @@ public class MatchManagerTest {
         hasSegB = new HashSet(Arrays.asList(segB));
         hasSegAandB = new HashSet(Arrays.asList(segA, segB));
         
+        // make MatchSegments, the matches array shows that all characters in the target Segment are a match to the source
+        boolean[] matches = new boolean[4];
+        for (int i=0; i<matches.length; i++) {
+            matches[i] = true;
+        }
+        MatchSegment matchSegA = new MatchSegment(segA);
+        matchSegA.setMatches(matches);
+        MatchSegment matchSegB = new MatchSegment(segB);
+        matchSegB.setMatches(matches);
+        
+        //make MatchLists
         emptyML = new MatchList();
         matchWithA = new MatchList();
-        matchWithA.addEntry(new MatchSegment(segA));
+        matchWithA.addEntry(matchSegA);
         matchWithB = new MatchList();
-        matchWithB.addEntry(new MatchSegment(segB));
+        matchWithB.addEntry(matchSegB);
         matchWithAandB = new MatchList();
-        matchWithAandB.addEntry(new MatchSegment(segA));
-        matchWithAandB.addEntry(new MatchSegment(segB));
+        matchWithAandB.addEntry(matchSegA);
+        matchWithAandB.addEntry(matchSegB);
     }
     
     @After

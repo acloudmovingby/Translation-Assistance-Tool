@@ -10,6 +10,8 @@ import DataStructures.BasicFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -202,6 +204,40 @@ public class PostingsListTest {
         result = pl1.getMatchingID("");// shd return empty list
         expResult = new ArrayList();
         assertEquals(expResult, result); 
+    }
+    
+    /**
+     * Tests the method addMultipleSegments.
+     * 
+     * NOT CORRECT (PostingsList.equals(...) doesn't work correctly)
+     */
+    @Test
+    public void testAddMultiple() {
+        System.out.println("testAddMultiple");
+        
+        // Create 3 distinct segments
+        SegmentBuilder sb = new SegmentBuilder();
+        sb.setThai("AAAAAAA");
+        sb.setCommitted(true);
+        Segment seg1 = sb.createSegmentNewID();
+        sb.setThai("BBBBBBB");
+        Segment seg2 = sb.createSegmentNewID();
+        sb.setThai("CCCCCCC");
+        Segment seg3 = sb.createSegmentNewID();
+        
+        // create two postings lists
+        PostingsList pl1 = new PostingsList(3);
+        PostingsList pl2 = new PostingsList(3);
+        
+        // for the first postings list, add segments sequentially
+        pl1.addSegment(seg1);
+        pl1.addSegment(seg2);
+        pl1.addSegment(seg3);
+       
+        // for the second postings list, batch add the segments.
+        pl2.addMultipleSegments(new HashSet(Arrays.asList(seg3, seg1, seg2)));
+        
+        assertEquals(pl1, pl2);
     }
 
     

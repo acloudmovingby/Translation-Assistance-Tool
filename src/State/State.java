@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import javafx.collections.ObservableList;
 
 
@@ -84,8 +85,8 @@ public class State {
         
         setMainFile(mf);
         
-        matchManager = new MatchManager(this);
-        
+        //matchManager = new MatchManager(this);
+        matchManager = new MatchManager(new HashSet(corpus.getAllCommittedSegs()));
         
         mf.equals(mainFile);
         compareFile = findMatch(segSelected);
@@ -141,7 +142,7 @@ public class State {
     }
     
     public PostingsList getPostingsList(int nGramLength) {
-        return matchManager.getPLM().getPostingsList(nGramLength);
+        return matchManager.getPostingsListManager().getPostingsList(nGramLength);
     }
     
      /**
@@ -231,7 +232,7 @@ public class State {
      * @return 
      */
     protected PostingsListManager getPostingsListManager() {
-        return matchManager.getPLM();
+        return matchManager.getPostingsListManager();
     }
 
     /**
@@ -334,8 +335,6 @@ public class State {
             }
         }
     }
-    
-    
     
     
   

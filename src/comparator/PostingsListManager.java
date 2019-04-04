@@ -9,6 +9,7 @@ import DataStructures.Corpus;
 import DataStructures.PostingsList;
 import DataStructures.Segment;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -21,7 +22,8 @@ import java.util.List;
  */
 public class PostingsListManager {
 
-    private final Corpus corpus;
+    private final Corpus corpus; // later remove
+    private final HashSet<Segment> committedSegments;
     private final List<PostingsList> plList;
 
     public PostingsListManager(Corpus c) {
@@ -34,6 +36,22 @@ public class PostingsListManager {
         plList.forEach((pl) -> {
             pl.addCorpus(c);
         });
+        committedSegments = new HashSet();
+    }
+
+    public PostingsListManager(HashSet<Segment> committedSegments) {
+        
+        this.committedSegments = committedSegments;
+        
+        plList = new ArrayList();
+        for (int i = 2; i < 9; i++) {
+            plList.add(new PostingsList(i));
+        }
+        
+        plList.forEach((pl) -> {
+            pl.addMultipleSegments(committedSegments);
+        });
+        corpus = new Corpus();
     }
     
     /**
@@ -45,6 +63,8 @@ public class PostingsListManager {
             pl.addSegment(s);
         }
     }
+    
+    
     
     public void removeSegment(Segment s) {
         for (PostingsList pl : plList) {
@@ -58,7 +78,6 @@ public class PostingsListManager {
                 return pl;
             }
         }
-
         PostingsList pl = new PostingsList(ngramLength);
         pl.addCorpus(corpus);
         return pl;

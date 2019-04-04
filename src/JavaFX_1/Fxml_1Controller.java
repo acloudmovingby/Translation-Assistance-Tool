@@ -10,6 +10,7 @@ import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.UIState;
 import UserActions.Commit;
+import UserActions.EditEnglish;
 import UserActions.Merge;
 import UserActions.Split;
 import java.net.URL;
@@ -187,9 +188,15 @@ public class Fxml_1Controller implements Initializable {
             int row = e.getTablePosition().getRow();
             Segment editedTU = tableView.getItems().get(row);
             
+            if (editedTU != null) {
+                dispatcher.acceptAction(new EditEnglish(editedTU, e.getNewValue()));
+            }
+            
+            /*
             editedTU.setEnglish(e.getNewValue());
             editedTU.setCommitted(true);
             tableView.getItems().set(row, editedTU); 
+                */
         }
         );
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));

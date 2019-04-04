@@ -7,7 +7,10 @@ package DataStructures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * Parses the thai text in Segments into ngrams (length of ngram specified in
@@ -58,6 +61,10 @@ public class PostingsList {
             });
         }
     }
+    
+    public void addMultipleSegments(HashSet<Segment> segs) {
+        segs.forEach((seg) -> this.addSegment(seg));
+    }
 
     public boolean addFile(BasicFile bf) {
         if (bf != null) {
@@ -75,9 +82,9 @@ public class PostingsList {
         return false;
     }
 
-    public void addCorpus(Corpus fl) {
-        if (fl != null) {
-            fl.getFiles().forEach(f -> addFile(f));
+    public void addCorpus(Corpus c) {
+        if (c != null) {
+            c.getFiles().forEach(f -> addFile(f));
         }
     }
 
@@ -153,10 +160,24 @@ public class PostingsList {
 
         PostingsList pl = (PostingsList) o;
 
-        if (this.map.equals(pl.getMap())) {
-            return false;
-        }
+        // CURRENTLY THIS DOESN'T SEEM TO WORK...probably because it's not doing a deep comparison of the HashMaps
+        return (this.getNGramLength() == pl.getNGramLength() && this.map.equals(pl.getMap()));
+    }
 
-        return true;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.map);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        
+        map.entrySet().forEach((e) -> {
+            sb.append(e.getKey()).append(": ").append(e.getValue());
+        });
+        return sb.toString();
     }
 }
