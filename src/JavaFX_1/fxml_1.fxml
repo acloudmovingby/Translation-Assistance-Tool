@@ -17,8 +17,8 @@
 <GridPane alignment="CENTER" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="707.0" prefWidth="939.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
    <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
      <buttons>
-         <Button mnemonicParsing="false" onAction="#split" text="Split" />
-         <Button mnemonicParsing="false" onAction="#merge" text="Merge" />
+         <Button fx:id="splitButton" mnemonicParsing="false" onAction="#split" text="Split" />
+         <Button fx:id="mergeButton" mnemonicParsing="false" onAction="#merge" text="Merge" />
          <Button mnemonicParsing="false" onAction="#commit" text="Commit" />
          <Button mnemonicParsing="false" onAction="#export" text="Export Committed" />
          <Button mnemonicParsing="false" onAction="#undo" text="Undo" />

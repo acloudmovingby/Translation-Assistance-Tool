@@ -47,30 +47,30 @@ public class UndoManager {
         ////////
         
         List<Segment> allCurrentSegs = new ArrayList();
-        for (Segment s : mainFileInState.getAllSegs()) {
+        mainFileInState.getAllSegs().forEach((s) -> {
             allCurrentSegs.add(Segment.getDeepCopy(s));
-        }
+        });
         
         List<Segment> previousActiveSegs = new ArrayList();
-        for (Segment s : previousMainFile.getActiveSegs()) {
+        previousMainFile.getActiveSegs().forEach((s) -> {
             previousActiveSegs.add(Segment.getDeepCopy(s));
-        }
+        });
         
         ArrayList<Segment> previousHiddenSegs = new ArrayList();
-        for (Segment s : previousMainFile.getHiddenSegs()) {
+        previousMainFile.getHiddenSegs().forEach((s) -> {
             previousHiddenSegs.add(Segment.getDeepCopy(s));
-        }
+        });
         
         // removes all segs from main file
         
         allCurrentSegs.forEach(s -> {state.removeSeg2(s);});
         
-        // rebuild active segs
+        // add active segs to MainFile
         for (int i=0; i<previousActiveSegs.size(); i++) {
             state.addSeg(i, previousActiveSegs.get(i));
         }
         
-        // rebuild hidden segs
+        // add hidden segs to MainFile
         for (int i=0; i<previousHiddenSegs.size(); i++) {
             state.addToHidden(previousHiddenSegs.get(i));
         }

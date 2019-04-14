@@ -6,6 +6,7 @@ import DataStructures.FileBuilder;
 import State.State;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
+import DataStructures.SegmentBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.UIState;
@@ -17,13 +18,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -32,6 +35,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
@@ -97,6 +101,12 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     Label numMatches;
+    
+    @FXML
+    Button splitButton;
+    
+    @FXML
+    Button mergeButton;
 
     String committedStatusColor;
     String unCommittedStatusColor;
@@ -140,7 +150,7 @@ public class Fxml_1Controller implements Initializable {
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
-        
+            
         Initializer init = new Initializer(mainFile, corpus);
         state = init.getState();
         uiState = init.getUIState();
@@ -156,12 +166,7 @@ public class Fxml_1Controller implements Initializable {
 
         // MAIN FILE VIEWER COLUMNS
         // id column:
-        idCol.setCellValueFactory(new Callback<CellDataFeatures<Segment, Integer>, ObservableValue<Integer>>() {
-            @Override
-            public ObservableValue<Integer> call(CellDataFeatures<Segment, Integer> p) {
-                return new ReadOnlyObjectWrapper(tableView.getItems().indexOf(p.getValue()));
-            }
-        });
+        idCol.setCellValueFactory((CellDataFeatures<Segment, Integer> p) -> new ReadOnlyObjectWrapper(tableView.getItems().indexOf(p.getValue())));
         idCol.setSortable(false);
 
         // Thai column:
@@ -186,23 +191,19 @@ public class Fxml_1Controller implements Initializable {
         englishCol.setCellFactory(cf2);
         englishCol.setOnEditCommit(e -> {
             int row = e.getTablePosition().getRow();
-            Segment editedTU = tableView.getItems().get(row);
+            Segment editedSeg = tableView.getItems().get(row);
+            SegmentBuilder sb = new SegmentBuilder(editedSeg);
+            editedSeg = sb.createSegment();
             
-            if (editedTU != null) {
-                dispatcher.acceptAction(new EditEnglish(editedTU, e.getNewValue()));
+            if (editedSeg != null) {
+                dispatcher.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
             }
-            
-            /*
-            editedTU.setEnglish(e.getNewValue());
-            editedTU.setCommitted(true);
-            tableView.getItems().set(row, editedTU); 
-                */
         }
         );
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
 
         // Status column:
-        // makes it so this columns cellValueFactory is bound to the isCommitted() method of TUEntry
+        // makes it so this columns cellValueFactory is bound to the isCommitted() method of Segment
         status.setCellValueFactory(cellData -> cellData.getValue().isCommittedProperty());
         //if the value of isCommitted() changes, the background color of the cell changes
         status.setCellFactory(tc -> {
@@ -292,7 +293,7 @@ public class Fxml_1Controller implements Initializable {
         // Sets "score" rating for match. Currently represents the number of matching characters.
         scoreColComp.setCellValueFactory(new PropertyValueFactory<>("longestMatchLength"));
 
-        // sets initial compare file in compare table to first TU in state file viewer
+        // sets initial compare file in compare table to first Seg in state file viewer
         //setCompareTable(state.getMainFile().getActiveSegs().get(0).toString());
 
         /*
@@ -318,6 +319,15 @@ public class Fxml_1Controller implements Initializable {
             numMatches.setText(String.valueOf(newVal));
         });
 
+        
+        // Makes it so merge is disabled except when multiple cells are selected
+        tableView.getSelectionModel().getSelectedItems().addListener((Change<? extends Segment> c) -> {
+            if (c.getList().size() <= 1) {
+                mergeButton.setDisable(true);
+            } else {
+                mergeButton.setDisable(false);
+            }
+        });
     }
 
     @FXML
@@ -397,15 +407,15 @@ public class Fxml_1Controller implements Initializable {
      * Takes a boolean array of same length as text where true indicates a
      * matching character and false indicates a non-matching character.
      *
-     * @param matchingTUText The Thai text with matches in it.
+     * @param matchingSegText The Thai text with matches in it.
      * @param matches A boolean array of same length as text.
      * @return A TextFlow object with matching substrings colored differently.
      */
-    public TextFlow matchesAsTextFlow(String matchingTUText, boolean[] matches) {
+    public TextFlow matchesAsTextFlow(String matchingSegText, boolean[] matches) {
         // breaks text up into list of matching and non-matching substrings
         ArrayList<String> substrings = new ArrayList();
         TextFlow textFlow = new TextFlow();
-        if (matchingTUText.length() == 0) {
+        if (matchingSegText.length() == 0) {
             return textFlow;
         }
 
@@ -417,10 +427,10 @@ public class Fxml_1Controller implements Initializable {
                 substrings.add(sb.toString());
                 // restarts stringbuilder and resets current boolean
                 sb = new StringBuilder();
-                sb.append(matchingTUText.charAt(i));
+                sb.append(matchingSegText.charAt(i));
                 currentBoolean = matches[i];
             } else {
-                sb.append(matchingTUText.charAt(i));
+                sb.append(matchingSegText.charAt(i));
             }
         }
         substrings.add(sb.toString());

@@ -62,38 +62,20 @@ public class PostingsList {
         }
     }
     
+    /**
+     * Runs addSegment(seg) on all Segments in the given HashSet.
+     * @param segs 
+     */
     public void addMultipleSegments(HashSet<Segment> segs) {
         segs.forEach((seg) -> this.addSegment(seg));
     }
 
-    public boolean addFile(BasicFile bf) {
-        if (bf != null) {
-            bf.getHiddenSegs().forEach(seg -> {
-                if (seg.isCommitted()) {
-                    addSegment(seg);
-                }
-            });
-            bf.getActiveSegs().forEach(seg -> {
-                if (seg.isCommitted()) {
-                    addSegment(seg);
-                }
-            });
-        }
-        return false;
-    }
-
-    public void addCorpus(Corpus c) {
-        if (c != null) {
-            c.getFiles().forEach(f -> addFile(f));
-        }
-    }
-
     /**
-     * Returns a list of ids of TUs that contain the specified ngram. If no such
-     * TU exists, an empty list is returned.
+     * Returns a list of ids of Segments that contain the specified ngram. If no such
+     * Segment exists, then an empty list is returned.
      *
      * @param ngram
-     * @return A (possibly empty) list of TU ids.
+     * @return A (possibly empty) list of Segment ids.
      */
     public List<Segment> getMatchingID(String ngram) {
         List<Segment> ret = map.get(ngram);
@@ -101,14 +83,23 @@ public class PostingsList {
 
     }
 
-    public static List<String> makeNGrams(String text, int ngLength) {
+    /**
+     * Takes a String and returns a contiguous sequence of substrings from it, each with the specified length. 
+     * 
+     * For example: ("hello", 2) would return ["he", "el", "ll", "lo"]. If the length is longer than the string's length, then the String is returned wrapped in a list (one element). This is the only circumstance in which the strings in the list will not have the specified length.
+     * 
+     * @param text
+     * @param ngramLength
+     * @return The sequence of n-grams
+     */
+    public static List<String> makeNGrams(String text, int ngramLength) {
         List<String> l = new ArrayList();
-        if (text.length() < ngLength) {
+        if (text.length() < ngramLength) {
             l.add(text);
         } else {
-            for (int i = 0; i <= text.length() - ngLength; i++) {
+            for (int i = 0; i <= text.length() - ngramLength; i++) {
                 String str;
-                str = text.substring(i, i + ngLength);
+                str = text.substring(i, i + ngramLength);
                 l.add(str);
             }
         }

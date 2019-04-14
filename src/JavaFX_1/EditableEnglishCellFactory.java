@@ -23,45 +23,45 @@ import javafx.util.StringConverter;
  */
 public class EditableEnglishCellFactory
         implements Callback<TableColumn<Segment, String>, TableCell<Segment, String>> {
-    
+
     private TextAlignment alignment;
     private Format format;
     private Font font;
-    
+
     public EditableEnglishCellFactory() {
         this.setAlignment(TextAlignment.LEFT);
     }
-    
+
     public TextAlignment getAlignment() {
         return alignment;
     }
-    
+
     public void setAlignment(TextAlignment alignment) {
         this.alignment = alignment;
     }
-    
+
     public Format getFormat() {
         return format;
     }
-    
+
     public void setFormat(Format format) {
         this.format = format;
     }
-    
+
     public Font getFont() {
         return font;
     }
-    
+
     public void setFont(Font font) {
         this.font = font;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public TableCell<Segment, String> call(TableColumn<Segment, String> p) {
+        /*
         TextFieldTableCell<Segment, String> cell = new TextFieldTableCell<Segment, String>(new StringConverter() {
 
-            // String converter...don't know what it does but is needed for TextFieldTableCell
             @Override
             public String toString(Object t) {
                 if (t != null) {
@@ -70,29 +70,30 @@ public class EditableEnglishCellFactory
                     return null;
                 }
             }
-            
+
             @Override
             public Object fromString(String string) {
                 return string;
             }
-        }) {
+        }) 
+        {
             // actual body of cell
             private Text text;
-            
+
             @Override
             public void updateItem(String item, boolean empty) {
                 if (item == getItem()) {
                     return;
                 }
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
                 } else {
                     if (this.isEditing()) {
                         System.out.println("It's editing.");
-                    } 
+                    }
                     text = new Text(item);
                     text.setFont(font);
                     text.wrappingWidthProperty().bind(p.widthProperty().subtract(5));
@@ -113,6 +114,9 @@ public class EditableEnglishCellFactory
                 break;
         }
         return cell;
+        */
+        // TEMPORARY (USUALLY USE THE ABOVE CODE)
+        return MyEditCell.createStringEditCell();
     }
-    
+
 }

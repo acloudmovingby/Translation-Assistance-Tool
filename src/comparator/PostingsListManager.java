@@ -22,22 +22,10 @@ import java.util.List;
  */
 public class PostingsListManager {
 
-    private final Corpus corpus; // later remove
     private final HashSet<Segment> committedSegments;
     private final List<PostingsList> plList;
 
-    public PostingsListManager(Corpus c) {
-        plList = new ArrayList();
-        for (int i = 2; i < 9; i++) {
-            plList.add(new PostingsList(i));
-        }
-
-        this.corpus = c;
-        plList.forEach((pl) -> {
-            pl.addCorpus(c);
-        });
-        committedSegments = new HashSet();
-    }
+   
 
     public PostingsListManager(HashSet<Segment> committedSegments) {
         
@@ -51,7 +39,6 @@ public class PostingsListManager {
         plList.forEach((pl) -> {
             pl.addMultipleSegments(committedSegments);
         });
-        corpus = new Corpus();
     }
     
     /**
@@ -79,7 +66,7 @@ public class PostingsListManager {
             }
         }
         PostingsList pl = new PostingsList(ngramLength);
-        pl.addCorpus(corpus);
+        pl.addMultipleSegments(committedSegments);
         return pl;
     }
     
