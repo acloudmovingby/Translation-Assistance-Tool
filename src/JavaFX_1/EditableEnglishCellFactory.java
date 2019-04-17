@@ -7,15 +7,11 @@ package JavaFX_1;
 
 import DataStructures.Segment;
 import java.text.Format;
-import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 /**
  *

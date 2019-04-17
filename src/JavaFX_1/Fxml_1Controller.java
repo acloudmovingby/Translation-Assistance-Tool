@@ -18,14 +18,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,7 +45,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -179,6 +175,7 @@ public class Fxml_1Controller implements Initializable {
             text.setFont(UIState.getThaiFont());
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            // ensures that the text wraps at the column width
             text.wrappingWidthProperty().bind(thaiCol.widthProperty());
             text.textProperty().bind(cell.itemProperty());
             cell.setEditable(true);
@@ -264,11 +261,11 @@ public class Fxml_1Controller implements Initializable {
                         setStyle("");
                         MatchSegment thisCellSegment = tc.getTableView().getItems().get(this.getIndex());
                         boolean[] matches = thisCellSegment.getMatches();
-                        // all true will be one color, all false will be another color
+                        // matching characters are marked as one color, non-matching characters are another column
                         final TextFlow textFlow = matchesAsTextFlow(thisCellSegment.getThai(), matches);
                         this.setGraphic(textFlow);
+                        
                         setPrefHeight(textFlow.prefHeight(thaiColComp.getWidth()) + 4);
-
                         thaiColComp.widthProperty().addListener((v, o, n)
                                 -> setPrefHeight(textFlow.prefHeight(n.doubleValue()) + 4));
                     }

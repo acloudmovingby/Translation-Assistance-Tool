@@ -15,7 +15,7 @@ import java.util.List;
  * Commits one or more segments in the MainFile. 
  * @author Chris
  */
-public class Commit implements Action {
+public class Commit implements MainFileAction {
 
     //private final Segment seg; 
     private final List<Segment> segList;

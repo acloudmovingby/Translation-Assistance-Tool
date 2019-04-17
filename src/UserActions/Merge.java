@@ -16,7 +16,7 @@ import javafx.collections.ObservableList;
  *
  * @author Chris
  */
-public class Merge implements Action {
+public class Merge implements MainFileAction {
 
     private final List<Segment> segsToMerge;
 

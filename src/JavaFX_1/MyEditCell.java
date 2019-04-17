@@ -7,17 +7,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.util.StringConverter;
 
 
 public class MyEditCell<S, T> extends TableCell<S, T> {
 
-    // Text field for editing
-    private final TextField textField = new TextField();
+    // Text area for editing
+    private final TextArea textArea = new TextArea();
     
     // Converter for converting the text in the text field to the user type, and vice-versa:
-    private final StringConverter<T> converter ;
+    private final StringConverter<T> converter;
     
     public MyEditCell(StringConverter<T> converter) {
         this.converter = converter ;
@@ -30,18 +30,17 @@ public class MyEditCell<S, T> extends TableCell<S, T> {
             }
         });
         
-        setGraphic(textField);
+        setGraphic(textArea);
         setContentDisplay(ContentDisplay.TEXT_ONLY);
         this.setWrapText(true);
-
-        textField.setOnAction(evt -> {
-            commitEdit(this.converter.fromString(textField.getText()));
-        });
-        textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+        textArea.setWrapText(true);
+        // This makes it so that if the user clicks somewhere else outside of the cell, the text is committed
+        textArea.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (! isNowFocused) {
-                commitEdit(this.converter.fromString(textField.getText()));
+                commitEdit(this.converter.fromString(textArea.getText()));
             }
         });
+        
     }
     
     /**
@@ -75,9 +74,10 @@ public class MyEditCell<S, T> extends TableCell<S, T> {
     @Override
     public void startEdit() {
         super.startEdit();
-        textField.setText(converter.toString(getItem()));
+        textArea.setText(converter.toString(getItem()));
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        textField.requestFocus();   
+        textArea.requestFocus();   
+        
     }
 
     // revert to text display

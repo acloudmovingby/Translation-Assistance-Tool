@@ -13,7 +13,7 @@ import State.State;
  * User edits English text of a segment.
  * @author Chris
  */
-public class EditEnglish implements Action {
+public class EditEnglish implements MainFileAction {
     
     private final Segment seg; 
     private final String newEnglishText;

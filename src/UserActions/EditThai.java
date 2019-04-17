@@ -13,7 +13,7 @@ import State.State;
  *
  * @author Chris
  */
-public class EditThai implements Action {
+public class EditThai implements MainFileAction {
     
     Segment seg;
     String newThaiText;
