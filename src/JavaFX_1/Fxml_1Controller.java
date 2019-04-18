@@ -14,6 +14,7 @@ import UserActions.Commit;
 import UserActions.EditEnglish;
 import UserActions.Merge;
 import UserActions.Split;
+import UserActions.Uncommit;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -351,6 +352,14 @@ public class Fxml_1Controller implements Initializable {
         if (selectedItems != null) {
             
             dispatcher.acceptAction(new Commit(selectedItems));
+        }
+    }
+    
+    @FXML
+    private void uncommit(ActionEvent event) {
+        ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        if (selectedItems != null) {
+            dispatcher.acceptAction(new Uncommit(selectedItems));
         }
     }
 

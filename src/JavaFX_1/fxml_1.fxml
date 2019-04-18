@@ -22,6 +22,7 @@
          <Button mnemonicParsing="false" onAction="#commit" text="Commit" />
          <Button mnemonicParsing="false" onAction="#export" text="Export Committed" />
          <Button mnemonicParsing="false" onAction="#undo" text="Undo" />
+         <Button mnemonicParsing="false" onAction="#uncommit" text="Uncommit" />
      </buttons>
    </ButtonBar> 
     

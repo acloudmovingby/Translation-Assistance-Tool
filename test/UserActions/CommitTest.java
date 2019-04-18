@@ -12,7 +12,6 @@ import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
-import State.State;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;

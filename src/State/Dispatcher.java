@@ -34,7 +34,7 @@ public class Dispatcher {
     }
     
     public void undo() {
-        um.restorePriorMainFile(state); // takes state and replaces the main file with the prior stored version in UndoManager
+        um.executeUndo(state); // takes state and replaces the main file with the prior stored version in UndoManager
         dm.push(state); // new state is pushed to database
     }
     

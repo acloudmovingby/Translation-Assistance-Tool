@@ -8,7 +8,9 @@ package DataStructures;
 import java.util.ArrayList;
 
 /**
- *
+ * 
+ * A collection of BasicFiles. 
+ * 
  * @author Chris
  */
 public class Corpus {

@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- *
+ * Utility methods to properly construct BasicFile objects. 
+ * 
  * @author Chris
  */
 public class FileBuilder {

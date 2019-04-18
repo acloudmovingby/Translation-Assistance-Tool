@@ -12,20 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Commits one or more segments in the MainFile. 
+ * Uncommits one or more segments in the MainFile. 
  * @author Chris
  */
-public class Commit implements MainFileAction {
+public class Uncommit implements MainFileAction {
 
     //private final Segment seg; 
     private final List<Segment> segList;
 
-    public Commit(Segment seg) {
+    public Uncommit(Segment seg) {
         segList = new ArrayList();
         segList.add(Segment.getDeepCopy(seg));
     }
 
-    public Commit(List<Segment> segList) {
+    public Uncommit(List<Segment> segList) {
         // NEED TO DEFENSIVELY COPY because JavaFX always has seglist list point back to activeSegsList in main file (thus causing concurrent modification issues). 
         List<Segment> listCopy = new ArrayList();
         segList.forEach((s) -> {listCopy.add(Segment.getDeepCopy(s));});
@@ -35,10 +35,10 @@ public class Commit implements MainFileAction {
     @Override
     public void execute(State state) {
         for (Segment seg : segList) {
-            // if the seg is already committed, then do nothing. 
-            if (!seg.isCommitted()) {
+            // if the seg isn't committed, then do nothing (no need to uncommit).
+            if (seg.isCommitted()) {
                 SegmentBuilder sb = new SegmentBuilder(seg);
-                sb.setCommitted(true);
+                sb.setCommitted(false);
                 state.replaceSeg(seg, sb.createSegmentNewID());
             }
         }
