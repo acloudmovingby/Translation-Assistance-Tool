@@ -78,18 +78,8 @@ public class Segment {
     }
 
 
-    public void setThai(String thai) {
-       thaiProperty.set(thai);
-    }
-
-
     public String getEnglish() {
         return englishProperty.getValue();
-    }
-
-
-    public void setEnglish(String english) {
-        englishProperty.set(english);
     }
 
   

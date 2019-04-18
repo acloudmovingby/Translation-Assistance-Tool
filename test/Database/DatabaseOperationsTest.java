@@ -136,10 +136,10 @@ public class DatabaseOperationsTest {
         
         // Add a third time, with a change. When you get it the version from the database, shouldn't match, but will return true if added. 
         System.out.println("3rd Push (with change)");
-        /*sb = new SegmentBuilder(expResult);
+        sb = new SegmentBuilder(expResult);
         sb.setEnglish("English changed");
-        expResult = sb.createSegment();*/
-        expResult.setEnglish("English changed");
+        expResult = sb.createSegment();
+        //expResult.setEnglish("English changed");
         assertEquals(false, DatabaseOperations.getSegment(expResult.getID()).equals(expResult));
         assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
         
