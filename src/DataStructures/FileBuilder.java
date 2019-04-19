@@ -104,6 +104,16 @@ public class FileBuilder {
         return ret;
     }
     
+    
+    /**
+     * Creates a BasicFile from two lists of Strings. The file created represents a translated file, so all Segments are committed. 
+     * 
+     * The two lists are assumed to correspond (of course). For example, the 3rd English string should be the translation of the 3rd Thai string. This method of course has no way of verifying this, of course. If one list is longer than the other, the returned file will only contain Segments up to the shorter of the lists and the remaining Strings in the longer list are discarded.  
+     * 
+     * @param thaiSegments
+     * @param englishSegments
+     * @return 
+     */
     public static BasicFile fromArrayLists(ArrayList<String> thaiSegments, ArrayList<String> englishSegments) {
         
         BasicFile bf = new BasicFile();
@@ -117,6 +127,7 @@ public class FileBuilder {
             SegmentBuilder sb = new SegmentBuilder(bf);
             sb.setThai(iterThai.next());
             sb.setEnglish(iterEnglish.next());
+            sb.setCommitted(true);
             bf.addSeg(sb.createSegment());
         }
         

@@ -23,7 +23,7 @@ public class RebootDatabaseAndBuildCorpus {
             String thaiFile1 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Thai Book 3-AUTO.txt";
             String engFile1 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Eng Book 3-SQ.txt";
             BasicFile file1 = (new ThaiLawParser(thaiFile1, engFile1)).makeFile();
-            file1.commitAllSegs();
+            
             //DatabaseOperations.addFile(file1);
             DatabaseOperations.addFile(file1);
             //file1.setFileName("Civil and Commercial Code: Book 3");

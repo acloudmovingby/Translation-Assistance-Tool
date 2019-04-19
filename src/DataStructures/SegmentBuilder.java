@@ -19,10 +19,9 @@ public class SegmentBuilder {
     private String thai;
     private String english;
     private boolean isCommitted;
-    private int rank;
     
     /**
-     * Prepares a segment with the default values: id=0; fileID=0; fileName = "", Thai = "", English = "", isCommitted=false, isRemoved=false, rank=0
+     * Prepares a segment with the default values: id=0; fileID=0; fileName = "", Thai = "", English = "", isCommitted=false, isRemoved=false
      */
     public SegmentBuilder() {
         this.id = DatabaseOperations.makeSegID();
@@ -31,7 +30,6 @@ public class SegmentBuilder {
         this.thai = "";
         this.english = "";
         this.isCommitted = false;
-        this.rank = 0;
     }
     
     /**
@@ -45,7 +43,6 @@ public class SegmentBuilder {
         this.thai = s.getThai();
         this.english = s.getEnglish();
         this.isCommitted = s.isCommitted();
-        this.rank = s.getRank();
     }
     
     /**
@@ -59,7 +56,6 @@ public class SegmentBuilder {
         this.thai = "";
         this.english = "";
         this.isCommitted = false;
-        this.rank = 0;
     }
     
     /**
@@ -67,7 +63,7 @@ public class SegmentBuilder {
      * @return 
      */
     public Segment createSegment() {
-        return new Segment(id, fileID, fileName, thai, english, isCommitted, rank);
+        return new Segment(id, fileID, fileName, thai, english, isCommitted);
     }
     
     /**
@@ -76,7 +72,7 @@ public class SegmentBuilder {
      */
     public Segment createSegmentNewID() {
         this.id = DatabaseOperations.makeSegID();
-        return new Segment(id, fileID, fileName, thai, english, isCommitted, rank);
+        return new Segment(id, fileID, fileName, thai, english, isCommitted);
     }
     
     public void setID(int id) {
@@ -101,9 +97,5 @@ public class SegmentBuilder {
     
     public void setCommitted(boolean isCommitted) {
         this.isCommitted = isCommitted;
-    }
-    
-    public void setRank(int rank) {
-        this.rank = rank;
     }
 }

@@ -17,18 +17,26 @@ import javafx.collections.ObservableList;
 
 /**
  * A list of Segments, some active, some hidden.
- * 
- * Active Segments are what the user actually sees while translating. Hidden Segments may be committed (and thus available for match search), but are not seen by the user upon opening the file. 
+ *
+ * Active Segments are what the user actually sees while translating. Hidden
+ * Segments may be committed (and thus available for match search), but are not
+ * seen by the user upon opening the file.
  *
  * @author Chris
  */
 public class BasicFile {
 
     // Actual segs displayed to the user while translating this file.
-    private ObservableList<Segment> activeSegs;
+    private final ObservableList<Segment> activeSegs;
     // Any segs that had been hidden. They still might appear in match queries if they had been commited
-    private ArrayList<Segment> hiddenSegs;
+    private final ArrayList<Segment> hiddenSegs;
+    /**
+     * The name of the file.
+     */
     private String fileName;
+    /**
+     * The id associated with the file in the SQLite database.
+     */
     private final int fileID;
 
     /**
@@ -41,20 +49,22 @@ public class BasicFile {
         fileName = "untitled";
         fileID = DatabaseOperations.createFileID(fileName);
     }
-    
+
     /**
-     * Constructor creating a deep copy of another file. 
-     * 
-     * One use of this constructor is to transform a BasicFile into a MainFile. All segment ids will be identical, but they are distinct objects in distinct lists.
-     * @param file 
+     * Constructor creating a deep copy of another file.
+     *
+     * One use of this constructor is to transform a BasicFile into a MainFile.
+     * All segment ids will be identical, but they are distinct objects in
+     * distinct lists.
+     *
+     * @param file
      */
     public BasicFile(BasicFile file) {
         this.fileID = file.getFileID();
         this.fileName = file.getFileName();
         activeSegs = FXCollections.observableArrayList();
         hiddenSegs = new ArrayList();
-        
-        
+
         for (Segment s : file.getActiveSegs()) {
             SegmentBuilder sb = new SegmentBuilder(s);
             Segment segCopy = sb.createSegment();
@@ -64,12 +74,12 @@ public class BasicFile {
             SegmentBuilder sb = new SegmentBuilder(s);
             Segment segCopy = sb.createSegment();
             hiddenSegs.add(segCopy);
-        } 
+        }
     }
 
     /**
      * Constructor for an empty file with the specified id and name.
-     * 
+     *
      * Used when rebuilding a file from the database.
      *
      * @param fileID
@@ -81,19 +91,20 @@ public class BasicFile {
         activeSegs = FXCollections.observableArrayList();
         hiddenSegs = new ArrayList();
     }
-    
-    
 
     /**
-     * Adds the segment to the end of the activeSegs list in BasicFile. Throws an IllegalArgumentException if: (1) fileID/fileName do not match this file or (2) the segment is "hidden"
-     * @param seg 
+     * Adds the segment to the end of the activeSegs list in BasicFile. Throws
+     * an IllegalArgumentException if: (1) fileID/fileName do not match this
+     * file or (2) the segment is "hidden"
+     *
+     * @param seg
      */
     public void addSeg(Segment seg) {
         // these exceptions are bad programming practice, but will be replaced in time!
         // this just makes sure the Segment was constructed correctly.
         // in the future, BasicFile/Segment will be designed in a way that an illegal argument can't be made
-        if (seg.getFileID() != getFileID() ||
-                !seg.getFileName().equals(getFileName())) {
+        if (seg.getFileID() != getFileID()
+                || !seg.getFileName().equals(getFileName())) {
             throw new IllegalArgumentException();
         } else {
             getActiveSegs().add(seg);
@@ -115,12 +126,16 @@ public class BasicFile {
     }
 
     /**
-     * Currently mutates the segment instead of replacing it. 
+     * NOTE: THIS REPLACES ALL SEGMENTS IN FILE (because they are immutable).
+     *
+     * Is expensive to do, so if you know at the time the file is being parsed/constructed that all segments are committed, then it's better to build the file with committed segments from the beginning. 
      */
     public void commitAllSegs() {
-        for (Segment seg : getActiveSegs()) {
-            seg.setCommitted(true);
-        }
+        getActiveSegs().replaceAll((seg) -> {
+            SegmentBuilder sb = new SegmentBuilder(seg);
+            sb.setCommitted(true);
+            return sb.createSegment();
+        });
     }
 
     @Override
@@ -138,17 +153,17 @@ public class BasicFile {
         if (this.getFileID() != m.getFileID()) {
             return false;
         }
-        
+
         if (!this.getFileName().equals(m.getFileName())) {
             return false;
         }
-        
+
         // First checks that the hidden segs length is the same, and if it is, checks the equalit of every segment in that list. 
         // if the hidden segs list length is unequal, returns false.
         if (this.getHiddenSegs().size() == m.getHiddenSegs().size()) {
             Iterator i1 = this.getHiddenSegs().iterator();
             Iterator i2 = m.getHiddenSegs().iterator();
-            
+
             while (i1.hasNext() && i2.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
                     return false;
@@ -157,13 +172,13 @@ public class BasicFile {
         } else {
             return false;
         }
-        
-         // Checks that the ACTIVE SEGS length is the same, and if it is, checks the equalit of every segment in that list. 
-         // if the ACTIVE SEGS list length is unequal, returns false.
+
+        // Checks that the ACTIVE SEGS length is the same, and if it is, checks the equalit of every segment in that list. 
+        // if the ACTIVE SEGS list length is unequal, returns false.
         if (this.getActiveSegs().size() == m.getActiveSegs().size()) {
             Iterator i1 = this.getActiveSegs().iterator();
             Iterator i2 = m.getActiveSegs().iterator();
-            
+
             while (i1.hasNext() && i2.hasNext()) {
                 if (!i1.next().equals(i2.next())) {
                     return false;
@@ -172,7 +187,7 @@ public class BasicFile {
         } else {
             return false;
         }
-        
+
         return true;
     }
 
@@ -197,7 +212,7 @@ public class BasicFile {
             sb.append(tu.toString());
             sb.append("\n\t");
         }
-        
+
         sb.append("HIDDEN\n\t");
         for (Segment tu : getHiddenSegs()) {
             sb.append(tu.toString());
@@ -213,22 +228,23 @@ public class BasicFile {
     public int getFileID() {
         return fileID;
     }
-    
+
     public ArrayList<Segment> getHiddenSegs() {
         return hiddenSegs;
     }
-    
+
     /**
      * Returns all segs from the file, both hidden and active.
-     * @return 
+     *
+     * @return
      */
     public List<Segment> getAllSegs() {
-        
+
         Stream<Segment> streamA = getActiveSegs().stream();
         Stream<Segment> streamR = getHiddenSegs().stream();
         Stream<Segment> allSegsStream = Stream.concat(streamA, streamR);
-        
+
         return allSegsStream.collect(Collectors.toList());
     }
-    
+
 }

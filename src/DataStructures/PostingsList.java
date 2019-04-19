@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 /**
- * Parses the thai text in Segments into ngrams (length of ngram specified in
+ * Takes Segments and parses the Thai text in into ngrams (length of ngram specified in
  * PostingsList constructor).
  *
  * @author Chris
@@ -21,7 +20,7 @@ import java.util.Objects;
 public class PostingsList {
 
     private final int nGramLength;
-    private HashMap<String, List<Segment>> map;
+    private final HashMap<String, List<Segment>> map;
 
     /**
      * Parses Segment into ngrams to be stored/retrieved from database.

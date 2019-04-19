@@ -104,51 +104,7 @@ public class DatabaseOperationsTest {
    
 
     
-/**
-     * Test of addSeg method, of class DatabaseOperations.
-     * By using a single connection, maybe you can avoid certain SQL errors?
-     */
-    @Test
-    public void testAddOrUpdateSeg() {
-        System.out.println("addOrUpdateSeg");
-        DatabaseOperations.rebootDB();
-        
-        // make the file
-        BasicFile bf = new BasicFile();
-        
-        // add a segment
-        SegmentBuilder sb = new SegmentBuilder(bf);
-        sb.setThai("Thai");
-        sb.setEnglish("English");
-        Segment expResult = sb.createSegment();
-        bf.addSeg(expResult);
-     
-        int numOfTUsInDB = DatabaseOperations.numberOfSegs();
-        // Add seg (should return true)
-        System.out.println("1st Push");
-        assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
-        assertEquals(expResult, DatabaseOperations.getSegment(expResult.getID()));
-       
-        // Add again (should return true)
-        System.out.println("2nd Push");
-        assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
-        assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
-        
-        // Add a third time, with a change. When you get it the version from the database, shouldn't match, but will return true if added. 
-        System.out.println("3rd Push (with change)");
-        sb = new SegmentBuilder(expResult);
-        sb.setEnglish("English changed");
-        expResult = sb.createSegment();
-        //expResult.setEnglish("English changed");
-        assertEquals(false, DatabaseOperations.getSegment(expResult.getID()).equals(expResult));
-        assertEquals(DatabaseOperations.addOrUpdateSegment(expResult), true);
-        
-        // When you get the seg from the db, it should have the updated value. 
-        assertEquals(DatabaseOperations.getSegment(expResult.getID()), expResult);
-        
-        // After all these operations, there should still only be one more seg in db
-        assertEquals(numOfTUsInDB + 1, DatabaseOperations.numberOfSegs());
-    }
+
     
     /**
      *

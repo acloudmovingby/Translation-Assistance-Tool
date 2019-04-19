@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package DataStructures;
 
 import java.util.Objects;
@@ -13,20 +8,41 @@ import javafx.beans.property.StringProperty;
 
 /**
  * Stores the Thai and English translation (if it exists yet) for a given Thai segment. This entry is tied to the fileID of the file with which it is associated.
+ * 
+ * Immutable. (though the StringProperty objects stored could in theory be mutated elsewhere). 
+ * 
  * @author Chris
  */
-public class Segment {
+public final class Segment {
 
-    private int id;
-    private int fileID;
-    private String fileName;
+    /**
+     * The id associated with the Segment (is equivalent to the unique id representing the segment in the SQLite database).
+     */
+    private final int id;
+    /**
+     * The id of the file with which this Segment is associated. 
+     */
+    private final int fileID;
     
-    private StringProperty thaiProperty;
-    private StringProperty englishProperty;
+    /**
+     * The name of the file with which this is associated. 
+     */
+    private final String fileName;
     
-    BooleanProperty isCommittedProperty;
+    /**
+     * The source Thai text.
+     */
+    private final StringProperty thaiProperty;
+    /**
+     * The English translation of the Thai text (or "" if no translation has been given yet). 
+     */
+    private final StringProperty englishProperty;
     
-    private int rank;
+    /**
+     * If a Segment is committed, it means that the user has wanted to store the translation represented by the Segment (and make it available for searches later).
+     */
+    private final BooleanProperty isCommittedProperty;
+    
     
     public Segment() {
         thaiProperty = new SimpleStringProperty("");
@@ -34,6 +50,7 @@ public class Segment {
         isCommittedProperty = new SimpleBooleanProperty(false);
         this.id = 0;
         this.fileID = 0;  
+        this.fileName = "untitled";
     }
 
     public Segment(int fileID){
@@ -42,6 +59,7 @@ public class Segment {
         isCommittedProperty = new SimpleBooleanProperty(false);
         this.id = 0;
         this.fileID = fileID;
+        this.fileName = "untitled";
     }
     
     public Segment(int id, int fileID, String fileName){
@@ -53,14 +71,13 @@ public class Segment {
         this.fileName = fileName;
     }
     
-    public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted, int rank) {
+    public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted) {
         this.id = id;
         this.fileID = fileID;
         this.fileName = fileName;
         thaiProperty = new SimpleStringProperty(thai);
         englishProperty = new SimpleStringProperty(english);
         isCommittedProperty = new SimpleBooleanProperty(isCommitted);
-        this.rank = rank;
     }
     
     /**
@@ -127,28 +144,43 @@ public class Segment {
     }
 
 
+    /**
+     * Same as getThai except it returns an observable StringProperty (necessary for JavaFX stuff). 
+     * @return 
+     */
     public StringProperty thaiProperty() {
         return thaiProperty;
     }
 
 
+    /**
+     * Same as getEnglish except it returns an observable StringProperty (necessary for JavaFX stuff). 
+     * @return 
+     */
     public StringProperty englishProperty() {
         return englishProperty;
     }
 
 
+    /**
+     * If a Segment is committed, it means that the user has wanted to store the translation for the Thai text represented by the Segment. 
+     * 
+     * If a Segment is committed, then it can be searched for matches. 
+     * 
+     * @return True if the Segment is committed and false otherwise.
+     */
     public boolean isCommitted() {
         return isCommittedProperty.get();
     }
 
+    /**
+     * Same as isCommitted() except it returns an observable Boolean Property (necessary for JavaFX stuff).
+     * @return True if the Segment is committed and false otherwise.
+     */
     public BooleanProperty isCommittedProperty() {
         return isCommittedProperty;
     }
     
-
-    public void setCommitted(boolean b) {
-        isCommittedProperty.set(b);
-    }
 
     public String getFileName() {
         return fileName;
@@ -161,27 +193,5 @@ public class Segment {
     public int getFileID() {
         return fileID;
     }
-
-    public int getRank() {
-        return rank;
-    }
-    
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
-    public void setID(int id) {
-        this.id = id;
-    }
-    
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-    
-    public void setFileID(int fileID) {
-        this.fileID = fileID;
-    }
-    
-    
 
 }

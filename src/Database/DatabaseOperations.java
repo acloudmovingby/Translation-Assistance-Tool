@@ -31,52 +31,7 @@ public class DatabaseOperations {
      *
      *************************************************************************
      */
-    /**
-     * Puts the Segment into the database. If a Segment with that id already
-     * exists, then it is replaced by the new Segment. If successful, returns
-     * true. If there is a SQL error, then returns false.
-     * 
-     * Note, using this method makes the segment out of the context of a File, so this method assumes it is not "removed" (the removed value is set to 0, false).
-     * For this reason, segs should probably added in the context of a file. 
-     * @param seg
-     * @return
-     */
-    public static boolean addOrUpdateSegment(Segment seg) {
-
-        
-        String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
-
-        try (Connection conn = DatabaseOperations.connect();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setDouble(1, seg.getID());
-
-            pstmt.setDouble(2, seg.getFileID());
-
-            pstmt.setString(3, seg.getFileName());
-
-            pstmt.setString(4, seg.getThai());
-
-            pstmt.setString(5, seg.getEnglish());
-
-            // committed/removed booleans are stored as binary (0 = false, 1 = true)
-            if (seg.isCommitted()) {
-                pstmt.setInt(6, 1);
-            } else {
-                pstmt.setInt(6, 0);
-            }
-            // removed variable set to 0 (false)
-            pstmt.setInt(7, 0);
-
-            pstmt.setInt(8, seg.getRank());
-
-            pstmt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("AddOrUpdateSeg(" + seg.getID() + ": " + e.getMessage());
-            return false;
-        }
-
-    }
+    
 
     /**
      * Adds all Segment entries contained in the file to the database or updates
@@ -431,7 +386,6 @@ public class DatabaseOperations {
         sb.setEnglish(rs.getString("english"));
         int committedStatus = rs.getInt("committed");
         sb.setCommitted(rs.getInt("committed") == 1);
-        sb.setRank(rs.getInt("rank"));
 
         return sb.createSegment();
     }
