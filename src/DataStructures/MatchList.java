@@ -1,7 +1,6 @@
 package DataStructures;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,8 +49,8 @@ public class MatchList {
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
         
-        for (MatchSegment tu : matchSegList) {
-            sb.append(tu.toString());
+        for (MatchSegment ms : matchSegList) {
+            sb.append(ms.toString());
             sb.append("\n\t");
         }
          return sb.toString();

@@ -5,7 +5,6 @@
  */
 package State;
 
-import DataStructures.Corpus;
 import DataStructures.MainFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
@@ -123,7 +122,7 @@ public class UndoManagerTest {
         MainFile mf = emptyDisp.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         
-        // one segment state
+        // main file with one segment
         // commit the only segment in the main file
         StateCopier oneSegStateCopy = new StateCopier(oneSegDisp.getState());
         Segment onlyExistantSeg = oneSegDisp.getUIState().getMainFileSegs().get(0);

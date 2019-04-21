@@ -7,7 +7,7 @@ package State;
 
 import comparator.PostingsListManager;
 import Database.DatabaseOperations;
-import DataStructures.PostingsList;
+import comparator.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.MatchList;
 import DataStructures.Corpus;
@@ -159,9 +159,9 @@ public class State {
                             new BufferedWriter(
                                     new FileWriter(FILENAME)));
             
-            for (Segment tu : getMainFile().getActiveSegs()) {
-                if (tu.isCommitted()) {
-                    out.println(tu.getEnglish());
+            for (Segment seg : getMainFile().getActiveSegs()) {
+                if (seg.isCommitted()) {
+                    out.println(seg.getEnglish());
                 }
             }
 

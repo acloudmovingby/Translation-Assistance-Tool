@@ -9,7 +9,6 @@ import DataStructures.BasicFile;
 import DataStructures.MatchList;
 import DataStructures.Corpus;
 import DataStructures.MatchSegment;
-import DataStructures.PostingsList;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;

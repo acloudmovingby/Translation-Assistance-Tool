@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package DataStructures;
 
 import Database.DatabaseOperations;
@@ -46,7 +41,7 @@ public class SegmentBuilder {
     }
     
     /**
-     * Makes sure the segment contains the fileID and fileName of the given file. All other properties are as per the default constructor (the no arg constructor): id=random integer; Thai = "", English = "", isCommitted=false, isRemoved=false, rank=0
+     * Makes sure the segment contains the fileID and fileName of the given file. All other properties are as per the default constructor (the no arg constructor): id=random integer; Thai = "", English = "", isCommitted=false, isRemoved=false
      * @param bf 
      */
     public SegmentBuilder(BasicFile bf) {

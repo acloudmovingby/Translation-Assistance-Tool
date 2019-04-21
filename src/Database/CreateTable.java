@@ -1,18 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
-
-TU ids go up by 1000.
-When I insert 
-    put in at 500 (750, etc..)
-    check to make sure it doesn't exist
-    
-If it exists (which is unlikely because user probably won't merge/split more than a time or two).
-    have method to reassign neighboring TU ids. This requires at most log2 1000 upateTU calls (?).
-
-
- */
 package Database;
 
 import java.sql.Connection;
@@ -21,13 +6,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- *
+ * Creates a SQLite table with the name "database1.db". 
+ * 
  * @author Chris
  */
 public class CreateTable {
 
     /**
-     * Create a new table in the test database for TU Entries.
+     * Create a new table in the test database for Segment Entries.
      *
      */
     private static void createTUEntryTable() {

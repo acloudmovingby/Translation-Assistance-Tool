@@ -7,7 +7,6 @@ package comparator;
 
 import DataStructures.MatchList;
 import DataStructures.MatchSegment;
-import DataStructures.PostingsList;
 import DataStructures.Segment;
 import java.util.HashMap;
 import java.util.HashSet;

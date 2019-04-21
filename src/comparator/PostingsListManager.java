@@ -5,8 +5,6 @@
  */
 package comparator;
 
-import DataStructures.Corpus;
-import DataStructures.PostingsList;
 import DataStructures.Segment;
 import java.util.ArrayList;
 import java.util.HashSet;

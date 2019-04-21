@@ -8,7 +8,7 @@ package UserActions;
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
 import DataStructures.MainFile;
-import DataStructures.PostingsList;
+import comparator.PostingsList;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;

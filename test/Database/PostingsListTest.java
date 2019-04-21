@@ -5,7 +5,7 @@
  */
 package Database;
 
-import DataStructures.PostingsList;
+import comparator.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;

@@ -5,7 +5,6 @@
  */
 package comparator;
 
-import DataStructures.PostingsList;
 import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;

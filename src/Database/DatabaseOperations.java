@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Database;
 
 import DataStructures.BasicFile;
@@ -19,7 +15,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
- *
+ * The core class for writing/reading to the SQLite database.
+ * 
  * @author Chris
  */
 public class DatabaseOperations {
@@ -27,7 +24,7 @@ public class DatabaseOperations {
     /**
      * ***********************************************************************
      *
-     * Methods that can WRITE to database
+     * Methods that can WRITE to the database
      *
      *************************************************************************
      */
@@ -45,9 +42,6 @@ public class DatabaseOperations {
      * there is an SQL error, returns false.
      */
     public static boolean addFile(BasicFile bf) {
-        if (!State.databaseIsWritable()) {
-            return false;
-        } else {
             DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
             String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
@@ -115,7 +109,6 @@ public class DatabaseOperations {
                 System.out.println("AddFileAsBatch: " + e.getMessage());
                 return false;
             }
-        }
     }
 
     /**
@@ -127,9 +120,6 @@ public class DatabaseOperations {
      * @return True if added successfully, false if an SQLException is thrown.
      */
     public static boolean addOrUpdateFileName(double fileID, String fileName) {
-        if (!State.databaseIsWritable()) {
-            return false;
-        } else {
             String sql = "INSERT OR REPLACE INTO files(fileID, fileName) VALUES(?,?)";
 
             try (Connection conn = DatabaseOperations.connect();
@@ -143,8 +133,6 @@ public class DatabaseOperations {
                 System.out.println("addOrUpdateFileName: " + e.getMessage());
                 return false;
             }
-
-        }
     }
 
     /**
@@ -182,11 +170,6 @@ public class DatabaseOperations {
      */
     public static boolean removeSeg(double id) {
 
-        // If database isn't active, this returns default of false;
-        if (!State.databaseIsWritable()) {
-            return false;
-        } else {
-
             String sql = "DELETE FROM corpus1 WHERE id = ?";
 
             try (Connection conn = DatabaseOperations.connect();
@@ -202,7 +185,6 @@ public class DatabaseOperations {
                 System.out.println("removeSeg: " + e.getMessage());
                 return false;
             }
-        }
     }
 
     /**
@@ -213,9 +195,6 @@ public class DatabaseOperations {
      *************************************************************************
      */
     public static int numberOfSegs() {
-        if (!State.databaseIsReadable()) {
-            return 0;
-        } else {
             String sql = "SELECT COUNT(*) FROM corpus1;";
 
             int notDistinctCount = 0;
@@ -245,15 +224,9 @@ public class DatabaseOperations {
             }
 
             return distinctCount;
-        }
     }
 
     public static String getFileName(double fileID) {
-
-        // If database isn't active, this returns default of null;
-        if (!State.databaseIsReadable()) {
-            return null;
-        } else {
 
             String idAsString = String.valueOf(fileID);
             String sql = "SELECT fileName FROM files WHERE fileID =" + idAsString + ";";
@@ -270,7 +243,6 @@ public class DatabaseOperations {
                 System.out.println("getFileName: " + e.getMessage());
             }
             return null;
-        }
     }
 
     /**
@@ -281,11 +253,6 @@ public class DatabaseOperations {
      * @return The Segment object associated with that id
      */
     public static Segment getSegment(double id) {
-
-        // If database isn't active, this returns default of null;
-        if (!State.databaseIsReadable()) {
-            return null;
-        } else {
 
             String idAsString = String.valueOf(id);
             String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE id =" + idAsString + ";";
@@ -304,7 +271,6 @@ public class DatabaseOperations {
                 System.out.println("getSegment: " + e.getMessage());
             }
             return null;
-        }
     }
 
     public static Corpus getAllSegments() {
