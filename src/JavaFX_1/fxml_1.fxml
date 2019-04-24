@@ -17,12 +17,35 @@
 <GridPane alignment="CENTER" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="707.0" prefWidth="939.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
    <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
      <buttons>
-         <Button fx:id="splitButton" mnemonicParsing="false" onAction="#split" text="Split" />
-         <Button fx:id="mergeButton" mnemonicParsing="false" onAction="#merge" text="Merge" />
-         <Button mnemonicParsing="false" onAction="#commit" text="Commit" />
-         <Button mnemonicParsing="false" onAction="#export" text="Export Committed" />
-         <Button mnemonicParsing="false" onAction="#undo" text="Undo" />
-         <Button mnemonicParsing="false" onAction="#uncommit" text="Uncommit" />
+         <Button fx:id="commitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#commit" text="Commit" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font></Button>
+         <Button fx:id="uncommitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#uncommit" text="Uncommit" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font></Button>
+         <Button fx:id="splitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#split" text="Split" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font></Button>
+         <Button fx:id="mergeButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#merge" text="Merge" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font></Button>
+         <Button fx:id="undoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#undo" text="Undo" textAlignment="CENTER">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font></Button>
+         <Button fx:id="exportButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#export" text="Export Committed" textAlignment="CENTER" ButtonBar.buttonData="RIGHT">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font></Button>
+         <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#undo" text="Redo" textAlignment="CENTER">
+            <font>
+               <Font name="System Bold" size="10.0" />
+            </font>
+         </Button>
      </buttons>
    </ButtonBar> 
     

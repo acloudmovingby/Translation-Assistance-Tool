@@ -20,7 +20,7 @@ public class JavaFX_1 extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("FXML TableView Example");
+        primaryStage.setTitle("Thai CAT Tool");
        
        
         Pane myPane = (Pane) FXMLLoader.load(getClass().getResource("fxml_1.fxml"));

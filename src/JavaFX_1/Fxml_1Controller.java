@@ -34,12 +34,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -98,16 +101,25 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     Label numMatches;
-    
+
     @FXML
     Button splitButton;
-    
+
     @FXML
     Button mergeButton;
 
+    @FXML
+    Button commitButton;
+    
+    @FXML
+    Button uncommitButton;
+    
+    @FXML
+    Button exportButton;
+
     String committedStatusColor;
     String unCommittedStatusColor;
-    
+
     Dispatcher dispatcher;
     UIState uiState;
     /**
@@ -137,17 +149,17 @@ public class Fxml_1Controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         JavaFX_1.myControllerHandle = this;
-        
+
         // retrieves all files previously stored in database
         Corpus corpus = DatabaseOperations.getAllSegments();
-        
+
         // builds a main file from some random Thai document
         FileBuilder fileBuilder = new FileBuilder();
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
-            
+
         Initializer init = new Initializer(mainFile, corpus);
         state = init.getState();
         uiState = init.getUIState();
@@ -192,7 +204,7 @@ public class Fxml_1Controller implements Initializable {
             Segment editedSeg = tableView.getItems().get(row);
             SegmentBuilder sb = new SegmentBuilder(editedSeg);
             editedSeg = sb.createSegment();
-            
+
             if (editedSeg != null) {
                 dispatcher.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
             }
@@ -265,7 +277,7 @@ public class Fxml_1Controller implements Initializable {
                         // matching characters are marked as one color, non-matching characters are another column
                         final TextFlow textFlow = matchesAsTextFlow(thisCellSegment.getThai(), matches);
                         this.setGraphic(textFlow);
-                        
+
                         setPrefHeight(textFlow.prefHeight(thaiColComp.getWidth()) + 4);
                         thaiColComp.widthProperty().addListener((v, o, n)
                                 -> setPrefHeight(textFlow.prefHeight(n.doubleValue()) + 4));
@@ -317,7 +329,6 @@ public class Fxml_1Controller implements Initializable {
             numMatches.setText(String.valueOf(newVal));
         });
 
-        
         // Makes it so merge is disabled except when multiple cells are selected
         tableView.getSelectionModel().getSelectedItems().addListener((Change<? extends Segment> c) -> {
             if (c.getList().size() <= 1) {
@@ -326,6 +337,46 @@ public class Fxml_1Controller implements Initializable {
                 mergeButton.setDisable(false);
             }
         });
+
+        // Apply image to COMMIT button
+        ImageView commitIV = new ImageView(getClass().getResource("/JavaFX_1/CommitButtonPNG.png").toExternalForm());
+        commitIV.setFitWidth(40);
+        commitIV.setPreserveRatio(true);
+        commitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        commitIV.setCache(true); // perhaps not necessary
+        commitButton.setGraphic(commitIV);
+        
+        // apply image to UNCOMMIT button
+        ImageView uncommitIV = new ImageView(getClass().getResource("/JavaFX_1/UncommitButton.png").toExternalForm());
+        uncommitIV.setFitWidth(40);
+        uncommitIV.setPreserveRatio(true);
+        uncommitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        uncommitIV.setCache(true); // perhaps not necessary
+        uncommitButton.setGraphic(uncommitIV);
+        
+        // apply image to SPLIT button
+        ImageView splitIV = new ImageView(getClass().getResource("/JavaFX_1/SplitButton.png").toExternalForm());
+        splitIV.setFitWidth(40);
+        splitIV.setPreserveRatio(true);
+        splitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        splitIV.setCache(true); // perhaps not necessary
+        splitButton.setGraphic(splitIV);
+
+        // apply image to MERGE button
+        ImageView mergeIV = new ImageView(getClass().getResource("/JavaFX_1/MergeButton.png").toExternalForm());
+        mergeIV.setFitWidth(40);
+        mergeIV.setPreserveRatio(true);
+        mergeIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        mergeIV.setCache(true); // perhaps not necessary
+        mergeButton.setGraphic(mergeIV);
+        
+        // apply image to EXPORT button
+        ImageView exportIV = new ImageView(getClass().getResource("/JavaFX_1/ExportButton.png").toExternalForm());
+        exportIV.setFitWidth(40);
+        exportIV.setPreserveRatio(true);
+        exportIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        exportIV.setCache(true); // perhaps not necessary
+        exportButton.setGraphic(exportIV);
     }
 
     @FXML
@@ -350,11 +401,11 @@ public class Fxml_1Controller implements Initializable {
     private void commit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            
+
             dispatcher.acceptAction(new Commit(selectedItems));
         }
     }
-    
+
     @FXML
     private void uncommit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
@@ -367,10 +418,10 @@ public class Fxml_1Controller implements Initializable {
     private void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.Z) {
             if (!zPressed.getValue()) {
-                
+
                 zPressed.set(true);
                 if (zPressed.getValue() && commandPressed.getValue()) {
-                   // state.undo();
+                    // state.undo();
                 }
                 event.consume();
             }
@@ -463,10 +514,11 @@ public class Fxml_1Controller implements Initializable {
         }
         return textFlow;
     }
+
     @FXML
     private void undo(ActionEvent event) {
         dispatcher.undo();
-        
+
     }
 
     private void setScene(Scene scene) {

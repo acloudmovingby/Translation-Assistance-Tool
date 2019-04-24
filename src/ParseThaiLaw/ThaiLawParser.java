@@ -48,19 +48,27 @@ public class ThaiLawParser {
         - string to int converter (string->int)
             literally just Integer.parseint(string)
      */
-    public ThaiLawParser(String fileNameThai, String fileNameEng) {
-        this.fileNameThai = fileNameThai;
+    /**
+     * NOT NECESSARY FOR CORE FUNCTIONALITY OF THIS PROGRAM. HIGHLY SPECIFIC TO A CERTAIN PDF FORMAT. Takes pdfs taken from a specific website (thailaw) and parses the Thai and English to add to the corpus for this program. 
+     * 
+     * Highly specific to how those PDFs are formatted, but useful because that website provides thousands of pages of Thai laws with translations formatted in a specific way.
+     * 
+     * @param thaiFilePath
+     * @param englishFilePath 
+     */
+    public ThaiLawParser(String thaiFilePath, String englishFilePath) {
+        this.fileNameThai = thaiFilePath;
         try {
 
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
-                    = new FileReader(fileNameThai);
+                    = new FileReader(thaiFilePath);
 
             BufferedReader buffReaderThai
                     = new BufferedReader(fileReaderThai);
 
             FileReader fileReaderEng
-                    = new FileReader(fileNameEng);
+                    = new FileReader(englishFilePath);
 
             BufferedReader buffReaderEng
                     = new BufferedReader(fileReaderEng);
@@ -139,11 +147,11 @@ public class ThaiLawParser {
         } catch (FileNotFoundException ex) {
             System.out.println(
                     "Unable to open file '"
-                    + fileNameThai + "'");
+                    + thaiFilePath + "'");
         } catch (IOException ex) {
             System.out.println(
                     "Error reading file '"
-                    + fileNameThai + "'");
+                    + thaiFilePath + "'");
             // Or we could just do this: 
             // ex.printStackTrace();
         }
