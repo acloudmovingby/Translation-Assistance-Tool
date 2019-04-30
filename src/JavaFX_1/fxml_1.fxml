@@ -41,7 +41,7 @@
             <font>
                <Font name="System Bold" size="10.0" />
             </font></Button>
-         <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#undo" text="Redo" textAlignment="CENTER">
+         <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#undo" text="Redo" textAlignment="CENTER" wrapText="true">
             <font>
                <Font name="System Bold" size="10.0" />
             </font>

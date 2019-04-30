@@ -34,14 +34,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -153,7 +151,7 @@ public class Fxml_1Controller implements Initializable {
         // retrieves all files previously stored in database
         Corpus corpus = DatabaseOperations.getAllSegments();
 
-        // builds a main file from some random Thai document
+        // builds a main file from the specified Thai document
         FileBuilder fileBuilder = new FileBuilder();
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
@@ -188,8 +186,7 @@ public class Fxml_1Controller implements Initializable {
             text.setFont(UIState.getThaiFont());
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-            // ensures that the text wraps at the column width
-            text.wrappingWidthProperty().bind(thaiCol.widthProperty());
+            text.wrappingWidthProperty().bind(thaiCol.widthProperty()); // ensures that the text wraps at the column width
             text.textProperty().bind(cell.itemProperty());
             cell.setEditable(true);
             return cell;
@@ -215,20 +212,20 @@ public class Fxml_1Controller implements Initializable {
         // Status column:
         // makes it so this columns cellValueFactory is bound to the isCommitted() method of Segment
         status.setCellValueFactory(cellData -> cellData.getValue().isCommittedProperty());
-        //if the value of isCommitted() changes, the background color of the cell changes
+        // if the value of isCommitted() changes, the background color of the cell changes
         status.setCellFactory(tc -> {
             TableCell<Segment, Boolean> cell = new TableCell<Segment, Boolean>() {
                 @Override
                 protected void updateItem(Boolean item, boolean empty) {
                     super.updateItem(item, empty);
-
-                    // assign item's toString value as text
+                    
                     if (empty || item == null) {
                         setText(null);
                         setGraphic(null);
                     } else {
                         if (item == true) {
                             setText(null);
+                            // here is where the committed color is set 
                             setStyle("-fx-background-color: " + committedStatusColor + ";");
                         } else {
                             setStyle("");
@@ -244,17 +241,14 @@ public class Fxml_1Controller implements Initializable {
         // MatchScore:
         matchScore.setCellValueFactory(new PropertyValueFactory<>("matchScore"));
 
-        // Tags column
         // sets title at top to the name of the file
         title.setText(state.getMainFile().getFileName());
 
-        // binds state file to state table viewer
-        //tableView.setItems(state.getMainFileSegs());
+        // puts the list of Segments from the main file into the main table view
         tableView.setItems(uiState.getMainFileSegs());
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        // tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         // COMPARE FILE VIEWER
         // Thai columns
         thaiColComp.setCellValueFactory(new PropertyValueFactory<>("thai"));
@@ -303,8 +297,6 @@ public class Fxml_1Controller implements Initializable {
         // Sets "score" rating for match. Currently represents the number of matching characters.
         scoreColComp.setCellValueFactory(new PropertyValueFactory<>("longestMatchLength"));
 
-        // sets initial compare file in compare table to first Seg in state file viewer
-        //setCompareTable(state.getMainFile().getActiveSegs().get(0).toString());
 
         /*
             Makes it so when a row is selected in the state table, this renders compareTable with a new MatchList made from the Thai String from the state table.

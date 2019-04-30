@@ -111,7 +111,8 @@ public class EditableEnglishCellFactory
         }
         return cell;
         */
-        // TEMPORARY (USUALLY USE THE ABOVE CODE)
+        // Use the below code. The above makes a cell with a TextField, which, thanks to the brilliant JavaFX development team, doesn't support line wrapping. 
+        // So use the below instead, which uses a TextArea (which has its own problems)
         return MyEditCell.createStringEditCell();
     }
 
