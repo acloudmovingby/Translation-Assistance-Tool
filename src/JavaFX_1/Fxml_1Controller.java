@@ -1,5 +1,6 @@
 package JavaFX_1;
 
+import State.StateBuilder;
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
 import DataStructures.FileBuilder;
@@ -148,26 +149,25 @@ public class Fxml_1Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // retrieves all files previously stored in database
-        Corpus corpus = DatabaseOperations.getAllSegments();
-
         // builds a main file from the specified Thai document
         FileBuilder fileBuilder = new FileBuilder();
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
-
-        StateBuilder stateBuilder = new StateBuilder(mainFile, corpus);
-        state = stateBuilder.getState();
-        uiState = stateBuilder.getUIState();
-        dispatcher = stateBuilder.getDispatcher();
-
+        
+        // actually builds all the important objects for the program and sets the items for the tables to display
+        setMainFile(mainFile);
+        
+        
+        
+        // BELOW IS ONLY UI INITIALIZIATION THAT DOESN'T DEPEND ON MAIN FILE
+        // Because the main file can be changed mid program operation, all UI elements that depend on state/UIstate/Dispatcher need to be in the method setMainFile so they are reset when the main file is changed
+       
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
 
-        // Sets prompt text for minMatchLengthField to equal default minimum match length
-        minMatchLengthField.setPromptText(Integer.toString(state.getMinMatchLength()));
+        
         // Set prompt text for search field
         searchField.setPromptText("search...");
 
@@ -195,6 +195,7 @@ public class Fxml_1Controller implements Initializable {
         });*/
 
         EditableCellFactory cf = new EditableCellFactory();
+        cf.setFont(UIState.getEnglishFont()); // should actually do in CSS
 
         thaiCol.setCellFactory(cf);
         thaiCol.setOnEditCommit(e -> {
@@ -208,7 +209,6 @@ public class Fxml_1Controller implements Initializable {
         });
 
         // English column:
-        cf.setFont(UIState.getEnglishFont());
         englishCol.setCellFactory(cf);
         englishCol.setOnEditCommit(e -> {
             int row = e.getTablePosition().getRow();
@@ -254,16 +254,11 @@ public class Fxml_1Controller implements Initializable {
         // MatchScore:
         matchScore.setCellValueFactory(new PropertyValueFactory<>("matchScore"));
 
-        // sets title at top to the name of the file
-        title.setText(state.getMainFile().getFileName());
-
-        // puts the list of Segments from the main file into the main table view
-        tableView.setItems(uiState.getMainFileSegs());
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        // COMPARE FILE VIEWER
-        // Thai columns
+        // MATCH TABLE
+        // MATCHES: THAI COLUMN
         thaiColComp.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiColComp.setMinWidth(120);
         thaiColComp.setCellFactory(tc -> {
@@ -300,7 +295,7 @@ public class Fxml_1Controller implements Initializable {
             text.textProperty().bind(cell.itemProperty());
             return cell;
         });
-        // English column
+        // MATCHES: ENGLISH COLUMN
         englishColComp.setCellValueFactory(new PropertyValueFactory<>("english"));
         BasicCellFactory cf1 = new BasicCellFactory();
         cf1.setFont(UIState.getEnglishFont());
@@ -317,9 +312,6 @@ public class Fxml_1Controller implements Initializable {
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 state.newSelection(newSelection);
-                if (scene == null && tableView.getScene() != null) {
-                    // setScene(tableView.getScene());
-                }
             }
         }
         );
@@ -328,11 +320,9 @@ public class Fxml_1Controller implements Initializable {
         Font.getFamilies().forEach((s) -> {
             System.out.println(s);
         }); */
-        compareTable.setItems(uiState.getMatchList());
+        
 
-        uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
-            numMatches.setText(String.valueOf(newVal));
-        });
+        
 
         // Makes it so merge is disabled except when multiple cells are selected
         tableView.getSelectionModel().getSelectedItems().addListener((Change<? extends Segment> c) -> {
@@ -532,7 +522,41 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     private void undo(ActionEvent event) {
         dispatcher.undo();
-
+    }
+    
+    @FXML
+    private void redo(ActionEvent event) {
+        dispatcher.redo();
+    }
+    
+    /**
+     * Key method for initializing the state for a given main file. Creates a new StateBuilder which in turn creates the various key components of the program (Dispatcher, State, UIState) that are intrinsically linked to the main file being translated. If a new file is being made the main file (such as when opening an old translation project or starting a new one), all of these should be reset.
+     * 
+     * This is also where all segments are retrieved from the database (for searching matches with the main file). Currently this just re-retrieves all of these and recreates all the Postings Lists, which may be inefficient, but the user isn't expected to change files that often. If this needs to be changed (like the user is switching between files a lot) it would not be too hard to reconfigure this so that it doesn't redo these expensive operations (because all that's really changing is the MainFile). But currently, for simplicity sake and to avoid unforeseen errors, the whole program is essentially rebooted by doing this.  
+     * 
+     * @param bf The new main file to be translated
+     */
+    private void setMainFile(BasicFile newMainFile) {
+        Corpus corpus = DatabaseOperations.getAllSegments();
+        StateBuilder stateBuilder = new StateBuilder(newMainFile, corpus);
+        state = stateBuilder.getState();
+        uiState = stateBuilder.getUIState();
+        dispatcher = stateBuilder.getDispatcher();
+        
+        // UI THINGS THAT DEPEND ON MAINFILE
+        
+        // sets title at top to the name of the file
+        title.setText(state.getMainFile().getFileName());
+        
+        // puts the list of Segments from the main file into the main table view
+        tableView.setItems(uiState.getMainFileSegs());
+        
+        compareTable.setItems(uiState.getMatchList());
+        
+        uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
+            numMatches.setText(String.valueOf(newVal));
+        });
+        
     }
 
 }

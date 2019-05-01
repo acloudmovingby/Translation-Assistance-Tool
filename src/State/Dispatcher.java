@@ -13,8 +13,6 @@ import UserActions.MainFileAction;
  * These include all user forms of input on a main file: editing, committing,
  * split, merge, etc.
  *
- * When the user performs an action that affects the MainFile, a
- *
  * @author Chris
  */
 public class Dispatcher {
@@ -38,6 +36,11 @@ public class Dispatcher {
     public void undo() {
         um.executeUndo(state); // takes state and replaces the main file with the prior stored version in UndoManager
         dm.push(state); // new state is pushed to database
+    }
+    
+    public void redo() {
+        um.executeRedo(state);
+        dm.push(state);
     }
 
     public UIState getUIState() {

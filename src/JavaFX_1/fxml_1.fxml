@@ -47,7 +47,7 @@
                     <Font name="System Bold" size="10.0" />
                 </font>
             </Button>
-            <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#undo" text="Redo" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#redo" text="Redo" textAlignment="CENTER" wrapText="true">
                 <font>
                     <Font name="System Bold" size="10.0" />
                 </font>
@@ -69,7 +69,7 @@
     </TableView>
     <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="8">
         <children>
-            <Pane prefWidth="939.0">
+            <Pane prefHeight="35.0" prefWidth="939.0">
                 <children>
                     <TextField fx:id="searchField" layoutX="5.0" layoutY="5.0" onAction="#search" prefWidth="256.0">
                         <font>
@@ -87,9 +87,9 @@
                     <Insets bottom="20.0" top="12.0" />
                 </padding>
             </Pane>
-            <Pane maxHeight="-Infinity" prefHeight="200.0" prefWidth="200.0">
+            <Pane maxHeight="-Infinity" prefHeight="147.0" prefWidth="939.0">
                 <children>
-                    <TableView fx:id="compareTable" layoutX="3.0" prefHeight="171.0" prefWidth="936.0">
+                    <TableView fx:id="compareTable" layoutX="3.0" prefHeight="157.0" prefWidth="936.0">
                         <columns>
                             <TableColumn fx:id="thaiColComp" prefWidth="358.0" text="Thai" />
                             <TableColumn fx:id="englishColComp" prefWidth="343.0" text="English" />
@@ -103,8 +103,8 @@
     </VBox>
     <Pane maxHeight="-Infinity" prefHeight="25.0" prefWidth="939.0" GridPane.rowIndex="10">
         <children>
-            <Label layoutX="10.0" layoutY="3.0" text="Matching TUs:" />
-            <Label fx:id="numMatches" layoutX="107.0" layoutY="4.0" prefHeight="17.0" prefWidth="52.0" text="0" />
+            <Label layoutX="16.0" layoutY="4.0" text="Matching Segments:" />
+            <Label fx:id="numMatches" layoutX="148.0" layoutY="4.0" prefHeight="17.0" prefWidth="52.0" text="0" />
         </children>
     </Pane>
     <columnConstraints>

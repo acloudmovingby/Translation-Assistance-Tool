@@ -32,7 +32,7 @@ public class UIState {
         numMatches = new SimpleIntegerProperty(0);
     }
 
-    void setMainFileSegs(ObservableList<Segment> segList) {
+    protected void setMainFileSegs(ObservableList<Segment> segList) {
         this.mainFileSegs = segList;
     }
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package JavaFX_1;
+package State;
 
 import DataStructures.BasicFile;
 import DataStructures.Corpus;

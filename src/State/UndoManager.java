@@ -87,7 +87,7 @@ public class UndoManager {
         // add the current state to the undo stack
         undoStack.offerFirst(new MainFile(state.getMainFile()));
 
-        // get the "prior" state (i.e what we are re-doing into)
+        // get the "next" state (i.e what we are re-doing into)
         MainFile nextRedoFile = redoStack.pollFirst();
 
         // replace the main file

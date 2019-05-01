@@ -9,7 +9,6 @@ import DataStructures.MainFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
-import JavaFX_1.StateBuilder;
 import UserActions.Commit;
 import UserActions.EditEnglish;
 import UserActions.EditThai;
