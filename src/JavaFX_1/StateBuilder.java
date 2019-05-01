@@ -17,28 +17,28 @@ import State.UndoManager;
  *
  * @author Chris
  */
-public class Initializer {
-    
+public class StateBuilder {
+
     private final Dispatcher d;
     private final State state;
     private final DatabaseManager dm;
-    
-    public Initializer(BasicFile mainFile, Corpus corpus) {
+
+    public StateBuilder(BasicFile mainFile, Corpus corpus) {
         state = new State(mainFile, corpus);
         dm = new DatabaseManager(state);
         d = new Dispatcher(dm, state, new UndoManager());
     }
-    
+
     public UIState getUIState() {
         return state.getUIState();
     }
-    
+
     public Dispatcher getDispatcher() {
         return d;
     }
-        
+
     public State getState() {
         return state;
     }
-    
+
 }

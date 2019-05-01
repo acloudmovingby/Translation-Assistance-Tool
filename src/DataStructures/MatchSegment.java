@@ -18,21 +18,25 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 /**
- * This class represents a match between a source Segment in the MainFile and a target segment from the corpus. 
- * 
- * The source Segment is not stored in the Segment, but the target Segment and its properties are.
- * 
- * 
+ * This class represents a match between a source Segment in the MainFile and a
+ * target segment from the corpus.
+ *
+ * The source Segment is not stored in the Segment, but the target Segment and
+ * its properties are.
+ *
+ *
  * @author Chris
  */
 public class MatchSegment implements Comparable<MatchSegment> {
 
     /**
-     * Represents the segment from the corpus with which a match was found (the "target" segment in a match).
+     * Represents the segment from the corpus with which a match was found (the
+     * "target" segment in a match).
      */
     private final Segment seg;
     /**
-     * Represents where in the seg's Thai property there are matches. Length is equal to seg.getThai().length()
+     * Represents where in the seg's Thai property there are matches. Length is
+     * equal to seg.getThai().length()
      */
     private boolean[] charsPartOfSubstring;
     /**
@@ -71,7 +75,7 @@ public class MatchSegment implements Comparable<MatchSegment> {
     public String getFileName() {
         return fileName.getValue();
     }
-    
+
     public final void setFileName(String fileName) {
         if (fileName == null) {
             this.fileName.set("");
@@ -83,19 +87,19 @@ public class MatchSegment implements Comparable<MatchSegment> {
     public String getThai() {
         return thaiProperty.getValue();
     }
-    
+
     public void setThai(String thai) {
-       thaiProperty.set(thai);
+        thaiProperty.set(thai);
         charsPartOfSubstring = new boolean[getThai().length()];
         for (boolean b : charsPartOfSubstring) {
             b = false;
         }
     }
-    
+
     public String getEnglish() {
         return englishProperty.getValue();
     }
-    
+
     public void setEnglish(String english) {
         englishProperty.set(english);
     }
@@ -103,11 +107,11 @@ public class MatchSegment implements Comparable<MatchSegment> {
     public boolean[] getMatches() {
         return charsPartOfSubstring;
     }
-    
+
     public void setMatches(boolean[] matches) {
         this.charsPartOfSubstring = matches;
     }
-    
+
     public int getMatchSize() {
         matchSize = 0;
         for (boolean b : charsPartOfSubstring) {
@@ -126,8 +130,6 @@ public class MatchSegment implements Comparable<MatchSegment> {
         return t.getMatchSize() - getMatchSize();
     }
 
-    
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -139,13 +141,12 @@ public class MatchSegment implements Comparable<MatchSegment> {
         }
 
         MatchSegment m = (MatchSegment) o;
-      
+
         boolean cond1 = m.getMatchSize() == getMatchSize();
         boolean cond2 = m.getFileName().equals(getFileName());
         boolean cond3 = m.getThai().equals(getThai());
         boolean cond4 = m.getEnglish().equals(getEnglish());
-        
-        
+
         return cond1 && cond2 && cond3 && cond4;
     }
 
@@ -158,11 +159,11 @@ public class MatchSegment implements Comparable<MatchSegment> {
         hash = 59 * hash + Objects.hashCode(getEnglish());
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder bf = new StringBuilder();
-        
+
         bf.append("[");
         bf.append(this.getThai());
         bf.append(", ");
@@ -172,67 +173,68 @@ public class MatchSegment implements Comparable<MatchSegment> {
         bf.append(", ");
         bf.append(this.getMatchSize());
         bf.append("]");
-        
+
         return bf.toString();
-       
+
     }
 
     public StringProperty thaiProperty() {
-         return thaiProperty;
+        return thaiProperty;
     }
 
     public StringProperty englishProperty() {
         return englishProperty;
     }
-    
+
     public StringProperty fileNameProperty() {
         return fileName;
     }
-    
+
     public StringProperty matchSizeProperty() {
         return new SimpleStringProperty(String.valueOf(getMatchSize()));
     }
 
     public void setCommitted(boolean b) {
-         isCommittedProperty.set(b);
+        isCommittedProperty.set(b);
     }
 
     public boolean isCommitted() {
         return isCommittedProperty.get();
     }
-    
+
     public BooleanProperty isCommittedProperty() {
         return isCommittedProperty;
     }
-    
+
     private void setLongestMatchLength() {
         int longestLength = 0;
         int currentLength = 0;
         for (boolean b : charsPartOfSubstring) {
-            if (b==false) {
-                longestLength = currentLength>longestLength ? currentLength : longestLength;
+            if (b == false) {
+                longestLength = currentLength > longestLength ? currentLength : longestLength;
                 currentLength = 0;
             }
-            if (b==true) {
+            if (b == true) {
                 currentLength++;
             }
         }
-        longestMatchLength = (currentLength>longestLength ? currentLength : longestLength);
+        longestMatchLength = (currentLength > longestLength ? currentLength : longestLength);
     }
-    
+
     public StringProperty longestMatchLengthProperty() {
         setLongestMatchLength();
         return new SimpleStringProperty(String.valueOf(longestMatchLength));
     }
-    
+
     /**
-     * Returns a TextFlow object for use in updateItem callback method 
-     * @return 
+     * Returns a TextFlow object for use in updateItem callback method
+     *
+     * @return
      */
     public TextFlow getTFlow() {
         return tFlow;
     }
-    
+
     /**
      * Takes a boolean array of same length as text where true indicates a
      * matching character and false indicates a non-matching character.
@@ -289,9 +291,10 @@ public class MatchSegment implements Comparable<MatchSegment> {
     }
 
     /**
-     * Gets the segment that this MatchSegment represents (i.e. where in the corpus the match was found).
-     * 
-     * @return 
+     * Gets the segment that this MatchSegment represents (i.e. where in the
+     * corpus the match was found).
+     *
+     * @return
      */
     public Segment getSegment() {
         return seg;

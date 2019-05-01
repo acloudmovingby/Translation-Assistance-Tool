@@ -28,30 +28,29 @@ public class Split implements MainFileAction {
 
     @Override
     public void execute(State state) {
-        
-        
+
         ObservableList<Segment> mfActiveSegs = state.getMainFile().getActiveSegs();
         // if the seg is null or is not in the list of active segs, return
         // if the split index is out of bounds, return
-        if (seg == null 
-                || splitIndex <= 0 
+        if (seg == null
+                || splitIndex <= 0
                 || splitIndex >= seg.getThai().length()) {
             return;
         }
-        
+
         // This makes sure that the selected seg is actually in the active segs list.
         // we use == to make sure it's the exact same object (the .equals method for Segments compares the value of the fields, not identity of the object)
         // if two segs have same field values (including id) but are not the same object, this method (splitSeg) will not work correctly
         boolean isInActiveSegs = false;
         for (Segment s : mfActiveSegs) {
-            if (s==seg) {
+            if (s == seg) {
                 isInActiveSegs = true;
             }
         }
         if (!isInActiveSegs) {
             return;
         }
-            
+
         // splits the Thai text into two parts, splitting at the splitIndex
         String firstThai = seg.getThai().substring(0, splitIndex);
         String secondThai = seg.getThai().substring(splitIndex);
@@ -72,9 +71,7 @@ public class Split implements MainFileAction {
             int insertIndex = mfActiveSegs.indexOf(newSeg1);
             state.addSeg(insertIndex + 1, newSeg2);
         }
-        
 
-        
     }
 
 }

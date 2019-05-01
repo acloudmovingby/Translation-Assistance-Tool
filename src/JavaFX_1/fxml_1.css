@@ -1,24 +1,24 @@
 
 
 .mainFxmlClass {
-    
+
     .text-field {
-    -fx-background-radius: 0 ;
-}
+        -fx-background-radius: 0 ;
+    }
 
-.text-field-table-cell .text-field {
-    -fx-border-color: -fx-background;
-    -fx-background-radius: 0 ;
-}
-.text-field:focused {
-}
-   
+    .text-field-table-cell .text-field {
+        -fx-border-color: -fx-background;
+        -fx-background-radius: 0 ;
+    }
+    .text-field:focused {
+    }
 
-.button {
-    -fx-background-color: transparent;
-    -fx-padding: 10 0 0 10;
-    -fx-pref-width: 60;
-}
+
+    .button {
+        -fx-background-color: transparent;
+        -fx-padding: 10 0 0 10;
+        -fx-pref-width: 60;
+    }
 
 
 

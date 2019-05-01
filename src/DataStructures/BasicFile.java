@@ -96,8 +96,12 @@ public class BasicFile {
      * Adds the segment to the end of the activeSegs list in BasicFile. Throws
      * an IllegalArgumentException if: (1) fileID/fileName do not match this
      * file or (2) the segment is "hidden"
-     * 
-     * Arguably a Segment doesn't need to know what file it is in, but it made certain things easier in other parts of the program... (but if need be, could be changed). The current program never moves Segment between files, so it's not a bad assumption that every Segment is permanently associated with just one file. 
+     *
+     * Arguably a Segment doesn't need to know what file it is in, but it made
+     * certain things easier in other parts of the program... (but if need be,
+     * could be changed). The current program never moves Segment between files,
+     * so it's not a bad assumption that every Segment is permanently associated
+     * with just one file.
      *
      * @param seg
      */
@@ -111,8 +115,10 @@ public class BasicFile {
     }
 
     /**
-     * Removes the given Segment from the active lists (if it exists there or not), and adds it to the hidden list. 
-     * @param seg 
+     * Removes the given Segment from the active lists (if it exists there or
+     * not), and adds it to the hidden list.
+     *
+     * @param seg
      */
     public void hideSeg(Segment seg) {
         hiddenSegs.add(seg);
@@ -132,8 +138,8 @@ public class BasicFile {
      * NOTE: THIS REPLACES ALL SEGMENTS IN FILE (because they are immutable).
      *
      * Is expensive to do, so if you know at the time the file is being
-     * parsed/constructed that all segments will be committed, then it's better to
-     * build the file with committed segments from the get go.
+     * parsed/constructed that all segments will be committed, then it's better
+     * to build the file with committed segments from the get go.
      */
     public void commitAllSegs() {
         getActiveSegs().replaceAll((seg) -> {
@@ -146,11 +152,11 @@ public class BasicFile {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        
+
         // add fileName 
         sb.append("Filename: ").append(fileName);
         sb.append("\n\t");
-        
+
         // show active segments
         sb.append("ACTIVE\n\t");
         getActiveSegs().stream()
@@ -170,13 +176,15 @@ public class BasicFile {
         }).forEachOrdered((segString) -> {
             sb.append("\n\t");
         });
-        
+
         return sb.toString();
     }
 
     /**
-     * Returns all "active" Segments in the file, i.e. those which can be seen when the user opens the file to translate.
-     * @return 
+     * Returns all "active" Segments in the file, i.e. those which can be seen
+     * when the user opens the file to translate.
+     *
+     * @return
      */
     public ObservableList<Segment> getActiveSegs() {
         return activeSegs;
@@ -187,8 +195,11 @@ public class BasicFile {
     }
 
     /**
-     * Retursn all Segments associated with this file but which have been "hidden," i.e. they can be searched for matches but they are not shown when the file is opened. 
-     * @return 
+     * Retursn all Segments associated with this file but which have been
+     * "hidden," i.e. they can be searched for matches but they are not shown
+     * when the file is opened.
+     *
+     * @return
      */
     public ArrayList<Segment> getHiddenSegs() {
         return hiddenSegs;
@@ -206,7 +217,7 @@ public class BasicFile {
 
         return allSegsStream.collect(Collectors.toList());
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {

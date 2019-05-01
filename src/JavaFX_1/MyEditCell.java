@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 
@@ -25,11 +26,11 @@ public class MyEditCell<S, T> extends TableCell<S, T> {
 
         text.textProperty().bind(itemProperty().asString()); // temp
         text.wrappingWidthProperty().bind(widthProperty()); // temp
+        text.setFont(Font.font("Arial"));
 
-
-        setGraphic(text); 
+        setGraphic(text);
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        
+
         this.setWrapText(true);
         textArea.setWrapText(true);
         // This makes it so that if the user clicks somewhere else outside of the cell, the text is committed

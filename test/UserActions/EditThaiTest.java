@@ -25,22 +25,22 @@ import static org.junit.Assert.*;
  * @author Chris
  */
 public class EditThaiTest {
-    
+
     public EditThaiTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -57,15 +57,15 @@ public class EditThaiTest {
         - blank Thai text ""
         - change Thai to something (normal)
         - do normal with first, middle, end seg
-        */
+         */
         // create test objects
         Corpus c = TestObjectBuilder.getCommittedTestCorpus();
         BasicFile mainFile = c.getFiles().get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
         mainFile = d.getState().getMainFile();
-        
+
         String newThai = "new Thai";
-       
+
         /* CHANGE NON-EXISTENT SEGMENT */
         // nothing should change
         assertEquals(0, d.getState().getPostingsList(3).getMatchingID("new").size());
@@ -78,7 +78,7 @@ public class EditThaiTest {
         assertEquals(0, d.getState().getPostingsList(3).getMatchingID("new").size());
         // get file back from Database and check that it's the same
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         /* CHANGE FIRST SEGMENT */
         // The OLD text will be in the postings list because it was a committed segment
         // the NEW text will NOT be in the pl because this action makes the seg uncommitted (it appears as the same seg to the user)
@@ -96,7 +96,7 @@ public class EditThaiTest {
         assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size());
         // get file back from Database and check that it's the same
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         /* CHANGE FIRST SEGMENT AGAIN */
         assertEquals(1, d.getState().getPostingsList(3).getMatchingID("new").size());
         // get first segment of mainfile
@@ -110,7 +110,7 @@ public class EditThaiTest {
         assertEquals(3, d.getState().getPostingsList(3).getMatchingID("th1").size());
         // get file back from Database and check that it's the same
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         /* CHANGE MIDDLE SEGMENT */
         // get first segment of mainfile
         seg = d.getState().getMainFile().getActiveSegs().get(2);
@@ -124,7 +124,7 @@ public class EditThaiTest {
         assertEquals(2, d.getState().getPostingsList(3).getMatchingID("new").size());
         // get file back from Database and check that it's the same
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         /* CHANGE LAST SEGMENT */
         // get first segment of mainfile
         seg = d.getState().getMainFile().getActiveSegs().get(4);
@@ -139,5 +139,5 @@ public class EditThaiTest {
         // get file back from Database and check that it's the same
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
     }
-    
+
 }

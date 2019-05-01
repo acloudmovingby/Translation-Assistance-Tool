@@ -9,15 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class serves one purpose: Uses dynamic programming to find substrings of a minimum length in s2 that are also substrings in s1. This is returned as a boolean array of length s2 where true indicates it is a common substring. Note that a single substring in s1 could map to multiple substrings in s2.
+ * This class serves one purpose: Uses dynamic programming to find substrings of
+ * a minimum length in s2 that are also substrings in s1. This is returned as a
+ * boolean array of length s2 where true indicates it is a common substring.
+ * Note that a single substring in s1 could map to multiple substrings in s2.
+ *
  * @author Chris
  */
 public class Substring {
-    
-    
+
     /**
-     * Uses dynamic programming to find substrings of a minimum length in s2 that are also substrings in s1. This is returned as a boolean array of length s2 where true indicates it is a common substring.
-     * Note that a single substring in s1 could map to multiple substrings in s2. 
+     * Uses dynamic programming to find substrings of a minimum length in s2
+     * that are also substrings in s1. This is returned as a boolean array of
+     * length s2 where true indicates it is a common substring. Note that a
+     * single substring in s1 could map to multiple substrings in s2.
+     *
      * @param s1
      * @param s2
      * @param minLength
@@ -27,9 +33,9 @@ public class Substring {
         int[][] subLengths = findPossibleSubsInS2(s1, s2);
         boolean[] matches = new boolean[s2.length()];
         for (boolean b : matches) {
-            b=false;
+            b = false;
         }
-        
+
         for (int i = 0; i < s1.length(); i++) {
             for (int j = 0; j < s2.length(); j++) {
                 int subStringLength = subLengths[i][j];
@@ -38,19 +44,24 @@ public class Substring {
                     // sets the lengths of those prior chars to zero, to prevent redundant checking
                     for (int k = 0; k < subStringLength; k++) {
                         subLengths[i - k][j - k] = 0;
-                        matches[j-k] = true;
+                        matches[j - k] = true;
                     }
                 }
             }
         }
         return matches;
     }
-    
+
     /**
-     * Builds a two dimensional array showing all common substrings between s1 and s2. A value of 0 in a given cell indicates the two characters are not identical. A value greater than 0 indicates those characters are identical and the length of the common substring up to that point (numbers will increment diagonally from left->right and top-> down).
+     * Builds a two dimensional array showing all common substrings between s1
+     * and s2. A value of 0 in a given cell indicates the two characters are not
+     * identical. A value greater than 0 indicates those characters are
+     * identical and the length of the common substring up to that point
+     * (numbers will increment diagonally from left->right and top-> down).
+     *
      * @param s1
      * @param s2
-     * @return 
+     * @return
      */
     private static int[][] findPossibleSubsInS2(String s1, String s2) {
         int[][] subLength = new int[s1.length()][s2.length()];
@@ -64,7 +75,7 @@ public class Substring {
                         subLength[i][j] = 1;
                     } else {
                         subLength[i][j] = subLength[i - 1][j - 1] + 1;
-                    } 
+                    }
                 } else {
                     subLength[i][j] = 0;
                 }
@@ -72,14 +83,15 @@ public class Substring {
         }
         return subLength;
     }
-    
+
     /**
-     * Helper method for tests for this class. 
+     * Helper method for tests for this class.
+     *
      * @param boolArr
-     * @return 
+     * @return
      */
     public static List<Boolean> arrayConverter(boolean[] boolArr) {
-         List<Boolean> l = new ArrayList(boolArr.length);
+        List<Boolean> l = new ArrayList(boolArr.length);
         for (boolean b : boolArr) {
             l.add(b);
         }
@@ -87,11 +99,10 @@ public class Substring {
     }
 
     /**
-     * NO LONGER USING
-     * Finds all common substrings between two strings (s1, s2) of a minimum
-     * length with the following conditions: substrings cannot overlap in s2
-     * (but may in s1) and a single substring in s1 could map to multiple
-     * substrings in s2.
+     * NO LONGER USING Finds all common substrings between two strings (s1, s2)
+     * of a minimum length with the following conditions: substrings cannot
+     * overlap in s2 (but may in s1) and a single substring in s1 could map to
+     * multiple substrings in s2.
      *
      * @param s1
      * @param s2
@@ -105,12 +116,11 @@ public class Substring {
 
         // FINDS WHERE ALL SUBSTRINGS COULD BE 
         subLength = findPossibleSubsInS2(s1, s2);
-        
 
         List<String> finalSubs = new ArrayList();
         for (int i = s1.length() - 1; i >= 0; i--) {
             for (int j = s2.length() - 1; j >= 0; j--) {
-                if (subLength[i][j]>0 && subLength[i][j] >= minLength) {
+                if (subLength[i][j] > 0 && subLength[i][j] >= minLength) {
                     int subLen = subLength[i][j];
                     StringBuilder sb = new StringBuilder();
                     for (int k = 0; k < subLen; k++) {

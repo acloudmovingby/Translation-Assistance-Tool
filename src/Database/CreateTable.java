@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Creates a SQLite table with the name "database1.db". 
- * 
+ * Creates a SQLite table with the name "database1.db".
+ *
  * @author Chris
  */
 public class CreateTable {
@@ -40,7 +40,7 @@ public class CreateTable {
             System.out.println(e.getMessage());
         }
     }
-    
+
     /**
      * Create a new table in the test database for files.
      *

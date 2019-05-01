@@ -55,7 +55,6 @@ public class MergeTest {
             BasicFile mainFile = c.getFiles().get(0);
             Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
             mainFile = d.getState().getMainFile();
-            
 
             // makes 5 segments
             Segment seg1 = mainFile.getActiveSegs().get(0);
@@ -63,8 +62,6 @@ public class MergeTest {
             Segment seg3 = mainFile.getActiveSegs().get(2);
             Segment seg4 = mainFile.getActiveSegs().get(3);
             Segment seg5 = mainFile.getActiveSegs().get(4);
-
-            
 
             ArrayList<Segment> selectedSegs = new ArrayList();
             switch (i) {
@@ -88,10 +85,10 @@ public class MergeTest {
                     // if i=1 --> merge first two
                     StringBuilder sb = new StringBuilder(seg1.getThai());
                     sb.append(seg2.getThai()); // combine the Thai from both segs
-                    
+
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
-                    
+
                     d.acceptAction(new Merge(selectedSegs));
                     assertEquals(4, mainFile.getActiveSegs().size());
                     assertEquals(2, mainFile.getHiddenSegs().size());
@@ -101,7 +98,7 @@ public class MergeTest {
                     assertEquals(mainFile.getActiveSegs().get(3).equals(seg5), true);
                     assertEquals(mainFile.getHiddenSegs().get(0).equals(seg1), true);
                     assertEquals(mainFile.getHiddenSegs().get(1).equals(seg2), true);
-                    
+
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
                 }
@@ -110,7 +107,7 @@ public class MergeTest {
                     StringBuilder sb = new StringBuilder(seg1.getThai());
                     sb.append(seg2.getThai());
                     sb.append(seg3.getThai());// combine the Thai from the three segs
-                    
+
                     selectedSegs.add(seg1);
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
@@ -132,7 +129,7 @@ public class MergeTest {
                     // if i=3 --> merge tu2-tu3
                     StringBuilder sb = new StringBuilder(seg2.getThai());
                     sb.append(seg3.getThai());
-                    
+
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
@@ -152,7 +149,7 @@ public class MergeTest {
                 }
                 // if i=4 --> merge 1-3
                 case 4: {
-                    
+
                     selectedSegs.add(seg2);
                     selectedSegs.add(seg3);
                     d.acceptAction(new Merge(selectedSegs));
@@ -266,7 +263,7 @@ public class MergeTest {
 
                     assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
                     break;
-                } 
+                }
                 // if i=10 --> merge invalid argument (segs not contiguous)
                 case 10: {
                     selectedSegs.add(seg1);
@@ -275,7 +272,7 @@ public class MergeTest {
                     selectedSegs.add(seg4);
                     selectedSegs.add(seg2); // this seg is repeated and out of order
                     d.acceptAction(new Merge(selectedSegs));
-                    
+
                     assertEquals(5, mainFile.getActiveSegs().size());
                     assertEquals(0, mainFile.getHiddenSegs().size());
                     assertEquals(mainFile.getActiveSegs().get(0).equals(seg1), true);

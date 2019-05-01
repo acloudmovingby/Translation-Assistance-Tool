@@ -24,22 +24,22 @@ import static org.junit.Assert.*;
  * @author Chris
  */
 public class SplitTest {
-    
+
     public SplitTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -55,9 +55,7 @@ public class SplitTest {
         BasicFile mainFile = c.getFiles().get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
         mainFile = d.getState().getMainFile();
-       
-        
-        
+
         /* SPLIT FIRST SEGMENT */
         Segment firstSegment = d.getState().getMainFile().getActiveSegs().get(0);
         // Split with 0 index, nothing should change
@@ -81,11 +79,7 @@ public class SplitTest {
         assertEquals(0, d.getState().getPostingsList(4).getMatchingID("th11").size());
         // assert changes have been made to database correctly
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-       
-        
-        
-        
-        
+
         /* SPLIT MIDDLE SEGMENT */
         int midSegIndex = 3;
         Segment middleSegment = d.getState().getMainFile().getActiveSegs().get(midSegIndex);
@@ -103,8 +97,8 @@ public class SplitTest {
         // check that the UI result is correct, that the English of that segment has in fact changed
         assertEquals("t", d.getUIState().getMainFileSegs().get(midSegIndex).getThai());
         assertEquals("en3", d.getUIState().getMainFileSegs().get(midSegIndex).getEnglish());
-        assertEquals("h3", d.getUIState().getMainFileSegs().get(midSegIndex+1).getThai());
-        assertEquals("", d.getUIState().getMainFileSegs().get(midSegIndex+1).getEnglish());
+        assertEquals("h3", d.getUIState().getMainFileSegs().get(midSegIndex + 1).getThai());
+        assertEquals("", d.getUIState().getMainFileSegs().get(midSegIndex + 1).getEnglish());
         assertEquals(7, d.getUIState().getMainFileSegs().size());
         System.out.println(c);
         // confirm postings lists 
@@ -113,11 +107,8 @@ public class SplitTest {
         assertEquals(0, d.getState().getPostingsList(4).getMatchingID("th11").size());
         // assert changes have been made to database correctly
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         // SPLIT LAST SEGMENT
-        
     }
-    
-        
-    
+
 }

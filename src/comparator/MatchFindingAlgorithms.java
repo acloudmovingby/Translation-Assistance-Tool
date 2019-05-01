@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Provides methods to find matches between a source Segment and some target (e.g. a whole corpus, an individual Segment).
+ * Provides methods to find matches between a source Segment and some target
+ * (e.g. a whole corpus, an individual Segment).
  *
  * Currently uses dynamic programming but could probably be better implemented
  * with suffix trees or other means.
@@ -26,12 +27,17 @@ import java.util.Optional;
 public class MatchFindingAlgorithms {
 
     /**
-     * Returns a MatchList representing all the segments from a corpus that form a "basic match" with the source Segment. A "basic match" between two segments means these two Segments have common substring(s) of at least the minimum length.
+     * Returns a MatchList representing all the segments from a corpus that form
+     * a "basic match" with the source Segment. A "basic match" between two
+     * segments means these two Segments have common substring(s) of at least
+     * the minimum length.
      *
      * @param source The segment which you would like to compare against the
      * corpus and find matches.
-     * @param minMatchLength The minimum length of a "match" (a common substring).
-     * @param pl This is the PostingsList (ngrams-Segment pairs) representing the corpus.
+     * @param minMatchLength The minimum length of a "match" (a common
+     * substring).
+     * @param pl This is the PostingsList (ngrams-Segment pairs) representing
+     * the corpus.
      * @return A MatchList showing all matches found for the source Segment.
      */
     public static MatchList basicMatch(Segment source, int minMatchLength, PostingsList pl) {
@@ -53,7 +59,7 @@ public class MatchFindingAlgorithms {
                     // uses Optionals to check if there is a new match. If so, adds to the matchList
                     singleSegBasicMatch(source, target, minMatchLength)
                             .ifPresent(newMatchSegment -> matchList.addEntry(newMatchSegment));
-                    
+
                     segsAlreadyChecked.add(target);
                 }
             }

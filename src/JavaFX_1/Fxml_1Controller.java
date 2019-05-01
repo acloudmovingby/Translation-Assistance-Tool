@@ -12,6 +12,7 @@ import State.Dispatcher;
 import State.UIState;
 import UserActions.Commit;
 import UserActions.EditEnglish;
+import UserActions.EditThai;
 import UserActions.Merge;
 import UserActions.Split;
 import UserActions.Uncommit;
@@ -39,6 +40,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -108,10 +110,10 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     Button commitButton;
-    
+
     @FXML
     Button uncommitButton;
-    
+
     @FXML
     Button exportButton;
 
@@ -146,8 +148,6 @@ public class Fxml_1Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        JavaFX_1.myControllerHandle = this;
-
         // retrieves all files previously stored in database
         Corpus corpus = DatabaseOperations.getAllSegments();
 
@@ -158,10 +158,10 @@ public class Fxml_1Controller implements Initializable {
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
 
-        Initializer init = new Initializer(mainFile, corpus);
-        state = init.getState();
-        uiState = init.getUIState();
-        dispatcher = init.getDispatcher();
+        StateBuilder stateBuilder = new StateBuilder(mainFile, corpus);
+        state = stateBuilder.getState();
+        uiState = stateBuilder.getUIState();
+        dispatcher = stateBuilder.getDispatcher();
 
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
@@ -180,6 +180,8 @@ public class Fxml_1Controller implements Initializable {
         thaiCol.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiCol.setMinWidth(80);
         thaiCol.setEditable(true);
+        /*
+        // The following just simply displays the Thai text (it is not editable or selectable)
         thaiCol.setCellFactory(tc -> {
             TableCell<Segment, String> cell = new TableCell<>();
             Text text = new Text();
@@ -190,19 +192,30 @@ public class Fxml_1Controller implements Initializable {
             text.textProperty().bind(cell.itemProperty());
             cell.setEditable(true);
             return cell;
+        });*/
+
+        EditableCellFactory cf = new EditableCellFactory();
+
+        thaiCol.setCellFactory(cf);
+        thaiCol.setOnEditCommit(e -> {
+            int row = e.getTablePosition().getRow();
+            Segment editedSeg = tableView.getItems().get(row);
+            if (editedSeg != null) {
+                SegmentBuilder sb = new SegmentBuilder(editedSeg);
+                editedSeg = sb.createSegment();
+                dispatcher.acceptAction(new EditThai(editedSeg, e.getNewValue()));
+            }
         });
 
         // English column:
-        EditableEnglishCellFactory cf2 = new EditableEnglishCellFactory();
-        cf2.setFont(UIState.getEnglishFont());
-        englishCol.setCellFactory(cf2);
+        cf.setFont(UIState.getEnglishFont());
+        englishCol.setCellFactory(cf);
         englishCol.setOnEditCommit(e -> {
             int row = e.getTablePosition().getRow();
             Segment editedSeg = tableView.getItems().get(row);
-            SegmentBuilder sb = new SegmentBuilder(editedSeg);
-            editedSeg = sb.createSegment();
-
             if (editedSeg != null) {
+                SegmentBuilder sb = new SegmentBuilder(editedSeg);
+                editedSeg = sb.createSegment();
                 dispatcher.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
             }
         }
@@ -218,7 +231,7 @@ public class Fxml_1Controller implements Initializable {
                 @Override
                 protected void updateItem(Boolean item, boolean empty) {
                     super.updateItem(item, empty);
-                    
+
                     if (empty || item == null) {
                         setText(null);
                         setGraphic(null);
@@ -305,7 +318,7 @@ public class Fxml_1Controller implements Initializable {
             if (newSelection != null) {
                 state.newSelection(newSelection);
                 if (scene == null && tableView.getScene() != null) {
-                    setScene(tableView.getScene());
+                    // setScene(tableView.getScene());
                 }
             }
         }
@@ -337,7 +350,7 @@ public class Fxml_1Controller implements Initializable {
         commitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
         commitIV.setCache(true); // perhaps not necessary
         commitButton.setGraphic(commitIV);
-        
+
         // apply image to UNCOMMIT button
         ImageView uncommitIV = new ImageView(getClass().getResource("/JavaFX_1/UncommitButton.png").toExternalForm());
         uncommitIV.setFitWidth(40);
@@ -345,7 +358,7 @@ public class Fxml_1Controller implements Initializable {
         uncommitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
         uncommitIV.setCache(true); // perhaps not necessary
         uncommitButton.setGraphic(uncommitIV);
-        
+
         // apply image to SPLIT button
         ImageView splitIV = new ImageView(getClass().getResource("/JavaFX_1/SplitButton.png").toExternalForm());
         splitIV.setFitWidth(40);
@@ -361,7 +374,7 @@ public class Fxml_1Controller implements Initializable {
         mergeIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
         mergeIV.setCache(true); // perhaps not necessary
         mergeButton.setGraphic(mergeIV);
-        
+
         // apply image to EXPORT button
         ImageView exportIV = new ImageView(getClass().getResource("/JavaFX_1/ExportButton.png").toExternalForm());
         exportIV.setFitWidth(40);
@@ -438,6 +451,15 @@ public class Fxml_1Controller implements Initializable {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
 
         if (selectedItems != null && !selectedItems.isEmpty()) {
+
+            int charIndexToSplitOn = 0;
+            // get caret position in currently editing Thai cell
+            TablePosition<Segment, ?> cellBeingEdited = tableView.getEditingCell();
+            if (cellBeingEdited != null) {
+                TableColumn<Segment, ?> columnBeingEdited = tableView.getColumns().get(cellBeingEdited.getColumn());
+
+            }
+
             // only splits if one row is selected
             if (selectedItems.size() == 1) {
                 // sends that row to dispatcher
@@ -511,10 +533,6 @@ public class Fxml_1Controller implements Initializable {
     private void undo(ActionEvent event) {
         dispatcher.undo();
 
-    }
-
-    private void setScene(Scene scene) {
-        this.scene = scene;
     }
 
 }

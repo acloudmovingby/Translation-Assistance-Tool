@@ -17,14 +17,14 @@ import javafx.util.Callback;
  *
  * @author Chris
  */
-public class EditableEnglishCellFactory
+public class EditableCellFactory
         implements Callback<TableColumn<Segment, String>, TableCell<Segment, String>> {
 
     private TextAlignment alignment;
     private Format format;
     private Font font;
 
-    public EditableEnglishCellFactory() {
+    public EditableCellFactory() {
         this.setAlignment(TextAlignment.LEFT);
     }
 
@@ -110,7 +110,7 @@ public class EditableEnglishCellFactory
                 break;
         }
         return cell;
-        */
+         */
         // Use the below code. The above makes a cell with a TextField, which, thanks to the brilliant JavaFX development team, doesn't support line wrapping. 
         // So use the below instead, which uses a TextArea (which has its own problems)
         return MyEditCell.createStringEditCell();

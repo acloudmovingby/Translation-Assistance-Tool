@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Takes Segments and parses the Thai text in into ngrams (length of ngram specified in
- * PostingsList constructor).
+ * Takes Segments and parses the Thai text in into ngrams (length of ngram
+ * specified in PostingsList constructor).
  *
  * @author Chris
  */
@@ -61,18 +61,19 @@ public class PostingsList {
             });
         }
     }
-    
+
     /**
      * Runs addSegment(seg) on all Segments in the given HashSet.
-     * @param segs 
+     *
+     * @param segs
      */
     public void addMultipleSegments(HashSet<Segment> segs) {
         segs.forEach((seg) -> this.addSegment(seg));
     }
 
     /**
-     * Returns a list of ids of Segments that contain the specified ngram. If no such
-     * Segment exists, then an empty list is returned.
+     * Returns a list of ids of Segments that contain the specified ngram. If no
+     * such Segment exists, then an empty list is returned.
      *
      * @param ngram
      * @return A (possibly empty) list of Segment ids.
@@ -84,10 +85,14 @@ public class PostingsList {
     }
 
     /**
-     * Takes a String and returns a contiguous sequence of substrings from it, each with the specified length. 
-     * 
-     * For example: ("hello", 2) would return ["he", "el", "ll", "lo"]. If the length is longer than the string's length, then the String is returned wrapped in a list (one element). This is the only circumstance in which the strings in the list will not have the specified length.
-     * 
+     * Takes a String and returns a contiguous sequence of substrings from it,
+     * each with the specified length.
+     *
+     * For example: ("hello", 2) would return ["he", "el", "ll", "lo"]. If the
+     * length is longer than the string's length, then the String is returned
+     * wrapped in a list (one element). This is the only circumstance in which
+     * the strings in the list will not have the specified length.
+     *
      * @param text
      * @param ngramLength
      * @return The sequence of n-grams
@@ -161,11 +166,11 @@ public class PostingsList {
         hash = 71 * hash + Objects.hashCode(this.map);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        
+
         map.entrySet().forEach((e) -> {
             sb.append(e.getKey()).append(": ").append(e.getValue());
         });

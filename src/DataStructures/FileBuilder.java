@@ -1,4 +1,3 @@
-
 package DataStructures;
 
 import ParseThaiLaw.TMXResourceBundle;
@@ -10,21 +9,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Utility methods to properly construct BasicFile objects. 
- * 
+ * Utility methods to properly construct BasicFile objects.
+ *
  * @author Chris
  */
 public class FileBuilder {
 
     /**
-     * Takes two strings (thai and english) and splits into segments based on line
-     * breaks. Both texts must have equal number of line breaks or it throws an
-     * IllegalArgumentException.
+     * Takes two strings (thai and english) and splits into segments based on
+     * line breaks. Both texts must have equal number of line breaks or it
+     * throws an IllegalArgumentException.
      *
      * @param thai
      * @param english
-     * @return BasicFile with each Segment representing a line break in
-     * original text.
+     * @return BasicFile with each Segment representing a line break in original
+     * text.
      */
     public BasicFile buildBasicParse(String thai, String english) {
         String[] th = thai.split("\r?\n");
@@ -35,7 +34,7 @@ public class FileBuilder {
             throw new IllegalArgumentException("Unequal number of line breaks in the two texts.");
         }*/
         BasicFile bf = new BasicFile();
-        
+
         for (int i = 0; i < th.length; i++) {
             SegmentBuilder sb = new SegmentBuilder(bf);
             sb.setThai(th[i]);
@@ -46,35 +45,33 @@ public class FileBuilder {
             }
             bf.addSeg(sb.createSegment());
         }
-        
+
         return bf;
     }
-    
+
     public BasicFile justThaiFilePath(String filePath) {
         BasicFile ret = null;
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
                     = new FileReader(filePath);
-            
+
             BufferedReader buffReaderThai
                     = new BufferedReader(fileReaderThai);
-            
-            
+
             String line;
-            
+
             StringBuilder sb = new StringBuilder();
             int counter = 0;
             while ((line = buffReaderThai.readLine()) != null) {
                 if (line.trim().length() > 0) {
-                    sb.append(line+"\n");
+                    sb.append(line + "\n");
                     counter++;
-                }                
-            } 
-            
-           
+                }
+            }
+
             StringBuilder sb2 = new StringBuilder(counter);
-            
+
             /*
             //makes "english" just be an index number, for testing purposes only
             
@@ -82,7 +79,7 @@ public class FileBuilder {
                 sb2.append(i + "\n");
             }*/
             ret = this.buildBasicParse(sb.toString(), sb2.toString());
-           
+
             buffReaderThai.close();
             ret.setFileName(makeFileNameFromPath(filePath));
         } catch (FileNotFoundException ex) {
@@ -96,28 +93,33 @@ public class FileBuilder {
             // Or we could just do this: 
             // ex.printStackTrace();
         }
-        
+
         return ret;
     }
-    
-    
+
     /**
-     * Creates a BasicFile from two lists of Strings. The file created represents a translated file, so all Segments are committed. 
-     * 
-     * The two lists are assumed to correspond (of course). For example, the 3rd English string should be the translation of the 3rd Thai string. This method of course has no way of verifying this, of course. If one list is longer than the other, the returned file will only contain Segments up to the shorter of the lists and the remaining Strings in the longer list are discarded.  
-     * 
+     * Creates a BasicFile from two lists of Strings. The file created
+     * represents a translated file, so all Segments are committed.
+     *
+     * The two lists are assumed to correspond (of course). For example, the 3rd
+     * English string should be the translation of the 3rd Thai string. This
+     * method of course has no way of verifying this, of course. If one list is
+     * longer than the other, the returned file will only contain Segments up to
+     * the shorter of the lists and the remaining Strings in the longer list are
+     * discarded.
+     *
      * @param thaiSegments
      * @param englishSegments
-     * @return 
+     * @return
      */
     public static BasicFile fromArrayLists(ArrayList<String> thaiSegments, ArrayList<String> englishSegments) {
-        
+
         BasicFile bf = new BasicFile();
 
         // creates iterators for each list of segments
         Iterator<String> iterThai = thaiSegments.iterator();
         Iterator<String> iterEnglish = englishSegments.iterator();
-        
+
         // iterates down each list, adding them together as TUs
         while (iterThai.hasNext() && iterEnglish.hasNext()) {
             SegmentBuilder sb = new SegmentBuilder(bf);
@@ -126,10 +128,10 @@ public class FileBuilder {
             sb.setCommitted(true);
             bf.addSeg(sb.createSegment());
         }
-        
+
         return bf;
     }
-    
+
     private static ArrayList<String> removeWhiteSpace(ArrayList<String> list) {
         ArrayList<String> ret = new ArrayList(list.size());
         for (String str : list) {
@@ -140,28 +142,28 @@ public class FileBuilder {
         }
         return ret;
     }
-    
+
     public static String makeFileNameFromPath(String filePath) {
         String fileName = "default";
         if (filePath != null) {
             String[] filePathSplit = filePath.split("/");
-            fileName = filePathSplit[filePathSplit.length-1];
+            fileName = filePathSplit[filePathSplit.length - 1];
         }
         return fileName;
     }
-    
+
     public static BasicFile parseTMX(String filePath) {
         BasicFile bf = new BasicFile();
         bf.setFileName(makeFileNameFromPath(filePath));
-        
+
         TMXResourceBundle thaiBundle = new TMXResourceBundle(
-               filePath,
+                filePath,
                 "th-TH");
 
         TMXResourceBundle engBundle = new TMXResourceBundle(
-                 filePath,
+                filePath,
                 "en-US");
-        
+
         for (String s : thaiBundle.keySet()) {
             if (engBundle.containsKey(s)) {
                 SegmentBuilder sb = new SegmentBuilder(bf);
@@ -169,13 +171,11 @@ public class FileBuilder {
                 sb.setEnglish(engBundle.getString(s));
                 sb.setCommitted(true);
                 bf.addSeg(sb.createSegment());
-                
+
             }
         }
-        
+
         return bf;
     }
-    
-   
-    
+
 }

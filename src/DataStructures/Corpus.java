@@ -8,9 +8,9 @@ package DataStructures;
 import java.util.ArrayList;
 
 /**
- * 
- * A collection of BasicFiles. 
- * 
+ *
+ * A collection of BasicFiles.
+ *
  * @author Chris
  */
 public class Corpus {
@@ -40,9 +40,10 @@ public class Corpus {
 
         return aList;
     }
-    
+
     /**
-     * Removes the file from the corpus. 
+     * Removes the file from the corpus.
+     *
      * @param bf
      * @return
      */
@@ -62,7 +63,7 @@ public class Corpus {
     public BasicFile getFile(String fileName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -71,10 +72,12 @@ public class Corpus {
         });
         return sb.toString();
     }
-    
+
     /**
-     * Returns the total number of segs (both hidden and active) in all files of the corpus.
-     * @return 
+     * Returns the total number of segs (both hidden and active) in all files of
+     * the corpus.
+     *
+     * @return
      */
     public int numTotalSegs() {
         int numSegs = 0;
@@ -84,14 +87,14 @@ public class Corpus {
         }
         return numSegs;
     }
-    
+
     /**
-     * Commits segment of every file in corpus. 
+     * Commits segment of every file in corpus.
      */
     public void commitAllFiles() {
         for (BasicFile f : getFiles()) {
             f.commitAllSegs();
         }
     }
-    
+
 }

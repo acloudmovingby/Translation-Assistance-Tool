@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Commits one or more segments in the MainFile. 
+ * Commits one or more segments in the MainFile.
+ *
  * @author Chris
  */
 public class Commit implements MainFileAction {
@@ -28,7 +29,9 @@ public class Commit implements MainFileAction {
     public Commit(List<Segment> segList) {
         // NEED TO DEFENSIVELY COPY because JavaFX always has seglist list point back to activeSegsList in main file (thus causing concurrent modification issues). 
         List<Segment> listCopy = new ArrayList();
-        segList.forEach((s) -> {listCopy.add(Segment.getDeepCopy(s));});
+        segList.forEach((s) -> {
+            listCopy.add(Segment.getDeepCopy(s));
+        });
         this.segList = listCopy;
     }
 

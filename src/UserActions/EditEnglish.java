@@ -11,13 +11,14 @@ import State.State;
 
 /**
  * User edits English text of a segment.
+ *
  * @author Chris
  */
 public class EditEnglish implements MainFileAction {
-    
-    private final Segment seg; 
+
+    private final Segment seg;
     private final String newEnglishText;
-    
+
     public EditEnglish(Segment seg, String newEnglishText) {
         this.seg = seg;
         this.newEnglishText = newEnglishText;
@@ -25,13 +26,13 @@ public class EditEnglish implements MainFileAction {
 
     @Override
     public void execute(State state) {
-        
+
         SegmentBuilder sb = new SegmentBuilder(seg);
         sb.setEnglish(newEnglishText);
         sb.setCommitted(false); // because it has new English, it is now made uncommitted
         Segment newSeg = sb.createSegmentNewID();
-        
+
         state.replaceSeg(seg, newSeg);
     }
-    
+
 }

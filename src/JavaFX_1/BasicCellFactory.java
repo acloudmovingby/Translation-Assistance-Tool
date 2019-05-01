@@ -19,57 +19,58 @@ import javafx.util.Callback;
  *
  * @author Chris
  */
-public class BasicCellFactory     
+public class BasicCellFactory
         implements Callback<TableColumn<MatchSegment, String>, TableCell<MatchSegment, String>> {
-    
+
     private TextAlignment alignment;
     private Format format;
     private Font font;
- 
+
     public BasicCellFactory() {
         this.setAlignment(TextAlignment.LEFT);
     }
-    
+
     public TextAlignment getAlignment() {
         return alignment;
     }
- 
+
     public void setAlignment(TextAlignment alignment) {
         this.alignment = alignment;
     }
- 
+
     public Format getFormat() {
         return format;
     }
- 
+
     public void setFormat(Format format) {
         this.format = format;
     }
-    
+
     public Font getFont() {
         return font;
     }
-    
+
     public void setFont(Font font) {
         this.font = font;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public TableCell<MatchSegment, String> call(TableColumn<MatchSegment, String> p) {
         TableCell<MatchSegment, String> cell = new TableCell<MatchSegment, String>() {
             private Text text;
+
             @Override
             public void updateItem(String item, boolean empty) {
                 if (item == getItem()) {
                     return;
                 }
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
-                } else { 
+                } else {
                     text = new Text(item);
                     text.setFont(font);
                     text.wrappingWidthProperty().bind(p.widthProperty().subtract(5));
@@ -91,7 +92,5 @@ public class BasicCellFactory
         }
         return cell;
     }
-    
+
 }
-
-

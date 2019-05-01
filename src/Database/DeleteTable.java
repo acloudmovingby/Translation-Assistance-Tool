@@ -17,7 +17,7 @@ import java.sql.Statement;
 public class DeleteTable {
 
     /**
-     * Deletes the TU entry table. 
+     * Deletes the TU entry table.
      *
      */
     private static void deleteSegsTable() {
@@ -35,7 +35,7 @@ public class DeleteTable {
             System.out.println(e.getMessage());
         }
     }
-    
+
     /**
      * Deletes the files table.
      *
@@ -49,13 +49,13 @@ public class DeleteTable {
 
         try (Connection conn = DriverManager.getConnection(url);
                 Statement stmt = conn.createStatement()) {
-            
+
             stmt.execute(sql);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
-    
+
     public static void deleteAllTables() {
         deleteSegsTable();
         deleteFileTable();

@@ -14,10 +14,10 @@ import State.State;
  * @author Chris
  */
 public class EditThai implements MainFileAction {
-    
+
     Segment seg;
     String newThaiText;
-    
+
     public EditThai(Segment seg, String newThaiText) {
         this.seg = seg;
         this.newThaiText = newThaiText;
@@ -25,7 +25,7 @@ public class EditThai implements MainFileAction {
 
     @Override
     public void execute(State state) {
-        
+
         if (!state.getMainFile().getActiveSegs().contains(seg)) {
             return; // if the seg doesn't exist in the file, then this Action should do nothing
         } else {
@@ -33,9 +33,9 @@ public class EditThai implements MainFileAction {
             sb.setThai(newThaiText);
             sb.setCommitted(false);
             Segment newSeg = sb.createSegmentNewID();
-            
+
             state.replaceSeg(seg, newSeg);
         }
     }
-    
+
 }

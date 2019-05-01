@@ -1,4 +1,3 @@
-
 package Database;
 
 import DataStructures.BasicFile;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 /**
  * The core class for writing/reading to the SQLite database.
- * 
+ *
  * @author Chris
  */
 public class DatabaseOperations {
@@ -28,8 +27,6 @@ public class DatabaseOperations {
      *
      *************************************************************************
      */
-    
-
     /**
      * Adds all Segment entries contained in the file to the database or updates
      * them if they already exist. If there are Segment entries matching this
@@ -42,73 +39,72 @@ public class DatabaseOperations {
      * there is an SQL error, returns false.
      */
     public static boolean addFile(BasicFile bf) {
-            DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
-            String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
+        DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
+        String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
-            try (Connection conn = DatabaseOperations.connect();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseOperations.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-                conn.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
-                // this makes sure that the segments in the file, when retrieved from the db, can be ordered in the proper order.
-                // simply increments by 1 on each segment. 
-                int rank = 0;
-                // keeps count of the number of segs added so that the SQL can run a batch transaction (which is much more efficient than individual transactions).
-                // when i=1000, or at the last segment, the SQL is then run as one batch transaction.
-                int i = 0;
+            // this makes sure that the segments in the file, when retrieved from the db, can be ordered in the proper order.
+            // simply increments by 1 on each segment. 
+            int rank = 0;
+            // keeps count of the number of segs added so that the SQL can run a batch transaction (which is much more efficient than individual transactions).
+            // when i=1000, or at the last segment, the SQL is then run as one batch transaction.
+            int i = 0;
 
-                for (Segment seg : bf.getActiveSegs()) {
+            for (Segment seg : bf.getActiveSegs()) {
 
+                pstmt.setDouble(1, seg.getID());
+                pstmt.setDouble(2, seg.getFileID());
+                pstmt.setString(3, seg.getFileName());
+                pstmt.setString(4, seg.getThai());
+                pstmt.setString(5, seg.getEnglish());
+                // committed/removed booleans are stored as binary (0 = false, 1 = true)
+                pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
+                // removed is set to "false"
+                pstmt.setInt(7, 0);
+                pstmt.setInt(8, rank);
+                pstmt.addBatch();
+                rank++;
+                i++;
 
-                    pstmt.setDouble(1, seg.getID());
-                    pstmt.setDouble(2, seg.getFileID());
-                    pstmt.setString(3, seg.getFileName());
-                    pstmt.setString(4, seg.getThai());
-                    pstmt.setString(5, seg.getEnglish());
-                    // committed/removed booleans are stored as binary (0 = false, 1 = true)
-                    pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
-                    // removed is set to "false"
-                    pstmt.setInt(7, 0);
-                    pstmt.setInt(8, rank);
-                    pstmt.addBatch();
-                    rank++;
-                    i++;
-
-                    if (i % 1000 == 0 || i == bf.getActiveSegs().size()) {
-                        pstmt.executeBatch(); //Execute every 1000 segments.
-                    }
+                if (i % 1000 == 0 || i == bf.getActiveSegs().size()) {
+                    pstmt.executeBatch(); //Execute every 1000 segments.
                 }
-
-                // resetting counters
-                i = 0;
-                rank = 0;
-                for (Segment seg : bf.getHiddenSegs()) {
-
-                    pstmt.setDouble(1, seg.getID());
-                    pstmt.setDouble(2, seg.getFileID());
-                    pstmt.setString(3, seg.getFileName());
-                    pstmt.setString(4, seg.getThai());
-                    pstmt.setString(5, seg.getEnglish());
-                    // committed/removed booleans are stored as binary (0 = false, 1 = true)
-                    pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
-                    // removed is set  to "true"
-                    pstmt.setInt(7, 1);
-                    pstmt.setInt(8, rank);
-                    pstmt.addBatch();
-                    rank++;
-                    i++;
-
-                    if (i % 1000 == 0 || i == bf.getHiddenSegs().size()) {
-                        pstmt.executeBatch(); //Execute every 1000 segments.
-                    }
-                }
-                conn.commit();
-                return true;
-
-            } catch (SQLException e) {
-                System.out.println("AddFileAsBatch: " + e.getMessage());
-                return false;
             }
+
+            // resetting counters
+            i = 0;
+            rank = 0;
+            for (Segment seg : bf.getHiddenSegs()) {
+
+                pstmt.setDouble(1, seg.getID());
+                pstmt.setDouble(2, seg.getFileID());
+                pstmt.setString(3, seg.getFileName());
+                pstmt.setString(4, seg.getThai());
+                pstmt.setString(5, seg.getEnglish());
+                // committed/removed booleans are stored as binary (0 = false, 1 = true)
+                pstmt.setInt(6, seg.isCommitted() ? 1 : 0);
+                // removed is set  to "true"
+                pstmt.setInt(7, 1);
+                pstmt.setInt(8, rank);
+                pstmt.addBatch();
+                rank++;
+                i++;
+
+                if (i % 1000 == 0 || i == bf.getHiddenSegs().size()) {
+                    pstmt.executeBatch(); //Execute every 1000 segments.
+                }
+            }
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("AddFileAsBatch: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -120,19 +116,19 @@ public class DatabaseOperations {
      * @return True if added successfully, false if an SQLException is thrown.
      */
     public static boolean addOrUpdateFileName(double fileID, String fileName) {
-            String sql = "INSERT OR REPLACE INTO files(fileID, fileName) VALUES(?,?)";
+        String sql = "INSERT OR REPLACE INTO files(fileID, fileName) VALUES(?,?)";
 
-            try (Connection conn = DatabaseOperations.connect();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseOperations.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-                pstmt.setDouble(1, fileID);
-                pstmt.setString(2, fileName);
-                pstmt.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                System.out.println("addOrUpdateFileName: " + e.getMessage());
-                return false;
-            }
+            pstmt.setDouble(1, fileID);
+            pstmt.setString(2, fileName);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("addOrUpdateFileName: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -170,21 +166,21 @@ public class DatabaseOperations {
      */
     public static boolean removeSeg(double id) {
 
-            String sql = "DELETE FROM corpus1 WHERE id = ?";
+        String sql = "DELETE FROM corpus1 WHERE id = ?";
 
-            try (Connection conn = DatabaseOperations.connect();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseOperations.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-                // set the corresponding param
-                pstmt.setDouble(1, id);
-                // execute the delete statement
-                pstmt.executeUpdate();
-                return true;
+            // set the corresponding param
+            pstmt.setDouble(1, id);
+            // execute the delete statement
+            pstmt.executeUpdate();
+            return true;
 
-            } catch (SQLException e) {
-                System.out.println("removeSeg: " + e.getMessage());
-                return false;
-            }
+        } catch (SQLException e) {
+            System.out.println("removeSeg: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -195,54 +191,54 @@ public class DatabaseOperations {
      *************************************************************************
      */
     public static int numberOfSegs() {
-            String sql = "SELECT COUNT(*) FROM corpus1;";
+        String sql = "SELECT COUNT(*) FROM corpus1;";
 
-            int notDistinctCount = 0;
-            int distinctCount = 0;
+        int notDistinctCount = 0;
+        int distinctCount = 0;
 
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
-                notDistinctCount = rs.getInt(1);
-            } catch (SQLException e) {
-                System.out.println("count: " + e.getMessage());
-            }
+            notDistinctCount = rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println("count: " + e.getMessage());
+        }
 
-            sql = "SELECT COUNT(DISTINCT id) FROM corpus1;";
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
+        sql = "SELECT COUNT(DISTINCT id) FROM corpus1;";
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
-                distinctCount = rs.getInt(1);
-            } catch (SQLException e) {
-                System.out.println("count: " + e.getMessage());
-            }
+            distinctCount = rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println("count: " + e.getMessage());
+        }
 
-            if (distinctCount != notDistinctCount) {
-                System.out.println(distinctCount + ", " + notDistinctCount);
-            }
+        if (distinctCount != notDistinctCount) {
+            System.out.println(distinctCount + ", " + notDistinctCount);
+        }
 
-            return distinctCount;
+        return distinctCount;
     }
 
     public static String getFileName(double fileID) {
 
-            String idAsString = String.valueOf(fileID);
-            String sql = "SELECT fileName FROM files WHERE fileID =" + idAsString + ";";
+        String idAsString = String.valueOf(fileID);
+        String sql = "SELECT fileName FROM files WHERE fileID =" + idAsString + ";";
 
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
-                // loop through the result set
-                while (rs.next()) {
-                    return rs.getString("fileName");
-                }
-                return null;
-            } catch (SQLException e) {
-                System.out.println("getFileName: " + e.getMessage());
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            // loop through the result set
+            while (rs.next()) {
+                return rs.getString("fileName");
             }
             return null;
+        } catch (SQLException e) {
+            System.out.println("getFileName: " + e.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -254,23 +250,23 @@ public class DatabaseOperations {
      */
     public static Segment getSegment(double id) {
 
-            String idAsString = String.valueOf(id);
-            String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE id =" + idAsString + ";";
+        String idAsString = String.valueOf(id);
+        String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE id =" + idAsString + ";";
 
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
-                // loop through the result set
-                while (rs.next()) {
-                    // Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
-                    return rebuildSegment(rs);
-                }
-                return null;
-            } catch (SQLException e) {
-                System.out.println("getSegment: " + e.getMessage());
+            // loop through the result set
+            while (rs.next()) {
+                // Segment ret = new Segment(rs.getInt("id"), rs.getInt("fileID"), rs.getString("fileName"));
+                return rebuildSegment(rs);
             }
             return null;
+        } catch (SQLException e) {
+            System.out.println("getSegment: " + e.getMessage());
+        }
+        return null;
     }
 
     public static Corpus getAllSegments() {
@@ -343,7 +339,7 @@ public class DatabaseOperations {
      * @throws SQLException
      */
     private static Segment rebuildSegment(ResultSet rs) throws SQLException {
-        
+
         SegmentBuilder sb = new SegmentBuilder();
         sb.setFileID(rs.getInt("fileID"));
         sb.setID(rs.getInt("id"));

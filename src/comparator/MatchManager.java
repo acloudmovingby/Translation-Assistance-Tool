@@ -15,7 +15,9 @@ import java.util.HashSet;
  * Caches matches found. Because MatchLists are retrieved whenever the user
  * selects a new cell and because finding matches is quite expensive, they
  * should be cached (also because JavaFX can change selection quite unexpectedly
- * at times). If segments are removed/added from the pool of searchable segments (such as when a segment is committed), then MatchManager should be notified via the methods includeSegmentInMatches and removeSegmentFromMatches. 
+ * at times). If segments are removed/added from the pool of searchable segments
+ * (such as when a segment is committed), then MatchManager should be notified
+ * via the methods includeSegmentInMatches and removeSegmentFromMatches.
  *
  * @author Chris
  */
@@ -24,11 +26,13 @@ public class MatchManager {
     private final PostingsListManager plm;
 
     /**
-     * Cache for MatchLists for basic matches. Outer HashMap links a minimum match length to the appropriate cache. The inner HashMap links source segments to the cached match lists.
-     * 
+     * Cache for MatchLists for basic matches. Outer HashMap links a minimum
+     * match length to the appropriate cache. The inner HashMap links source
+     * segments to the cached match lists.
+     *
      */
-    private final HashMap<Integer, HashMap<Segment,MatchList>> basicMatchCache;
-    
+    private final HashMap<Integer, HashMap<Segment, MatchList>> basicMatchCache;
+
     public MatchManager(HashSet<Segment> segsToSearchForMatches) {
         plm = new PostingsListManager(segsToSearchForMatches);
         basicMatchCache = new HashMap();
@@ -43,11 +47,11 @@ public class MatchManager {
      * @return
      */
     public MatchList basicMatch(Segment seg, int minMatchLength) {
-        
+
         PostingsList pl = plm.getPostingsList(
-                    (minMatchLength <= 8 ? minMatchLength : 8));
-         return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
-         /*
+                (minMatchLength <= 8 ? minMatchLength : 8));
+        return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
+        /*
         
         HashMap<Segment, MatchList> cacheForThisLength = basicMatchCache.get(minMatchLength);
         
@@ -72,12 +76,15 @@ public class MatchManager {
     }
 
     /**
-     * Notifies MatchManager that a segment should now be included in match searches. (because it was committed, restored to the MainFile after undo, etc.)
+     * Notifies MatchManager that a segment should now be included in match
+     * searches. (because it was committed, restored to the MainFile after undo,
+     * etc.)
+     *
      * @param newSeg
      */
     public void includeSegmentInMatches(Segment newSeg) {
         plm.addSegment(newSeg);
-        
+
         // for each minimum length, look through the cache and if source segs now match with newSeg, then add the match to the MatchList
         basicMatchCache.forEach((length, cache) -> {
             cache.forEach((sourceSeg, matchList) -> {
@@ -88,7 +95,9 @@ public class MatchManager {
     }
 
     /**
-     * Notifies MatchManager that a segment should no longer be included in match searches. (because it was uncommitted, was removed, disappeared after an undo, etc.).
+     * Notifies MatchManager that a segment should no longer be included in
+     * match searches. (because it was uncommitted, was removed, disappeared
+     * after an undo, etc.).
      *
      * Removes the segment from both the PostingsListManager and from all
      * currently cached MatchLists.
@@ -114,6 +123,5 @@ public class MatchManager {
     public PostingsListManager getPostingsListManager() {
         return plm;
     }
-
 
 }

@@ -16,22 +16,17 @@ import javafx.stage.Stage;
  * @author Chris
  */
 public class JavaFX_1 extends Application {
-    static Fxml_1Controller myControllerHandle;
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Thai CAT Tool");
-       
-       
+
         Pane myPane = (Pane) FXMLLoader.load(getClass().getResource("fxml_1.fxml"));
         Scene myScene = new Scene(myPane);
-        
+
         myScene.getStylesheets().add(getClass().getResource("fxml_1.css").toExternalForm());
         primaryStage.setScene(myScene);
         primaryStage.show();
-        
-        
-        
     }
 
     /**
@@ -40,16 +35,5 @@ public class JavaFX_1 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
-}
 
-/*
-<columns>
-            <TableColumn fx:id="thaiColumn"  text="Thai" prefWidth="100">
-               
-            </TableColumn>
-            <TableColumn text="English" prefWidth="100">
-                
-            </TableColumn>
-        </columns> 
-*/
+}

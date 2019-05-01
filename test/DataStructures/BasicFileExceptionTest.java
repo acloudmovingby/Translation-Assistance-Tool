@@ -6,7 +6,10 @@
 package DataStructures;
 
 /**
- * A test file to check whether exceptions are being thrown when invalid segments are added to the file. This is bad programming (later Segment/BasicFile will be changed so that no need for exception throwing).
+ * A test file to check whether exceptions are being thrown when invalid
+ * segments are added to the file. This is bad programming (later
+ * Segment/BasicFile will be changed so that no need for exception throwing).
+ *
  * @author Chris
  */
 public class BasicFileExceptionTest {
@@ -17,33 +20,29 @@ public class BasicFileExceptionTest {
     public static void main(String[] args) {
         BasicFile bf = new BasicFile();
         System.out.println(bf);
-        
+
         // makes sure a properly built segment CAN be added
         SegmentBuilder sb = new SegmentBuilder(bf);
         bf.addSeg(sb.createSegment());
-        
+
         // makes sure an exception is thrown when the fileID doesn't match.
         try {
             sb.setFileID(-1);
             bf.addSeg(sb.createSegmentNewID());
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Exception thrown! " + e);
         }
-        
+
         // makes sure an exception is thrown when the fileName doesn't match
         try {
             sb = new SegmentBuilder(bf);
             sb.setFileName("something else");
             bf.addSeg(sb.createSegmentNewID());
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Exception thrown! " + e);
         }
-        
-        
-        
+
         System.out.println(bf);
     }
-    
+
 }

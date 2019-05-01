@@ -1,4 +1,4 @@
-  /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -23,7 +23,7 @@ import java.util.Iterator;
 public class ThaiLawParser {
 
     String fileNameThai;
-    
+
     private int sectionNumsWrong;
     private int sectionLengthsWrong;
     private int thaiSecsSkipped;
@@ -49,12 +49,16 @@ public class ThaiLawParser {
             literally just Integer.parseint(string)
      */
     /**
-     * NOT NECESSARY FOR CORE FUNCTIONALITY OF THIS PROGRAM. HIGHLY SPECIFIC TO A CERTAIN PDF FORMAT. Takes pdfs taken from a specific website (thailaw) and parses the Thai and English to add to the corpus for this program. 
-     * 
-     * Highly specific to how those PDFs are formatted, but useful because that website provides thousands of pages of Thai laws with translations formatted in a specific way.
-     * 
+     * NOT NECESSARY FOR CORE FUNCTIONALITY OF THIS PROGRAM. HIGHLY SPECIFIC TO
+     * A CERTAIN PDF FORMAT. Takes pdfs taken from a specific website (thailaw)
+     * and parses the Thai and English to add to the corpus for this program.
+     *
+     * Highly specific to how those PDFs are formatted, but useful because that
+     * website provides thousands of pages of Thai laws with translations
+     * formatted in a specific way.
+     *
      * @param thaiFilePath
-     * @param englishFilePath 
+     * @param englishFilePath
      */
     public ThaiLawParser(String thaiFilePath, String englishFilePath) {
         this.fileNameThai = thaiFilePath;
@@ -97,7 +101,7 @@ public class ThaiLawParser {
             ArrayList<String> engSegments2 = skippedSectionCorrecter(engSegments);
             int thaiSecsSkipped2 = checkSectionSkips(thaiSegments2);
             int engSecsSkipped2 = checkSectionSkips(engSegments2);
-            
+
             ArrayList<ArrayList<String>> thaiSectionsParsed2 = parseWithinSections(thaiSegments2);
             //System.out.println(thaiSectionsParsed2);
             /*for (ArrayList<String> al : thaiSectionsParsed2) {
@@ -133,11 +137,11 @@ public class ThaiLawParser {
             System.out.println("\tEnglish sections skipped by 1: \t\t" + engSecsSkipped2);
             System.out.println("\tSection # mis-matches: \t\t\t" + sectionNumsWrong2);
             System.out.println("\tSection length mis-matches: \t\t" + sectionLengthsWrong2);
-            
+
             finalThaiSegs = thaiSegments2;
             finalEngSegs = engSegments2;
-           // finalThaiSegs = this.unpackSections(parseWithinSections(thaiSegments2));
-           // finalEngSegs =  this.unpackSections(parseWithinSections(engSegments2));
+            // finalThaiSegs = this.unpackSections(parseWithinSections(thaiSegments2));
+            // finalEngSegs =  this.unpackSections(parseWithinSections(engSegments2));
 
             /*
             System.out.println(sectionNumsAnalysis);
@@ -231,8 +235,11 @@ public class ThaiLawParser {
     }
 
     /**
-     * Checks to see if a section number was skipped (i.e. went from Section 24 to 26). Does not correct these errors, but sets variable skippedSectionAnalysis.
-     * @param segments After first parse, before parse within sections. 
+     * Checks to see if a section number was skipped (i.e. went from Section 24
+     * to 26). Does not correct these errors, but sets variable
+     * skippedSectionAnalysis.
+     *
+     * @param segments After first parse, before parse within sections.
      * @return The number of skipped sections.
      */
     private static int checkSectionSkips(ArrayList<String> segments) {
@@ -266,9 +273,15 @@ public class ThaiLawParser {
     }
 
     /**
-     * Tries to make a new entry for a skipped section if it can be found. Specifically, if a section number skips (say from 24 to 26), it looks in the prior section to see if the skipped section is in there and the OCR didn't add a line break properly. (i.e. it looks for Section 25 near the end of what was previously the Section 24 segment).
-     * @param input A list of sections 
-     * @return The list but with as many skipped sections unpacked as could be found. 
+     * Tries to make a new entry for a skipped section if it can be found.
+     * Specifically, if a section number skips (say from 24 to 26), it looks in
+     * the prior section to see if the skipped section is in there and the OCR
+     * didn't add a line break properly. (i.e. it looks for Section 25 near the
+     * end of what was previously the Section 24 segment).
+     *
+     * @param input A list of sections
+     * @return The list but with as many skipped sections unpacked as could be
+     * found.
      */
     static ArrayList<String> skippedSectionCorrecter(ArrayList<String> input) {
         ArrayList<String> ret = new ArrayList(input.size());
@@ -560,33 +573,33 @@ public class ThaiLawParser {
 
             // if it starts a new section, it creates a new segment in enSegs
             if (startsSection) {
-                
-                    enSegs.add(sb.toString());
-                    sb = new StringBuilder();
 
-                    /*if the Section has content (i.e. was translated), appends the line to 
+                enSegs.add(sb.toString());
+                sb = new StringBuilder();
+
+                /*if the Section has content (i.e. was translated), appends the line to 
                     a new StringBuilder along with the next line. Otherwise, it breaks up the line
                     into several segments to add to enSegs;
-                    */
-                    if (!isNotTranslatedSection) {
-                        /* for first file I made do it this way:
+                 */
+                if (!isNotTranslatedSection) {
+                    /* for first file I made do it this way:
                 sb.append(line).append(" ").append(buffReaderEng.readLine()).append(buffReaderEng.readLine());
                      */
                     // for every other file use this:
-                        
-                        sb.append(line).append(" ").append(buffReaderEng.readLine());
-                    } else {
-                        /* splits into substrings wherever you have this: "Section ### Section"
+
+                    sb.append(line).append(" ").append(buffReaderEng.readLine());
+                } else {
+                    /* splits into substrings wherever you have this: "Section ### Section"
                         deals with issue of OCR seeing blank sections and putting them
                         on one line. 
-                        */
-                        //sb.append(line).append(" ").append(buffReaderEng.readLine());
-                       String[] sa = trimmed.split("(?=(Section \\d+ Section))");
-                        enSegs.addAll(Arrays.asList(sa));
-                        String lastLine = enSegs.remove(enSegs.size()-1);
-                        enSegs.addAll(Arrays.asList(lastLine.split("(?=(Section))")));
-                    }
-                
+                     */
+                    //sb.append(line).append(" ").append(buffReaderEng.readLine());
+                    String[] sa = trimmed.split("(?=(Section \\d+ Section))");
+                    enSegs.addAll(Arrays.asList(sa));
+                    String lastLine = enSegs.remove(enSegs.size() - 1);
+                    enSegs.addAll(Arrays.asList(lastLine.split("(?=(Section))")));
+                }
+
             } // if it is not a page number of footer,etc. then it adds line to current segment
             else if (!isPageNum && !isFooterEtc) {
                 // if there is a page break (\f), then this checks to see if it begins with a special word (book, title, section, etc.). If not, it appends this line to the prior one. Generally solves more problems than it causes.
@@ -615,7 +628,6 @@ public class ThaiLawParser {
         }
         return ret;
     }
-    
 
     private static int checkSectionParsing(ArrayList<ArrayList<String>> thaiSectionsParsed, ArrayList<ArrayList<String>> engSectionsParsed) {
 
@@ -665,7 +677,7 @@ public class ThaiLawParser {
         return numWrong;
 
     }
-    
+
     // Takes the nested arraylists and turns them into a single arrayList
     private ArrayList<String> unpackSections(ArrayList<ArrayList<String>> arrayList) {
         ArrayList<String> ret = new ArrayList(arrayList.size());
@@ -676,11 +688,11 @@ public class ThaiLawParser {
         }
         return ret;
     }
-    
+
     public BasicFile makeFile() {
         BasicFile file = FileBuilder.fromArrayLists(finalThaiSegs, finalEngSegs);
         file.setFileName(makeFileNameFromPath(fileNameThai));
-         return file;
+        return file;
     }
 
 }

@@ -21,22 +21,22 @@ import static org.junit.Assert.*;
  * @author Chris
  */
 public class FileFactoryTest {
-    
+
     public FileFactoryTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -51,16 +51,16 @@ public class FileFactoryTest {
         String english = "";
         FileBuilder instance = new FileBuilder();
         BasicFile result = instance.buildBasicParse(thai, english);
-        
+
         BasicFile expResult = new BasicFile();
         SegmentBuilder sb = new SegmentBuilder(expResult);
         sb.setThai(thai);
         sb.setEnglish(english);
         expResult.addSeg(sb.createSegment());
-        
+
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of buildBasicParse method using two entries.
      */
@@ -71,17 +71,17 @@ public class FileFactoryTest {
         String english = "politics";
         FileBuilder instance = new FileBuilder();
         BasicFile result = instance.buildBasicParse(thai, english);
-        
+
         BasicFile expResult = new BasicFile();
         SegmentBuilder sb = new SegmentBuilder(expResult);
         sb.setThai(thai);
         sb.setEnglish(english);
         expResult.addSeg(sb.createSegment());
-        
+
         assertEquals(expResult, result);
     }
-    
-     /**
+
+    /**
      * Test of buildBasicParse method using two entries.
      */
     @Test
@@ -91,24 +91,22 @@ public class FileFactoryTest {
         String english = "politics\nof Thailand";
         FileBuilder instance = new FileBuilder();
         BasicFile result = instance.buildBasicParse(thai, english);
-        
+
         BasicFile expResult = new BasicFile();
-        
+
         SegmentBuilder sb = new SegmentBuilder(expResult);
         sb.setThai("การเมือง");
         sb.setEnglish("politics");
         expResult.addSeg(sb.createSegment());
-        
+
         sb.setThai("ของประเทศไทย");
         sb.setEnglish("of Thailand");
         expResult.addSeg(sb.createSegmentNewID());
-            
-           
-        
+
         System.out.println("result is: \n" + result);
         System.out.println("expResult is: \n" + expResult);
-        
+
         assertEquals(expResult, result);
     }
-    
+
 }

@@ -24,22 +24,22 @@ import static org.junit.Assert.*;
  * @author Chris
  */
 public class DatabaseManagerTest {
-    
+
     public DatabaseManagerTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -50,9 +50,9 @@ public class DatabaseManagerTest {
     @Test
     public void testBackupMainFile() {
         DatabaseOperations.rebootDB();
-        
+
         System.out.println("backupMainFile");
-        
+
         // (0)
         // test with an empty main file
         State emptyState = TestObjectBuilder.getEmptyState();
@@ -63,18 +63,17 @@ public class DatabaseManagerTest {
         // checks to see that the file is the sam even after backing up the unchanged file
         dmEmpty.push(emptyState);
         assertEquals(emptyMF, DatabaseOperations.getFile(emptyMF.getFileID()));
-        
-        
+
         State state = TestObjectBuilder.getTestState();
         DatabaseManager dm = new DatabaseManager(state);
         MainFile mf = state.getMainFile();
         int fileID = mf.getFileID();
-        
+
         // (1) 
         // check to see that the new file is in the database 
         // this should happen because DatabaseManager should auto-add the file to the db on construction
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        
+
         // (2)
         // check to see that the file is the same after just adding the file without any changes made
         int numFiles = DatabaseOperations.getAllFileIDs().size();
@@ -82,7 +81,7 @@ public class DatabaseManagerTest {
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // checks that number of files in DB are still the same
         assertEquals(numFiles, DatabaseOperations.getAllFileIDs().size());
-         
+
         // (3) 
         // make a subtraction to the file (beg / middle / end?)
         // check to make sure changes are reflected in db
@@ -92,7 +91,7 @@ public class DatabaseManagerTest {
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // checks that number of files in DB are still the same
         assertEquals(numFiles, DatabaseOperations.getAllFileIDs().size());
-        
+
         // (4)
         // make several additions to the file (in the beg/middle/end)
         // checks to make sure each change is reflected in database
@@ -108,7 +107,7 @@ public class DatabaseManagerTest {
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // checks that number of files in DB are still the same
         assertEquals(numFiles, DatabaseOperations.getAllFileIDs().size());
-        
+
         // (5) 
         // subtract down to an empty file, backup, check
         ArrayList<Segment> segsToRemove = new ArrayList();
@@ -121,12 +120,12 @@ public class DatabaseManagerTest {
         dm.push(state);
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         assertEquals(numFiles, DatabaseOperations.getAllFileIDs().size());
-       
-        
+
     }
-    
+
     /**
-     * If the segs in the main file are removed from both active/removed lists, the db should then remove those rows from the db.
+     * If the segs in the main file are removed from both active/removed lists,
+     * the db should then remove those rows from the db.
      */
     @Test
     public void testDeleteSegsBeforeBackup() {
@@ -134,21 +133,21 @@ public class DatabaseManagerTest {
         State state = TestObjectBuilder.getTestState();
         MainFile mainFile = state.getMainFile();
         DatabaseManager dm = new DatabaseManager(state);
-        
+
         SegmentBuilder sb = new SegmentBuilder(mainFile);
         mainFile.getHiddenSegs().add(sb.createSegment());
         dm.push(state);
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         // delete all active segs in mf
         mainFile.getActiveSegs().clear();
         dm.push(state);
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        
+
         // delete all hidden segs in mf
         mainFile.getHiddenSegs().clear();
         dm.push(state);
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
     }
-    
+
 }
