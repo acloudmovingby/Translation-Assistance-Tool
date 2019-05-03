@@ -19,6 +19,37 @@
         -fx-padding: 10 0 0 10;
         -fx-pref-width: 60;
     }
+    
+    .tab-label {
+        -fx-content-display: top;
+    }
+    
+    .tab-pane {
+        -fx-tab-min-height: 100;
+        -fx-tab-max-height: 100;
+        -fx-tab-min-width: 100;
+        -fx-tab-max-width: 100;
+        
+    }
+
+
+    .tab  {
+        -fx-background-color: #2d3a71;
+    }
+    
+    .tab-pane {
+        
+    }
+
+
+    .tab-header-area {
+        -fx-background-color: #2d3a71;
+        /* -fx-opacity: 0;*/
+    }
+
+    .tab-header-background {
+           -fx-background-color: #2d3a71;
+    }
 
 
 

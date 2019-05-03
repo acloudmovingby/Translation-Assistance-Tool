@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane alignment="CENTER" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="707.0" prefWidth="939.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
+    <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
+        <buttons>
+            <Button fx:id="commitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#commit" text="Commit" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+            <Button fx:id="uncommitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#uncommit" text="Uncommit" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+            <Button fx:id="splitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#split" text="Split" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+            <Button fx:id="mergeButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#merge" text="Merge" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+            <Button fx:id="undoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#undo" text="Undo" textAlignment="CENTER">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+            <Button fx:id="exportButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#export" text="Export Committed" textAlignment="CENTER" ButtonBar.buttonData="RIGHT">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+            <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#redo" text="Redo" textAlignment="CENTER" wrapText="true">
+                <font>
+                    <Font name="System Bold" size="10.0" />
+                </font>
+            </Button>
+        </buttons>
+    </ButtonBar> 
+    
+    <Label fx:id="title" style="-fx-font: NORMAL 20 Tahoma;" text="Address Book" GridPane.rowIndex="4">
+    </Label>
+    <TableView fx:id="tableView" editable="true" prefHeight="399.0" prefWidth="939.0" GridPane.rowIndex="5">
+        <columns>
+            <TableColumn fx:id="idCol" prefWidth="32.77339541912079" text="id" />
+            <TableColumn fx:id="thaiCol" editable="false" prefWidth="311.81269454956055" sortable="false" text="Thai" />
+            <TableColumn fx:id="englishCol" minWidth="0.0" prefWidth="378.1872253417969" sortable="false" text="English" />
+            <TableColumn fx:id="status" minWidth="0.0" prefWidth="75.94622802734375" text="Status" />
+            <TableColumn fx:id="matchScore" prefWidth="60.7294921875" text="Match" />
+            <TableColumn prefWidth="63.62591552734375" text="Tags" />
+        </columns>
+    </TableView>
+    <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="8">
+        <children>
+            <Pane prefHeight="35.0" prefWidth="939.0">
+                <children>
+                    <TextField fx:id="searchField" layoutX="5.0" layoutY="5.0" onAction="#search" prefWidth="256.0">
+                        <font>
+                            <Font size="11.0" />
+                        </font>
+                    </TextField>
+                    <TextField fx:id="minMatchLengthField" layoutX="864.0" layoutY="5.0" onAction="#minMatchLengthChanged" prefWidth="41.0">
+                        <font>
+                            <Font size="11.0" />
+                        </font>
+                    </TextField>
+                    <Label layoutX="742.0" layoutY="6.0" text="min match length = " />
+                </children>
+                <padding>
+                    <Insets bottom="20.0" top="12.0" />
+                </padding>
+            </Pane>
+            <Pane maxHeight="-Infinity" prefHeight="147.0" prefWidth="939.0">
+                <children>
+                    <TableView fx:id="compareTable" layoutX="3.0" prefHeight="157.0" prefWidth="936.0">
+                        <columns>
+                            <TableColumn fx:id="thaiColComp" prefWidth="358.0" text="Thai" />
+                            <TableColumn fx:id="englishColComp" prefWidth="343.0" text="English" />
+                            <TableColumn fx:id="fileColComp" prefWidth="104.0" text="File" />
+                            <TableColumn fx:id="scoreColComp" prefWidth="109.0" text="Score" />
+                        </columns>
+                    </TableView>
+                </children>
+            </Pane>
+        </children>
+    </VBox>
+    <Pane maxHeight="-Infinity" prefHeight="25.0" prefWidth="939.0" GridPane.rowIndex="10">
+        <children>
+            <Label layoutX="16.0" layoutY="4.0" text="Matching Segments:" />
+            <Label fx:id="numMatches" layoutX="148.0" layoutY="4.0" prefHeight="17.0" prefWidth="52.0" text="0" />
+        </children>
+    </Pane>
+    <columnConstraints>
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints minHeight="0.0" />
+        <RowConstraints />
+        <RowConstraints minHeight="0.0" />
+        <RowConstraints />
+        <RowConstraints />
+    </rowConstraints>
+    
+    
+</GridPane>

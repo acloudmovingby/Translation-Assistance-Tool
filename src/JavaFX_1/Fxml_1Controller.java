@@ -39,6 +39,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TablePosition;
@@ -117,6 +118,9 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     Button exportButton;
+    
+    @FXML
+    Tab analysisTab;
 
     String committedStatusColor;
     String unCommittedStatusColor;
@@ -333,6 +337,9 @@ public class Fxml_1Controller implements Initializable {
             }
         });
 
+        /*
+        BUTTON IMAGES
+        */
         // Apply image to COMMIT button
         ImageView commitIV = new ImageView(getClass().getResource("/JavaFX_1/CommitButtonPNG.png").toExternalForm());
         commitIV.setFitWidth(40);
@@ -372,6 +379,21 @@ public class Fxml_1Controller implements Initializable {
         exportIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
         exportIV.setCache(true); // perhaps not necessary
         exportButton.setGraphic(exportIV);
+        
+        /*
+        SIDE BAR BUTTONS
+        */
+        // apply image to ANALYSIS TAB 
+        ImageView analysisIV = new ImageView(getClass().getResource("/JavaFX_1/PieChartButton.png").toExternalForm());
+        exportIV.setFitWidth(20);
+        exportIV.setPreserveRatio(true);
+        exportIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        exportIV.setCache(true); // perhaps not necessary
+        Label analysisTabLabel = new Label("", analysisIV);
+        analysisTabLabel.setText("Analysis");
+        analysisTabLabel.setMaxWidth(40);
+        analysisTab.setGraphic(analysisTabLabel);
+        analysisTab.setText("");
     }
 
     @FXML
