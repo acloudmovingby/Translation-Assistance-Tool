@@ -60,7 +60,7 @@ public class DatabaseManagerTest {
         DatabaseManager dmEmpty = new DatabaseManager(emptyState);
         // checks to see that the file is in the db already
         assertEquals(emptyMF, DatabaseOperations.getFile(emptyMF.getFileID()));
-        // checks to see that the file is the sam even after backing up the unchanged file
+        // checks to see that the file is the same even after backing up the unchanged file
         dmEmpty.push(emptyState);
         assertEquals(emptyMF, DatabaseOperations.getFile(emptyMF.getFileID()));
 

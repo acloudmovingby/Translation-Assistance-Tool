@@ -50,8 +50,4 @@ public class Dispatcher {
     public State getState() {
         return state;
     }
-
-    public DatabaseManager getDM() {
-        return dm;
-    }
 }
