@@ -34,7 +34,7 @@ public class EditThai implements MainFileAction {
             sb.setCommitted(false);
             Segment newSeg = sb.createSegmentNewID();
 
-            state.replaceSeg(seg, newSeg);
+            state.replaceSegInMainFile(seg, newSeg);
         }
     }
 

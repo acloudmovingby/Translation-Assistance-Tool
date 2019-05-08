@@ -186,10 +186,6 @@ public class State {
         return DATABASE_IS_WRITABLE;
     }
 
-    public void commitSeg(Segment seg) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     /**
      * Finds matching segments according to default match finding algorithm
      *
@@ -216,13 +212,6 @@ public class State {
         return uiState;
     }
 
-    public void restorePriorMainFile(MainFile priorMainFile) {
-
-    }
-
-    public void split(Segment seg, int index) {
-        getMainFile().splitSeg(seg, index);
-    }
 
     /**
      * Required by StateCopier class for testing purpose only.
@@ -234,21 +223,22 @@ public class State {
     }
 
     /**
-     * Takes the "oldSeg" from the MainFile's active segs list and replaces it.
+     * Takes oldSeg from the MainFile's active segs list and replaces it with newSeg.
+     * 
      * If MF's active segs list does not contain the specified Segment, it
      * returns false and nothing changes. If it does, the MainFile and
      * PostingsListManager adjust appropriately. The old segment is NOT removed
      * from PostingsList if it had been committed. If the new Segment is
-     * committed, it will be added to the postings lists.This mehtod does NOT
+     * committed, it will be added to the postings lists.This method does NOT
      * check to see if ids are different or same, or any other relationship
-     * between the old and new seg, it merely replaces it if it exists in
+     * between the old and new seg, it merely replaces it if it exists in the
      * activeSegs of the main file.
      *
      * @param oldSeg
      * @param newSeg
      * @return True if seg exists in MF active. False if not.
      */
-    public boolean replaceSeg(Segment oldSeg, Segment newSeg) {
+    public boolean replaceSegInMainFile(Segment oldSeg, Segment newSeg) {
 
         ObservableList<Segment> mfActiveSegs = getMainFile().getActiveSegs();
         // checks to make sure oldSeg exists in MainFile active segs
@@ -261,27 +251,9 @@ public class State {
             // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
             getMainFile().getHiddenSegs().add(oldSeg);
 
-            //adjusts Postings Lists
+            //adjusts Postings Lists (so the newSeg can be found in searches if it is committed)
             matchManager.includeSegmentInMatches(newSeg);
 
-            return true;
-        }
-    }
-
-    public boolean removeSeg(Segment seg) {
-        ObservableList<Segment> mfActiveSegs = getMainFile().getActiveSegs();
-        // checks to make sure oldSeg exists in MainFile active segs
-        if (!mfActiveSegs.contains(seg)) {
-            return false;
-        } else {
-            // removes from active segs
-            mfActiveSegs.remove(seg);
-            // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
-            getMainFile().getHiddenSegs().add(seg);
-
-            // postings lists not changed:
-            // if segment had been committed, we still want it stored
-            // if segment had not been committed, it won't exist in postings lists anyways. 
             return true;
         }
     }
@@ -296,7 +268,7 @@ public class State {
      * @param insertIndex
      * @param seg
      */
-    public void addSeg(int insertIndex, Segment seg) {
+    public void addSegToMainFileActive(int insertIndex, Segment seg) {
         getMainFile().getActiveSegs().add(insertIndex, seg);
         matchManager.includeSegmentInMatches(seg);
     }
@@ -308,7 +280,7 @@ public class State {
      * @param seg
      * @return
      */
-    public boolean removeSeg2(Segment seg) {
+    public boolean removeSegFromMainFile(Segment seg) {
         ObservableList<Segment> activeSegs = getMainFile().getActiveSegs();
         ArrayList<Segment> hiddenSegs = getMainFile().getHiddenSegs();
 
@@ -337,7 +309,7 @@ public class State {
      * @param seg
      * @return
      */
-    public void addToHidden(Segment seg) {
+    public void addToMainFileHidden(Segment seg) {
         ObservableList<Segment> activeSegs = getMainFile().getActiveSegs();
         ArrayList<Segment> hiddenSegs = getMainFile().getHiddenSegs();
 

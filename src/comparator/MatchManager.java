@@ -51,28 +51,6 @@ public class MatchManager {
         PostingsList pl = plm.getPostingsList(
                 (minMatchLength <= 8 ? minMatchLength : 8));
         return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
-        /*
-        
-        HashMap<Segment, MatchList> cacheForThisLength = basicMatchCache.get(minMatchLength);
-        
-        // if that minMatchLength hasn't been queried, then make a new cache for that length
-        if (cacheForThisLength == null) {
-            cacheForThisLength = new HashMap();
-            basicMatchCache.put(minMatchLength, cacheForThisLength);
-        }
-        
-        MatchList m = basicMatchCache.get(minMatchLength).get(seg);
-        
-        // if cache doesn't currently have a cached matchlist, then generate one and add to cache.
-        if (m == null) {
-            PostingsList pl = plm.getPostingsList(
-                    (minMatchLength <= 8 ? minMatchLength : 8));
-            m = MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
-            basicMatchCache.get(minMatchLength).put(seg, m);
-        }
-        
-        return m;
-         */
     }
 
     /**

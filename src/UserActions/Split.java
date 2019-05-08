@@ -62,14 +62,14 @@ public class Split implements MainFileAction {
         sb.setCommitted(false);
         Segment newSeg1 = sb.createSegmentNewID();
         // if the first seg replaced the old seg correctly, then the second seg is added
-        if (state.replaceSeg(seg, newSeg1)) {
+        if (state.replaceSegInMainFile(seg, newSeg1)) {
             // creates second new seg and inserts
             sb.setThai(secondThai);
             sb.setEnglish("");
             Segment newSeg2 = sb.createSegmentNewID();
             // inserts it after the other new Seg
             int insertIndex = mfActiveSegs.indexOf(newSeg1);
-            state.addSeg(insertIndex + 1, newSeg2);
+            state.addSegToMainFileActive(insertIndex + 1, newSeg2);
         }
 
     }

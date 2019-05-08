@@ -10,8 +10,11 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
@@ -22,7 +25,30 @@
      <tabs>
        <Tab fx:id="homeTab" text="Home Tab">
          <content>
-           <AnchorPane minHeight="0.0" minWidth="0.0" />
+           <AnchorPane minHeight="0.0" minWidth="0.0">
+                  <children>
+                     <BorderPane prefHeight="703.0" prefWidth="979.0">
+                        <left>
+                           <AnchorPane prefHeight="602.0" prefWidth="110.0" BorderPane.alignment="CENTER" />
+                        </left>
+                        <right>
+                           <AnchorPane prefHeight="602.0" prefWidth="110.0" BorderPane.alignment="CENTER" />
+                        </right>
+                        <center>
+                           <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                              <top>
+                                 <HBox fx:id="homeTopIcons" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                              </top>
+                              <center>
+                                 <FlowPane fx:id="loadFileFlowPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                              </center>
+                           </BorderPane>
+                        </center>
+                        <top>
+                           <AnchorPane prefHeight="101.0" prefWidth="979.0" BorderPane.alignment="CENTER" />
+                        </top>
+                     </BorderPane>
+                  </children></AnchorPane>
          </content>
        </Tab>
        <Tab fx:id="translationTab" text="Translation Tab">
@@ -130,6 +156,16 @@
                                 </children>
                             </Pane>
                         </children>
+                        <rowConstraints>
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                        </rowConstraints>
                      </GridPane>
                   </children>
                </AnchorPane>

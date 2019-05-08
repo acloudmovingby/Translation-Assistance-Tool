@@ -36,6 +36,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
@@ -44,9 +45,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -55,10 +59,53 @@ import javafx.scene.text.TextFlow;
 /**
  * FXML Controller class
  *
+ * JavaFX, the GUI used in this application, relies on working together with an
+ * FXML document and a CSS stylesheet to properly render the application UI. The
+ * @FXML labels indicate that a given variable is linked to an id in the FXML
+ * document (and therefore its name cannot be changed unless also changed in the
+ * FXML doc).
+ *
+ * One of the least well organized classes in the program...so beware.
+ *
  * @author Chris
  */
 public class Fxml_1Controller implements Initializable {
 
+    /**
+     * *****************
+     *
+     * TAB FXML OBJECTS (the actual tabs you click on in the TabPane)
+    *******************
+     */
+    @FXML
+    Tab analysisTab;
+
+    /**
+     * *****************
+     *
+     * HOME TAB FXML OBJECTS
+     *
+     *******************
+     */
+
+    /*
+    Represents the area of the home page where you click on icons to load prior projects. 
+     */
+    @FXML
+    FlowPane loadFileFlowPane;
+
+    /*
+    Represents the area where the new file and the import tmx icons are. 
+     */
+    @FXML
+    HBox homeTopIcons;
+
+    /**
+     * *****************
+     *
+     * TRANSLATION TAB FXML OBJECTS      *
+     ******************
+     */
     @FXML
     Label title;
 
@@ -118,22 +165,20 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     Button exportButton;
-    
-    @FXML
-    Tab analysisTab;
 
     String committedStatusColor;
     String unCommittedStatusColor;
 
     Dispatcher dispatcher;
     UIState uiState;
-    /**
-     * Main logic of the program. Controller retrieves and sends information to
-     * state.
-     */
     State state;
-    Scene scene;
 
+    /**
+     * Never could get this to work, correctly...but left here in case I wanted
+     * to take a stab at it later. Program registers command and z pressed
+     * individually, but never registered the two of them being pressed
+     * together.
+     */
     final BooleanProperty commandPressed;
     final BooleanProperty zPressed;
     final BooleanBinding commandZPressed;
@@ -159,19 +204,52 @@ public class Fxml_1Controller implements Initializable {
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
-        
+
         // actually builds all the important objects for the program and sets the items for the tables to display
         setMainFile(mainFile);
-        
-        
-        
+
+        /**
+         * *****************
+         *
+         * HOME TAB UI INITIALIZATION
+         *
+         *******************
+         */
+        // NEW FILE ICON + IMPORT TMX ICON
+        Image newFileIcon = new Image(getClass().getResource("/JavaFX_1/NewFileIcon.png").toExternalForm());
+        ImageView newFileIconIV = new ImageView(newFileIcon);
+        newFileIconIV.setFitWidth(110);
+        newFileIconIV.setPreserveRatio(true);
+        Label newFileLabel = new Label("New", newFileIconIV);
+        newFileLabel.setMinWidth(130);
+        newFileLabel.setMaxWidth(130);
+        newFileLabel.setGraphicTextGap(8);
+        newFileLabel.setContentDisplay(ContentDisplay.TOP);
+        homeTopIcons.getChildren().add(newFileLabel);
+
+        // LOAD FILE ICONS
+        Image loadFileIcon = new Image(getClass().getResource("/JavaFX_1/BlankFileIcon.png").toExternalForm());
+
+        // Creates the actual icons, including the standard blank file icon image, the name of the file, and any listeners (?)
+        for (String fileName : DatabaseOperations.getAllFileNames()) {
+            ImageView loadFileIconIV = new ImageView(loadFileIcon);
+            loadFileIconIV.setFitWidth(110);
+            loadFileIconIV.setPreserveRatio(true);
+            Label loadFileLabel = new Label(fileName, loadFileIconIV);
+            loadFileLabel.setMinWidth(130);
+            loadFileLabel.setMaxWidth(130);
+            loadFileLabel.setPrefWidth(130);
+            loadFileLabel.setGraphicTextGap(8);
+            //loadFileLabel.setWrapText(true);
+            loadFileLabel.setContentDisplay(ContentDisplay.TOP);
+            loadFileFlowPane.getChildren().add(loadFileLabel);
+        }
+
         // BELOW IS ONLY UI INITIALIZIATION THAT DOESN'T DEPEND ON MAIN FILE
         // Because the main file can be changed mid program operation, all UI elements that depend on state/UIstate/Dispatcher need to be in the method setMainFile so they are reset when the main file is changed
-       
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
 
-        
         // Set prompt text for search field
         searchField.setPromptText("search...");
 
@@ -324,10 +402,6 @@ public class Fxml_1Controller implements Initializable {
         Font.getFamilies().forEach((s) -> {
             System.out.println(s);
         }); */
-        
-
-        
-
         // Makes it so merge is disabled except when multiple cells are selected
         tableView.getSelectionModel().getSelectedItems().addListener((Change<? extends Segment> c) -> {
             if (c.getList().size() <= 1) {
@@ -339,7 +413,7 @@ public class Fxml_1Controller implements Initializable {
 
         /*
         BUTTON IMAGES
-        */
+         */
         // Apply image to COMMIT button
         ImageView commitIV = new ImageView(getClass().getResource("/JavaFX_1/CommitButtonPNG.png").toExternalForm());
         commitIV.setFitWidth(40);
@@ -379,16 +453,16 @@ public class Fxml_1Controller implements Initializable {
         exportIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
         exportIV.setCache(true); // perhaps not necessary
         exportButton.setGraphic(exportIV);
-        
+
         /*
         SIDE BAR BUTTONS
-        */
+         */
         // apply image to ANALYSIS TAB 
         ImageView analysisIV = new ImageView(getClass().getResource("/JavaFX_1/PieChartButton.png").toExternalForm());
-        exportIV.setFitWidth(20);
-        exportIV.setPreserveRatio(true);
-        exportIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        exportIV.setCache(true); // perhaps not necessary
+        analysisIV.setFitWidth(50);
+        analysisIV.setPreserveRatio(true);
+        analysisIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        analysisIV.setCache(true); // perhaps not necessary
         Label analysisTabLabel = new Label("", analysisIV);
         analysisTabLabel.setText("Analysis");
         analysisTabLabel.setMaxWidth(40);
@@ -545,17 +619,30 @@ public class Fxml_1Controller implements Initializable {
     private void undo(ActionEvent event) {
         dispatcher.undo();
     }
-    
+
     @FXML
     private void redo(ActionEvent event) {
         dispatcher.redo();
     }
-    
+
     /**
-     * Key method for initializing the state for a given main file. Creates a new StateBuilder which in turn creates the various key components of the program (Dispatcher, State, UIState) that are intrinsically linked to the main file being translated. If a new file is being made the main file (such as when opening an old translation project or starting a new one), all of these should be reset.
-     * 
-     * This is also where all segments are retrieved from the database (for searching matches with the main file). Currently this just re-retrieves all of these and recreates all the Postings Lists, which may be inefficient, but the user isn't expected to change files that often. If this needs to be changed (like the user is switching between files a lot) it would not be too hard to reconfigure this so that it doesn't redo these expensive operations (because all that's really changing is the MainFile). But currently, for simplicity sake and to avoid unforeseen errors, the whole program is essentially rebooted by doing this.  
-     * 
+     * Key method for initializing the state for a given main file. Creates a
+     * new StateBuilder which in turn creates the various key components of the
+     * program (Dispatcher, State, UIState) that are intrinsically linked to the
+     * main file being translated. If a new file is being made the main file
+     * (such as when opening an old translation project or starting a new one),
+     * all of these should be reset.
+     *
+     * This is also where all segments are retrieved from the database (for
+     * searching matches with the main file). Currently this just re-retrieves
+     * all of these and recreates all the Postings Lists, which may be
+     * inefficient, but the user isn't expected to change files that often. If
+     * this needs to be changed (like the user is switching between files a lot)
+     * it would not be too hard to reconfigure this so that it doesn't redo
+     * these expensive operations (because all that's really changing is the
+     * MainFile). But currently, for simplicity sake and to avoid unforeseen
+     * errors, the whole program is essentially rebooted by doing this.
+     *
      * @param bf The new main file to be translated
      */
     private void setMainFile(BasicFile newMainFile) {
@@ -564,21 +651,20 @@ public class Fxml_1Controller implements Initializable {
         state = stateBuilder.getState();
         uiState = stateBuilder.getUIState();
         dispatcher = stateBuilder.getDispatcher();
-        
+
         // UI THINGS THAT DEPEND ON MAINFILE
-        
         // sets title at top to the name of the file
         title.setText(state.getMainFile().getFileName());
-        
+
         // puts the list of Segments from the main file into the main table view
         tableView.setItems(uiState.getMainFileSegs());
-        
+
         compareTable.setItems(uiState.getMatchList());
-        
+
         uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
             numMatches.setText(String.valueOf(newVal));
         });
-        
+
     }
 
 }

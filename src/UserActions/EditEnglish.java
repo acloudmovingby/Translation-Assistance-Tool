@@ -32,7 +32,7 @@ public class EditEnglish implements MainFileAction {
         sb.setCommitted(false); // because it has new English, it is now made uncommitted
         Segment newSeg = sb.createSegmentNewID();
 
-        state.replaceSeg(seg, newSeg);
+        state.replaceSegInMainFile(seg, newSeg);
     }
 
 }

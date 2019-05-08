@@ -121,17 +121,17 @@ public class UndoManager {
 
         // removes all segs from main file
         allCurrentSegs.forEach(s -> {
-            state.removeSeg2(s);
+            state.removeSegFromMainFile(s);
         });
 
         // add active segs to MainFile
         for (int i = 0; i < previousActiveSegs.size(); i++) {
-            state.addSeg(i, previousActiveSegs.get(i));
+            state.addSegToMainFileActive(i, previousActiveSegs.get(i));
         }
 
         // add hidden segs to MainFile
         for (int i = 0; i < previousHiddenSegs.size(); i++) {
-            state.addToHidden(previousHiddenSegs.get(i));
+            state.addToMainFileHidden(previousHiddenSegs.get(i));
         }
     }
 }

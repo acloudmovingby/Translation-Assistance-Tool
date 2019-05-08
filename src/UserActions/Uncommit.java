@@ -42,7 +42,7 @@ public class Uncommit implements MainFileAction {
             if (seg.isCommitted()) {
                 SegmentBuilder sb = new SegmentBuilder(seg);
                 sb.setCommitted(false);
-                state.replaceSeg(seg, sb.createSegmentNewID());
+                state.replaceSegInMainFile(seg, sb.createSegmentNewID());
             }
         }
     }

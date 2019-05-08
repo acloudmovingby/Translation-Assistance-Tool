@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The core class for writing/reading to the SQLite database.
@@ -353,32 +354,50 @@ public class DatabaseOperations {
     }
 
     /**
-     * Retrieves all fileID from database
+     * Returns list of the names of all files in the database. If an SQL exception occurs, returns null.
+     * 
+     * @return 
+     */
+    public static List<String> getAllFileNames() {
+        List<String> fileNames = new ArrayList();
+        
+        String sql = "SELECT fileName FROM files;";
+        
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                fileNames.add(rs.getString("fileName"));
+            }
+            return fileNames;
+        } catch (SQLException e) {
+            System.out.println("getAllFileIDs: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves all fileIDs from the database. If an SQL exception occurs, returns null.
      *
      * @return
      */
     public static ArrayList<Integer> getAllFileIDs() {
         ArrayList<Integer> fileIDs = new ArrayList();
 
-        // If database isn't active, this returns default of null;
-        if (!State.databaseIsReadable()) {
-            return fileIDs;
-        } else {
+        String sql = "SELECT DISTINCT fileID FROM files;";
 
-            String sql = "SELECT DISTINCT fileID FROM files;";
-
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
-                while (rs.next()) {
-                    fileIDs.add(rs.getInt("fileID"));
-                }
-                return fileIDs;
-            } catch (SQLException e) {
-                System.out.println("getAllFileIDs: " + e.getMessage());
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                fileIDs.add(rs.getInt("fileID"));
             }
-            return null;
+            return fileIDs;
+        } catch (SQLException e) {
+            System.out.println("getAllFileIDs: " + e.getMessage());
         }
+        return null;
+
     }
 
     /**
