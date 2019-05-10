@@ -142,20 +142,17 @@ public class DatabaseOperations {
 
         int fileID;
 
-        if (!State.databaseIsWritable()) {
-            fileID = (int) (Math.random() * 100000000);
-        } else {
-            fileID = 0;
+        fileID = 0;
 
-            // checks to see if the curent fileID is in database. If yes, then it generates a random new one until a new one is found. 
-            while (containsFileID(fileID)) {
-                fileID = (int) (Math.random() * 100000000);
-            }
-            // adds this id/name pairing to the database
-            addOrUpdateFileName(fileID, fileName);
-            System.out.println("CreateFileID: " + fileID + ", " + fileName);
-            // returns the id so the BasicFile object can store it.
+        // checks to see if the curent fileID is in database. If yes, then it generates a random new one until a new one is found. 
+        while (containsFileID(fileID)) {
+            fileID = (int) (Math.random() * 100000000);
         }
+        // adds this id/name pairing to the database
+        addOrUpdateFileName(fileID, fileName);
+        System.out.println("CreateFileID: " + fileID + ", " + fileName);
+        // returns the id so the BasicFile object can store it.
+
         return fileID;
     }
 
@@ -274,10 +271,6 @@ public class DatabaseOperations {
 
         Corpus fList = new Corpus();
 
-        // If database isn't active, this returns default of null;
-        if (!State.databaseIsReadable()) {
-            return fList;
-        } else {
 
             // gets all fileIDs
             // rebuilds a file for each one and adds to the fileList
@@ -286,7 +279,7 @@ public class DatabaseOperations {
                 fList.addFile(getFile(fileID));
             });
             return fList;
-        }
+        
     }
 
     /**
@@ -300,10 +293,6 @@ public class DatabaseOperations {
         // recreates the BasicFile object with the specified id and name.
         BasicFile file = new BasicFile(fileID, getFileName(fileID));
 
-        // If database isn't active, this returns the empty file;
-        if (!State.databaseIsReadable()) {
-            return file;
-        } else {
 
             String idAsString = String.valueOf(fileID);
             String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";
@@ -328,7 +317,7 @@ public class DatabaseOperations {
                 System.out.println("getFile: " + e.getMessage());
             }
             return file;
-        }
+        
     }
 
     /**
@@ -354,15 +343,16 @@ public class DatabaseOperations {
     }
 
     /**
-     * Returns list of the names of all files in the database. If an SQL exception occurs, returns null.
-     * 
-     * @return 
+     * Returns list of the names of all files in the database. If an SQL
+     * exception occurs, returns null.
+     *
+     * @return
      */
     public static List<String> getAllFileNames() {
         List<String> fileNames = new ArrayList();
-        
+
         String sql = "SELECT fileName FROM files;";
-        
+
         try (Connection conn = DatabaseOperations.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -377,7 +367,8 @@ public class DatabaseOperations {
     }
 
     /**
-     * Retrieves all fileIDs from the database. If an SQL exception occurs, returns null.
+     * Retrieves all fileIDs from the database. If an SQL exception occurs,
+     * returns null.
      *
      * @return
      */
@@ -409,10 +400,6 @@ public class DatabaseOperations {
     public static boolean containsID(int segID) {
         String sql = "SELECT id FROM corpus1 where id= ?";
 
-        // If database isn't active, this returns false;
-        if (!State.databaseIsReadable()) {
-            return false;
-        } else {
 
             Connection conn = null;
             PreparedStatement pstmt = null;
@@ -448,7 +435,7 @@ public class DatabaseOperations {
                 }
             }
             return false;
-        }
+        
     }
 
     /**
@@ -459,10 +446,6 @@ public class DatabaseOperations {
      */
     protected static boolean containsFileID(double fileID) {
 
-        // If database isn't active, this returns default of false;
-        if (!State.databaseIsReadable()) {
-            return false;
-        } else {
 
             String sql = "SELECT fileID FROM files";
 
@@ -480,7 +463,7 @@ public class DatabaseOperations {
                 System.out.println("fileIDExists: " + e.getMessage());
             }
             return false;
-        }
+        
     }
 
     /**
@@ -513,19 +496,7 @@ public class DatabaseOperations {
      * @return
      */
     public static int makeSegID() {
-        int newID = 0;
-
-        if (State.databaseIsReadable()) {
-            /*
-            // If id already exists or is equal to zero, it regenerates.
-            while (containsFileID(newID) || newID == 0) {
-                newID = (int) (Math.random() * 100000000);
-            }
-            // returns the id so the BasicFile object can store it.
-             */
-
-        }
-        newID = (int) (Math.random() * 100000000);
+        int newID = (int) (Math.random() * 100000000);
         return newID;
     }
 

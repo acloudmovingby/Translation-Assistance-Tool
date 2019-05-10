@@ -1,7 +1,6 @@
 package State;
 
 import DataStructures.BasicFile;
-import DataStructures.MainFile;
 import DataStructures.Segment;
 import Database.DatabaseOperations;
 import java.util.ArrayList;
@@ -37,16 +36,19 @@ public class DatabaseManager {
         backupFile(state.getMainFile());
     }
     
-    /*
-     Finds what segments existed in priorMainFile that now don't exist in currentMainFile.
-    Returns this as a list.
+    /**
+     * Finds what segments previously existed in the file but now no longer do.
+     * 
+     * @param priorFileVersion Previous version of the file.
+     * @param file Current version of the file.
+     * @return Segments that use to exist in file but now don't.
      */
-    private List<Segment> findMissingSegs(BasicFile priorMainFile, BasicFile currentMainFile) {
+    private List<Segment> findMissingSegs(BasicFile priorFileVersion, BasicFile file) {
         // if it exists in priorbackup, but doesn't exist in mf, then add to 'missing segs' list
-        List<Segment> mainFileSegs = currentMainFile.getAllSegs();
+        List<Segment> mainFileSegs = file.getAllSegs();
         List<Segment> missingSegs = new ArrayList();
 
-        priorMainFile.getAllSegs().stream()
+        priorFileVersion.getAllSegs().stream()
                 .filter((s) -> (!mainFileSegs.contains(s)))
                 .forEachOrdered((s) -> {
                     missingSegs.add(s);
@@ -59,7 +61,7 @@ public class DatabaseManager {
      * 
      * @param file 
      */
-    public void backupFile(BasicFile file) {
+    private void backupFile(BasicFile file) {
         BasicFile priorFileVersion = getPriorFileVersion(file.getFileID());
         updateFileInDatabase(priorFileVersion, file);
     }

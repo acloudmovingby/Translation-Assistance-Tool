@@ -44,7 +44,7 @@ public class UndoManager {
      * history, so if undo is performed and then a new state is pushed onto the
      * undo stack, the redo is cleared (so no redo can then be performed).
      *
-     * @param state
+     * @param file
      */
     protected void push(State state) {
         undoStack.offerFirst(new MainFile(state.getMainFile()));
@@ -121,17 +121,17 @@ public class UndoManager {
 
         // removes all segs from main file
         allCurrentSegs.forEach(s -> {
-            state.removeSegFromMainFile(s);
+            state.removeSegFromFile(s, state.getMainFile());
         });
 
         // add active segs to MainFile
         for (int i = 0; i < previousActiveSegs.size(); i++) {
-            state.addSegToMainFileActive(i, previousActiveSegs.get(i));
+            state.addSegToFileActiveList(i, previousActiveSegs.get(i), state.getMainFile());
         }
 
         // add hidden segs to MainFile
         for (int i = 0; i < previousHiddenSegs.size(); i++) {
-            state.addToMainFileHidden(previousHiddenSegs.get(i));
+            state.addToMainFileHidden(previousHiddenSegs.get(i), state.getMainFile());
         }
     }
 }

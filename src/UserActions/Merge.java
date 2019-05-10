@@ -49,12 +49,12 @@ public class Merge implements MainFileAction {
             sb.setCommitted(false);
 
             // add the newly created segment to the main file
-            state.addSegToMainFileActive(firstIndex, sb.createSegmentNewID());
+            state.addSegToFileActiveList(firstIndex, sb.createSegmentNewID(), state.getMainFile());
 
             // remove the old segments
             for (Segment s : segsToMerge) {
-                state.removeSegFromMainFile(s);
-                state.addToMainFileHidden(s);
+                state.removeSegFromFile(s, state.getMainFile());
+                state.addToMainFileHidden(s, state.getMainFile());
             }
         }
 

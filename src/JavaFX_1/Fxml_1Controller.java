@@ -34,7 +34,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
@@ -61,6 +60,7 @@ import javafx.scene.text.TextFlow;
  *
  * JavaFX, the GUI used in this application, relies on working together with an
  * FXML document and a CSS stylesheet to properly render the application UI. The
+ *
  * @FXML labels indicate that a given variable is linked to an id in the FXML
  * document (and therefore its name cannot be changed unless also changed in the
  * FXML doc).
@@ -75,7 +75,8 @@ public class Fxml_1Controller implements Initializable {
      * *****************
      *
      * TAB FXML OBJECTS (the actual tabs you click on in the TabPane)
-    *******************
+     *
+     ******************
      */
     @FXML
     Tab analysisTab;
@@ -103,8 +104,9 @@ public class Fxml_1Controller implements Initializable {
     /**
      * *****************
      *
-     * TRANSLATION TAB FXML OBJECTS      *
-     ******************
+     * TRANSLATION TAB FXML OBJECTS
+     *
+     ****************
      */
     @FXML
     Label title;
@@ -477,7 +479,7 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     protected void search(ActionEvent event) {
-        state.search(searchField.getText());
+        // not yet implemented
     }
 
     @FXML

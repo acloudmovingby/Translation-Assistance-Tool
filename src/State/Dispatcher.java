@@ -5,6 +5,7 @@
  */
 package State;
 
+import DataStructures.Segment;
 import UserActions.MainFileAction;
 
 /**

@@ -42,7 +42,7 @@ public class Commit implements MainFileAction {
             if (!seg.isCommitted()) {
                 SegmentBuilder sb = new SegmentBuilder(seg);
                 sb.setCommitted(true);
-                state.replaceSegInMainFile(seg, sb.createSegmentNewID());
+                state.replaceSegInFile(seg, sb.createSegmentNewID(), state.getMainFile());
             }
         }
     }

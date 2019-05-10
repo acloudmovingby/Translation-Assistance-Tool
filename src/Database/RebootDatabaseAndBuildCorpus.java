@@ -6,7 +6,6 @@
 package Database;
 
 import DataStructures.BasicFile;
-import State.State;
 import ParseThaiLaw.ThaiLawParser;
 
 /**
@@ -18,9 +17,6 @@ import ParseThaiLaw.ThaiLawParser;
 public class RebootDatabaseAndBuildCorpus {
 
     public static void build() {
-        if (!State.databaseIsReadable()) {
-            System.out.println("Database not active. Corpus not built.");
-        } else {
 
             String thaiFile1 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Thai Book 3-AUTO.txt";
             String engFile1 = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/Eng Book 3-SQ.txt";
@@ -62,7 +58,7 @@ public class RebootDatabaseAndBuildCorpus {
             //DatabaseOperations.addFile(tmxParse3);
             DatabaseOperations.addFile(tmxParse3);
              */
-        }
+        
     }
 
     /**

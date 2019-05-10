@@ -123,9 +123,9 @@ public class TestObjectBuilder {
      */
     public static Corpus getCommittedTestCorpus() {
         Corpus c = getTestCorpus();
-        for (BasicFile f : c.getFiles()) {
+        c.getFiles().forEach((f) -> {
             f.commitAllSegs();
-        }
+        });
         return c;
     }
 
@@ -217,29 +217,6 @@ public class TestObjectBuilder {
         mainFile.getHiddenSegs().add(sb.createSegmentNewID());
 
         return new State(mainFile, getTestCorpus());
-    }
-
-    /**
-     * Takes a state and returns it exactly as it is, except with all segs in
-     * the corpus committed. THE MAIN FILE IS NOT CHANGED. Because the corpus
-     * can contain the main file, this method assures that the committed status
-     * of any segs in the main file are not affected. It does this by copying
-     * the MainFile before re-adding it using the MainFile constructor
-     * MainFile(BasicFile). Note, the segs committed will have the same id, but
-     * will not be the same objects.
-     *
-     * @param s
-     * @return
-     */
-    public static State commitAllCorpus(State s) {
-        Corpus c = s.getCorpus();
-        MainFile mf = s.getMainFile();
-        MainFile mfCopy = new MainFile(mf);
-
-        c.commitAllFiles();
-
-        return new State(mfCopy, c);
-
     }
 
     /**

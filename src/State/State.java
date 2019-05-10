@@ -1,20 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package State;
 
 import comparator.PostingsListManager;
-import Database.DatabaseOperations;
 import comparator.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.MatchList;
 import DataStructures.Corpus;
 import DataStructures.MainFile;
-import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import comparator.MatchFindingAlgorithms;
 import comparator.MatchManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -30,9 +22,6 @@ import javafx.collections.ObservableList;
  */
 public class State {
 
-    private static final boolean DATABASE_IS_READABLE = true;
-    private static final boolean DATABASE_IS_WRITABLE = true;
-    private static final boolean REBOOT_DATABASE = false;
 
     /**
      * Handles the searching and caching of matches.
@@ -49,8 +38,6 @@ public class State {
      */
     private final Corpus corpus;
 
-    private MatchList compareFile;
-
     private final UIState uiState;
 
     /**
@@ -61,10 +48,6 @@ public class State {
     private Segment segSelected;
 
     public State(BasicFile mainFile, Corpus corpus) {
-
-        if (REBOOT_DATABASE) {
-            DatabaseOperations.rebootDB();
-        }
 
         uiState = new UIState();
 
@@ -84,7 +67,6 @@ public class State {
         matchManager = new MatchManager(new HashSet(corpus.getAllCommittedSegs()));
 
         mf.equals(mainFile);
-        compareFile = findMatch(segSelected);
 
     }
 
@@ -98,14 +80,6 @@ public class State {
             segSelected = newMainFile.getActiveSegs().get(0);
         }
         uiState.setMainFileSegs(newMainFile.getActiveSegs());
-    }
-
-    public MatchList getMatchFile() {
-        return compareFile;
-    }
-
-    public ObservableList<MatchSegment> getMatchList() {
-        return uiState.getMatchList();
     }
 
     /**
@@ -174,16 +148,7 @@ public class State {
     }
 
     private void setMatchFile(MatchList newMatches) {
-        compareFile = newMatches;
         uiState.setMatchList(newMatches.getMatchSegments());
-    }
-
-    public static boolean databaseIsReadable() {
-        return DATABASE_IS_READABLE;
-    }
-
-    public static boolean databaseIsWritable() {
-        return DATABASE_IS_WRITABLE;
     }
 
     /**
@@ -200,19 +165,14 @@ public class State {
         }
     }
 
-    private MatchList findExactMatch(String str) {
-        return MatchFindingAlgorithms.exactMatch(str, this);
-    }
-
-    public void search(String text) {
-        setMatchFile(findExactMatch(text));
-    }
-
     public UIState getUIState() {
         return uiState;
     }
 
-
+    public MatchManager getMatchManager() {
+        return matchManager;
+    }
+    
     /**
      * Required by StateCopier class for testing purpose only.
      *
@@ -223,24 +183,24 @@ public class State {
     }
 
     /**
-     * Takes oldSeg from the MainFile's active segs list and replaces it with newSeg.
+     * Takes oldSeg from the file's active segs list and replaces it with newSeg.
      * 
-     * If MF's active segs list does not contain the specified Segment, it
-     * returns false and nothing changes. If it does, the MainFile and
+     * If the file's active segs list does not contain the specified Segment, it
+     * returns false and nothing changes. If it does, the file and
      * PostingsListManager adjust appropriately. The old segment is NOT removed
      * from PostingsList if it had been committed. If the new Segment is
      * committed, it will be added to the postings lists.This method does NOT
      * check to see if ids are different or same, or any other relationship
      * between the old and new seg, it merely replaces it if it exists in the
-     * activeSegs of the main file.
+     * activeSegs of the file.
      *
      * @param oldSeg
      * @param newSeg
-     * @return True if seg exists in MF active. False if not.
+     * @return True if the seg is an active Segment in the file.
      */
-    public boolean replaceSegInMainFile(Segment oldSeg, Segment newSeg) {
+    public boolean replaceSegInFile(Segment oldSeg, Segment newSeg, BasicFile file) {
 
-        ObservableList<Segment> mfActiveSegs = getMainFile().getActiveSegs();
+        ObservableList<Segment> mfActiveSegs = file.getActiveSegs();
         // checks to make sure oldSeg exists in MainFile active segs
         if (!mfActiveSegs.contains(oldSeg)) {
             return false;
@@ -248,8 +208,8 @@ public class State {
             int index = mfActiveSegs.indexOf(oldSeg);
             // replaces the oldSeg with the newSeg at that index
             mfActiveSegs.set(index, newSeg);
-            // adds the oldSeg to the "removed" list, in case it was committed, so it can be later found in searches but is not displayed on screen
-            getMainFile().getHiddenSegs().add(oldSeg);
+            // adds the oldSeg to the "hidden" list, in case it was committed, so it can be later found in searches but is not displayed on screen
+            file.getHiddenSegs().add(oldSeg);
 
             //adjusts Postings Lists (so the newSeg can be found in searches if it is committed)
             matchManager.includeSegmentInMatches(newSeg);
@@ -259,7 +219,7 @@ public class State {
     }
 
     /**
-     * Adds the segment to the MainFile at the specified index and then adds it
+     * Adds the segment to the file at the specified index and then adds it
      * to the postings lists. If the file already contains this seg as an active
      * seg (i.e. it's the same object instance), it still adds it. However, if
      * the seg exists as a removed seg, it does not add it and instead throws an
@@ -268,8 +228,8 @@ public class State {
      * @param insertIndex
      * @param seg
      */
-    public void addSegToMainFileActive(int insertIndex, Segment seg) {
-        getMainFile().getActiveSegs().add(insertIndex, seg);
+    public void addSegToFileActiveList(int insertIndex, Segment seg, BasicFile file) {
+        file.getActiveSegs().add(insertIndex, seg);
         matchManager.includeSegmentInMatches(seg);
     }
 
@@ -280,9 +240,9 @@ public class State {
      * @param seg
      * @return
      */
-    public boolean removeSegFromMainFile(Segment seg) {
-        ObservableList<Segment> activeSegs = getMainFile().getActiveSegs();
-        ArrayList<Segment> hiddenSegs = getMainFile().getHiddenSegs();
+    public boolean removeSegFromFile(Segment seg, BasicFile file) {
+        ObservableList<Segment> activeSegs = file.getActiveSegs();
+        ArrayList<Segment> hiddenSegs = file.getHiddenSegs();
 
         if (activeSegs.contains(seg)) {
             // removes from active and from plm
@@ -292,8 +252,6 @@ public class State {
         } else if (hiddenSegs.contains(seg)) {
             // removes from hidden and from plm
             hiddenSegs.remove(seg);
-            //matchManager.removeSegmentFromMatches(seg);
-            //getPostingsListManager().removeSegmentFromMatches(seg);
             return true;
         } else {
             return false;
@@ -309,9 +267,9 @@ public class State {
      * @param seg
      * @return
      */
-    public void addToMainFileHidden(Segment seg) {
-        ObservableList<Segment> activeSegs = getMainFile().getActiveSegs();
-        ArrayList<Segment> hiddenSegs = getMainFile().getHiddenSegs();
+    public void addToMainFileHidden(Segment seg, BasicFile file) {
+        ObservableList<Segment> activeSegs = file.getActiveSegs();
+        ArrayList<Segment> hiddenSegs = file.getHiddenSegs();
 
         if (activeSegs.contains(seg)) {
             throw new IllegalArgumentException("A seg cannot be 'hidden' if it's already active. Remove seg from file first.");

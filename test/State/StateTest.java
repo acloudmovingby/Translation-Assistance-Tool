@@ -116,7 +116,7 @@ public class StateTest {
         testState = emptyState;
         SegmentBuilder sb = new SegmentBuilder(testState.getMainFile());
         Segment seg1 = sb.createSegment();
-        testState.addSegToMainFileActive(insertIndex, seg1);
+        testState.addSegToFileActiveList(insertIndex, seg1, testState.getMainFile());
         // assert total number of segs
         assertEquals(1, testState.getMainFile().getAllSegs().size());
         // assert location of inserted seg
@@ -127,7 +127,7 @@ public class StateTest {
         testState = oneSegState;
         sb = new SegmentBuilder(testState.getMainFile());
         seg1 = sb.createSegment();
-        testState.addSegToMainFileActive(insertIndex, seg1);
+        testState.addSegToFileActiveList(insertIndex, seg1, testState.getMainFile());
         // assert total number of segs
         assertEquals(2, testState.getMainFile().getAllSegs().size());
         // assert location of inserted seg
@@ -138,7 +138,7 @@ public class StateTest {
         testState = simpleState;
         sb = new SegmentBuilder(testState.getMainFile());
         seg1 = sb.createSegment();
-        testState.addSegToMainFileActive(insertIndex, seg1);
+        testState.addSegToFileActiveList(insertIndex, seg1, testState.getMainFile());
         // assert total number of segs
         assertEquals(6, testState.getMainFile().getAllSegs().size());
         // assert location of inserted seg
@@ -149,7 +149,7 @@ public class StateTest {
         testState = simpleCommittedState;
         sb = new SegmentBuilder(testState.getMainFile());
         seg1 = sb.createSegment();
-        testState.addSegToMainFileActive(insertIndex, seg1);
+        testState.addSegToFileActiveList(insertIndex, seg1, testState.getMainFile());
         // assert total number of segs
         assertEquals(6, testState.getMainFile().getAllSegs().size());
         // assert location of inserted seg

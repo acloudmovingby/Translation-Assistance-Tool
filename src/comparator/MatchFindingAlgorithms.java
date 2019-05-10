@@ -67,49 +67,7 @@ public class MatchFindingAlgorithms {
         return matchList;
     }
 
-    public static MatchList exactMatch(String text, State state) {
-        PostingsList pl = state.getPostingsList(
-                (text.length() <= 8 ? text.length() : 8));
-
-        MatchList mf = new MatchList();
-        HashSet<Segment> segsAlreadyChecked = new HashSet();
-
-        // makes all ngrams from seg
-        List<String> nGrams = PostingsList.makeNGrams(text, pl.getNGramLength());
-        // for each ngram in the text...
-        for (String ng : nGrams) {
-            // finds segments in the corpus that match that ngram
-            List<Segment> segList = pl.getMatchingID(ng);
-
-            // for each segment that matches that ngram....
-            for (Segment s : segList) {
-                if (!segsAlreadyChecked.contains(s)) {
-
-                    boolean[] matchingChars = MatchFindingAlgorithms.exactStringMatch(text, s.getThai());
-                    boolean hasMatch = false;
-                    for (int i = 0; i < matchingChars.length; i++) {
-                        if (matchingChars[i]) {
-                            hasMatch = true;
-                            break;
-                        }
-                    }
-
-                    if (hasMatch) {
-                        MatchSegment newMatch = new MatchSegment(s);
-                        newMatch.setThai(s.getThai());
-                        newMatch.setEnglish(s.getEnglish());
-                        newMatch.setFileName(s.getFileName());
-                        newMatch.setMatches(matchingChars);
-                        mf.addEntry(newMatch);
-                    }
-
-                    segsAlreadyChecked.add(s);
-                }
-            }
-        }
-        return mf;
-    }
-
+   
     /**
      * Compares the source segment and the target segment and if there are
      * common substrings between the Thai strings of both segments of a minimum
