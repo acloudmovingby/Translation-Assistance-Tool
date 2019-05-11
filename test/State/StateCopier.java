@@ -5,7 +5,7 @@
  */
 package State;
 
-import DataStructures.MainFile;
+import DataStructures.BasicFile;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -18,12 +18,12 @@ public class StateCopier {
 
     int postingsListSize;
     int numSegsInCorpus;
-    MainFile mainFileCopy;
+    BasicFile mainFileCopy;
 
     public StateCopier(State s) {
         postingsListSize = s.getPostingsListManager().size();
         numSegsInCorpus = s.getCorpus().numTotalSegs();
-        mainFileCopy = new MainFile(s.getMainFile());
+        mainFileCopy = new BasicFile(s.getMainFile());
     }
 
     /**

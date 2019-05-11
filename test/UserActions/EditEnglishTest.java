@@ -7,15 +7,10 @@ package UserActions;
 
 import DataStructures.BasicFile;
 import DataStructures.Corpus;
-import DataStructures.MainFile;
-import comparator.PostingsList;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
-import State.State;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.AfterClass;

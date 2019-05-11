@@ -20,8 +20,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER_LEFT" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="707.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
-   <TabPane prefHeight="700.0" prefWidth="1043.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" GridPane.halignment="LEFT">
+<GridPane alignment="CENTER_LEFT" prefHeight="707.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
+   <TabPane fx:id="mainTabPane" prefHeight="700.0" prefWidth="1043.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" GridPane.halignment="LEFT">
      <tabs>
        <Tab fx:id="homeTab" text="Home Tab">
          <content>
@@ -55,12 +55,12 @@
          <content>
            <AnchorPane minHeight="0.0" minWidth="0.0">
                   <children>
-                     <GridPane prefHeight="700.0" prefWidth="930.0">
+                     <GridPane prefHeight="700.0" prefWidth="930.0" AnchorPane.leftAnchor="20.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                        </columnConstraints>
                         <children>
-                            <ButtonBar prefHeight="46.0" prefWidth="887.0">
+                            <ButtonBar prefHeight="46.0">
                                 <buttons>
                                     <Button fx:id="commitButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#commit" text="Commit" textAlignment="CENTER" ButtonBar.buttonData="LEFT">
                                         <font>

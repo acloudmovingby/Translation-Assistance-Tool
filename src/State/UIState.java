@@ -5,8 +5,10 @@
  */
 package State;
 
+import DataStructures.BasicFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
+import java.util.List;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -20,9 +22,14 @@ import javafx.scene.text.Font;
  */
 public class UIState {
 
+    public ObservableList<BasicFile> getAllFiles() {
+        return allFilesInCorpus;
+    }
+
     private ObservableList<Segment> mainFileSegs;
     private final ObservableList<MatchSegment> matchList;
     private final IntegerProperty numMatches;
+    private final ObservableList<BasicFile> allFilesInCorpus;
     private static final Font DEFAULT_THAI_FONT = Font.font("Arial");
     private static final Font DEFAULT_ENGLISH_FONT = Font.font("Arial");
 
@@ -30,6 +37,7 @@ public class UIState {
         mainFileSegs = FXCollections.observableArrayList();
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
+        allFilesInCorpus = FXCollections.observableArrayList();
     }
 
     protected void setMainFileSegs(ObservableList<Segment> segList) {
@@ -75,5 +83,9 @@ public class UIState {
 
     public static Font getEnglishFont() {
         return DEFAULT_ENGLISH_FONT;
+    }
+    
+    public void setAllFilesInCorpus(List<BasicFile> files) {
+        allFilesInCorpus.setAll(files);
     }
 }

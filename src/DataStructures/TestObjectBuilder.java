@@ -230,7 +230,7 @@ public class TestObjectBuilder {
      */
     public static State commitAllMainFile(State s) {
         Corpus c = s.getCorpus();
-        MainFile mf = s.getMainFile();
+        BasicFile mf = s.getMainFile();
         mf.commitAllSegs();
 
         return new State(mf, c);

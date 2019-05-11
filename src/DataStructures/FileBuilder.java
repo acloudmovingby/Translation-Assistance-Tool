@@ -25,7 +25,7 @@ public class FileBuilder {
      * @return BasicFile with each Segment representing a line break in original
      * text.
      */
-    public BasicFile buildBasicParse(String thai, String english) {
+    public static BasicFile buildBasicParse(String thai, String english) {
         String[] th = thai.split("\r?\n");
         String[] en = english.split("\r?\n");
 
@@ -49,7 +49,7 @@ public class FileBuilder {
         return bf;
     }
 
-    public BasicFile justThaiFilePath(String filePath) {
+    public static BasicFile justThaiFilePath(String filePath) {
         BasicFile ret = null;
         try {
             // FileReader reads text files in the default encoding.
@@ -78,7 +78,7 @@ public class FileBuilder {
             for (int i=0; i<counter; i++) {
                 sb2.append(i + "\n");
             }*/
-            ret = this.buildBasicParse(sb.toString(), sb2.toString());
+            ret = buildBasicParse(sb.toString(), sb2.toString());
 
             buffReaderThai.close();
             ret.setFileName(makeFileNameFromPath(filePath));

@@ -5,7 +5,7 @@
  */
 package State;
 
-import DataStructures.MainFile;
+import DataStructures.BasicFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
@@ -117,7 +117,7 @@ public class UndoManagerTest {
         emptyDisp.acceptAction(new Commit(TestObjectBuilder.getTestSeg()));
         emptyDisp.undo();
         assertEquals(true, emptyStateCopy.compare(emptyDisp.getState()));
-        MainFile mf = emptyDisp.getState().getMainFile();
+        BasicFile mf = emptyDisp.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // main file with one segment
@@ -175,7 +175,7 @@ public class UndoManagerTest {
         emptyDisp.acceptAction(new EditEnglish(TestObjectBuilder.getTestSeg(), "test"));
         emptyDisp.undo();
         assertEquals(true, emptyStateCopy.compare(emptyDisp.getState()));
-        MainFile mf = emptyDisp.getState().getMainFile();
+        BasicFile mf = emptyDisp.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // one segment state
@@ -230,7 +230,7 @@ public class UndoManagerTest {
         emptyDisp.acceptAction(new EditThai(TestObjectBuilder.getTestSeg(), "test"));
         emptyDisp.undo();
         assertEquals(true, emptyStateCopy.compare(emptyDisp.getState()));
-        MainFile mf = emptyDisp.getState().getMainFile();
+        BasicFile mf = emptyDisp.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // one segment state
@@ -287,7 +287,7 @@ public class UndoManagerTest {
         StateCopier emptyStateCopy = new StateCopier(emptyDisp.getState());
         emptyDisp.acceptAction(new Split(TestObjectBuilder.getTestSeg(), 1));
         emptyDisp.undo();
-        MainFile mf = emptyDisp.getState().getMainFile();
+        BasicFile mf = emptyDisp.getState().getMainFile();
         assertEquals(true, emptyStateCopy.compare(emptyDisp.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
@@ -342,7 +342,7 @@ public class UndoManagerTest {
         StateCopier emptyStateCopy = new StateCopier(emptyDisp.getState());
         emptyDisp.acceptAction(new Merge(new ArrayList<Segment>()));
         emptyDisp.undo();
-        MainFile mf = emptyDisp.getState().getMainFile();
+        BasicFile mf = emptyDisp.getState().getMainFile();
         assertEquals(true, emptyStateCopy.compare(emptyDisp.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
@@ -402,7 +402,7 @@ public class UndoManagerTest {
 
         // "save" the committed state
         StateCopier state1Copy = new StateCopier(committedDisp.getState());
-        MainFile mf = committedDisp.getState().getMainFile();
+        BasicFile mf = committedDisp.getState().getMainFile();
         System.out.println("State1Copy = " + state1Copy.mainFileCopy);
         assertEquals(true, state1Copy.compare(committedDisp.getState()));
 

@@ -5,7 +5,6 @@ import comparator.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.MatchList;
 import DataStructures.Corpus;
-import DataStructures.MainFile;
 import DataStructures.Segment;
 import comparator.MatchManager;
 import java.io.BufferedWriter;
@@ -31,7 +30,7 @@ public class State {
     /**
      * The file currently being translated.
      */
-    private MainFile mainFile;
+    private BasicFile mainFile;
 
     /**
      * The corpus where matches are found.
@@ -58,7 +57,7 @@ public class State {
 
         // the following code ensures that the file selected as main file is in fact in the corpus
         corpus.removeFile(mainFile);
-        MainFile mf = new MainFile(mainFile);
+        BasicFile mf = new BasicFile(mainFile);
         corpus.addFile(mf);
 
         setMainFile(mf);
@@ -68,13 +67,14 @@ public class State {
 
         mf.equals(mainFile);
 
+        uiState.setAllFilesInCorpus(corpus.getFiles());
     }
 
-    public MainFile getMainFile() {
+    public BasicFile getMainFile() {
         return mainFile;
     }
 
-    public final void setMainFile(MainFile newMainFile) {
+    public final void setMainFile(BasicFile newMainFile) {
         this.mainFile = newMainFile;
         if (!newMainFile.getActiveSegs().isEmpty()) {
             segSelected = newMainFile.getActiveSegs().get(0);
@@ -167,10 +167,6 @@ public class State {
 
     public UIState getUIState() {
         return uiState;
-    }
-
-    public MatchManager getMatchManager() {
-        return matchManager;
     }
     
     /**

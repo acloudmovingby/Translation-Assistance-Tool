@@ -6,7 +6,6 @@
 package State;
 
 import DataStructures.BasicFile;
-import DataStructures.MainFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
@@ -56,7 +55,7 @@ public class DatabaseManagerTest {
         // (0)
         // test with an empty main file
         State emptyState = TestObjectBuilder.getEmptyState();
-        MainFile emptyMF = emptyState.getMainFile();
+        BasicFile emptyMF = emptyState.getMainFile();
         DatabaseManager dmEmpty = new DatabaseManager(emptyState);
         // checks to see that the file is in the db already
         assertEquals(emptyMF, DatabaseOperations.getFile(emptyMF.getFileID()));
@@ -66,7 +65,7 @@ public class DatabaseManagerTest {
 
         State state = TestObjectBuilder.getTestState();
         DatabaseManager dm = new DatabaseManager(state);
-        MainFile mf = state.getMainFile();
+        BasicFile mf = state.getMainFile();
         int fileID = mf.getFileID();
 
         // (1) 
@@ -131,7 +130,7 @@ public class DatabaseManagerTest {
     public void testDeleteSegsBeforeBackup() {
         // have a file, make sure it's backed up
         State state = TestObjectBuilder.getTestState();
-        MainFile mainFile = state.getMainFile();
+        BasicFile mainFile = state.getMainFile();
         DatabaseManager dm = new DatabaseManager(state);
 
         SegmentBuilder sb = new SegmentBuilder(mainFile);

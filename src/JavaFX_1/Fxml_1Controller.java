@@ -17,14 +17,12 @@ import UserActions.EditThai;
 import UserActions.Merge;
 import UserActions.Split;
 import UserActions.Uncommit;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
@@ -40,20 +38,20 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
 
 /**
  * FXML Controller class
@@ -78,6 +76,15 @@ public class Fxml_1Controller implements Initializable {
      *
      ******************
      */
+    @FXML
+    TabPane mainTabPane;
+
+    @FXML
+    Tab homeTab;
+    
+    @FXML
+    Tab translationTab;
+
     @FXML
     Tab analysisTab;
 
@@ -166,6 +173,12 @@ public class Fxml_1Controller implements Initializable {
     Button uncommitButton;
 
     @FXML
+    Button undoButton;
+
+    @FXML
+    Button redoButton;
+
+    @FXML
     Button exportButton;
 
     String committedStatusColor;
@@ -175,20 +188,8 @@ public class Fxml_1Controller implements Initializable {
     UIState uiState;
     State state;
 
-    /**
-     * Never could get this to work, correctly...but left here in case I wanted
-     * to take a stab at it later. Program registers command and z pressed
-     * individually, but never registered the two of them being pressed
-     * together.
-     */
-    final BooleanProperty commandPressed;
-    final BooleanProperty zPressed;
-    final BooleanBinding commandZPressed;
-
     public Fxml_1Controller() {
-        this.zPressed = new SimpleBooleanProperty(false);
-        this.commandPressed = new SimpleBooleanProperty(false);
-        this.commandZPressed = commandPressed.and(zPressed);
+
     }
 
     /**
@@ -210,6 +211,52 @@ public class Fxml_1Controller implements Initializable {
         // actually builds all the important objects for the program and sets the items for the tables to display
         setMainFile(mainFile);
 
+        /*
+        *****************
+        *
+        SIDE BAR BUTTONS
+        *
+        ***************
+         */
+        // image for HOME TAB
+        ImageView homeButtonLightBlueIV = new ImageView(getClass().getResource("/JavaFX_1/HomeButtonLightBlue.png").toExternalForm());
+        homeButtonLightBlueIV.setFitWidth(50);
+        homeButtonLightBlueIV.setPreserveRatio(true);
+        homeButtonLightBlueIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        homeButtonLightBlueIV.setCache(true); // perhaps not necessary
+        Label homeTabLabel = new Label("", homeButtonLightBlueIV);
+        homeTabLabel.setText("Translation");
+        homeTabLabel.setMaxWidth(40);
+        homeTab.setGraphic(homeTabLabel);
+        homeTab.setText("");
+        
+        
+        // image for TRANSLATION TAB
+        ImageView translationButtonWhiteIV = new ImageView(getClass().getResource("/JavaFX_1/TranslationButtonWhite.png").toExternalForm());
+        translationButtonWhiteIV.setFitWidth(50);
+        translationButtonWhiteIV.setPreserveRatio(true);
+        translationButtonWhiteIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        translationButtonWhiteIV.setCache(true); // perhaps not necessary
+        Label translationTabLabel = new Label("", translationButtonWhiteIV);
+        translationTabLabel.setText("Translation");
+        translationTabLabel.setMaxWidth(40);
+        translationTab.setGraphic(translationTabLabel);
+        translationTab.setText("");
+        
+        // image for ANALYSIS TAB 
+        ImageView analysisIV = new ImageView(getClass().getResource("/JavaFX_1/PieChartButton.png").toExternalForm());
+        analysisIV.setFitWidth(50);
+        analysisIV.setPreserveRatio(true);
+        analysisIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        analysisIV.setCache(true); // perhaps not necessary
+        Label analysisTabLabel = new Label("", analysisIV);
+        analysisTabLabel.setText("Analysis");
+        analysisTabLabel.setMaxWidth(40);
+        analysisTab.setGraphic(analysisTabLabel);
+        analysisTab.setText("");
+     
+        
+
         /**
          * *****************
          *
@@ -222,29 +269,42 @@ public class Fxml_1Controller implements Initializable {
         ImageView newFileIconIV = new ImageView(newFileIcon);
         newFileIconIV.setFitWidth(110);
         newFileIconIV.setPreserveRatio(true);
-        Label newFileLabel = new Label("New", newFileIconIV);
+        Button newFileLabel = new Button("New", newFileIconIV);
         newFileLabel.setMinWidth(130);
         newFileLabel.setMaxWidth(130);
         newFileLabel.setGraphicTextGap(8);
         newFileLabel.setContentDisplay(ContentDisplay.TOP);
+        newFileLabel.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(JavaFX_1.stage);
+            if (file != null) {
+                this.setMainFile(FileBuilder.justThaiFilePath(file.getAbsolutePath()));
+            }
+        }
+        );
         homeTopIcons.getChildren().add(newFileLabel);
 
         // LOAD FILE ICONS
-        Image loadFileIcon = new Image(getClass().getResource("/JavaFX_1/BlankFileIcon.png").toExternalForm());
+        Image loadFileIconImage = new Image(getClass().getResource("/JavaFX_1/BlankFileIcon.png").toExternalForm());
 
-        // Creates the actual icons, including the standard blank file icon image, the name of the file, and any listeners (?)
-        for (String fileName : DatabaseOperations.getAllFileNames()) {
-            ImageView loadFileIconIV = new ImageView(loadFileIcon);
+        // Creates the actual icons (which are buttons to open a file for translation) and include the standard blank file icon image, the name of the file, and any listeners (?)
+        for (BasicFile file : uiState.getAllFiles()) {
+            ImageView loadFileIconIV = new ImageView(loadFileIconImage);
             loadFileIconIV.setFitWidth(110);
             loadFileIconIV.setPreserveRatio(true);
-            Label loadFileLabel = new Label(fileName, loadFileIconIV);
-            loadFileLabel.setMinWidth(130);
-            loadFileLabel.setMaxWidth(130);
-            loadFileLabel.setPrefWidth(130);
-            loadFileLabel.setGraphicTextGap(8);
-            //loadFileLabel.setWrapText(true);
-            loadFileLabel.setContentDisplay(ContentDisplay.TOP);
-            loadFileFlowPane.getChildren().add(loadFileLabel);
+            Button loadFileIcon = new Button(file.getFileName(), loadFileIconIV);
+            loadFileIcon.setMinWidth(130);
+            loadFileIcon.setMaxWidth(130);
+            loadFileIcon.setPrefWidth(130);
+            loadFileIcon.setGraphicTextGap(8);
+            loadFileIcon.setContentDisplay(ContentDisplay.TOP);
+            loadFileFlowPane.getChildren().add(loadFileIcon);
+            // the following handles the events when the user, in the home tab, clicks on a file to open 
+            loadFileIcon.setOnAction(e -> {
+                setMainFile(file); // resets the main file
+                mainTabPane.getSelectionModel().select(translationTab); // switches the view from the home tab to the translation tab
+            });
+            loadFileIcon.getStyleClass().add("loadFileButton");
         }
 
         // BELOW IS ONLY UI INITIALIZIATION THAT DOESN'T DEPEND ON MAIN FILE
@@ -417,7 +477,7 @@ public class Fxml_1Controller implements Initializable {
         BUTTON IMAGES
          */
         // Apply image to COMMIT button
-        ImageView commitIV = new ImageView(getClass().getResource("/JavaFX_1/CommitButtonPNG.png").toExternalForm());
+        ImageView commitIV = new ImageView(getClass().getResource("/JavaFX_1/CommitButton.png").toExternalForm());
         commitIV.setFitWidth(40);
         commitIV.setPreserveRatio(true);
         commitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
@@ -456,20 +516,22 @@ public class Fxml_1Controller implements Initializable {
         exportIV.setCache(true); // perhaps not necessary
         exportButton.setGraphic(exportIV);
 
-        /*
-        SIDE BAR BUTTONS
-         */
-        // apply image to ANALYSIS TAB 
-        ImageView analysisIV = new ImageView(getClass().getResource("/JavaFX_1/PieChartButton.png").toExternalForm());
-        analysisIV.setFitWidth(50);
-        analysisIV.setPreserveRatio(true);
-        analysisIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        analysisIV.setCache(true); // perhaps not necessary
-        Label analysisTabLabel = new Label("", analysisIV);
-        analysisTabLabel.setText("Analysis");
-        analysisTabLabel.setMaxWidth(40);
-        analysisTab.setGraphic(analysisTabLabel);
-        analysisTab.setText("");
+        // apply image to UNDO button
+        ImageView undoIV = new ImageView(getClass().getResource("/JavaFX_1/UndoButton.png").toExternalForm());
+        undoIV.setFitWidth(30);
+        undoIV.setPreserveRatio(true);
+        undoIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        undoIV.setCache(true); // perhaps not necessary
+        undoButton.setGraphic(undoIV);
+
+        // apply image to REDO button
+        ImageView redoIV = new ImageView(getClass().getResource("/JavaFX_1/RedoButton.png").toExternalForm());
+        redoIV.setFitWidth(30);
+        redoIV.setPreserveRatio(true);
+        redoIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        redoIV.setCache(true); // perhaps not necessary
+        redoButton.setGraphic(redoIV);
+
     }
 
     @FXML
@@ -504,33 +566,6 @@ public class Fxml_1Controller implements Initializable {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
             dispatcher.acceptAction(new Uncommit(selectedItems));
-        }
-    }
-
-    @FXML
-    private void keyPressed(KeyEvent event) {
-        if (event.getCode() == KeyCode.Z) {
-            if (!zPressed.getValue()) {
-
-                zPressed.set(true);
-                if (zPressed.getValue() && commandPressed.getValue()) {
-                    // state.undo();
-                }
-                event.consume();
-            }
-        } else if (event.getCode() == KeyCode.COMMAND) {
-            event.consume();
-            commandPressed.set(true);
-        }
-    }
-
-    @FXML
-    private void keyReleased(KeyEvent event) {
-        if (event.getCode() == KeyCode.COMMAND) {
-            commandPressed.set(false);
-            event.consume();
-        } else if (event.getCode() == KeyCode.Z) {
-            event.consume();
         }
     }
 
