@@ -3,13 +3,8 @@ package State;
 import comparator.PostingsListManager;
 import comparator.PostingsList;
 import DataStructures.BasicFile;
-import DataStructures.MatchList;
 import DataStructures.Segment;
 import comparator.MatchManager;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
@@ -83,19 +78,18 @@ public class State {
             segSelected = newMainFile.getActiveSegs().get(0);
         }
         uiState.setMainFileSegs(newMainFile.getActiveSegs());
+        uiState.setMainFileName(newMainFile.getFileName());
     }
-
-    /**
-     * When a new selection is made in main file viewer.
-     *
-     * @param selectedSeg
-     */
-    public void newSelection(Segment selectedSeg) {
+    
+    public void setCurrentSelectedSeg(Segment selectedSeg) {
         this.segSelected = selectedSeg;
-        MatchList newMatches = findMatch(selectedSeg);
-        setMatchFile(newMatches);
+    }
+    
+    public Segment getCurrentSelectedSeg() {
+        return segSelected;
     }
 
+    
     public int getMinMatchLength() {
         return minMatchLength;
     }
@@ -106,7 +100,7 @@ public class State {
      */
     public void setMinLength(int minMatchLength) {
         this.minMatchLength = minMatchLength;
-        setMatchFile(findMatch(segSelected));
+        //uiState.setMatchList(findMatch(segSelected).getMatchSegments());
     }
     
     public List<BasicFile> getCorpusFiles() {
@@ -115,57 +109,6 @@ public class State {
 
     public PostingsList getPostingsList(int nGramLength) {
         return matchManager.getPostingsListManager().getPostingsList(nGramLength);
-    }
-
-    /**
-     * Exports to an external .txt file all the English from all committed Segs
-     * in the main file.
-     */
-    public void exportCommittedSegs() {
-
-        PrintWriter out = null;
-
-        try {
-            String FILENAME = "TranslationProgramExport.txt";
-            out
-                    = new PrintWriter(
-                            new BufferedWriter(
-                                    new FileWriter(FILENAME)));
-
-            for (Segment seg : getMainFile().getActiveSegs()) {
-                if (seg.isCommitted()) {
-                    out.println(seg.getEnglish());
-                }
-            }
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-        }
-
-    }
-
-    private void setMatchFile(MatchList newMatches) {
-        uiState.setMatchList(newMatches.getMatchSegments());
-    }
-
-    /**
-     * Finds matching segments according to default match finding algorithm
-     *
-     * @param seg
-     * @return MatchList with matching segments
-     */
-    private MatchList findMatch(Segment seg) {
-        if (seg == null) {
-            return new MatchList();
-        } else {
-            return matchManager.basicMatch(seg, getMinMatchLength());
-        }
     }
 
     public UIState getUIState() {
@@ -195,6 +138,7 @@ public class State {
      *
      * @param oldSeg
      * @param newSeg
+     * @param file
      * @return True if the seg is an active Segment in the file.
      */
     public boolean replaceSegInFile(Segment oldSeg, Segment newSeg, BasicFile file) {
@@ -226,6 +170,7 @@ public class State {
      *
      * @param insertIndex
      * @param seg
+     * @param file
      */
     public void addSegToFileActiveList(int insertIndex, Segment seg, BasicFile file) {
         file.getActiveSegs().add(insertIndex, seg);
@@ -237,6 +182,7 @@ public class State {
      * If the seg does not exist in the file, then it returns false.
      *
      * @param seg
+     * @param file
      * @return
      */
     public boolean removeSegFromFile(Segment seg, BasicFile file) {
@@ -264,7 +210,7 @@ public class State {
      * IllegalArgumentException.
      *
      * @param seg
-     * @return
+     * @param file
      */
     public void addToMainFileHidden(Segment seg, BasicFile file) {
         ObservableList<Segment> activeSegs = file.getActiveSegs();
@@ -279,5 +225,10 @@ public class State {
             }
         }
     }
+
+    protected MatchManager getMatchManager() {
+        return matchManager;
+    }
+
 
 }

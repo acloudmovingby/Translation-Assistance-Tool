@@ -14,21 +14,21 @@ import java.util.List;
  */
 public class StateBuilder {
 
-    private final Dispatcher d;
+    private final TopLevelBackEnd d;
     private final State state;
     private final DatabaseManager dm;
     
     public StateBuilder(BasicFile mainFile, List<BasicFile> fileList) {
         state = new State(mainFile, fileList);
         dm = new DatabaseManager(state);
-        d = new Dispatcher(dm, state, new UndoManager());
+        d = new TopLevelBackEnd(dm, state, new UndoManager());
     }
 
     public UIState getUIState() {
         return state.getUIState();
     }
 
-    public Dispatcher getDispatcher() {
+    public TopLevelBackEnd getTopLevelBackEnd() {
         return d;
     }
 

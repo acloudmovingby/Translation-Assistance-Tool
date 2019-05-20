@@ -2,7 +2,7 @@ package DataStructures;
 
 import Database.DatabaseOperations;
 import State.DatabaseManager;
-import State.Dispatcher;
+import State.TopLevelBackEnd;
 import State.State;
 import State.UndoManager;
 import java.util.ArrayList;
@@ -182,8 +182,8 @@ public class TestObjectBuilder {
         return (new SegmentBuilder()).createSegment();
     }
     
-    public static Dispatcher getDispatcher(BasicFile f, List<BasicFile> fileList) {
+    public static TopLevelBackEnd getDispatcher(BasicFile f, List<BasicFile> fileList) {
         State state = new State(f, fileList);
-        return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
+        return new TopLevelBackEnd(new DatabaseManager(state), state, new UndoManager());
     }
 }

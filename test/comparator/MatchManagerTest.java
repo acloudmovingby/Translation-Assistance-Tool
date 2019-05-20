@@ -4,14 +4,14 @@
  * and open the template in the editor.
  */
 package comparator;
-
-import DataStructures.MatchList;
+    
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,10 +38,10 @@ public class MatchManagerTest {
     HashSet<Segment> hasSegAandB;
 
     // possible results for match searches
-    MatchList emptyML;
-    MatchList matchWithA;
-    MatchList matchWithB;
-    MatchList matchWithAandB;
+    List<MatchSegment> emptyML;
+    List<MatchSegment> matchWithA;
+    List<MatchSegment> matchWithB;
+    List<MatchSegment> matchWithAandB;
 
     public MatchManagerTest() {
     }
@@ -87,14 +87,14 @@ public class MatchManagerTest {
         matchSegB.setMatches(matches);
 
         //make MatchLists
-        emptyML = new MatchList();
-        matchWithA = new MatchList();
-        matchWithA.addEntry(matchSegA);
-        matchWithB = new MatchList();
-        matchWithB.addEntry(matchSegB);
-        matchWithAandB = new MatchList();
-        matchWithAandB.addEntry(matchSegA);
-        matchWithAandB.addEntry(matchSegB);
+        emptyML = new ArrayList();
+        matchWithA = new ArrayList();
+        matchWithA.add(matchSegA);
+        matchWithB = new ArrayList();
+        matchWithB.add(matchSegB);
+        matchWithAandB = new ArrayList();
+        matchWithAandB.add(matchSegA);
+        matchWithAandB.add(matchSegB);
     }
 
     @After
@@ -117,7 +117,7 @@ public class MatchManagerTest {
     public void testGetOneCommittedSeg() {
         matchManager = new MatchManager(hasSegA);
         // test if no match should be expected
-        assertEquals(new MatchList(), matchManager.basicMatch(segB, 3));
+        assertEquals(new ArrayList(), matchManager.basicMatch(segB, 3));
         // test if match should be expected
         assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
     }
@@ -134,7 +134,7 @@ public class MatchManagerTest {
         assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
         // segAB will match with both
         assertEquals(matchWithAandB, matchManager.basicMatch(segAB, 3));
-        assertEquals(2, matchManager.basicMatch(segAB, 3).getMatchSegments().size());
+        assertEquals(2, matchManager.basicMatch(segAB, 3).size());
     }
 
     /**
@@ -147,7 +147,7 @@ public class MatchManagerTest {
         assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
 
         matchManager.includeSegmentInMatches(segA);
-        assertEquals(new MatchList(), matchManager.basicMatch(segB, 3));
+        assertEquals(new ArrayList(), matchManager.basicMatch(segB, 3));
         assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
     }
 
@@ -159,7 +159,7 @@ public class MatchManagerTest {
     public void testAddSegWithOneCommittedSegment() {
         matchManager = new MatchManager(hasSegA);
         // test if no match should be expected
-        assertEquals(new MatchList(), matchManager.basicMatch(segB, 3));
+        assertEquals(new ArrayList(), matchManager.basicMatch(segB, 3));
         // test if match should be expected
         assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
 
@@ -169,7 +169,7 @@ public class MatchManagerTest {
         assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
         // segAB will match with both
         assertEquals(matchWithAandB, matchManager.basicMatch(segAB, 3));
-        assertEquals(2, matchManager.basicMatch(segAB, 3).getMatchSegments().size());
+        assertEquals(2, matchManager.basicMatch(segAB, 3).size());
     }
 
     /**

@@ -10,7 +10,7 @@ import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
-import State.Dispatcher;
+import State.TopLevelBackEnd;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  */
 public class CommitTest {
 
-    Dispatcher d;
+    TopLevelBackEnd d;
     BasicFile mainFile;
 
     public CommitTest() {

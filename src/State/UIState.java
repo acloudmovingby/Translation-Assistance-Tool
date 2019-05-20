@@ -27,23 +27,26 @@ public class UIState {
     }
 
     private ObservableList<Segment> mainFileSegs;
+    private String mainFileName;
     private final ObservableList<MatchSegment> matchList;
     private final IntegerProperty numMatches;
     private final ObservableList<BasicFile> allFilesInCorpus;
     private static final Font DEFAULT_THAI_FONT = Font.font("Arial");
     private static final Font DEFAULT_ENGLISH_FONT = Font.font("Arial");
+    
 
     public UIState() {
         mainFileSegs = FXCollections.observableArrayList();
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
         allFilesInCorpus = FXCollections.observableArrayList();
+        mainFileName = "";
     }
 
     protected void setMainFileSegs(ObservableList<Segment> segList) {
         this.mainFileSegs = segList;
     }
-
+    
     /**
      * Returns the list of segments from the main file (the file currently being
      * translated).
@@ -64,7 +67,7 @@ public class UIState {
         return matchList;
     }
 
-    protected void setMatchList(ObservableList<MatchSegment> newMatchList) {
+    protected void setMatchList(List<MatchSegment> newMatchList) {
         matchList.setAll(newMatchList);
         setNumMatches(getMatchList().size());
     }
@@ -87,5 +90,13 @@ public class UIState {
     
     public void setAllFilesInCorpus(List<BasicFile> files) {
         allFilesInCorpus.setAll(files);
+    }
+    
+    public String getMainFileName() {
+        return mainFileName;
+    }
+    
+    protected void setMainFileName(String mainFileName) {
+        this.mainFileName = mainFileName;
     }
 }

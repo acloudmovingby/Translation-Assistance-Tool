@@ -10,7 +10,7 @@ import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
-import State.Dispatcher;
+import State.TopLevelBackEnd;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -60,7 +60,7 @@ public class EditThaiTest {
         // create test objects
         List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
         BasicFile mainFile = c.get(0);
-        Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
+        TopLevelBackEnd d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 
         String newThai = "new Thai";

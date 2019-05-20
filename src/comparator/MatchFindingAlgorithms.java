@@ -5,10 +5,8 @@
  */
 package comparator;
 
-import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import State.State;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,9 +38,9 @@ public class MatchFindingAlgorithms {
      * the corpus.
      * @return A MatchList showing all matches found for the source Segment.
      */
-    public static MatchList basicMatch(Segment source, int minMatchLength, PostingsList pl) {
+    public static List<MatchSegment> basicMatch(Segment source, int minMatchLength, PostingsList pl) {
 
-        MatchList matchList = new MatchList();
+        List<MatchSegment> matchList = new ArrayList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();
 
         // makes all ngrams from seg
@@ -58,7 +56,7 @@ public class MatchFindingAlgorithms {
 
                     // uses Optionals to check if there is a new match. If so, adds to the matchList
                     singleSegBasicMatch(source, target, minMatchLength)
-                            .ifPresent(newMatchSegment -> matchList.addEntry(newMatchSegment));
+                            .ifPresent(newMatchSegment -> matchList.add(newMatchSegment));
 
                     segsAlreadyChecked.add(target);
                 }
@@ -132,16 +130,4 @@ public class MatchFindingAlgorithms {
         return ret;
     }
 
-    public MatchList complexMatch(Segment seg) {
-        return new MatchList();
-    }
-
-    // split getThai into ngrams ( O(m) m=length of thai Text, m is small)
-    // look up each ngram matching segments, hash table, O(1), 
-    // for each segment match, see if it 
-    // make copy of ngram/segment hashtable, each time a segment is accessed, remove from memory?
-    // problem: we re-search adjacent ngrams and keep
-    //      even if we see smth once, we may find a match later in the ngram
-    //      key: remove ngrams from prior parts
-    //      what if we just searched the whole corpus as a string and just see if it works? 
 }

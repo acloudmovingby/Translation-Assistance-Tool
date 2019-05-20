@@ -9,7 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
-import State.Dispatcher;
+import State.TopLevelBackEnd;
 import State.State;
 import java.util.List;
 import org.junit.After;
@@ -53,7 +53,7 @@ public class SplitTest {
         // create test objects
         List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
         BasicFile mainFile = c.get(0);
-        Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
+        TopLevelBackEnd d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 
         /* SPLIT FIRST SEGMENT */

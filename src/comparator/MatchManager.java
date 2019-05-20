@@ -5,11 +5,11 @@
  */
 package comparator;
 
-import DataStructures.MatchList;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Caches matches found. Because MatchLists are retrieved whenever the user
@@ -31,7 +31,7 @@ public class MatchManager {
      * segments to the cached match lists.
      *
      */
-    private final HashMap<Integer, HashMap<Segment, MatchList>> basicMatchCache;
+    private final HashMap<Integer, HashMap<Segment, List<MatchSegment>>> basicMatchCache;
 
     public MatchManager(HashSet<Segment> segsToSearchForMatches) {
         plm = new PostingsListManager(segsToSearchForMatches);
@@ -39,14 +39,14 @@ public class MatchManager {
     }
 
     /**
-     * Returns a MatchList (a list of matching segments) for the specified
+     * Returns a list of matching Segments for the specified
      * segment.
      *
      * @param seg
      * @param minMatchLength
      * @return
      */
-    public MatchList basicMatch(Segment seg, int minMatchLength) {
+    public List<MatchSegment> basicMatch(Segment seg, int minMatchLength) {
 
         PostingsList pl = plm.getPostingsList(
                 (minMatchLength <= 8 ? minMatchLength : 8));
@@ -67,7 +67,7 @@ public class MatchManager {
         basicMatchCache.forEach((length, cache) -> {
             cache.forEach((sourceSeg, matchList) -> {
                 MatchFindingAlgorithms.singleSegBasicMatch(sourceSeg, newSeg, length)
-                        .ifPresent((matchSeg) -> matchList.addEntry(matchSeg));
+                        .ifPresent((matchSeg) -> matchList.add(matchSeg));
             });
         });
     }
@@ -88,12 +88,12 @@ public class MatchManager {
             cache.forEach((sourceSeg, matchList) -> {
                 // if the matchList contains a matchsegment pointing to seg, then remove that MatchSegment from the list
                 MatchSegment toRemove = null;
-                for (MatchSegment m : matchList.getMatchSegments()) {
+                for (MatchSegment m : matchList) {
                     if (m.getSegment().equals(seg)) {
                         toRemove = m;
                     }
                 }
-                matchList.removeEntry(toRemove);
+                matchList.remove(toRemove);
             });
         });
     }
