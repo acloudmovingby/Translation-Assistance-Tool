@@ -1,10 +1,8 @@
 package Database;
 
 import DataStructures.BasicFile;
-import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
-import State.State;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -267,19 +265,15 @@ public class DatabaseOperations {
         return null;
     }
 
-    public static Corpus getAllSegments() {
+    public static ArrayList<BasicFile> getAllFiles() {
+        ArrayList<BasicFile> fileList = new ArrayList();
 
-        Corpus fList = new Corpus();
-
-
-            // gets all fileIDs
-            // rebuilds a file for each one and adds to the fileList
-            ArrayList<Integer> allFileIDs = getAllFileIDs();
-            allFileIDs.forEach((fileID) -> {
-                fList.addFile(getFile(fileID));
-            });
-            return fList;
+        ArrayList<Integer> allFileIDs = getAllFileIDs();
+        allFileIDs.forEach((fileID) -> {
+            fileList.add(getFile(fileID));
+        });
         
+        return fileList;
     }
 
     /**
@@ -293,31 +287,30 @@ public class DatabaseOperations {
         // recreates the BasicFile object with the specified id and name.
         BasicFile file = new BasicFile(fileID, getFileName(fileID));
 
+        String idAsString = String.valueOf(fileID);
+        String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";
 
-            String idAsString = String.valueOf(fileID);
-            String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
+            // loop through the result set
+            while (rs.next()) {
 
-                // loop through the result set
-                while (rs.next()) {
-
-                    // Segment seg = new Segment(file.getFileID());
-                    Segment seg = rebuildSegment(rs);
-                    // if "removed" == 1 (which means "true"), then it is put in removed segs.
-                    if (rs.getInt("removed") == 1) {
-                        file.getHiddenSegs().add(seg);
-                    } else {
-                        file.getActiveSegs().add(seg);
-                    }
+                // Segment seg = new Segment(file.getFileID());
+                Segment seg = rebuildSegment(rs);
+                // if "removed" == 1 (which means "true"), then it is put in removed segs.
+                if (rs.getInt("removed") == 1) {
+                    file.getHiddenSegs().add(seg);
+                } else {
+                    file.getActiveSegs().add(seg);
                 }
-            } catch (SQLException e) {
-                System.out.println("getFile: " + e.getMessage());
             }
-            return file;
-        
+        } catch (SQLException e) {
+            System.out.println("getFile: " + e.getMessage());
+        }
+        return file;
+
     }
 
     /**
@@ -400,42 +393,41 @@ public class DatabaseOperations {
     public static boolean containsID(int segID) {
         String sql = "SELECT id FROM corpus1 where id= ?";
 
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
-            Connection conn = null;
-            PreparedStatement pstmt = null;
-            ResultSet rs = null;
+        try {
+            conn = DatabaseOperations.connect();
+            pstmt = conn.prepareStatement(sql);
 
+            pstmt.setInt(1, segID);
+            rs = pstmt.executeQuery();
+            // loop through the result set
+            while (rs.next()) {
+                if (segID == rs.getInt("id")) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("containsID: " + e.getMessage());
+        } finally {
             try {
-                conn = DatabaseOperations.connect();
-                pstmt = conn.prepareStatement(sql);
-
-                pstmt.setInt(1, segID);
-                rs = pstmt.executeQuery();
-                // loop through the result set
-                while (rs.next()) {
-                    if (segID == rs.getInt("id")) {
-                        return true;
-                    }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             } catch (SQLException e) {
                 System.out.println("containsID: " + e.getMessage());
-            } finally {
-                try {
-                    if (rs != null) {
-                        rs.close();
-                    }
-                    if (pstmt != null) {
-                        pstmt.close();
-                    }
-                    if (conn != null) {
-                        conn.close();
-                    }
-                } catch (SQLException e) {
-                    System.out.println("containsID: " + e.getMessage());
-                }
             }
-            return false;
-        
+        }
+        return false;
+
     }
 
     /**
@@ -446,24 +438,23 @@ public class DatabaseOperations {
      */
     protected static boolean containsFileID(double fileID) {
 
+        String sql = "SELECT fileID FROM files";
 
-            String sql = "SELECT fileID FROM files";
+        try (Connection conn = DatabaseOperations.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
-            try (Connection conn = DatabaseOperations.connect();
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)) {
-
-                // loop through the result set
-                while (rs.next()) {
-                    if (fileID == rs.getDouble("fileID")) {
-                        return true;
-                    }
+            // loop through the result set
+            while (rs.next()) {
+                if (fileID == rs.getDouble("fileID")) {
+                    return true;
                 }
-            } catch (SQLException e) {
-                System.out.println("fileIDExists: " + e.getMessage());
             }
-            return false;
-        
+        } catch (SQLException e) {
+            System.out.println("fileIDExists: " + e.getMessage());
+        }
+        return false;
+
     }
 
     /**

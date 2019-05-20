@@ -4,7 +4,6 @@ import comparator.PostingsListManager;
 import comparator.PostingsList;
 import DataStructures.BasicFile;
 import DataStructures.MatchList;
-import DataStructures.Corpus;
 import DataStructures.Segment;
 import comparator.MatchManager;
 import java.io.BufferedWriter;
@@ -12,7 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 import javafx.collections.ObservableList;
 
 /**
@@ -35,7 +34,7 @@ public class State {
     /**
      * The corpus where matches are found.
      */
-    private final Corpus corpus;
+    private final List<BasicFile> corpus;
 
     private final UIState uiState;
 
@@ -46,28 +45,32 @@ public class State {
 
     private Segment segSelected;
 
-    public State(BasicFile mainFile, Corpus corpus) {
+    
+    public State(BasicFile mainFile, List<BasicFile> fileList) {
 
         uiState = new UIState();
 
         // Default minimum length for matches
         minMatchLength = 5;
 
-        this.corpus = corpus;
+        // DELETE THIS LATER
+        this.corpus = fileList;
+        //fileList.forEach(f -> corpus.addFile(f));
+        
 
         // the following code ensures that the file selected as main file is in fact in the corpus
-        corpus.removeFile(mainFile);
+        corpus.remove(mainFile);
         BasicFile mf = new BasicFile(mainFile);
-        corpus.addFile(mf);
+        corpus.add(mf);
 
         setMainFile(mf);
 
         //matchManager = new MatchManager(this);
-        matchManager = new MatchManager(new HashSet(corpus.getAllCommittedSegs()));
+        matchManager = new MatchManager(BasicFile.getAllCommittedSegsInFileList(corpus));
 
         mf.equals(mainFile);
 
-        uiState.setAllFilesInCorpus(corpus.getFiles());
+        uiState.setAllFilesInCorpus(corpus);
     }
 
     public BasicFile getMainFile() {
@@ -105,8 +108,8 @@ public class State {
         this.minMatchLength = minMatchLength;
         setMatchFile(findMatch(segSelected));
     }
-
-    public Corpus getCorpus() {
+    
+    public List<BasicFile> getCorpusFiles() {
         return corpus;
     }
 

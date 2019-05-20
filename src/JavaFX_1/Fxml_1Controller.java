@@ -2,7 +2,6 @@ package JavaFX_1;
 
 import State.StateBuilder;
 import DataStructures.BasicFile;
-import DataStructures.Corpus;
 import DataStructures.FileBuilder;
 import State.State;
 import DataStructures.MatchSegment;
@@ -224,12 +223,11 @@ public class Fxml_1Controller implements Initializable {
         homeButtonLightBlueIV.setPreserveRatio(true);
         homeButtonLightBlueIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
         homeButtonLightBlueIV.setCache(true); // perhaps not necessary
-        Label homeTabLabel = new Label("", homeButtonLightBlueIV);
-        homeTabLabel.setText("Translation");
+        Label homeTabLabel = new Label("Home", homeButtonLightBlueIV);
         homeTabLabel.setMaxWidth(40);
+        homeTabLabel.getStyleClass().add("homeTabLabel");
         homeTab.setGraphic(homeTabLabel);
         homeTab.setText("");
-        
         
         // image for TRANSLATION TAB
         ImageView translationButtonWhiteIV = new ImageView(getClass().getResource("/JavaFX_1/TranslationButtonWhite.png").toExternalForm());
@@ -683,8 +681,7 @@ public class Fxml_1Controller implements Initializable {
      * @param bf The new main file to be translated
      */
     private void setMainFile(BasicFile newMainFile) {
-        Corpus corpus = DatabaseOperations.getAllSegments();
-        StateBuilder stateBuilder = new StateBuilder(newMainFile, corpus);
+        StateBuilder stateBuilder = new StateBuilder(newMainFile, DatabaseOperations.getAllFiles());
         state = stateBuilder.getState();
         uiState = stateBuilder.getUIState();
         dispatcher = stateBuilder.getDispatcher();

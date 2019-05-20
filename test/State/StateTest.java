@@ -6,10 +6,10 @@
 package State;
 
 import DataStructures.BasicFile;
-import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -70,13 +70,13 @@ public class StateTest {
         simpleCommittedState = TestObjectBuilder.getCommittedTestState();
 
         // state where the "mainFile" is already in corpus
-        Corpus c1 = TestObjectBuilder.getCommittedTestCorpus();
+        List<BasicFile> c1 = TestObjectBuilder.getCommittedTestCorpus();
         System.out.println(c1);
-        numFiles = c1.getFiles().size();
-        state1 = new State(c1.getFiles().get(0), c1);
+        numFiles = c1.size();
+        state1 = new State(c1.get(0), c1);
 
         // state where the mainfile was created outside of corpus
-        Corpus c2 = TestObjectBuilder.getCommittedTestCorpus();
+        List<BasicFile> c2 = (TestObjectBuilder.getCommittedTestCorpus());
         BasicFile bf = TestObjectBuilder.getTestFile();
         bf.commitAllSegs();
         state2 = new State(bf, c2);
@@ -94,12 +94,10 @@ public class StateTest {
     @Test
     public void testGetCorpus() {
         System.out.println("getCorpus");
+        
+        assertEquals(numFiles, state1.getCorpusFiles().size());
 
-        System.out.println(state1.getCorpus());
-
-        assertEquals(numFiles, state1.getCorpus().getFiles().size());
-
-        assertEquals(numFiles + 1, state2.getCorpus().getFiles().size());
+        assertEquals(numFiles + 1, state2.getCorpusFiles().size());
     }
 
     /**

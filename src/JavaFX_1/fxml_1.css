@@ -51,6 +51,17 @@
            -fx-background-color: #2d3a71;
     }
 
+    .homeTabLabel:hover {
+        /*
+        DOESN"T DO ANYTHING:
+        -fx-background-image: url("/JavaFX_1/HomeButtonLightBlue.png");
+        -fx-background-width: 40;
+        
+        WORKS BUT SCALES DEPENDING ON IMAGE SIZE
+        -fx-graphic: url("/JavaFX_1/HomeButtonLightBlue.png");
+        -fx-scale-y: 0.5;
+        -fx-scale-x: 0.5;*/
+    }
 
 
 }

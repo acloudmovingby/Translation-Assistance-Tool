@@ -6,7 +6,6 @@
 package UserActions;
 
 import DataStructures.BasicFile;
-import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
@@ -43,13 +42,13 @@ public class CommitTest {
 
     @Before
     public void setUp() {
-        Corpus c = TestObjectBuilder.getIdenticalCorpus();
+        List<BasicFile> c = TestObjectBuilder.getIdenticalCorpus();
         // commit all the segments in one of the files in corpus (not the main file)
-        c.getFiles().get(1).commitAllSegs();
+        c.get(1).commitAllSegs();
         // the main file has no committed segments
         mainFile = TestObjectBuilder.getIdenticalFile();
 
-        d = TestObjectBuilder.getDispatcher(c, mainFile);
+        d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 
     }

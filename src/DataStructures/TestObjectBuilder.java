@@ -5,6 +5,8 @@ import State.DatabaseManager;
 import State.Dispatcher;
 import State.State;
 import State.UndoManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates various objects to make testing easier.
@@ -93,11 +95,11 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static Corpus getIdenticalCorpus() {
-        Corpus c = new Corpus();
-        c.addFile(getIdenticalFile());
-        c.addFile(getIdenticalFile());
-        c.addFile(getIdenticalFile());
+    public static List<BasicFile> getIdenticalCorpus() {
+        List<BasicFile> c = new ArrayList();
+        c.add(getIdenticalFile());
+        c.add(getIdenticalFile());
+        c.add(getIdenticalFile());
         return c;
     }
 
@@ -108,11 +110,11 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static Corpus getTestCorpus() {
-        Corpus c = new Corpus();
-        c.addFile(getTestFile());
-        c.addFile(getTestFile());
-        c.addFile(getTestFile());
+    public static List<BasicFile> getTestCorpus() {
+        List<BasicFile> c = new ArrayList();
+        c.add(getTestFile());
+        c.add(getTestFile());
+        c.add(getTestFile());
         return c;
     }
 
@@ -121,12 +123,12 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static Corpus getCommittedTestCorpus() {
-        Corpus c = getTestCorpus();
-        c.getFiles().forEach((f) -> {
+    public static List<BasicFile> getCommittedTestCorpus() {
+        List<BasicFile> fileList = getTestCorpus();
+        fileList.forEach((f) -> {
             f.commitAllSegs();
         });
-        return c;
+        return fileList;
     }
 
     /**
@@ -160,9 +162,9 @@ public class TestObjectBuilder {
      */
     public static State getEmptyState() {
         BasicFile bf = new BasicFile();
-        Corpus c = new Corpus();
-        c.addFile(bf);
-        return new State(bf, c);
+        List<BasicFile> fileList = new ArrayList();
+        fileList.add(bf);
+        return new State(bf, fileList);
     }
 
     /**
@@ -173,92 +175,15 @@ public class TestObjectBuilder {
      * @return a state with a single file with a single segment
      */
     public static State getOneSegState() {
-        Corpus c = new Corpus();
-        return new State(getOneSegFile(), c);
+        return new State(getOneSegFile(), new ArrayList());
     }
 
     public static Segment getTestSeg() {
         return (new SegmentBuilder()).createSegment();
     }
-
-    /**
-     * Returns a dispatcher wrapped around the state from getTestState();
-     *
-     * @return
-     */
-    public static Dispatcher getTestDispatcher() {
-        State state = getTestState();
+    
+    public static Dispatcher getDispatcher(BasicFile f, List<BasicFile> fileList) {
+        State state = new State(f, fileList);
         return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
     }
-
-    public static Dispatcher getDispatcher(Corpus c, BasicFile f) {
-        State state = new State(f, c);
-        return new Dispatcher(new DatabaseManager(state), state, new UndoManager());
-    }
-
-    /**
-     * State composed of the corpus from getTestCorpus() and a main file from
-     * getTestFile(). The mainFile also has 3 segs added to the hidden segs
-     * list. All segs (both in main file and in corpus) are committed.
-     *
-     * @return
-     */
-    public static State getComplexState() {
-        BasicFile mainFile = getTestFile();
-        SegmentBuilder sb = new SegmentBuilder(mainFile);
-        sb.setThai("thHidden1");
-        sb.setEnglish("enHidden1");
-        mainFile.getHiddenSegs().add(sb.createSegment());
-        sb.setThai("thHidden2");
-        sb.setEnglish("enHidden2");
-        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
-        sb.setThai("thHidden3");
-        sb.setEnglish("enHidden3");
-        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
-
-        return new State(mainFile, getTestCorpus());
-    }
-
-    /**
-     * Takes a state and returns it exactly as it is, except with all segs in
-     * the mainFile committed. Segs in other files are not affected. The method
-     * used is commitAllSegs in mainFile, which, at the time of writing this
-     * comment, mutates the seg instead of replacing it.
-     *
-     * @param s
-     * @return
-     */
-    public static State commitAllMainFile(State s) {
-        Corpus c = s.getCorpus();
-        BasicFile mf = s.getMainFile();
-        mf.commitAllSegs();
-
-        return new State(mf, c);
-    }
-
-    /**
-     * State composed of the corpus from getTestCorpus() and a main file from
-     * getTestFile(). The mainFile also has 3 segs added to the hidden segs
-     * list. All segs (both in main file and in corpus) are committed.
-     *
-     * @return
-     */
-    public static State getCommittedComplexState() {
-        BasicFile mainFile = getTestFile();
-        SegmentBuilder sb = new SegmentBuilder(mainFile);
-        sb.setThai("thHidden1");
-        sb.setEnglish("enHidden1");
-        mainFile.getHiddenSegs().add(sb.createSegment());
-        sb.setThai("thHidden2");
-        sb.setEnglish("enHidden2");
-        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
-        sb.setThai("thHidden3");
-        sb.setEnglish("enHidden3");
-        mainFile.getHiddenSegs().add(sb.createSegmentNewID());
-
-        mainFile.commitAllSegs();
-
-        return new State(mainFile, getCommittedTestCorpus());
-    }
-
 }

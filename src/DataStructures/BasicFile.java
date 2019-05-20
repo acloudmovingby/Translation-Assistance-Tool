@@ -7,6 +7,7 @@ package DataStructures;
 
 import Database.DatabaseOperations;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -279,6 +280,18 @@ public class BasicFile {
         hash = 17 * hash + Objects.hashCode(getHiddenSegs());
         hash = 51 * hash + Objects.hashCode(getFileName());
         return hash;
+    }
+    
+    static public HashSet<Segment> getAllCommittedSegsInFileList(List<BasicFile> fileList) {
+        HashSet<Segment> allCommittedSegs = new HashSet();
+        
+        fileList.stream().forEach(f -> {
+            allCommittedSegs.addAll(f.getActiveSegs());
+            allCommittedSegs.addAll(f.getHiddenSegs());
+        });
+        allCommittedSegs.removeIf(seg -> !seg.isCommitted());
+
+        return allCommittedSegs;
     }
 
 }

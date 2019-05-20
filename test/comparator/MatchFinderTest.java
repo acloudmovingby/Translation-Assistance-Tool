@@ -7,11 +7,11 @@ package comparator;
 
 import DataStructures.BasicFile;
 import DataStructures.MatchList;
-import DataStructures.Corpus;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import State.State;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,7 +54,7 @@ public class MatchFinderTest {
         // makes a corpus with 1 file
         // makes that 1 file have 1 segment called corpusSeg1
         // the Thai text in corpusSeg1 is "test"
-        Corpus corpus = new Corpus();
+        ArrayList<BasicFile> corpus = new ArrayList();
         BasicFile bf1 = new BasicFile();
 
         SegmentBuilder sb = new SegmentBuilder(bf1);
@@ -62,7 +62,7 @@ public class MatchFinderTest {
         sb.setCommitted(true);
         Segment corpusSeg1 = sb.createSegment();
         bf1.addSeg(corpusSeg1);
-        corpus.addFile(bf1);
+        corpus.add(bf1);
         State state = new State(bf1, corpus);
 
         // makes a second file with 1 segment: mainFileSeg

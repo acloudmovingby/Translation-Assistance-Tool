@@ -6,12 +6,12 @@
 package UserActions;
 
 import DataStructures.BasicFile;
-import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
 import State.State;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -51,9 +51,9 @@ public class SplitTest {
     public void testExecute() {
         System.out.println("execute");
         // create test objects
-        Corpus c = TestObjectBuilder.getCommittedTestCorpus();
-        BasicFile mainFile = c.getFiles().get(0);
-        Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+        List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
+        BasicFile mainFile = c.get(0);
+        Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 
         /* SPLIT FIRST SEGMENT */

@@ -6,11 +6,11 @@
 package UserActions;
 
 import DataStructures.BasicFile;
-import DataStructures.Corpus;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
+import java.util.List;
 import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -51,9 +51,9 @@ public class EditEnglishTest {
     public void testExecute() {
 
         // create test objects
-        Corpus c = TestObjectBuilder.getCommittedTestCorpus();
-        BasicFile mainFile = c.getFiles().get(0);
-        Dispatcher d = TestObjectBuilder.getDispatcher(c, mainFile);
+        List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
+        BasicFile mainFile = c.get(0);
+        Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 
         // get first segment of mainfile

@@ -55,23 +55,23 @@ public class UndoManagerTest {
         // sets up 4 dispatchers
         // emptyState (1 file with zero segments)
         State emptyState = TestObjectBuilder.getEmptyState();
-        StateBuilder emptyStateInit = new StateBuilder(emptyState.getMainFile(), emptyState.getCorpus());
+        StateBuilder emptyStateInit = new StateBuilder(emptyState.getMainFile(), emptyState.getCorpusFiles());
         emptyDisp = emptyStateInit.getDispatcher();
 
         // 1 file with 1 seg. This seg is not committed
         State oneSegState = TestObjectBuilder.getOneSegState();
-        StateBuilder oneSegStateInit = new StateBuilder(oneSegState.getMainFile(), oneSegState.getCorpus());
+        StateBuilder oneSegStateInit = new StateBuilder(oneSegState.getMainFile(), oneSegState.getCorpusFiles());
         oneSegDisp = oneSegStateInit.getDispatcher();
 
         // 5 segs in three files. None are committed
         State simpleState = TestObjectBuilder.getTestState();
-        StateBuilder simpleStateInit = new StateBuilder(simpleState.getMainFile(), simpleState.getCorpus());
+        StateBuilder simpleStateInit = new StateBuilder(simpleState.getMainFile(), simpleState.getCorpusFiles());
         simpleDisp = simpleStateInit.getDispatcher();
         lastSegIndex = simpleState.getMainFile().getActiveSegs().size() - 1;
 
         // same as simple state except all files are committed
         State simpleCommittedState = TestObjectBuilder.getCommittedTestState();
-        StateBuilder simpleCommittedInit = new StateBuilder(simpleCommittedState.getMainFile(), simpleCommittedState.getCorpus());
+        StateBuilder simpleCommittedInit = new StateBuilder(simpleCommittedState.getMainFile(), simpleCommittedState.getCorpusFiles());
         committedDisp = simpleCommittedInit.getDispatcher();
     }
 

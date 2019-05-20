@@ -6,6 +6,7 @@
 package State;
 
 import DataStructures.BasicFile;
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -22,7 +23,7 @@ public class StateCopier {
 
     public StateCopier(State s) {
         postingsListSize = s.getPostingsListManager().size();
-        numSegsInCorpus = s.getCorpus().numTotalSegs();
+        numSegsInCorpus = getNumsSegsInFileList(s.getCorpusFiles());
         mainFileCopy = new BasicFile(s.getMainFile());
     }
 
@@ -35,12 +36,21 @@ public class StateCopier {
      */
     public boolean compare(State s) {
 
-        assertEquals(numSegsInCorpus, s.getCorpus().numTotalSegs());
+        assertEquals(numSegsInCorpus, getNumsSegsInFileList(s.getCorpusFiles()));
         assertEquals(mainFileCopy, s.getMainFile());
         assertEquals(postingsListSize, s.getPostingsListManager().size());
 
         return postingsListSize == s.getPostingsListManager().size()
-                && numSegsInCorpus == s.getCorpus().numTotalSegs()
+                && numSegsInCorpus == getNumsSegsInFileList(s.getCorpusFiles())
                 && mainFileCopy.equals(s.getMainFile());
+    }
+    
+    private int getNumsSegsInFileList(List<BasicFile> fileList) {
+        int numSegs = 0;
+        for (BasicFile bf : fileList) {
+            numSegs = numSegs + bf.getActiveSegs().size();
+            numSegs = numSegs + bf.getHiddenSegs().size();
+        }
+        return numSegs;
     }
 }
