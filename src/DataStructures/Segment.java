@@ -50,33 +50,6 @@ public final class Segment {
      */
     private final BooleanProperty isCommittedProperty;
 
-    public Segment() {
-        thaiProperty = new SimpleStringProperty("");
-        englishProperty = new SimpleStringProperty("");
-        isCommittedProperty = new SimpleBooleanProperty(false);
-        this.id = 0;
-        this.fileID = 0;
-        this.fileName = "untitled";
-    }
-
-    public Segment(int fileID) {
-        thaiProperty = new SimpleStringProperty("");
-        englishProperty = new SimpleStringProperty("");
-        isCommittedProperty = new SimpleBooleanProperty(false);
-        this.id = 0;
-        this.fileID = fileID;
-        this.fileName = "untitled";
-    }
-
-    public Segment(int id, int fileID, String fileName) {
-        thaiProperty = new SimpleStringProperty("");
-        englishProperty = new SimpleStringProperty("");
-        isCommittedProperty = new SimpleBooleanProperty(false);
-        this.id = id;
-        this.fileID = fileID;
-        this.fileName = fileName;
-    }
-
     public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted) {
         this.id = id;
         this.fileID = fileID;
