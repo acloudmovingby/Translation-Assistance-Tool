@@ -22,12 +22,12 @@ public class State {
     private final MatchManager matchManager;
 
     /**
-     * The file currently being translated.
+     * The file currently being translated. Is in the corpus.
      */
     private BasicFile mainFile;
 
     /**
-     * The corpus where matches are found.
+     * The corpus where matches are found. The main file must be in this.
      */
     private final List<BasicFile> corpus;
 
@@ -48,9 +48,7 @@ public class State {
         // Default minimum length for matches
         minMatchLength = 5;
 
-        // DELETE THIS LATER
         this.corpus = fileList;
-        //fileList.forEach(f -> corpus.addFile(f));
         
 
         // the following code ensures that the file selected as main file is in fact in the corpus

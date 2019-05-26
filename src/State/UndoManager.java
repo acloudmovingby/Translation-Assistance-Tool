@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package State;
 
 import DataStructures.BasicFile;
@@ -27,7 +22,7 @@ public class UndoManager {
 
     /**
      * A stack representing "future" MainFile states that have been undone but
-     * could be redone (redo-ed ?).
+     * could be redone.
      */
     private final Deque<BasicFile> redoStack;
 
@@ -44,7 +39,7 @@ public class UndoManager {
      * history, so if undo is performed and then a new state is pushed onto the
      * undo stack, the redo is cleared (so no redo can then be performed).
      *
-     * @param file
+     * @param state
      */
     protected void push(State state) {
         undoStack.offerFirst(new BasicFile(state.getMainFile()));
@@ -56,7 +51,7 @@ public class UndoManager {
      * with the last stored version. Does not change the mainFile object itself,
      * but rather operates through the State object's access methods
      * (addSegment, addToHidden, removeSegment). This ensures UndoManager
-     * doesn't have to worry about what data in State depends on the MF (such as
+     * doesn't have to worry about what data in State depends on the main file (such as
      * the postings lists) and the state updates those automatically.
      *
      * @param state

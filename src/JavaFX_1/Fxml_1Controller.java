@@ -54,6 +54,8 @@ import javafx.stage.FileChooser;
 /**
  * FXML Controller class does: (1) registers user input to pass on to back end and (2) controls UI with any components that can't be done in CSS/FXML (such as dynamic content that I found hard to do in the SceneBuilder).
  *
+ * This class primarily wiring between the UI code and the business logic classes, but performs no business logic itself.
+ * 
  * JavaFX, the GUI used in this application, relies on working together with an
  * FXML document and a CSS stylesheet to properly render the application UI. The
  *
@@ -61,7 +63,6 @@ import javafx.stage.FileChooser;
  * document (and therefore its name cannot be changed unless also changed in the
  * FXML doc).
  *
- * One of the least well organized classes in the program...so beware.
  *
  * @author Chris
  */

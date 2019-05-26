@@ -11,8 +11,7 @@ import javafx.beans.property.StringProperty;
  * segment. This entry is tied to the fileID of the file with which it is
  * associated.
  *
- * Immutable. (though the StringProperty objects stored could in theory be
- * mutated elsewhere).
+ * Immutable. 
  *
  * @author Chris
  */
@@ -34,29 +33,29 @@ public final class Segment {
     private final String fileName;
 
     /**
-     * The source Thai text.
+     * The source text.
      */
-    private final StringProperty thaiProperty;
+    private final String thai;
+    
     /**
-     * The English translation of the Thai text (or "" if no translation has
-     * been given yet).
+     * The target text (the translation).
      */
-    private final StringProperty englishProperty;
-
+    private final String english;
+    
     /**
      * If a Segment is committed, it means that the user has wanted to store the
      * translation represented by the Segment (and make it available for
-     * searches later).
+     * searches).
      */
-    private final BooleanProperty isCommittedProperty;
-
+    private final boolean isCommitted;
+  
     public Segment(int id, int fileID, String fileName, String thai, String english, boolean isCommitted) {
         this.id = id;
         this.fileID = fileID;
         this.fileName = fileName;
-        thaiProperty = new SimpleStringProperty(thai);
-        englishProperty = new SimpleStringProperty(english);
-        isCommittedProperty = new SimpleBooleanProperty(isCommitted);
+        this.thai = thai;
+        this.english = english;
+        this.isCommitted = isCommitted;
     }
 
     /**
@@ -72,11 +71,13 @@ public final class Segment {
     }
 
     public String getThai() {
-        return thaiProperty.getValue();
+        return thai;
+        //return thaiProperty.getValue();
     }
 
     public String getEnglish() {
-        return englishProperty.getValue();
+        return english;
+        //return englishProperty.getValue();
     }
 
     @Override
@@ -123,22 +124,22 @@ public final class Segment {
 
     /**
      * Same as getThai except it returns an observable StringProperty (necessary
-     * for JavaFX stuff).
+     * for JavaFX bindings).
      *
      * @return
      */
     public StringProperty thaiProperty() {
-        return thaiProperty;
+        return new SimpleStringProperty(thai);
     }
 
     /**
      * Same as getEnglish except it returns an observable StringProperty
-     * (necessary for JavaFX stuff).
+     * (necessary for JavaFX bindings).
      *
      * @return
      */
     public StringProperty englishProperty() {
-        return englishProperty;
+        return new SimpleStringProperty(english);
     }
 
     /**
@@ -150,7 +151,7 @@ public final class Segment {
      * @return True if the Segment is committed and false otherwise.
      */
     public boolean isCommitted() {
-        return isCommittedProperty.get();
+        return isCommitted;
     }
 
     /**
@@ -160,7 +161,7 @@ public final class Segment {
      * @return True if the Segment is committed and false otherwise.
      */
     public BooleanProperty isCommittedProperty() {
-        return isCommittedProperty;
+        return new SimpleBooleanProperty(isCommitted);
     }
 
     public String getFileName() {

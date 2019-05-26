@@ -7,7 +7,6 @@ package State;
 
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
-import UserActions.MainFileAction;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
+import UserActions.MutateFileAction;
 
 /**
  * Receives all user input from the Controller and delegates these tasks to various components that then work directly with the State data. 
@@ -23,30 +23,30 @@ import javafx.collections.FXCollections;
  */
 public class TopLevelBackEnd {
 
-    final DatabaseManager dm;
+    final DatabaseManager databaseManager;
     final State state;
-    final UndoManager um;
+    final UndoManager undoManager;
 
     public TopLevelBackEnd(DatabaseManager db, State state, UndoManager um) {
-        this.dm = db;
+        this.databaseManager = db;
         this.state = state;
-        this.um = um;
+        this.undoManager = um;
     }
 
-    public void acceptAction(MainFileAction a) {
-        um.push(state); // current state is stored for undo functionality
+    public void acceptAction(MutateFileAction a) {
+        undoManager.push(state); // current state is stored for undo functionality
         a.execute(state); //action executes, affecting state
-        dm.push(state); // new state is pushed to database
+        databaseManager.push(state); // new state is pushed to database
     }
 
     public void undo() {
-        um.executeUndo(state); // takes state and replaces the main file with the prior stored version in UndoManager
-        dm.push(state); // new state is pushed to database
+        undoManager.executeUndo(state); // takes state and replaces the main file with the prior stored version in UndoManager
+        databaseManager.push(state); // new state is pushed to database
     }
 
     public void redo() {
-        um.executeRedo(state);
-        dm.push(state);
+        undoManager.executeRedo(state);
+        databaseManager.push(state);
     }
 
     public UIState getUIState() {

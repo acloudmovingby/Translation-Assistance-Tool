@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Chris
  */
-public class Uncommit implements MainFileAction {
+public class Uncommit implements MutateFileAction {
 
     //private final Segment seg; 
     private final List<Segment> segList;

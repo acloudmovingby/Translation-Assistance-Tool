@@ -16,7 +16,7 @@ import javafx.collections.ObservableList;
  *
  * @author Chris
  */
-public class Merge implements MainFileAction {
+public class Merge implements MutateFileAction {
 
     private final List<Segment> segsToMerge;
 
@@ -47,9 +47,10 @@ public class Merge implements MainFileAction {
             sb.setThai(thaiSB.toString());
             sb.setEnglish(engSB.toString());
             sb.setCommitted(false);
+            Segment mergedSeg = sb.createSegmentNewID();
 
             // add the newly created segment to the main file
-            state.addSegToFileActiveList(firstIndex, sb.createSegmentNewID(), state.getMainFile());
+            state.addSegToFileActiveList(firstIndex, mergedSeg, state.getMainFile());
 
             // remove the old segments
             for (Segment s : segsToMerge) {

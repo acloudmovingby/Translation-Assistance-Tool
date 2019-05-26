@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Chris
  */
-public class Commit implements MainFileAction {
+public class Commit implements MutateFileAction {
 
     //private final Segment seg; 
     private final List<Segment> segList;

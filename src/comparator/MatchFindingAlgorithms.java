@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Provides methods to find matches between a source Segment and some target
- * (e.g. a whole corpus, an individual Segment).
+ * Provides methods to find matches between a source Segment and some target Segment.
  *
  * Currently uses dynamic programming but could probably be better implemented
  * with suffix trees or other means.

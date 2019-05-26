@@ -52,7 +52,8 @@ public class UndoManagerTest {
     @Before
     public void setUp() {
 
-        // sets up 4 dispatchers
+        // sets up 4 top level back ends where the states are defined as follows:
+        
         // emptyState (1 file with zero segments)
         State emptyState = TestObjectBuilder.getEmptyState();
         StateBuilder emptyStateInit = new StateBuilder(emptyState.getMainFile(), emptyState.getCorpusFiles());

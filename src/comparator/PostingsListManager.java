@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Manages the postings lists that store the corpus as ngrams of various length.
+ * Manages the postings lists that store the corpus as ngrams of various lengths.
  *
  * This object makes it easier for other parts of the program to retrieve or
  * update these postingslists as needed.
@@ -28,7 +28,7 @@ public class PostingsListManager {
         this.committedSegments = committedSegments;
 
         plList = new ArrayList();
-        for (int i = 2; i < 9; i++) {
+        for (int i = 4; i < 9; i++) {
             plList.add(new PostingsList(i));
         }
 

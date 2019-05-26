@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Takes Segments and parses the Thai text in into ngrams (length of ngram
+ * Takes Segments and parses the Thai text into ngrams (length of ngram
  * specified in PostingsList constructor).
  *
  * @author Chris

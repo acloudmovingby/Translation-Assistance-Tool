@@ -16,7 +16,7 @@ import javafx.collections.ObservableList;
  *
  * @author Chris
  */
-public class Split implements MainFileAction {
+public class Split implements MutateFileAction {
 
     private final Segment seg;
     private final int splitIndex;
