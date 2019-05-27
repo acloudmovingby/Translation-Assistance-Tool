@@ -9,7 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
-import State.TopLevelBackEnd;
+import State.Dispatcher;
 import java.util.List;
 import javafx.collections.ObservableList;
 import org.junit.After;
@@ -53,7 +53,7 @@ public class EditEnglishTest {
         // create test objects
         List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
         BasicFile mainFile = c.get(0);
-        TopLevelBackEnd d = TestObjectBuilder.getDispatcher(mainFile, c);
+        Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 
         // get first segment of mainfile

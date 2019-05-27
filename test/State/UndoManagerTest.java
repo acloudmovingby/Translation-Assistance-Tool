@@ -29,13 +29,13 @@ import static org.junit.Assert.*;
  */
 public class UndoManagerTest {
 
-    TopLevelBackEnd emptyBackEnd;
-    TopLevelBackEnd oneSegBackEnd;
+    Dispatcher emptyDispatcher;
+    Dispatcher oneSegDispatcher;
     /**
      * 5 segs in three files. None are committed
      */
-    TopLevelBackEnd simpleBackEnd;
-    TopLevelBackEnd committedBackEnd;
+    Dispatcher simpleDispatcher;
+    Dispatcher committedDispatcher;
     int lastSegIndex;
 
     public UndoManagerTest() {
@@ -52,28 +52,28 @@ public class UndoManagerTest {
     @Before
     public void setUp() {
 
-        // sets up 4 top level back ends where the states are defined as follows:
+        // sets up 4 dispatchers where the states are defined as follows:
         
         // emptyState (1 file with zero segments)
         State emptyState = TestObjectBuilder.getEmptyState();
         StateBuilder emptyStateInit = new StateBuilder(emptyState.getMainFile(), emptyState.getCorpusFiles());
-        emptyBackEnd = emptyStateInit.getTopLevelBackEnd();
+        emptyDispatcher = emptyStateInit.getDispatcher();
 
         // 1 file with 1 seg. This seg is not committed
         State oneSegState = TestObjectBuilder.getOneSegState();
         StateBuilder oneSegStateInit = new StateBuilder(oneSegState.getMainFile(), oneSegState.getCorpusFiles());
-        oneSegBackEnd = oneSegStateInit.getTopLevelBackEnd();
+        oneSegDispatcher = oneSegStateInit.getDispatcher();
 
         // 5 segs in three files. None are committed
         State simpleState = TestObjectBuilder.getTestState();
         StateBuilder simpleStateInit = new StateBuilder(simpleState.getMainFile(), simpleState.getCorpusFiles());
-        simpleBackEnd = simpleStateInit.getTopLevelBackEnd();
+        simpleDispatcher = simpleStateInit.getDispatcher();
         lastSegIndex = simpleState.getMainFile().getActiveSegs().size() - 1;
 
         // same as simple state except all files are committed
         State simpleCommittedState = TestObjectBuilder.getCommittedTestState();
         StateBuilder simpleCommittedInit = new StateBuilder(simpleCommittedState.getMainFile(), simpleCommittedState.getCorpusFiles());
-        committedBackEnd = simpleCommittedInit.getTopLevelBackEnd();
+        committedDispatcher = simpleCommittedInit.getDispatcher();
     }
 
     @After
@@ -86,24 +86,24 @@ public class UndoManagerTest {
     @Test
     public void testNoActionUndo() {
         // empty state
-        StateCopier emptyStateCopy = new StateCopier(emptyBackEnd.getState());
-        emptyBackEnd.undo();
-        assertEquals(true, emptyStateCopy.compare(emptyBackEnd.getState()));
+        StateCopier emptyStateCopy = new StateCopier(emptyDispatcher.getState());
+        emptyDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyDispatcher.getState()));
 
         // one segment state
-        StateCopier oneSegStateCopy = new StateCopier(oneSegBackEnd.getState());
-        oneSegBackEnd.undo();
-        assertEquals(true, oneSegStateCopy.compare(oneSegBackEnd.getState()));
+        StateCopier oneSegStateCopy = new StateCopier(oneSegDispatcher.getState());
+        oneSegDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegDispatcher.getState()));
 
         // generic, simple state
-        StateCopier simpleStateCopy = new StateCopier(simpleBackEnd.getState());
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
+        StateCopier simpleStateCopy = new StateCopier(simpleDispatcher.getState());
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
 
         // simple state where all segs are committted
-        StateCopier simpleCommittedCopy = new StateCopier(committedBackEnd.getState());
-        committedBackEnd.undo();
-        assertEquals(true, simpleCommittedCopy.compare(committedBackEnd.getState()));
+        StateCopier simpleCommittedCopy = new StateCopier(committedDispatcher.getState());
+        committedDispatcher.undo();
+        assertEquals(true, simpleCommittedCopy.compare(committedDispatcher.getState()));
     }
 
     /**
@@ -114,54 +114,54 @@ public class UndoManagerTest {
     public void testUndoCommit() {
 
         // empty state
-        StateCopier emptyStateCopy = new StateCopier(emptyBackEnd.getState());
-        emptyBackEnd.acceptAction(new Commit(TestObjectBuilder.getTestSeg()));
-        emptyBackEnd.undo();
-        assertEquals(true, emptyStateCopy.compare(emptyBackEnd.getState()));
-        BasicFile mf = emptyBackEnd.getState().getMainFile();
+        StateCopier emptyStateCopy = new StateCopier(emptyDispatcher.getState());
+        emptyDispatcher.acceptAction(new Commit(TestObjectBuilder.getTestSeg()));
+        emptyDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyDispatcher.getState()));
+        BasicFile mf = emptyDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // main file with one segment
         // commit the only segment in the main file
-        StateCopier oneSegStateCopy = new StateCopier(oneSegBackEnd.getState());
-        Segment onlyExistantSeg = oneSegBackEnd.getUIState().getMainFileSegs().get(0);
-        oneSegBackEnd.acceptAction(new Commit(onlyExistantSeg));
+        StateCopier oneSegStateCopy = new StateCopier(oneSegDispatcher.getState());
+        Segment onlyExistantSeg = oneSegDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegDispatcher.acceptAction(new Commit(onlyExistantSeg));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        oneSegBackEnd.undo();
-        oneSegStateCopy.compare(oneSegBackEnd.getState());
-        assertEquals(true, oneSegStateCopy.compare(oneSegBackEnd.getState()));
-        mf = oneSegBackEnd.getState().getMainFile();
+        oneSegDispatcher.undo();
+        oneSegStateCopy.compare(oneSegDispatcher.getState());
+        assertEquals(true, oneSegStateCopy.compare(oneSegDispatcher.getState()));
+        mf = oneSegDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // generic, simple state
         // commit the first seg, undo
         // commit the last seg, undo
-        StateCopier simpleStateCopy = new StateCopier(simpleBackEnd.getState());
-        Segment firstSeg = simpleBackEnd.getUIState().getMainFileSegs().get(0);
-        simpleBackEnd.acceptAction(new Commit(firstSeg));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        mf = simpleBackEnd.getState().getMainFile();
+        StateCopier simpleStateCopy = new StateCopier(simpleDispatcher.getState());
+        Segment firstSeg = simpleDispatcher.getUIState().getMainFileSegs().get(0);
+        simpleDispatcher.acceptAction(new Commit(firstSeg));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        mf = simpleDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        Segment lastSeg = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        simpleBackEnd.acceptAction(new Commit(lastSeg));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        mf = simpleBackEnd.getState().getMainFile();
+        Segment lastSeg = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        simpleDispatcher.acceptAction(new Commit(lastSeg));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        mf = simpleDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
-        StateCopier committedStateCopy = new StateCopier(committedBackEnd.getState());
-        firstSeg = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new Commit(firstSeg));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        StateCopier committedStateCopy = new StateCopier(committedDispatcher.getState());
+        firstSeg = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new Commit(firstSeg));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        lastSeg = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        committedBackEnd.acceptAction(new Commit(lastSeg));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        lastSeg = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        committedDispatcher.acceptAction(new Commit(lastSeg));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
 
@@ -172,52 +172,52 @@ public class UndoManagerTest {
     @Test
     public void testUndoEditEnglish() {
         // empty state
-        StateCopier emptyStateCopy = new StateCopier(emptyBackEnd.getState());
-        emptyBackEnd.acceptAction(new EditEnglish(TestObjectBuilder.getTestSeg(), "test"));
-        emptyBackEnd.undo();
-        assertEquals(true, emptyStateCopy.compare(emptyBackEnd.getState()));
-        BasicFile mf = emptyBackEnd.getState().getMainFile();
+        StateCopier emptyStateCopy = new StateCopier(emptyDispatcher.getState());
+        emptyDispatcher.acceptAction(new EditEnglish(TestObjectBuilder.getTestSeg(), "test"));
+        emptyDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyDispatcher.getState()));
+        BasicFile mf = emptyDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // one segment state
         // edit the english in the only segment in the main file
-        StateCopier oneSegStateCopy = new StateCopier(oneSegBackEnd.getState());
-        Segment onlyExistantSeg = oneSegBackEnd.getUIState().getMainFileSegs().get(0);
-        oneSegBackEnd.acceptAction(new EditEnglish(onlyExistantSeg, "test"));
-        oneSegBackEnd.undo();
-        assertEquals(true, oneSegStateCopy.compare(oneSegBackEnd.getState()));
-        mf = oneSegBackEnd.getState().getMainFile();
+        StateCopier oneSegStateCopy = new StateCopier(oneSegDispatcher.getState());
+        Segment onlyExistantSeg = oneSegDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegDispatcher.acceptAction(new EditEnglish(onlyExistantSeg, "test"));
+        oneSegDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegDispatcher.getState()));
+        mf = oneSegDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // generic, simple state
         // editEnglish the first seg then undo
-        StateCopier simpleStateCopy = new StateCopier(simpleBackEnd.getState());
-        Segment firstSeg = simpleBackEnd.getUIState().getMainFileSegs().get(0);
-        simpleBackEnd.acceptAction(new EditEnglish(firstSeg, "test"));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        mf = simpleBackEnd.getState().getMainFile();
+        StateCopier simpleStateCopy = new StateCopier(simpleDispatcher.getState());
+        Segment firstSeg = simpleDispatcher.getUIState().getMainFileSegs().get(0);
+        simpleDispatcher.acceptAction(new EditEnglish(firstSeg, "test"));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        mf = simpleDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // editEnglish the last seg then undo
-        Segment lastSeg = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        simpleBackEnd.acceptAction(new EditEnglish(lastSeg, "test"));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        mf = simpleBackEnd.getState().getMainFile();
+        Segment lastSeg = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        simpleDispatcher.acceptAction(new EditEnglish(lastSeg, "test"));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        mf = simpleDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
-        StateCopier committedStateCopy = new StateCopier(committedBackEnd.getState());
-        firstSeg = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new EditEnglish(firstSeg, "test"));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        StateCopier committedStateCopy = new StateCopier(committedDispatcher.getState());
+        firstSeg = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new EditEnglish(firstSeg, "test"));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        lastSeg = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        committedBackEnd.acceptAction(new EditEnglish(lastSeg, "test"));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        lastSeg = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        committedDispatcher.acceptAction(new EditEnglish(lastSeg, "test"));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
 
@@ -227,55 +227,55 @@ public class UndoManagerTest {
     @Test
     public void testUndoEditThai() {
         // empty state
-        StateCopier emptyStateCopy = new StateCopier(emptyBackEnd.getState());
-        emptyBackEnd.acceptAction(new EditThai(TestObjectBuilder.getTestSeg(), "test"));
-        emptyBackEnd.undo();
-        assertEquals(true, emptyStateCopy.compare(emptyBackEnd.getState()));
-        BasicFile mf = emptyBackEnd.getState().getMainFile();
+        StateCopier emptyStateCopy = new StateCopier(emptyDispatcher.getState());
+        emptyDispatcher.acceptAction(new EditThai(TestObjectBuilder.getTestSeg(), "test"));
+        emptyDispatcher.undo();
+        assertEquals(true, emptyStateCopy.compare(emptyDispatcher.getState()));
+        BasicFile mf = emptyDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // one segment state
         // editThai the only segment in the main file
-        StateCopier oneSegStateCopy = new StateCopier(oneSegBackEnd.getState());
-        Segment onlyExistantSeg = oneSegBackEnd.getUIState().getMainFileSegs().get(0);
-        oneSegBackEnd.acceptAction(new EditThai(onlyExistantSeg, "test"));
-        oneSegBackEnd.undo();
-        assertEquals(true, oneSegStateCopy.compare(oneSegBackEnd.getState()));
-        mf = oneSegBackEnd.getState().getMainFile();
+        StateCopier oneSegStateCopy = new StateCopier(oneSegDispatcher.getState());
+        Segment onlyExistantSeg = oneSegDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegDispatcher.acceptAction(new EditThai(onlyExistantSeg, "test"));
+        oneSegDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegDispatcher.getState()));
+        mf = oneSegDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // generic, simple state
         // editThai the first seg then undo
-        StateCopier simpleStateCopy = new StateCopier(simpleBackEnd.getState());
-        Segment firstSeg = simpleBackEnd.getUIState().getMainFileSegs().get(0);
-        simpleBackEnd.acceptAction(new EditThai(firstSeg, "test"));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        mf = simpleBackEnd.getState().getMainFile();
+        StateCopier simpleStateCopy = new StateCopier(simpleDispatcher.getState());
+        Segment firstSeg = simpleDispatcher.getUIState().getMainFileSegs().get(0);
+        simpleDispatcher.acceptAction(new EditThai(firstSeg, "test"));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        mf = simpleDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // editThai the last seg then undo
-        Segment lastSeg = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        simpleBackEnd.acceptAction(new EditThai(lastSeg, "test"));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        mf = simpleBackEnd.getState().getMainFile();
+        Segment lastSeg = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        simpleDispatcher.acceptAction(new EditThai(lastSeg, "test"));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        mf = simpleDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // committed state
         // editThai the first seg then undo
-        StateCopier committedStateCopy = new StateCopier(committedBackEnd.getState());
-        firstSeg = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new EditThai(firstSeg, "test"));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        StateCopier committedStateCopy = new StateCopier(committedDispatcher.getState());
+        firstSeg = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new EditThai(firstSeg, "test"));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // editThai the last seg then undo
-        lastSeg = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        committedBackEnd.acceptAction(new EditThai(lastSeg, "test"));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        lastSeg = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        committedDispatcher.acceptAction(new EditThai(lastSeg, "test"));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
 
@@ -285,52 +285,52 @@ public class UndoManagerTest {
     @Test
     public void testUndoSplit() {
         // empty state
-        StateCopier emptyStateCopy = new StateCopier(emptyBackEnd.getState());
-        emptyBackEnd.acceptAction(new Split(TestObjectBuilder.getTestSeg(), 1));
-        emptyBackEnd.undo();
-        BasicFile mf = emptyBackEnd.getState().getMainFile();
-        assertEquals(true, emptyStateCopy.compare(emptyBackEnd.getState()));
+        StateCopier emptyStateCopy = new StateCopier(emptyDispatcher.getState());
+        emptyDispatcher.acceptAction(new Split(TestObjectBuilder.getTestSeg(), 1));
+        emptyDispatcher.undo();
+        BasicFile mf = emptyDispatcher.getState().getMainFile();
+        assertEquals(true, emptyStateCopy.compare(emptyDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // one segment state
         // split the only segment in the main file
-        StateCopier oneSegStateCopy = new StateCopier(oneSegBackEnd.getState());
-        Segment onlyExistantSeg = oneSegBackEnd.getUIState().getMainFileSegs().get(0);
-        oneSegBackEnd.acceptAction(new Split(onlyExistantSeg, 1));
-        oneSegBackEnd.undo();
-        assertEquals(true, oneSegStateCopy.compare(oneSegBackEnd.getState()));
+        StateCopier oneSegStateCopy = new StateCopier(oneSegDispatcher.getState());
+        Segment onlyExistantSeg = oneSegDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegDispatcher.acceptAction(new Split(onlyExistantSeg, 1));
+        oneSegDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // generic, simple state
         // split the first seg then undo
-        StateCopier simpleStateCopy = new StateCopier(simpleBackEnd.getState());
-        Segment firstSeg = simpleBackEnd.getUIState().getMainFileSegs().get(0);
-        simpleBackEnd.acceptAction(new Split(firstSeg, 1));
-        simpleBackEnd.undo();
+        StateCopier simpleStateCopy = new StateCopier(simpleDispatcher.getState());
+        Segment firstSeg = simpleDispatcher.getUIState().getMainFileSegs().get(0);
+        simpleDispatcher.acceptAction(new Split(firstSeg, 1));
+        simpleDispatcher.undo();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // split the last seg then undo
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        Segment lastSeg = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        simpleBackEnd.acceptAction(new Split(lastSeg, 1));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        Segment lastSeg = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        simpleDispatcher.acceptAction(new Split(lastSeg, 1));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // committed state
         // editThai the first seg then undo
-        StateCopier committedStateCopy = new StateCopier(committedBackEnd.getState());
-        firstSeg = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new Split(firstSeg, 1));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        StateCopier committedStateCopy = new StateCopier(committedDispatcher.getState());
+        firstSeg = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new Split(firstSeg, 1));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // editThai the last seg then undo
-        lastSeg = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        committedBackEnd.acceptAction(new Split(lastSeg, 1));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        lastSeg = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        committedDispatcher.acceptAction(new Split(lastSeg, 1));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
 
@@ -340,58 +340,58 @@ public class UndoManagerTest {
     @Test
     public void testUndoMerge() {
         // empty state
-        StateCopier emptyStateCopy = new StateCopier(emptyBackEnd.getState());
-        emptyBackEnd.acceptAction(new Merge(new ArrayList<Segment>()));
-        emptyBackEnd.undo();
-        BasicFile mf = emptyBackEnd.getState().getMainFile();
-        assertEquals(true, emptyStateCopy.compare(emptyBackEnd.getState()));
+        StateCopier emptyStateCopy = new StateCopier(emptyDispatcher.getState());
+        emptyDispatcher.acceptAction(new Merge(new ArrayList<Segment>()));
+        emptyDispatcher.undo();
+        BasicFile mf = emptyDispatcher.getState().getMainFile();
+        assertEquals(true, emptyStateCopy.compare(emptyDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // one segment state
         // "merge" the only segment in the main file
-        StateCopier oneSegStateCopy = new StateCopier(oneSegBackEnd.getState());
-        Segment onlyExistantSeg = oneSegBackEnd.getUIState().getMainFileSegs().get(0);
-        oneSegBackEnd.acceptAction(new Merge(Arrays.asList(onlyExistantSeg)));
-        oneSegBackEnd.undo();
-        assertEquals(true, oneSegStateCopy.compare(oneSegBackEnd.getState()));
+        StateCopier oneSegStateCopy = new StateCopier(oneSegDispatcher.getState());
+        Segment onlyExistantSeg = oneSegDispatcher.getUIState().getMainFileSegs().get(0);
+        oneSegDispatcher.acceptAction(new Merge(Arrays.asList(onlyExistantSeg)));
+        oneSegDispatcher.undo();
+        assertEquals(true, oneSegStateCopy.compare(oneSegDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // generic, simple state
         // merge first two segs, then undo
-        StateCopier simpleStateCopy = new StateCopier(simpleBackEnd.getState());
-        Segment firstSeg = simpleBackEnd.getUIState().getMainFileSegs().get(0);
-        Segment secondSeg = simpleBackEnd.getUIState().getMainFileSegs().get(1);
-        simpleBackEnd.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
-        simpleBackEnd.undo();
+        StateCopier simpleStateCopy = new StateCopier(simpleDispatcher.getState());
+        Segment firstSeg = simpleDispatcher.getUIState().getMainFileSegs().get(0);
+        Segment secondSeg = simpleDispatcher.getUIState().getMainFileSegs().get(1);
+        simpleDispatcher.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
+        simpleDispatcher.undo();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // merge the last three segs, then undo
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
-        Segment seg1 = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        Segment seg2 = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex - 1);
-        Segment seg3 = simpleBackEnd.getUIState().getMainFileSegs().get(lastSegIndex - 2);
-        simpleBackEnd.acceptAction(new Merge(Arrays.asList(seg1, seg2, seg3)));
-        simpleBackEnd.undo();
-        assertEquals(true, simpleStateCopy.compare(simpleBackEnd.getState()));
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
+        Segment seg1 = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        Segment seg2 = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex - 1);
+        Segment seg3 = simpleDispatcher.getUIState().getMainFileSegs().get(lastSegIndex - 2);
+        simpleDispatcher.acceptAction(new Merge(Arrays.asList(seg1, seg2, seg3)));
+        simpleDispatcher.undo();
+        assertEquals(true, simpleStateCopy.compare(simpleDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
 
         // committed state
         // editThai the first seg then undo
-        StateCopier committedStateCopy = new StateCopier(committedBackEnd.getState());
-        firstSeg = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        secondSeg = committedBackEnd.getUIState().getMainFileSegs().get(1);
-        committedBackEnd.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        StateCopier committedStateCopy = new StateCopier(committedDispatcher.getState());
+        firstSeg = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        secondSeg = committedDispatcher.getUIState().getMainFileSegs().get(1);
+        committedDispatcher.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
         // editThai the last seg then undo
-        seg1 = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex);
-        seg2 = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex - 1);
-        seg3 = committedBackEnd.getUIState().getMainFileSegs().get(lastSegIndex - 2);
-        committedBackEnd.acceptAction(new Merge(Arrays.asList(seg1, seg2, seg3)));
-        committedBackEnd.undo();
-        assertEquals(true, committedStateCopy.compare(committedBackEnd.getState()));
-        mf = committedBackEnd.getState().getMainFile();
+        seg1 = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex);
+        seg2 = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex - 1);
+        seg3 = committedDispatcher.getUIState().getMainFileSegs().get(lastSegIndex - 2);
+        committedDispatcher.acceptAction(new Merge(Arrays.asList(seg1, seg2, seg3)));
+        committedDispatcher.undo();
+        assertEquals(true, committedStateCopy.compare(committedDispatcher.getState()));
+        mf = committedDispatcher.getState().getMainFile();
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
 
@@ -402,47 +402,47 @@ public class UndoManagerTest {
     public void testUndoMergeAndSplit() {
 
         // "save" the committed state
-        StateCopier state1Copy = new StateCopier(committedBackEnd.getState());
-        BasicFile mf = committedBackEnd.getState().getMainFile();
+        StateCopier state1Copy = new StateCopier(committedDispatcher.getState());
+        BasicFile mf = committedDispatcher.getState().getMainFile();
         System.out.println("State1Copy = " + state1Copy.mainFileCopy);
-        assertEquals(true, state1Copy.compare(committedBackEnd.getState()));
+        assertEquals(true, state1Copy.compare(committedDispatcher.getState()));
 
         // merge first two segments
-        Segment firstSeg = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        Segment secondSeg = committedBackEnd.getUIState().getMainFileSegs().get(1);
-        committedBackEnd.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
-        StateCopier state2Copy = new StateCopier(committedBackEnd.getState());
+        Segment firstSeg = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        Segment secondSeg = committedDispatcher.getUIState().getMainFileSegs().get(1);
+        committedDispatcher.acceptAction(new Merge(Arrays.asList(firstSeg, secondSeg)));
+        StateCopier state2Copy = new StateCopier(committedDispatcher.getState());
         System.out.println("State2Copy = " + state2Copy.mainFileCopy);
-        assertEquals(true, state2Copy.compare(committedBackEnd.getState()));
+        assertEquals(true, state2Copy.compare(committedDispatcher.getState()));
 
         // commit this newly merged segment 
-        Segment mergeResult = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new Commit(mergeResult));
-        StateCopier state3Copy = new StateCopier(committedBackEnd.getState());
+        Segment mergeResult = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new Commit(mergeResult));
+        StateCopier state3Copy = new StateCopier(committedDispatcher.getState());
         System.out.println("State3Copy = " + state3Copy.mainFileCopy);
-        assertEquals(true, state3Copy.compare(committedBackEnd.getState()));
+        assertEquals(true, state3Copy.compare(committedDispatcher.getState()));
 
         // split the newly merged segment
-        Segment commitResult = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new Split(commitResult, 1));
-        StateCopier state4Copy = new StateCopier(committedBackEnd.getState());
+        Segment commitResult = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new Split(commitResult, 1));
+        StateCopier state4Copy = new StateCopier(committedDispatcher.getState());
         System.out.println("State4Copy = " + state4Copy.mainFileCopy);
-        assertEquals(true, state4Copy.compare(committedBackEnd.getState()));
+        assertEquals(true, state4Copy.compare(committedDispatcher.getState()));
 
         // commit the newly split segment
-        Segment splitResult = committedBackEnd.getUIState().getMainFileSegs().get(0);
-        committedBackEnd.acceptAction(new Commit(splitResult));
-        System.out.println("Final = " + committedBackEnd.getState().getMainFile());
+        Segment splitResult = committedDispatcher.getUIState().getMainFileSegs().get(0);
+        committedDispatcher.acceptAction(new Commit(splitResult));
+        System.out.println("Final = " + committedDispatcher.getState().getMainFile());
 
         // undo three times, comparing each time with the saved states and the database
-        committedBackEnd.undo();
-        assertEquals(true, state4Copy.compare(committedBackEnd.getState()));
+        committedDispatcher.undo();
+        assertEquals(true, state4Copy.compare(committedDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        committedBackEnd.undo();
-        assertEquals(true, state3Copy.compare(committedBackEnd.getState()));
+        committedDispatcher.undo();
+        assertEquals(true, state3Copy.compare(committedDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
-        committedBackEnd.undo();
-        assertEquals(true, state2Copy.compare(committedBackEnd.getState()));
+        committedDispatcher.undo();
+        assertEquals(true, state2Copy.compare(committedDispatcher.getState()));
         assertEquals(mf, DatabaseOperations.getFile(mf.getFileID()));
     }
 

@@ -2,7 +2,7 @@ package DataStructures;
 
 import Database.DatabaseOperations;
 import State.DatabaseManager;
-import State.TopLevelBackEnd;
+import State.Dispatcher;
 import State.State;
 import State.UndoManager;
 import java.util.ArrayList;
@@ -140,8 +140,10 @@ public class TestObjectBuilder {
     public static State getCommittedTestState() {
         BasicFile mainFile = getTestFile();
         mainFile.commitAllSegs();
+        State state = new State(getCommittedTestCorpus());
+        state.setMainFile(mainFile);
 
-        return new State(mainFile, getCommittedTestCorpus());
+        return state;
     }
 
     /**
@@ -151,7 +153,9 @@ public class TestObjectBuilder {
      * @return
      */
     public static State getTestState() {
-        return new State(getTestFile(), getTestCorpus());
+        State state = new State(getTestCorpus());
+        state.setMainFile(getTestFile());
+        return state;
     }
 
     /**
@@ -164,7 +168,9 @@ public class TestObjectBuilder {
         BasicFile bf = new BasicFile();
         List<BasicFile> fileList = new ArrayList();
         fileList.add(bf);
-        return new State(bf, fileList);
+        State state = new State(fileList);
+        state.setMainFile(bf);
+        return state;
     }
 
     /**
@@ -175,15 +181,18 @@ public class TestObjectBuilder {
      * @return a state with a single file with a single segment
      */
     public static State getOneSegState() {
-        return new State(getOneSegFile(), new ArrayList());
+        State state = new State(new ArrayList());
+        state.setMainFile(getOneSegFile());
+        return state;
     }
 
     public static Segment getTestSeg() {
         return (new SegmentBuilder()).createSegment();
     }
     
-    public static TopLevelBackEnd getDispatcher(BasicFile f, List<BasicFile> fileList) {
-        State state = new State(f, fileList);
-        return new TopLevelBackEnd(new DatabaseManager(state), state, new UndoManager());
+    public static Dispatcher getDispatcher(BasicFile f, List<BasicFile> fileList) {
+        State state = new State(fileList);
+        state.setMainFile(f);
+        return new Dispatcher(state);
     }
 }

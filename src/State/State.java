@@ -6,6 +6,7 @@ import DataStructures.BasicFile;
 import DataStructures.Segment;
 import comparator.MatchManager;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import javafx.collections.ObservableList;
 
@@ -41,7 +42,7 @@ public class State {
     private Segment segSelected;
 
     
-    public State(BasicFile mainFile, List<BasicFile> fileList) {
+    public State(List<BasicFile> fileList) {
 
         uiState = new UIState();
 
@@ -50,18 +51,17 @@ public class State {
 
         this.corpus = fileList;
         
-
+/*
         // the following code ensures that the file selected as main file is in fact in the corpus
         corpus.remove(mainFile);
         BasicFile mf = new BasicFile(mainFile);
         corpus.add(mf);
 
-        setMainFile(mf);
+        setMainFile(mf);*/
 
         //matchManager = new MatchManager(this);
-        matchManager = new MatchManager(BasicFile.getAllCommittedSegsInFileList(corpus));
-
-        mf.equals(mainFile);
+        HashSet<Segment> allCommittedSegsInCorpus = BasicFile.getAllCommittedSegsInFileList(corpus);
+        matchManager = new MatchManager(allCommittedSegsInCorpus);
 
         uiState.setAllFilesInCorpus(corpus);
     }
@@ -70,7 +70,15 @@ public class State {
         return mainFile;
     }
 
+    /**
+     * Sets the specified file as the current main file for translating. If the file previously did not exist in the corpus, it adds it.
+     * @param newMainFile 
+     */
     public final void setMainFile(BasicFile newMainFile) {
+        if (! corpus.contains(newMainFile)) {
+            this.addFileToCorpus(newMainFile);
+        }
+            
         this.mainFile = newMainFile;
         if (!newMainFile.getActiveSegs().isEmpty()) {
             segSelected = newMainFile.getActiveSegs().get(0);
@@ -98,7 +106,6 @@ public class State {
      */
     public void setMinLength(int minMatchLength) {
         this.minMatchLength = minMatchLength;
-        //uiState.setMatchList(findMatch(segSelected).getMatchSegments());
     }
     
     public List<BasicFile> getCorpusFiles() {
@@ -141,19 +148,22 @@ public class State {
      */
     public boolean replaceSegInFile(Segment oldSeg, Segment newSeg, BasicFile file) {
 
-        ObservableList<Segment> mfActiveSegs = file.getActiveSegs();
+        ObservableList<Segment> activeSegsInFile = file.getActiveSegs();
         // checks to make sure oldSeg exists in MainFile active segs
-        if (!mfActiveSegs.contains(oldSeg)) {
+        if (!activeSegsInFile.contains(oldSeg)) {
             return false;
         } else {
-            int index = mfActiveSegs.indexOf(oldSeg);
+            int index = activeSegsInFile.indexOf(oldSeg);
             // replaces the oldSeg with the newSeg at that index
-            mfActiveSegs.set(index, newSeg);
+            activeSegsInFile.set(index, newSeg);
             // adds the oldSeg to the "hidden" list, in case it was committed, so it can be later found in searches but is not displayed on screen
             file.getHiddenSegs().add(oldSeg);
 
             //adjusts Postings Lists (so the newSeg can be found in searches if it is committed)
-            matchManager.includeSegmentInMatches(newSeg);
+            boolean bool = matchManager.includeSegmentInMatches(newSeg);
+            // TEMP DELETE
+            System.out.println("file is equal to main file? " + file.equals(mainFile));
+            System.out.println("result of matchManager include seg: " + bool);
 
             return true;
         }
@@ -229,4 +239,20 @@ public class State {
     }
 
 
+    /**
+     * Because some data (like the postings lists) depend on the corpus, the list of files in the corpus should not be modified directly, as this may not update the other data. 
+     * 
+     * @param file
+     * @return true if file was added, false if file already existed in corpus
+     */
+    protected boolean addFileToCorpus(BasicFile file) {
+        if (corpus.contains(file)) {
+            return false;
+        } else {
+            corpus.add(file); // add to corpus
+            file.getAllSegs().forEach(seg -> 
+                    matchManager.includeSegmentInMatches(seg)); // add to MatchManager
+            return true;
+        }
+    }
 }

@@ -27,7 +27,7 @@ public class Commit implements MutateFileAction {
     }
 
     public Commit(List<Segment> segList) {
-        // NEED TO DEFENSIVELY COPY because JavaFX always has seglist list point back to activeSegsList in main file (thus causing concurrent modification issues). 
+        // NEED TO DEFENSIVELY COPY because JavaFX always points back to activeSegsList in main file (thus causing concurrent modification issues). 
         List<Segment> listCopy = new ArrayList();
         segList.forEach((s) -> {
             listCopy.add(Segment.getDeepCopy(s));
@@ -40,9 +40,9 @@ public class Commit implements MutateFileAction {
         for (Segment seg : segList) {
             // if the seg is already committed, then do nothing. 
             if (!seg.isCommitted()) {
-                SegmentBuilder sb = new SegmentBuilder(seg);
-                sb.setCommitted(true);
-                state.replaceSegInFile(seg, sb.createSegmentNewID(), state.getMainFile());
+                SegmentBuilder segBuilder = new SegmentBuilder(seg);
+                segBuilder.setCommitted(true);
+                state.replaceSegInFile(seg, segBuilder.createSegmentNewID(), state.getMainFile());
             }
         }
     }

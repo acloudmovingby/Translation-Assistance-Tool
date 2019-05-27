@@ -39,8 +39,7 @@ public class MatchManager {
     }
 
     /**
-     * Returns a list of matching Segments for the specified
-     * segment.
+     * Returns a list of matching Segments for the specified segment.
      *
      * @param seg
      * @param minMatchLength
@@ -48,28 +47,41 @@ public class MatchManager {
      */
     public List<MatchSegment> basicMatch(Segment seg, int minMatchLength) {
 
+        // Here, if the minMatchLength is less than 8, then the postings list with that exact size algorithm is retrieved. Otherwise the 8-character ngram postings list is retrieved. 
         PostingsList pl = plm.getPostingsList(
                 (minMatchLength <= 8 ? minMatchLength : 8));
+
+        // TEMP FOR CHECKING SIZE OF POSTINGS LIST - DELETE LATER
+        for (PostingsList postingsList : plm.getAllPostingsLists()) {
+            int totalSegs = postingsList.getMap().values().stream().mapToInt(a -> a.size()).sum();
+            System.out.println("PL" + postingsList.getNGramLength() + ": total Ngrams = " + postingsList.getMap().size() + ", total segs contained = " + totalSegs);
+        }
         return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
     }
 
     /**
-     * Notifies MatchManager that a segment should now be included in match
-     * searches. (because it was committed, restored to the MainFile after undo,
-     * etc.)
+     * Notifies MatchManager that a committed segment should now be included in
+     * match searches. (because it was just committed by the user, restored to
+     * the MainFile after undo, etc.) If the segment is not committed, nothing
+     * is done.
      *
+     * 
      * @param newSeg
      */
-    public void includeSegmentInMatches(Segment newSeg) {
-        plm.addSegment(newSeg);
+    public boolean includeSegmentInMatches(Segment newSeg) {
+        if (newSeg.isCommitted()) {
+            plm.addSegment(newSeg);
 
-        // for each minimum length, look through the cache and if source segs now match with newSeg, then add the match to the MatchList
-        basicMatchCache.forEach((length, cache) -> {
-            cache.forEach((sourceSeg, matchList) -> {
-                MatchFindingAlgorithms.singleSegBasicMatch(sourceSeg, newSeg, length)
-                        .ifPresent((matchSeg) -> matchList.add(matchSeg));
+            // for each minimum length, look through the cache and if source segs now match with newSeg, then add the match to the MatchList
+            basicMatchCache.forEach((length, cache) -> {
+                cache.forEach((sourceSeg, matchList) -> {
+                    MatchFindingAlgorithms.singleSegBasicMatch(sourceSeg, newSeg, length)
+                            .ifPresent((matchSeg) -> matchList.add(matchSeg));
+                });
             });
-        });
+            return true;
+        }
+        return false;
     }
 
     /**

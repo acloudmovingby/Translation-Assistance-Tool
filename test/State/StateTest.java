@@ -70,16 +70,18 @@ public class StateTest {
         simpleCommittedState = TestObjectBuilder.getCommittedTestState();
 
         // state where the "mainFile" is already in corpus
-        List<BasicFile> c1 = TestObjectBuilder.getCommittedTestCorpus();
-        System.out.println(c1);
-        numFiles = c1.size();
-        state1 = new State(c1.get(0), c1);
+        List<BasicFile> corpus1 = TestObjectBuilder.getCommittedTestCorpus();
+        System.out.println(corpus1);
+        numFiles = corpus1.size();
+        state1 = new State(corpus1);
+        state1.setMainFile(corpus1.get(0));
 
         // state where the mainfile was created outside of corpus
-        List<BasicFile> c2 = (TestObjectBuilder.getCommittedTestCorpus());
+        List<BasicFile> corpus2 = (TestObjectBuilder.getCommittedTestCorpus());
         BasicFile bf = TestObjectBuilder.getTestFile();
         bf.commitAllSegs();
-        state2 = new State(bf, c2);
+        state2 = new State(corpus2);
+        state2.setMainFile(bf);
     }
 
     @After

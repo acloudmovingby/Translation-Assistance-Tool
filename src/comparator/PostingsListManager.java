@@ -28,7 +28,7 @@ public class PostingsListManager {
         this.committedSegments = committedSegments;
 
         plList = new ArrayList();
-        for (int i = 4; i < 9; i++) {
+        for (int i = 3; i < 8; i++) {
             plList.add(new PostingsList(i));
         }
 
@@ -69,7 +69,7 @@ public class PostingsListManager {
      * Returns the size of all postings lists stored in this
      * PostingsListManager. The size of a postings list is equivalent to the
      * number of distinct ngrams it has stored in its hash table (where key is
-     * the ngram and value is the list of segs with that ngram).
+     * the ngram and value is the list of Segments with that ngram).
      *
      * @return
      */
@@ -81,4 +81,8 @@ public class PostingsListManager {
         return ret;
     }
 
+    public List<PostingsList> getAllPostingsLists() {
+        return plList;
+    }
+    
 }

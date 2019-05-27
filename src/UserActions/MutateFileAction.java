@@ -10,7 +10,7 @@ import State.State;
 /**
  * Represents a user action that directly affects segments in a file.
  * 
- * They are sent by the {@link Controller} to the TopLevelBackEnd.
+ * They are sent by the {@link Controller} to the Dispatcher.
  *
  * @author Chris
  * 

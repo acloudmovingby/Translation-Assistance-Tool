@@ -43,10 +43,6 @@ public class UIState {
         mainFileName = "";
     }
 
-    protected void setMainFileSegs(ObservableList<Segment> segList) {
-        this.mainFileSegs = segList;
-    }
-    
     /**
      * Returns the list of segments from the main file (the file currently being
      * translated).
@@ -56,6 +52,19 @@ public class UIState {
     public ObservableList<Segment> getMainFileSegs() {
         return mainFileSegs;
     }
+    
+    /**
+     * Should be used when a new file is made the main file.
+     * 
+     * Because this is a link to a segment list contained with the file, as the file's segments are removed/added, this will reflect that automatically (no need to call this every time the user does some file-affecting action).
+     *
+     * @param segList 
+     */
+    protected void setMainFileSegs(ObservableList<Segment> segList) {
+        this.mainFileSegs = segList;
+    }
+    
+    
 
     /**
      * Returns the list of matching segments to be shown in the bottom part of

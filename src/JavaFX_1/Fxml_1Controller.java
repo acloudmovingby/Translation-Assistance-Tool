@@ -7,7 +7,7 @@ import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import Database.DatabaseOperations;
-import State.TopLevelBackEnd;
+import State.Dispatcher;
 import State.UIState;
 import UserActions.Commit;
 import UserActions.EditEnglish;
@@ -52,7 +52,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 
 /**
- * FXML Controller class does: (1) registers user input to pass on to back end and (2) controls UI with any components that can't be done in CSS/FXML (such as dynamic content that I found hard to do in the SceneBuilder).
+ * FXML Controller class does: (1) registers user input to pass on to  Dispatcher and (2) controls UI with any components that can't be done in CSS/FXML (such as dynamic content that I found hard to do in the SceneBuilder).
  *
  * This class primarily wiring between the UI code and the business logic classes, but performs no business logic itself.
  * 
@@ -185,7 +185,7 @@ public class Fxml_1Controller implements Initializable {
     /**
      * ****************
      * 
-     * Back End Objects
+     * "Model" Objects (model as in "Model-View-Controller")
      * 
      * ***************
      */
@@ -193,7 +193,7 @@ public class Fxml_1Controller implements Initializable {
     String committedStatusColor;
     String unCommittedStatusColor;
 
-    TopLevelBackEnd backEnd;
+    Dispatcher dispatcher;
     UIState uiState;
 
     /**
@@ -288,7 +288,7 @@ public class Fxml_1Controller implements Initializable {
         // LOAD FILE ICONS
         Image loadFileIconImage = new Image(getClass().getResource("/JavaFX_1/BlankFileIcon.png").toExternalForm());
 
-        // Creates the actual icons (which are buttons to open a file for translation) and include the standard blank file icon image, the name of the file, and any listeners (?)
+        // Creates the actual icons (which are buttons to open a file for translation) and include the standard blank file icon image, the name of the file, and a listener for when the user clicks on it
         for (BasicFile file : uiState.getAllFiles()) {
             ImageView loadFileIconIV = new ImageView(loadFileIconImage);
             loadFileIconIV.setFitWidth(110);
@@ -349,7 +349,7 @@ public class Fxml_1Controller implements Initializable {
             if (editedSeg != null) {
                 SegmentBuilder sb = new SegmentBuilder(editedSeg);
                 editedSeg = sb.createSegment();
-                backEnd.acceptAction(new EditThai(editedSeg, e.getNewValue()));
+                dispatcher.acceptAction(new EditThai(editedSeg, e.getNewValue()));
             }
         });
 
@@ -361,7 +361,7 @@ public class Fxml_1Controller implements Initializable {
             if (editedSeg != null) {
                 SegmentBuilder sb = new SegmentBuilder(editedSeg);
                 editedSeg = sb.createSegment();
-                backEnd.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
+                dispatcher.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
             }
         }
         );
@@ -456,7 +456,7 @@ public class Fxml_1Controller implements Initializable {
          */
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                backEnd.newSelection(newSelection);
+                dispatcher.newSelection(newSelection);
             }
         }
         );
@@ -537,7 +537,7 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     protected void minMatchLengthChanged(ActionEvent event) {
-        backEnd.setMinLength(Integer.valueOf(minMatchLengthField.getText()));
+        dispatcher.setMinLength(Integer.valueOf(minMatchLengthField.getText()));
     }
 
     @FXML
@@ -550,7 +550,7 @@ public class Fxml_1Controller implements Initializable {
     private void merge(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            backEnd.acceptAction(new Merge(selectedItems));
+            dispatcher.acceptAction(new Merge(selectedItems));
         }
     }
 
@@ -559,7 +559,7 @@ public class Fxml_1Controller implements Initializable {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
 
-            backEnd.acceptAction(new Commit(selectedItems));
+            dispatcher.acceptAction(new Commit(selectedItems));
         }
     }
 
@@ -567,7 +567,7 @@ public class Fxml_1Controller implements Initializable {
     private void uncommit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-            backEnd.acceptAction(new Uncommit(selectedItems));
+            dispatcher.acceptAction(new Uncommit(selectedItems));
         }
     }
 
@@ -587,16 +587,16 @@ public class Fxml_1Controller implements Initializable {
 
             // only splits if one row is selected
             if (selectedItems.size() == 1) {
-                // sends that row to back end
+                // sends that row to dispatcher
                 Segment seg = selectedItems.get(0);
-                backEnd.acceptAction(new Split(selectedItems.get(0), 10));
+                dispatcher.acceptAction(new Split(selectedItems.get(0), 10));
             }
         }
     }
 
     @FXML
     private void export(ActionEvent event) {
-        backEnd.exportCommittedSegs();
+        dispatcher.exportCommittedSegs();
     }
 
     /**
@@ -656,18 +656,18 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     private void undo(ActionEvent event) {
-        backEnd.undo();
+        dispatcher.undo();
     }
 
     @FXML
     private void redo(ActionEvent event) {
-        backEnd.redo();
+        dispatcher.redo();
     }
 
     /**
      * Key method for initializing the state for a given main file. Creates a
      * new StateBuilder which in turn creates the various key components of the
-     * program (TopLevelBackEnd, State, UIState) that are intrinsically linked to the
+     * program (Dispatcher, State, UIState) that are intrinsically linked to the
      * main file being translated. If a new file is being made the main file
      * (such as when opening an old translation project or starting a new one),
      * all of these should be reset.
@@ -685,9 +685,10 @@ public class Fxml_1Controller implements Initializable {
      * @param bf The new main file to be translated
      */
     private void setMainFile(BasicFile newMainFile) {
+        
         StateBuilder stateBuilder = new StateBuilder(newMainFile, DatabaseOperations.getAllFiles());
         uiState = stateBuilder.getUIState();
-        backEnd = stateBuilder.getTopLevelBackEnd();
+        dispatcher = stateBuilder.getDispatcher();
 
         // UI THINGS THAT DEPEND ON MAINFILE
         // sets title at top to the name of the file

@@ -63,7 +63,8 @@ public class MatchFinderTest {
         Segment corpusSeg1 = sb.createSegment();
         bf1.addSeg(corpusSeg1);
         corpus.add(bf1);
-        State state = new State(bf1, corpus);
+        State state = new State(corpus);
+        state.setMainFile(bf1);
 
         // makes a second file with 1 segment: mainFileSeg
         // mainFileSeg has Thai text of "test"
@@ -92,7 +93,8 @@ public class MatchFinderTest {
         sb.setCommitted(true);
         Segment corpusSeg2 = sb.createSegment();
         bf1.addSeg(corpusSeg2);
-        state = new State(bf1, corpus);
+        state = new State(corpus);
+        state.setMainFile(bf1);
 
         state.setMinLength(3);
         pl = state.getPostingsList(
@@ -107,7 +109,8 @@ public class MatchFinderTest {
         sb.setCommitted(true);
         Segment seg3 = sb.createSegmentNewID();
         bf1.addSeg(seg3);
-        state = new State(bf1, corpus);
+        state = new State(corpus);
+        state.setMainFile(bf1);
         state.setMinLength(3);
         pl = state.getPostingsList(
                 (state.getMinMatchLength() <= 8 ? state.getMinMatchLength() : 8));

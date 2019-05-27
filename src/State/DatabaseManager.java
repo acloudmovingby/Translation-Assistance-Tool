@@ -18,11 +18,13 @@ import java.util.List;
  */
 public class DatabaseManager {
     
-    HashMap<Integer,BasicFile> priorFileVersions;
+    /**
+     * Keys are file ids, values are the previously backed up version of that file 
+     */
+    private final HashMap<Integer,BasicFile> priorFileVersions;
 
-    public DatabaseManager(State state) {
+    public DatabaseManager() {
         priorFileVersions = new HashMap();
-        push(state);
     }
 
     /**
@@ -32,28 +34,8 @@ public class DatabaseManager {
      * 
      * @param state 
      */
-    final protected void push(State state) {
+    protected final void push(State state) {
         backupFile(state.getMainFile());
-    }
-    
-    /**
-     * Finds what segments previously existed in the file but now no longer do.
-     * 
-     * @param priorFileVersion Previous version of the file.
-     * @param file Current version of the file.
-     * @return Segments that use to exist in file but now don't.
-     */
-    private List<Segment> findMissingSegs(BasicFile priorFileVersion, BasicFile file) {
-        // if it exists in priorbackup, but doesn't exist in mf, then add to 'missing segs' list
-        List<Segment> mainFileSegs = file.getAllSegs();
-        List<Segment> missingSegs = new ArrayList();
-
-        priorFileVersion.getAllSegs().stream()
-                .filter((s) -> (!mainFileSegs.contains(s)))
-                .forEachOrdered((s) -> {
-                    missingSegs.add(s);
-                });
-        return missingSegs;
     }
 
     /**
@@ -93,6 +75,26 @@ public class DatabaseManager {
                     DatabaseOperations.removeSeg(s.getID());
                 });
             }
+    }
+    
+    /**
+     * Finds what segments previously existed in the file but now no longer do.
+     * 
+     * @param priorFileVersion Previous version of the file.
+     * @param file Current version of the file.
+     * @return Segments that use to exist in file but now don't.
+     */
+    private List<Segment> findMissingSegs(BasicFile priorFileVersion, BasicFile file) {
+        // if it exists in priorbackup, but doesn't exist in mf, then add to 'missing segs' list
+        List<Segment> mainFileSegs = file.getAllSegs();
+        List<Segment> missingSegs = new ArrayList();
+
+        priorFileVersion.getAllSegs().stream()
+                .filter((s) -> (!mainFileSegs.contains(s)))
+                .forEachOrdered((s) -> {
+                    missingSegs.add(s);
+                });
+        return missingSegs;
     }
     
 }

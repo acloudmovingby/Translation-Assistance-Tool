@@ -9,7 +9,7 @@ import DataStructures.BasicFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
-import State.TopLevelBackEnd;
+import State.Dispatcher;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -53,7 +53,7 @@ public class MergeTest {
             // create test objects
             List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
             BasicFile mainFile = c.get(0);
-            TopLevelBackEnd d = TestObjectBuilder.getDispatcher(mainFile, c);
+            Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
             mainFile = d.getState().getMainFile();
 
             // makes 5 segments

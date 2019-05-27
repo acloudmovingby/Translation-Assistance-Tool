@@ -147,7 +147,7 @@ public class MatchManagerTest {
         assertEquals(emptyML, matchManager.basicMatch(segAB, 3));
 
         matchManager.includeSegmentInMatches(segA);
-        assertEquals(new ArrayList(), matchManager.basicMatch(segB, 3));
+        assertEquals(emptyML, matchManager.basicMatch(segB, 3));
         assertEquals(matchWithA, matchManager.basicMatch(segA, 3));
     }
 

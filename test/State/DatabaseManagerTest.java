@@ -56,7 +56,8 @@ public class DatabaseManagerTest {
         // test with an empty main file
         State emptyState = TestObjectBuilder.getEmptyState();
         BasicFile emptyMF = emptyState.getMainFile();
-        DatabaseManager dmEmpty = new DatabaseManager(emptyState);
+        DatabaseManager dmEmpty = new DatabaseManager();
+        dmEmpty.push(emptyState);
         // checks to see that the file is in the db already
         assertEquals(emptyMF, DatabaseOperations.getFile(emptyMF.getFileID()));
         // checks to see that the file is the same even after backing up the unchanged file
@@ -64,7 +65,8 @@ public class DatabaseManagerTest {
         assertEquals(emptyMF, DatabaseOperations.getFile(emptyMF.getFileID()));
 
         State state = TestObjectBuilder.getTestState();
-        DatabaseManager dm = new DatabaseManager(state);
+        DatabaseManager dm = new DatabaseManager();
+        dm.push(state);
         BasicFile mf = state.getMainFile();
         int fileID = mf.getFileID();
 
@@ -131,7 +133,8 @@ public class DatabaseManagerTest {
         // have a file, make sure it's backed up
         State state = TestObjectBuilder.getTestState();
         BasicFile mainFile = state.getMainFile();
-        DatabaseManager dm = new DatabaseManager(state);
+        DatabaseManager dm = new DatabaseManager();
+        dm.push(state);
 
         SegmentBuilder sb = new SegmentBuilder(mainFile);
         mainFile.getHiddenSegs().add(sb.createSegment());
