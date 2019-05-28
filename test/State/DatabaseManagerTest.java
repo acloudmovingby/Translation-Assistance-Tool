@@ -48,7 +48,8 @@ public class DatabaseManagerTest {
      */
     @Test
     public void testBackupMainFile() {
-        DatabaseOperations.rebootDB();
+        
+        //DatabaseOperations.rebootDB();
 
         System.out.println("backupMainFile");
 

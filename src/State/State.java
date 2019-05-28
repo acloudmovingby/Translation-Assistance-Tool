@@ -78,7 +78,6 @@ public class State {
         if (! corpus.contains(newMainFile)) {
             this.addFileToCorpus(newMainFile);
         }
-            
         this.mainFile = newMainFile;
         if (!newMainFile.getActiveSegs().isEmpty()) {
             segSelected = newMainFile.getActiveSegs().get(0);
@@ -160,11 +159,8 @@ public class State {
             file.getHiddenSegs().add(oldSeg);
 
             //adjusts Postings Lists (so the newSeg can be found in searches if it is committed)
-            boolean bool = matchManager.includeSegmentInMatches(newSeg);
-            // TEMP DELETE
-            System.out.println("file is equal to main file? " + file.equals(mainFile));
-            System.out.println("result of matchManager include seg: " + bool);
-
+            matchManager.includeSegmentInMatches(newSeg);
+            
             return true;
         }
     }

@@ -132,11 +132,13 @@ public class Dispatcher {
      * @param file 
      */
     public void setMainFile(BasicFile file) {
+        System.out.println("dispatcher called");
         // set state's main file
         state.setMainFile(file);
         
-        // reset UIState's mainFileSegs
-        getUIState().setMainFileSegs(file.getActiveSegs());
+        // reset UIState properties
+        getUIState().setMainFileSegs(state.getMainFile().getActiveSegs());
+        getUIState().setMainFileName(state.getMainFile().getFileName());
     }
 
 }

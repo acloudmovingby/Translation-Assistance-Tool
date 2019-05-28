@@ -61,7 +61,7 @@ public class UIState {
      * @param segList 
      */
     protected void setMainFileSegs(ObservableList<Segment> segList) {
-        this.mainFileSegs = segList;
+        this.mainFileSegs.setAll(segList);
     }
     
     

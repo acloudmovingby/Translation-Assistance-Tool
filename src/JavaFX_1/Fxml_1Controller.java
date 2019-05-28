@@ -52,10 +52,13 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 
 /**
- * FXML Controller class does: (1) registers user input to pass on to  Dispatcher and (2) controls UI with any components that can't be done in CSS/FXML (such as dynamic content that I found hard to do in the SceneBuilder).
+ * FXML Controller class does: (1) registers user input to pass on to Dispatcher
+ * and (2) controls UI with any components that can't be done in CSS/FXML (such
+ * as dynamic content that I found hard to do in the SceneBuilder).
  *
- * This class primarily wiring between the UI code and the business logic classes, but performs no business logic itself.
- * 
+ * This class primarily wiring between the UI code and the business logic
+ * classes, but performs no business logic itself.
+ *
  * JavaFX, the GUI used in this application, relies on working together with an
  * FXML document and a CSS stylesheet to properly render the application UI. The
  *
@@ -100,14 +103,12 @@ public class Fxml_1Controller implements Initializable {
      */
     @FXML
     HBox homeTopIcons;
-    
+
     /*
     Represents the area of the home page where you click on icons to load prior projects. 
      */
     @FXML
     FlowPane loadFileFlowPane;
-
-    
 
     /**
      * *****************
@@ -181,15 +182,14 @@ public class Fxml_1Controller implements Initializable {
 
     @FXML
     Button exportButton;
-    
+
     /**
      * ****************
-     * 
+     *
      * "Model" Objects (model as in "Model-View-Controller")
-     * 
+     *
      * ***************
      */
-
     String committedStatusColor;
     String unCommittedStatusColor;
 
@@ -197,7 +197,8 @@ public class Fxml_1Controller implements Initializable {
     UIState uiState;
 
     /**
-     * Initializes the controller class. I don't know what url/rb are used for (something to do with JavaFX)
+     * Initializes the controller class. I don't know what url/rb are used for
+     * (something to do with JavaFX)
      *
      * @param url
      * @param rb
@@ -213,7 +214,24 @@ public class Fxml_1Controller implements Initializable {
         BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
 
         // actually builds all the important objects for the program and sets the items for the tables to display
-        setMainFile(mainFile);
+        //setMainFile(mainFile);
+        StateBuilder stateBuilder = new StateBuilder(mainFile, DatabaseOperations.getAllFiles());
+        uiState = stateBuilder.getUIState();
+        dispatcher = stateBuilder.getDispatcher();
+
+        // UI THINGS THAT DEPEND ON MAINFILE
+        // sets title at top to the name of the file
+        title.setText(uiState.getMainFileName());
+
+        // puts the list of Segments from the main file into the main table view
+        tableView.setItems(uiState.getMainFileSegs());
+
+        compareTable.setItems(uiState.getMatchList());
+
+        uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
+            numMatches.setText(String.valueOf(newVal));
+        });
+
 
         /*
         *****************
@@ -665,44 +683,12 @@ public class Fxml_1Controller implements Initializable {
     }
 
     /**
-     * Key method for initializing the state for a given main file. Creates a
-     * new StateBuilder which in turn creates the various key components of the
-     * program (Dispatcher, State, UIState) that are intrinsically linked to the
-     * main file being translated. If a new file is being made the main file
-     * (such as when opening an old translation project or starting a new one),
-     * all of these should be reset.
-     *
-     * This is also where all segments are retrieved from the database (for
-     * searching matches with the main file). Currently this just re-retrieves
-     * all of these and recreates all the Postings Lists, which may be
-     * inefficient, but the user isn't expected to change files that often. If
-     * this needs to be changed (like the user is switching between files a lot)
-     * it would not be too hard to reconfigure this so that it doesn't redo
-     * these expensive operations (because all that's really changing is the
-     * MainFile). But currently, for simplicity sake and to avoid unforeseen
-     * errors, the whole program is essentially rebooted by doing this.
+     * Calls the dispatcher to change the main file for translating.
      *
      * @param bf The new main file to be translated
      */
     private void setMainFile(BasicFile newMainFile) {
-        
-        StateBuilder stateBuilder = new StateBuilder(newMainFile, DatabaseOperations.getAllFiles());
-        uiState = stateBuilder.getUIState();
-        dispatcher = stateBuilder.getDispatcher();
-
-        // UI THINGS THAT DEPEND ON MAINFILE
-        // sets title at top to the name of the file
-        title.setText(uiState.getMainFileName());
-
-        // puts the list of Segments from the main file into the main table view
-        tableView.setItems(uiState.getMainFileSegs());
-
-        compareTable.setItems(uiState.getMatchList());
-
-        uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
-            numMatches.setText(String.valueOf(newVal));
-        });
-
+        dispatcher.setMainFile(newMainFile);
     }
 
 }
