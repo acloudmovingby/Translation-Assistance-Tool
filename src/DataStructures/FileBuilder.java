@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Utility methods to properly construct BasicFile objects.
+ * Utility methods to properly construct TranslationFile objects.
  *
  * @author Chris
  */
@@ -22,10 +22,10 @@ public class FileBuilder {
      *
      * @param thai
      * @param english
-     * @return BasicFile with each Segment representing a line break in original
-     * text.
+     * @return TranslationFile with each Segment representing a line break in original
+ text.
      */
-    public static BasicFile buildBasicParse(String thai, String english) {
+    public static TranslationFile buildBasicParse(String thai, String english) {
         String[] th = thai.split("\r?\n");
         String[] en = english.split("\r?\n");
 
@@ -33,7 +33,7 @@ public class FileBuilder {
         if (th.length != en.length) {
             throw new IllegalArgumentException("Unequal number of line breaks in the two texts.");
         }*/
-        BasicFile bf = new BasicFile();
+        TranslationFile bf = new TranslationFile();
 
         for (int i = 0; i < th.length; i++) {
             SegmentBuilder sb = new SegmentBuilder(bf);
@@ -49,8 +49,8 @@ public class FileBuilder {
         return bf;
     }
 
-    public static BasicFile justThaiFilePath(String filePath) {
-        BasicFile ret = null;
+    public static TranslationFile justThaiFilePath(String filePath) {
+        TranslationFile ret = null;
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReaderThai
@@ -98,7 +98,7 @@ public class FileBuilder {
     }
 
     /**
-     * Creates a BasicFile from two lists of Strings. The file created
+     * Creates a TranslationFile from two lists of Strings. The file created
      * represents a translated file, so all Segments are committed.
      *
      * The two lists are assumed to correspond (of course). For example, the 3rd
@@ -112,9 +112,9 @@ public class FileBuilder {
      * @param englishSegments
      * @return
      */
-    public static BasicFile fromArrayLists(ArrayList<String> thaiSegments, ArrayList<String> englishSegments) {
+    public static TranslationFile fromArrayLists(ArrayList<String> thaiSegments, ArrayList<String> englishSegments) {
 
-        BasicFile bf = new BasicFile();
+        TranslationFile bf = new TranslationFile();
 
         // creates iterators for each list of segments
         Iterator<String> iterThai = thaiSegments.iterator();
@@ -152,8 +152,8 @@ public class FileBuilder {
         return fileName;
     }
 
-    public static BasicFile parseTMX(String filePath) {
-        BasicFile bf = new BasicFile();
+    public static TranslationFile parseTMX(String filePath) {
+        TranslationFile bf = new TranslationFile();
         bf.setFileName(makeFileNameFromPath(filePath));
 
         TMXResourceBundle thaiBundle = new TMXResourceBundle(

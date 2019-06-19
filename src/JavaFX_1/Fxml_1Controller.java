@@ -1,13 +1,13 @@
 package JavaFX_1;
 
-import State.StateBuilder;
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.FileBuilder;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import Database.DatabaseOperations;
 import State.Dispatcher;
+import State.State;
 import State.UIState;
 import UserActions.Commit;
 import UserActions.EditEnglish;
@@ -211,17 +211,17 @@ public class Fxml_1Controller implements Initializable {
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
-        BasicFile mainFile = fileBuilder.justThaiFilePath(filePath);
+        TranslationFile mainFile = fileBuilder.justThaiFilePath(filePath);
 
-        // actually builds all the important objects for the program and sets the items for the tables to display
-        //setMainFile(mainFile);
-        StateBuilder stateBuilder = new StateBuilder(mainFile, DatabaseOperations.getAllFiles());
-        uiState = stateBuilder.getUIState();
-        dispatcher = stateBuilder.getDispatcher();
+        // build the important objects for the program and sets the items for the tables to display
+        State state = new State(DatabaseOperations.getAllFiles());
+        dispatcher = new Dispatcher(state);
+        setMainFile(mainFile);
+        uiState = dispatcher.getUIState();
 
         // UI THINGS THAT DEPEND ON MAINFILE
         // sets title at top to the name of the file
-        title.setText(uiState.getMainFileName());
+        title.textProperty().bind(uiState.getMainFileName());
 
         // puts the list of Segments from the main file into the main table view
         tableView.setItems(uiState.getMainFileSegs());
@@ -231,7 +231,6 @@ public class Fxml_1Controller implements Initializable {
         uiState.getNumMatchesProperty().addListener((ChangeListener) (arg, oldVal, newVal) -> {
             numMatches.setText(String.valueOf(newVal));
         });
-
 
         /*
         *****************
@@ -307,7 +306,7 @@ public class Fxml_1Controller implements Initializable {
         Image loadFileIconImage = new Image(getClass().getResource("/JavaFX_1/BlankFileIcon.png").toExternalForm());
 
         // Creates the actual icons (which are buttons to open a file for translation) and include the standard blank file icon image, the name of the file, and a listener for when the user clicks on it
-        for (BasicFile file : uiState.getAllFiles()) {
+        for (TranslationFile file : uiState.getAllFiles()) {
             ImageView loadFileIconIV = new ImageView(loadFileIconImage);
             loadFileIconIV.setFitWidth(110);
             loadFileIconIV.setPreserveRatio(true);
@@ -331,6 +330,8 @@ public class Fxml_1Controller implements Initializable {
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
 
+        // Set prompt text for minMatchLength field
+        minMatchLengthField.setPromptText(uiState.getMinMatchLength());
         // Set prompt text for search field
         searchField.setPromptText("search...");
 
@@ -478,11 +479,7 @@ public class Fxml_1Controller implements Initializable {
             }
         }
         );
-
-        /* FONTS
-        Font.getFamilies().forEach((s) -> {
-            System.out.println(s);
-        }); */
+        
         // Makes it so merge is disabled except when multiple cells are selected
         tableView.getSelectionModel().getSelectedItems().addListener((Change<? extends Segment> c) -> {
             if (c.getList().size() <= 1) {
@@ -491,66 +488,35 @@ public class Fxml_1Controller implements Initializable {
                 mergeButton.setDisable(false);
             }
         });
-
+        
         /*
         BUTTON IMAGES
          */
-        // Apply image to COMMIT button
-        ImageView commitIV = new ImageView(getClass().getResource("/JavaFX_1/CommitButton.png").toExternalForm());
-        commitIV.setFitWidth(40);
-        commitIV.setPreserveRatio(true);
-        commitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        commitIV.setCache(true); // perhaps not necessary
-        commitButton.setGraphic(commitIV);
+        commitButton.setGraphic(getImageView("/JavaFX_1/CommitButton.png", 40));
+        uncommitButton.setGraphic(getImageView("/JavaFX_1/UncommitButton.png", 40));
+        splitButton.setGraphic(getImageView("/JavaFX_1/SplitButton.png", 40));
+        mergeButton.setGraphic(getImageView("/JavaFX_1/MergeButton.png", 40));
+        exportButton.setGraphic(getImageView("/JavaFX_1/ExportButton.png", 40));
+        undoButton.setGraphic(getImageView("/JavaFX_1/UndoButton.png", 30));
+        redoButton.setGraphic(getImageView("/JavaFX_1/RedoButton.png", 30));
 
-        // apply image to UNCOMMIT button
-        ImageView uncommitIV = new ImageView(getClass().getResource("/JavaFX_1/UncommitButton.png").toExternalForm());
-        uncommitIV.setFitWidth(40);
-        uncommitIV.setPreserveRatio(true);
-        uncommitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        uncommitIV.setCache(true); // perhaps not necessary
-        uncommitButton.setGraphic(uncommitIV);
-
-        // apply image to SPLIT button
-        ImageView splitIV = new ImageView(getClass().getResource("/JavaFX_1/SplitButton.png").toExternalForm());
-        splitIV.setFitWidth(40);
-        splitIV.setPreserveRatio(true);
-        splitIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        splitIV.setCache(true); // perhaps not necessary
-        splitButton.setGraphic(splitIV);
-
-        // apply image to MERGE button
-        ImageView mergeIV = new ImageView(getClass().getResource("/JavaFX_1/MergeButton.png").toExternalForm());
-        mergeIV.setFitWidth(40);
-        mergeIV.setPreserveRatio(true);
-        mergeIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        mergeIV.setCache(true); // perhaps not necessary
-        mergeButton.setGraphic(mergeIV);
-
-        // apply image to EXPORT button
-        ImageView exportIV = new ImageView(getClass().getResource("/JavaFX_1/ExportButton.png").toExternalForm());
-        exportIV.setFitWidth(40);
-        exportIV.setPreserveRatio(true);
-        exportIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        exportIV.setCache(true); // perhaps not necessary
-        exportButton.setGraphic(exportIV);
-
-        // apply image to UNDO button
-        ImageView undoIV = new ImageView(getClass().getResource("/JavaFX_1/UndoButton.png").toExternalForm());
-        undoIV.setFitWidth(30);
-        undoIV.setPreserveRatio(true);
-        undoIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        undoIV.setCache(true); // perhaps not necessary
-        undoButton.setGraphic(undoIV);
-
-        // apply image to REDO button
-        ImageView redoIV = new ImageView(getClass().getResource("/JavaFX_1/RedoButton.png").toExternalForm());
-        redoIV.setFitWidth(30);
-        redoIV.setPreserveRatio(true);
-        redoIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        redoIV.setCache(true); // perhaps not necessary
-        redoButton.setGraphic(redoIV);
-
+    }
+    
+    /**
+     * Creates a JavaFX ImageView with the given width so JavaFX components can use it. 
+     * 
+     * Because ImageView is a Node, only one can exist in the JavaFX node graph. To use an image multiple times, you can use an Image object which then can be made into several ImageViews.
+     * 
+     * @param imageFilePath 
+     * @param width in pixels
+     */
+    private ImageView getImageView(String imageFilePath, int width) {
+        ImageView imageView = new ImageView(getClass().getResource(imageFilePath).toExternalForm());
+        imageView.setFitWidth(width);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
+        imageView.setCache(true);
+        return imageView;
     }
 
     @FXML
@@ -561,7 +527,7 @@ public class Fxml_1Controller implements Initializable {
     @FXML
     protected void search(ActionEvent event) {
         // not yet implemented
-        // is for when the user searches for an exact match in the search bar (much like typing "" around a search in google)
+        // is for when the user searches for an exact match in the search bar (like typing "" around a search in google)
     }
 
     @FXML
@@ -687,7 +653,7 @@ public class Fxml_1Controller implements Initializable {
      *
      * @param bf The new main file to be translated
      */
-    private void setMainFile(BasicFile newMainFile) {
+    private void setMainFile(TranslationFile newMainFile) {
         dispatcher.setMainFile(newMainFile);
     }
 
@@ -702,7 +668,7 @@ Callback:
 setCellFactory:
     takes callback that takes a TableColumn<S,T> and returns a TableCell<S,T>
     bind node text to cell value by doing this:  (the node in the cell).textProperty().bind(cell.itemProperty());
-    but why do you call the cell and not param????
+    
 
 setCellValueFactory:
     takes callback that takes a CellDataFeatures<S,T> and returns an ObservableValue<T>

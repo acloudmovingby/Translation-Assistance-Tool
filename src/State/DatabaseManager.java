@@ -1,6 +1,6 @@
 package State;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import Database.DatabaseOperations;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class DatabaseManager {
     /**
      * Keys are file ids, values are the previously backed up version of that file 
      */
-    private final HashMap<Integer,BasicFile> priorFileVersions;
+    private final HashMap<Integer,TranslationFile> priorFileVersions;
 
     public DatabaseManager() {
         priorFileVersions = new HashMap();
@@ -43,8 +43,8 @@ public class DatabaseManager {
      * 
      * @param file 
      */
-    private void backupFile(BasicFile file) {
-        BasicFile priorFileVersion = getPriorFileVersion(file.getFileID());
+    private void backupFile(TranslationFile file) {
+        TranslationFile priorFileVersion = getPriorFileVersion(file.getFileID());
         updateFileInDatabase(priorFileVersion, file);
     }
     
@@ -53,7 +53,7 @@ public class DatabaseManager {
      * @param fileID
      * @return The last updated version of the file with the given id.
      */
-    private BasicFile getPriorFileVersion(int fileID) {
+    private TranslationFile getPriorFileVersion(int fileID) {
         if (priorFileVersions.containsKey(fileID)) {
             return priorFileVersions.get(fileID);
         } else {
@@ -69,7 +69,7 @@ public class DatabaseManager {
      * @param priorFileVersion
      * @param file 
      */
-    private void updateFileInDatabase(BasicFile priorFileVersion, BasicFile file) {
+    private void updateFileInDatabase(TranslationFile priorFileVersion, TranslationFile file) {
         if (DatabaseOperations.addFile(file)) {
                 findMissingSegs(priorFileVersion, file).forEach((s) -> {
                     DatabaseOperations.removeSeg(s.getID());
@@ -84,7 +84,7 @@ public class DatabaseManager {
      * @param file Current version of the file.
      * @return Segments that use to exist in file but now don't.
      */
-    private List<Segment> findMissingSegs(BasicFile priorFileVersion, BasicFile file) {
+    private List<Segment> findMissingSegs(TranslationFile priorFileVersion, TranslationFile file) {
         // if it exists in priorbackup, but doesn't exist in mf, then add to 'missing segs' list
         List<Segment> mainFileSegs = file.getAllSegs();
         List<Segment> missingSegs = new ArrayList();

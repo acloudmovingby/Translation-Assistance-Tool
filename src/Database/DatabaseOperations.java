@@ -1,6 +1,6 @@
 package Database;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import java.sql.Connection;
@@ -37,7 +37,7 @@ public class DatabaseOperations {
      * @return True if all Segments are added successfully. If file is null or
      * there is an SQL error, returns false.
      */
-    public static boolean addFile(BasicFile bf) {
+    public static boolean addFile(TranslationFile bf) {
         DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
         String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
@@ -149,7 +149,7 @@ public class DatabaseOperations {
         // adds this id/name pairing to the database
         addOrUpdateFileName(fileID, fileName);
         System.out.println("CreateFileID: " + fileID + ", " + fileName);
-        // returns the id so the BasicFile object can store it.
+        // returns the id so the TranslationFile object can store it.
 
         return fileID;
     }
@@ -265,8 +265,8 @@ public class DatabaseOperations {
         return null;
     }
 
-    public static ArrayList<BasicFile> getAllFiles() {
-        ArrayList<BasicFile> fileList = new ArrayList();
+    public static ArrayList<TranslationFile> getAllFiles() {
+        ArrayList<TranslationFile> fileList = new ArrayList();
 
         ArrayList<Integer> allFileIDs = getAllFileIDs();
         allFileIDs.forEach((fileID) -> {
@@ -282,10 +282,10 @@ public class DatabaseOperations {
      * @param fileID
      * @return
      */
-    public static BasicFile getFile(int fileID) {
+    public static TranslationFile getFile(int fileID) {
 
-        // recreates the BasicFile object with the specified id and name.
-        BasicFile file = new BasicFile(fileID, getFileName(fileID));
+        // recreates the TranslationFile object with the specified id and name.
+        TranslationFile file = new TranslationFile(fileID, getFileName(fileID));
 
         String idAsString = String.valueOf(fileID);
         String sql = "SELECT id, fileID, fileName, thai, english, committed, removed, rank FROM corpus1 WHERE (fileID =" + idAsString + ") ORDER BY rank ASC;";

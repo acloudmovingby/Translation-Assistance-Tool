@@ -20,14 +20,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER_LEFT" prefHeight="707.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
-   <TabPane fx:id="mainTabPane" prefHeight="700.0" prefWidth="1043.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" GridPane.halignment="LEFT">
+<GridPane alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX_1.Fxml_1Controller">
+   <TabPane fx:id="mainTabPane" side="LEFT" tabClosingPolicy="UNAVAILABLE" GridPane.halignment="LEFT">
      <tabs>
        <Tab fx:id="homeTab" text="Home Tab">
          <content>
-           <AnchorPane minHeight="0.0" minWidth="0.0">
+           <AnchorPane>
                   <children>
-                     <BorderPane prefHeight="703.0" prefWidth="979.0">
+                     <BorderPane>
                         <left>
                            <AnchorPane prefHeight="602.0" prefWidth="110.0" BorderPane.alignment="CENTER" />
                         </left>
@@ -87,12 +87,12 @@
                                             <Font name="System Bold" size="10.0" />
                                         </font>
                                     </Button>
-                                    <Button fx:id="exportButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#export" text="Export Committed" textAlignment="CENTER" ButtonBar.buttonData="RIGHT">
+                                    <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#redo" text="Redo" textAlignment="CENTER" wrapText="true">
                                         <font>
                                             <Font name="System Bold" size="10.0" />
                                         </font>
                                     </Button>
-                                    <Button fx:id="redoButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#redo" text="Redo" textAlignment="CENTER" wrapText="true">
+                                    <Button fx:id="exportButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#export" text="Export Committed" textAlignment="CENTER" wrapText="true" ButtonBar.buttonData="RIGHT">
                                         <font>
                                             <Font name="System Bold" size="10.0" />
                                         </font>

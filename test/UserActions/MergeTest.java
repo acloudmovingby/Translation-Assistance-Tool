@@ -5,7 +5,7 @@
  */
 package UserActions;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.TestObjectBuilder;
 import Database.DatabaseOperations;
@@ -51,8 +51,8 @@ public class MergeTest {
     public void testExecute() {
         for (int i = 0; i < 10; i++) {
             // create test objects
-            List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
-            BasicFile mainFile = c.get(0);
+            List<TranslationFile> c = TestObjectBuilder.getCommittedTestCorpus();
+            TranslationFile mainFile = c.get(0);
             Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
             mainFile = d.getState().getMainFile();
 

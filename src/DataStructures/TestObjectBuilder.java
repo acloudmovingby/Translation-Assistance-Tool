@@ -24,8 +24,8 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static BasicFile getTestFile() {
-        BasicFile bf = new BasicFile(DatabaseOperations.createFileID("TestFile"), "TestFile");
+    public static TranslationFile getTestFile() {
+        TranslationFile bf = new TranslationFile(DatabaseOperations.createFileID("TestFile"), "TestFile");
 
         SegmentBuilder sb = new SegmentBuilder(bf);
         sb.setThai("th1");
@@ -56,10 +56,10 @@ public class TestObjectBuilder {
      * "This is Thai" and english saying "This is English". The segment ids are
      * still all unique. All segments are NOT committed.
      *
-     * @return BasicFile with 5 identical segments
+     * @return TranslationFile with 5 identical segments
      */
-    public static BasicFile getIdenticalFile() {
-        BasicFile bf = new BasicFile(DatabaseOperations.createFileID("TestFile"), "TestFile");
+    public static TranslationFile getIdenticalFile() {
+        TranslationFile bf = new TranslationFile(DatabaseOperations.createFileID("TestFile"), "TestFile");
 
         SegmentBuilder sb = new SegmentBuilder(bf);
         sb.setThai("This is Thai");
@@ -79,8 +79,8 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static BasicFile getOneSegFile() {
-        BasicFile bf = new BasicFile();
+    public static TranslationFile getOneSegFile() {
+        TranslationFile bf = new TranslationFile();
         SegmentBuilder sb = new SegmentBuilder(bf);
         sb.setThai("thai");
         sb.setEnglish("english");
@@ -95,8 +95,8 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static List<BasicFile> getIdenticalCorpus() {
-        List<BasicFile> c = new ArrayList();
+    public static List<TranslationFile> getIdenticalCorpus() {
+        List<TranslationFile> c = new ArrayList();
         c.add(getIdenticalFile());
         c.add(getIdenticalFile());
         c.add(getIdenticalFile());
@@ -110,8 +110,8 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static List<BasicFile> getTestCorpus() {
-        List<BasicFile> c = new ArrayList();
+    public static List<TranslationFile> getTestCorpus() {
+        List<TranslationFile> c = new ArrayList();
         c.add(getTestFile());
         c.add(getTestFile());
         c.add(getTestFile());
@@ -123,8 +123,8 @@ public class TestObjectBuilder {
      *
      * @return
      */
-    public static List<BasicFile> getCommittedTestCorpus() {
-        List<BasicFile> fileList = getTestCorpus();
+    public static List<TranslationFile> getCommittedTestCorpus() {
+        List<TranslationFile> fileList = getTestCorpus();
         fileList.forEach((f) -> {
             f.commitAllSegs();
         });
@@ -138,7 +138,7 @@ public class TestObjectBuilder {
      * @return
      */
     public static State getCommittedTestState() {
-        BasicFile mainFile = getTestFile();
+        TranslationFile mainFile = getTestFile();
         mainFile.commitAllSegs();
         State state = new State(getCommittedTestCorpus());
         state.setMainFile(mainFile);
@@ -165,8 +165,8 @@ public class TestObjectBuilder {
      * @return
      */
     public static State getEmptyState() {
-        BasicFile bf = new BasicFile();
-        List<BasicFile> fileList = new ArrayList();
+        TranslationFile bf = new TranslationFile();
+        List<TranslationFile> fileList = new ArrayList();
         fileList.add(bf);
         State state = new State(fileList);
         state.setMainFile(bf);
@@ -190,7 +190,7 @@ public class TestObjectBuilder {
         return (new SegmentBuilder()).createSegment();
     }
     
-    public static Dispatcher getDispatcher(BasicFile f, List<BasicFile> fileList) {
+    public static Dispatcher getDispatcher(TranslationFile f, List<TranslationFile> fileList) {
         State state = new State(fileList);
         state.setMainFile(f);
         return new Dispatcher(state);

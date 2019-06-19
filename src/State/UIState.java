@@ -5,32 +5,37 @@
  */
 package State;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import java.util.List;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
 
 /**
- * Provides all the data that will be displayed to the user.
+ * Provides all the data that will be displayed to the user. Is currently put in the State module, because all changes to UIState derive from changes in State.
+ * 
+ * All properties are final, but they can be mutated (because they are JavaFX properties). They are final because the JavaFX UI components need to bind to them and so they shouldn't change (although their contents will of course). 
  *
  * @author Chris
  */
 public class UIState {
 
-    public ObservableList<BasicFile> getAllFiles() {
+    public ObservableList<TranslationFile> getAllFiles() {
         return allFilesInCorpus;
     }
 
-    private ObservableList<Segment> mainFileSegs;
-    private String mainFileName;
+    private final ObservableList<Segment> mainFileSegs;
+    private final StringProperty mainFileName;
     private final ObservableList<MatchSegment> matchList;
     private final IntegerProperty numMatches;
-    private final ObservableList<BasicFile> allFilesInCorpus;
+    private final ObservableList<TranslationFile> allFilesInCorpus;
+    private int minMatchLength;
     private static final Font DEFAULT_THAI_FONT = Font.font("Arial");
     private static final Font DEFAULT_ENGLISH_FONT = Font.font("Arial");
     
@@ -40,7 +45,8 @@ public class UIState {
         matchList = FXCollections.observableArrayList();
         numMatches = new SimpleIntegerProperty(0);
         allFilesInCorpus = FXCollections.observableArrayList();
-        mainFileName = "";
+        mainFileName = new SimpleStringProperty("");
+        minMatchLength = 0;
     }
 
     /**
@@ -63,8 +69,6 @@ public class UIState {
     protected void setMainFileSegs(ObservableList<Segment> segList) {
         this.mainFileSegs.setAll(segList);
     }
-    
-    
 
     /**
      * Returns the list of matching segments to be shown in the bottom part of
@@ -97,15 +101,23 @@ public class UIState {
         return DEFAULT_ENGLISH_FONT;
     }
     
-    public void setAllFilesInCorpus(List<BasicFile> files) {
+    public void setAllFilesInCorpus(List<TranslationFile> files) {
         allFilesInCorpus.setAll(files);
     }
     
-    public String getMainFileName() {
+    public StringProperty getMainFileName() {
         return mainFileName;
     }
     
     protected void setMainFileName(String mainFileName) {
-        this.mainFileName = mainFileName;
+        this.mainFileName.set(mainFileName);
+    }
+
+    public String getMinMatchLength() {
+        return String.valueOf(minMatchLength);
+    }
+
+    void setMinMatchLength(int minMatchLength) {
+        this.minMatchLength = minMatchLength;
     }
 }

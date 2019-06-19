@@ -5,7 +5,7 @@
  */
 package State;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
@@ -70,15 +70,15 @@ public class StateTest {
         simpleCommittedState = TestObjectBuilder.getCommittedTestState();
 
         // state where the "mainFile" is already in corpus
-        List<BasicFile> corpus1 = TestObjectBuilder.getCommittedTestCorpus();
+        List<TranslationFile> corpus1 = TestObjectBuilder.getCommittedTestCorpus();
         System.out.println(corpus1);
         numFiles = corpus1.size();
         state1 = new State(corpus1);
         state1.setMainFile(corpus1.get(0));
 
         // state where the mainfile was created outside of corpus
-        List<BasicFile> corpus2 = (TestObjectBuilder.getCommittedTestCorpus());
-        BasicFile bf = TestObjectBuilder.getTestFile();
+        List<TranslationFile> corpus2 = (TestObjectBuilder.getCommittedTestCorpus());
+        TranslationFile bf = TestObjectBuilder.getTestFile();
         bf.commitAllSegs();
         state2 = new State(corpus2);
         state2.setMainFile(bf);

@@ -53,7 +53,7 @@ public class SegmentBuilder {
      *
      * @param bf
      */
-    public SegmentBuilder(BasicFile bf) {
+    public SegmentBuilder(TranslationFile bf) {
         this.id = DatabaseOperations.makeSegID();
         this.fileID = bf.getFileID();
         this.fileName = bf.getFileName();

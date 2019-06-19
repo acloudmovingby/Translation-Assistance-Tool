@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package comparator;
 
 import DataStructures.MatchSegment;
@@ -12,10 +7,13 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Caches matches found. Because MatchLists are retrieved whenever the user
- * selects a new cell and because finding matches is quite expensive, they
- * should be cached (also because JavaFX can change selection quite unexpectedly
- * at times). If segments are removed/added from the pool of searchable segments
+ * Finds matches, caches them, and returns MatchSegments for display in the UIState.
+ * 
+ * Because lists of matches are retrieved whenever the user
+ * selects a new Segment in the main file, and because finding matches is quite expensive, they
+ * should be cached (for example, in JavaFX, when you remove a row from a table that was selected, the selection will flutter around to different rows before resolving, resulting in many unnecessary calls to this; hence just putting in a cache, rather than trying to figure out what's happening under the hood in JavaFX). 
+ * 
+ * If segments are removed/added from the pool of searchable segments
  * (such as when a segment is committed), then MatchManager should be notified
  * via the methods includeSegmentInMatches and removeSegmentFromMatches.
  *
@@ -28,7 +26,7 @@ public class MatchManager {
     /**
      * Cache for MatchLists for basic matches. Outer HashMap links a minimum
      * match length to the appropriate cache. The inner HashMap links source
-     * segments to the cached match lists.
+     * segments to the cached lists of matches.
      *
      */
     private final HashMap<Integer, HashMap<Segment, List<MatchSegment>>> basicMatchCache;
@@ -47,15 +45,17 @@ public class MatchManager {
      */
     public List<MatchSegment> basicMatch(Segment seg, int minMatchLength) {
 
-        // Here, if the minMatchLength is less than 8, then the postings list with that exact size algorithm is retrieved. Otherwise the 8-character ngram postings list is retrieved. 
+        // Here, if the minMatchLength is less than 8, then the postings list with that exact size ngram is retrieved. Otherwise the 8-character ngram postings list is retrieved. 
+        // for ngrams of 8 character length, the number of Segments to check dramatically decreases, so I didn't waste more memory making postingslists for ngrams longer than 8.
         PostingsList pl = plm.getPostingsList(
                 (minMatchLength <= 8 ? minMatchLength : 8));
 
         // TEMP FOR CHECKING SIZE OF POSTINGS LIST - DELETE LATER
         for (PostingsList postingsList : plm.getAllPostingsLists()) {
-            int totalSegs = postingsList.getMap().values().stream().mapToInt(a -> a.size()).sum();
-            System.out.println("PL" + postingsList.getNGramLength() + ": total Ngrams = " + postingsList.getMap().size() + ", total segs contained = " + totalSegs);
+            //int totalSegs = postingsList.getMap().values().stream().mapToInt(a -> a.size()).sum();
+            //System.out.println("PL" + postingsList.getNGramLength() + ": total Ngrams = " + postingsList.getMap().size() + ", total segs contained = " + totalSegs);
         }
+        
         return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
     }
 

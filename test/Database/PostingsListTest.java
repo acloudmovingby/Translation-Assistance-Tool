@@ -6,7 +6,7 @@
 package Database;
 
 import comparator.PostingsList;
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class PostingsListTest {
         assertEquals(true, pl1.getMatchingID("null").isEmpty());
 
         // create seg1 in file bf1; add seg to PostingsList
-        BasicFile bf1 = new BasicFile();
+        TranslationFile bf1 = new TranslationFile();
         SegmentBuilder sb = new SegmentBuilder(bf1);
         sb.setThai("Abcabcdddd");
         sb.setCommitted(true);
@@ -121,7 +121,7 @@ public class PostingsListTest {
         assertEquals(true, pl1.getMatchingID("null").isEmpty());
 
         // construct seg1
-        BasicFile bf1 = new BasicFile();
+        TranslationFile bf1 = new TranslationFile();
         SegmentBuilder sb = new SegmentBuilder(bf1);
         sb.setThai("Abcabcdddd");
         sb.setCommitted(true);

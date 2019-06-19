@@ -5,7 +5,7 @@
  */
 package Files;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.FileBuilder;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
@@ -50,9 +50,9 @@ public class FileFactoryTest {
         String thai = "";
         String english = "";
         FileBuilder instance = new FileBuilder();
-        BasicFile result = instance.buildBasicParse(thai, english);
+        TranslationFile result = instance.buildBasicParse(thai, english);
 
-        BasicFile expResult = new BasicFile();
+        TranslationFile expResult = new TranslationFile();
         SegmentBuilder sb = new SegmentBuilder(expResult);
         sb.setThai(thai);
         sb.setEnglish(english);
@@ -70,9 +70,9 @@ public class FileFactoryTest {
         String thai = "การเมือง";
         String english = "politics";
         FileBuilder instance = new FileBuilder();
-        BasicFile result = instance.buildBasicParse(thai, english);
+        TranslationFile result = instance.buildBasicParse(thai, english);
 
-        BasicFile expResult = new BasicFile();
+        TranslationFile expResult = new TranslationFile();
         SegmentBuilder sb = new SegmentBuilder(expResult);
         sb.setThai(thai);
         sb.setEnglish(english);
@@ -90,9 +90,9 @@ public class FileFactoryTest {
         String thai = "การเมือง\nของประเทศไทย";
         String english = "politics\nof Thailand";
         FileBuilder instance = new FileBuilder();
-        BasicFile result = instance.buildBasicParse(thai, english);
+        TranslationFile result = instance.buildBasicParse(thai, english);
 
-        BasicFile expResult = new BasicFile();
+        TranslationFile expResult = new TranslationFile();
 
         SegmentBuilder sb = new SegmentBuilder(expResult);
         sb.setThai("การเมือง");

@@ -5,7 +5,7 @@
  */
 package ParseThaiLaw;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.FileBuilder;
 import static DataStructures.FileBuilder.makeFileNameFromPath;
 import java.io.BufferedReader;
@@ -689,8 +689,8 @@ public class ThaiLawParser {
         return ret;
     }
 
-    public BasicFile makeFile() {
-        BasicFile file = FileBuilder.fromArrayLists(finalThaiSegs, finalEngSegs);
+    public TranslationFile makeFile() {
+        TranslationFile file = FileBuilder.fromArrayLists(finalThaiSegs, finalEngSegs);
         file.setFileName(makeFileNameFromPath(fileNameThai));
         return file;
     }

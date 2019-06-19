@@ -8,7 +8,7 @@ package DataStructures;
 /**
  * A test file to check whether exceptions are being thrown when invalid
  * segments are added to the file. This is bad programming (later
- * Segment/BasicFile will be changed so that no need for exception throwing).
+ Segment/TranslationFile will be changed so that no need for exception throwing).
  *
  * @author Chris
  */
@@ -18,7 +18,7 @@ public class BasicFileExceptionTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BasicFile bf = new BasicFile();
+        TranslationFile bf = new TranslationFile();
         System.out.println(bf);
 
         // makes sure a properly built segment CAN be added

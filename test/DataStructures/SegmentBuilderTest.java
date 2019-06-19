@@ -44,7 +44,7 @@ public class SegmentBuilderTest {
     public void testConstructorFromFile() {
         System.out.println("ConstructorFromFile");
         // see TestObjectBuilder class for details
-        BasicFile bf = TestObjectBuilder.getTestFile();
+        TranslationFile bf = TestObjectBuilder.getTestFile();
         int fileID = bf.getFileID();
         SegmentBuilder sb = new SegmentBuilder(bf);
         sb.setThai("hope this works");

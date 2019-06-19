@@ -1,6 +1,6 @@
 package State;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ public class UndoManager {
      * A stack representing the prior states of the program. When undo is
      * performed, the top of the stack is popped and added to the redoStack.
      */
-    private final Deque<BasicFile> undoStack;
+    private final Deque<TranslationFile> undoStack;
 
     /**
      * A stack representing "future" MainFile states that have been undone but
      * could be redone.
      */
-    private final Deque<BasicFile> redoStack;
+    private final Deque<TranslationFile> redoStack;
 
     public UndoManager() {
         undoStack = new ArrayDeque();
@@ -42,7 +42,7 @@ public class UndoManager {
      * @param state
      */
     protected void push(State state) {
-        undoStack.offerFirst(new BasicFile(state.getMainFile()));
+        undoStack.offerFirst(new TranslationFile(state.getMainFile()));
         redoStack.clear();
     }
 
@@ -63,10 +63,10 @@ public class UndoManager {
         }
 
         // add the current state to the redo stack
-        redoStack.offerFirst(new BasicFile(state.getMainFile()));
+        redoStack.offerFirst(new TranslationFile(state.getMainFile()));
 
         // get the previous one
-        BasicFile previousMainFile = undoStack.pollFirst();
+        TranslationFile previousMainFile = undoStack.pollFirst();
 
         // replace the main file
         replaceMainFileInState(previousMainFile, state);
@@ -80,10 +80,10 @@ public class UndoManager {
         }
 
         // add the current state to the undo stack
-        undoStack.offerFirst(new BasicFile(state.getMainFile()));
+        undoStack.offerFirst(new TranslationFile(state.getMainFile()));
 
         // get the "next" state (i.e what we are re-doing into)
-        BasicFile nextRedoFile = redoStack.pollFirst();
+        TranslationFile nextRedoFile = redoStack.pollFirst();
 
         // replace the main file
         replaceMainFileInState(nextRedoFile, state);
@@ -96,8 +96,8 @@ public class UndoManager {
      * @param newFile
      * @param state
      */
-    private void replaceMainFileInState(BasicFile newFile, State state) {
-        BasicFile mainFileInState = state.getMainFile();
+    private void replaceMainFileInState(TranslationFile newFile, State state) {
+        TranslationFile mainFileInState = state.getMainFile();
 
         List<Segment> allCurrentSegs = new ArrayList();
         mainFileInState.getAllSegs().forEach((s) -> {

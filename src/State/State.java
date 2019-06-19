@@ -2,7 +2,7 @@ package State;
 
 import comparator.PostingsListManager;
 import comparator.PostingsList;
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import comparator.MatchManager;
 import java.util.ArrayList;
@@ -25,12 +25,12 @@ public class State {
     /**
      * The file currently being translated. Is in the corpus.
      */
-    private BasicFile mainFile;
+    private TranslationFile mainFile;
 
     /**
      * The corpus where matches are found. The main file must be in this.
      */
-    private final List<BasicFile> corpus;
+    private final List<TranslationFile> corpus;
 
     private final UIState uiState;
 
@@ -42,31 +42,32 @@ public class State {
     private Segment segSelected;
 
     
-    public State(List<BasicFile> fileList) {
+    public State(List<TranslationFile> fileList) {
 
         uiState = new UIState();
 
         // Default minimum length for matches
         minMatchLength = 5;
+        uiState.setMinMatchLength(5);
 
         this.corpus = fileList;
         
 /*
         // the following code ensures that the file selected as main file is in fact in the corpus
         corpus.remove(mainFile);
-        BasicFile mf = new BasicFile(mainFile);
+        TranslationFile mf = new TranslationFile(mainFile);
         corpus.add(mf);
 
         setMainFile(mf);*/
 
         //matchManager = new MatchManager(this);
-        HashSet<Segment> allCommittedSegsInCorpus = BasicFile.getAllCommittedSegsInFileList(corpus);
+        HashSet<Segment> allCommittedSegsInCorpus = TranslationFile.getAllCommittedSegsInFileList(corpus);
         matchManager = new MatchManager(allCommittedSegsInCorpus);
 
         uiState.setAllFilesInCorpus(corpus);
     }
 
-    public BasicFile getMainFile() {
+    public TranslationFile getMainFile() {
         return mainFile;
     }
 
@@ -74,7 +75,7 @@ public class State {
      * Sets the specified file as the current main file for translating. If the file previously did not exist in the corpus, it adds it.
      * @param newMainFile 
      */
-    public final void setMainFile(BasicFile newMainFile) {
+    public final void setMainFile(TranslationFile newMainFile) {
         if (! corpus.contains(newMainFile)) {
             this.addFileToCorpus(newMainFile);
         }
@@ -105,9 +106,10 @@ public class State {
      */
     public void setMinLength(int minMatchLength) {
         this.minMatchLength = minMatchLength;
+        uiState.setMinMatchLength(minMatchLength);
     }
     
-    public List<BasicFile> getCorpusFiles() {
+    public List<TranslationFile> getCorpusFiles() {
         return corpus;
     }
 
@@ -145,7 +147,7 @@ public class State {
      * @param file
      * @return True if the seg is an active Segment in the file.
      */
-    public boolean replaceSegInFile(Segment oldSeg, Segment newSeg, BasicFile file) {
+    public boolean replaceSegInFile(Segment oldSeg, Segment newSeg, TranslationFile file) {
 
         ObservableList<Segment> activeSegsInFile = file.getActiveSegs();
         // checks to make sure oldSeg exists in MainFile active segs
@@ -160,7 +162,7 @@ public class State {
 
             //adjusts Postings Lists (so the newSeg can be found in searches if it is committed)
             matchManager.includeSegmentInMatches(newSeg);
-            
+            uiState.setMainFileSegs(mainFile.getActiveSegs()); // update UI in case the main file changed
             return true;
         }
     }
@@ -176,9 +178,10 @@ public class State {
      * @param seg
      * @param file
      */
-    public void addSegToFileActiveList(int insertIndex, Segment seg, BasicFile file) {
+    public void addSegToFileActiveList(int insertIndex, Segment seg, TranslationFile file) {
         file.getActiveSegs().add(insertIndex, seg);
         matchManager.includeSegmentInMatches(seg);
+        uiState.setMainFileSegs(mainFile.getActiveSegs()); // update UI in case the main file changed
     }
 
     /**
@@ -189,7 +192,7 @@ public class State {
      * @param file
      * @return
      */
-    public boolean removeSegFromFile(Segment seg, BasicFile file) {
+    public boolean removeSegFromFile(Segment seg, TranslationFile file) {
         ObservableList<Segment> activeSegs = file.getActiveSegs();
         ArrayList<Segment> hiddenSegs = file.getHiddenSegs();
 
@@ -197,14 +200,14 @@ public class State {
             // removes from active and from plm
             activeSegs.remove(seg);
             matchManager.removeSegmentFromMatches(seg);
-            return true;
         } else if (hiddenSegs.contains(seg)) {
             // removes from hidden and from plm
             hiddenSegs.remove(seg);
-            return true;
         } else {
             return false;
         }
+        uiState.setMainFileSegs(mainFile.getActiveSegs()); // update UI in case the main file changed
+        return true;
     }
 
     /**
@@ -216,7 +219,7 @@ public class State {
      * @param seg
      * @param file
      */
-    public void addToMainFileHidden(Segment seg, BasicFile file) {
+    public void addToMainFileHidden(Segment seg, TranslationFile file) {
         ObservableList<Segment> activeSegs = file.getActiveSegs();
         ArrayList<Segment> hiddenSegs = file.getHiddenSegs();
 
@@ -241,13 +244,14 @@ public class State {
      * @param file
      * @return true if file was added, false if file already existed in corpus
      */
-    protected boolean addFileToCorpus(BasicFile file) {
+    protected boolean addFileToCorpus(TranslationFile file) {
         if (corpus.contains(file)) {
             return false;
         } else {
             corpus.add(file); // add to corpus
             file.getAllSegs().forEach(seg -> 
                     matchManager.includeSegmentInMatches(seg)); // add to MatchManager
+            uiState.setAllFilesInCorpus(corpus); // reset list of files in home page
             return true;
         }
     }

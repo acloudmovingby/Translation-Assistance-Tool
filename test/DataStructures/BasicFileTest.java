@@ -38,13 +38,16 @@ public class BasicFileTest {
     }
 
     /**
-     * Test of newSeg method, of class BasicFile.
+     * Test of newSeg method, of class TranslationFile.
      */
     @Test
     public void testEquals() {
+        
+        // NOT GREAT TESTS (Because I only test when they're equal, not when they're not)
+        
         System.out.println("Equals");
-        BasicFile f1 = new BasicFile();
-        BasicFile f2 = new BasicFile(f1.getFileID(), f1.getFileName());
+        TranslationFile f1 = new TranslationFile();
+        TranslationFile f2 = new TranslationFile(f1.getFileID(), f1.getFileName());
         assertEquals(f1, f2);
 
         // added a seg to f1, so they should no longer be equals
@@ -67,20 +70,20 @@ public class BasicFileTest {
     }
 
     /**
-     * Tests that constructing a BasicFile based on another BasicFile actually
-     * makes two entirely distinct objects (no pointers to the other).
+     * Tests that constructing a TranslationFile based on another TranslationFile actually
+ makes two entirely distinct objects (no pointers to the other).
      */
     @Test
     public void testCopyFile() {
         // NOT FINISHED
-        BasicFile testFile = TestObjectBuilder.getTestFile();
-        BasicFile testFileCopy = new BasicFile(testFile);
+        TranslationFile testFile = TestObjectBuilder.getTestFile();
+        TranslationFile testFileCopy = new TranslationFile(testFile);
 
     }
 
     @Test
     public void testGetAllSegs() {
-        BasicFile testFile = TestObjectBuilder.getTestFile();
+        TranslationFile testFile = TestObjectBuilder.getTestFile();
         assertEquals(5, testFile.getAllSegs().size());
 
         SegmentBuilder sb = new SegmentBuilder(testFile);

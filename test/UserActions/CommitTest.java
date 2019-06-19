@@ -5,7 +5,7 @@
  */
 package UserActions;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
@@ -26,8 +26,8 @@ import static org.junit.Assert.*;
  */
 public class CommitTest {
 
-    Dispatcher d;
-    BasicFile mainFile;
+    Dispatcher dispatcher;
+    TranslationFile mainFile;
 
     public CommitTest() {
     }
@@ -42,14 +42,14 @@ public class CommitTest {
 
     @Before
     public void setUp() {
-        List<BasicFile> c = TestObjectBuilder.getIdenticalCorpus();
+        List<TranslationFile> corpus = TestObjectBuilder.getIdenticalCorpus();
         // commit all the segments in one of the files in corpus (not the main file)
-        c.get(1).commitAllSegs();
+        corpus.get(1).commitAllSegs();
         // the main file has no committed segments
         mainFile = TestObjectBuilder.getIdenticalFile();
 
-        d = TestObjectBuilder.getDispatcher(mainFile, c);
-        mainFile = d.getState().getMainFile();
+        dispatcher = TestObjectBuilder.getDispatcher(mainFile, corpus);
+        mainFile = dispatcher.getState().getMainFile();
 
     }
 
@@ -64,80 +64,84 @@ public class CommitTest {
     public void testExecute() {
 
         // initially no segs are committed in main file, so 5 segs have the word "Thai" in them (from the corpus)
-        assertEquals(5, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(5, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
+        System.out.println(dispatcher.getState().getCorpusFiles());
+        dispatcher.getState().getCorpusFiles().forEach(f -> System.out.println(f.getFileID()));
+        System.out.println(dispatcher.getState().getMainFile());
 
         /* COMMIT FIRST SEGMENT */
         // gets first segment of MainFile
-        Segment firstSegment = d.getState().getMainFile().getActiveSegs().get(0);
+        Segment firstSegment = dispatcher.getState().getMainFile().getActiveSegs().get(0);
         // run the action
         System.out.println("about to commit first segment");
-        d.acceptAction(new Commit(firstSegment));
+        dispatcher.acceptAction(new Commit(firstSegment));
+        dispatcher.getState().getMainFile().getActiveSegs().forEach(s -> System.out.println(s.isCommitted()));
         // assert that the first segment is now committed, but the rest remain uncommitted
-        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         // after 1 seg is committed, now 6 segs have the word "Thai" in them
         //assertEquals(6, d.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         /* COMMIT THIRD SEGMENT */
         // gets third segment of mainfile
-        Segment thirdSegment = d.getState().getMainFile().getActiveSegs().get(2);
+        Segment thirdSegment = dispatcher.getState().getMainFile().getActiveSegs().get(2);
         // run the action
         System.out.println("about to commit second segment");
-        d.acceptAction(new Commit(thirdSegment));
+        dispatcher.acceptAction(new Commit(thirdSegment));
         // check that the 3rd segment in the UIState is now committed
-        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         //assertEquals(7, d.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         /* COMMIT LAST SEGMENT */
         // gets third segment of mainfile
-        Segment lastSegment = d.getState().getMainFile().getActiveSegs().get(4);
+        Segment lastSegment = dispatcher.getState().getMainFile().getActiveSegs().get(4);
         // run the action
-        d.acceptAction(new Commit(lastSegment));
+        dispatcher.acceptAction(new Commit(lastSegment));
         // check that the last segment in the UIState is committed
-        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        assertEquals(8, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(8, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         /* RE-COMMIT FIRST SEGMENT */
         // gets third segment of mainfile
-        Segment firstSegAgain = d.getState().getMainFile().getActiveSegs().get(0);
+        Segment firstSegAgain = dispatcher.getState().getMainFile().getActiveSegs().get(0);
         // run the action
-        d.acceptAction(new Commit(firstSegAgain));
+        dispatcher.acceptAction(new Commit(firstSegAgain));
         // check that nothing changed
-        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        assertEquals(8, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(8, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         /* COMMIT NON-EXISTENT SEGMENT */
         // makes a copy of the 4th segment, but assigns a new id
-        Segment fakeFourthSeg = (new SegmentBuilder(d.getState().getMainFile().getActiveSegs().get(3))).createSegmentNewID();
+        Segment fakeFourthSeg = (new SegmentBuilder(dispatcher.getState().getMainFile().getActiveSegs().get(3))).createSegmentNewID();
         // run the action
-        d.acceptAction(new Commit(fakeFourthSeg));
+        dispatcher.acceptAction(new Commit(fakeFourthSeg));
         // check that 4th segment is not committed
-        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(4).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(4).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
-        assertEquals(8, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(8, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
 
     }
 
@@ -153,29 +157,29 @@ public class CommitTest {
         List<Segment> segsToCommit = Arrays.asList(secondSeg, thirdSeg);
 
         // In the main file, no segs are committed, but there are 5 segs in the corpus that have the word "Thai" in them
-        assertEquals(5, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(5, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         // Commit segments 2 and 3
-        d.acceptAction(new Commit(segsToCommit));
-        assertEquals(false, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(false, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        dispatcher.acceptAction(new Commit(segsToCommit));
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(false, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         // two segs with the words "Thai" were committed in the mainfile, so now 7 segments total are committed that have the word "Thai" in them
-        assertEquals(7, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(7, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
 
         // Commit segments 1 through 4
         // Segs 2 and 3 will remain committed as before and segs 1 and 4 will now also be committed
         segsToCommit = Arrays.asList(firstSeg, secondSeg, thirdSeg, fourthSeg);
-        d.acceptAction(new Commit(segsToCommit));
-        assertEquals(true, d.getUIState().getMainFileSegs().get(0).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(1).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(2).isCommitted());
-        assertEquals(true, d.getUIState().getMainFileSegs().get(3).isCommitted());
+        dispatcher.acceptAction(new Commit(segsToCommit));
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(0).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(1).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(2).isCommitted());
+        assertEquals(true, dispatcher.getUIState().getMainFileSegs().get(3).isCommitted());
         assertEquals(mainFile, DatabaseOperations.getFile(mainFile.getFileID()));
         // two segs with the words "Thai" were committed in the mainfile, so now 9 segments total are committed that have the word "Thai" in them
-        assertEquals(9, d.getState().getPostingsList(4).getMatchingID("Thai").size());
+        assertEquals(9, dispatcher.getState().getPostingsList(4).getMatchingID("Thai").size());
 
     }
 

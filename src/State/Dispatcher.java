@@ -5,7 +5,7 @@
  */
 package State;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import java.io.BufferedWriter;
@@ -32,6 +32,7 @@ public class Dispatcher {
         this.databaseManager = new DatabaseManager();
         this.state = state;
         this.undoManager = new UndoManager();
+        
     }
 
     public void acceptAction(MutateFileAction a) {
@@ -50,6 +51,10 @@ public class Dispatcher {
         databaseManager.push(state);
     }
 
+    /**
+     * This is pushed up through dispatcher so Controller can access it, but its data depends on State so it is held by State.
+     * @return 
+     */
     public UIState getUIState() {
         return state.getUIState();
     }
@@ -131,7 +136,7 @@ public class Dispatcher {
      * This sets the main file for the program, both changing the main file pointer in state as well as updating the UIState so it correctly shows the main file segments in the translation tab.
      * @param file 
      */
-    public void setMainFile(BasicFile file) {
+    public void setMainFile(TranslationFile file) {
         System.out.println("dispatcher called");
         // set state's main file
         state.setMainFile(file);

@@ -5,7 +5,7 @@
  */
 package UserActions;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
@@ -58,8 +58,8 @@ public class EditThaiTest {
         - do normal with first, middle, end seg
          */
         // create test objects
-        List<BasicFile> c = TestObjectBuilder.getCommittedTestCorpus();
-        BasicFile mainFile = c.get(0);
+        List<TranslationFile> c = TestObjectBuilder.getCommittedTestCorpus();
+        TranslationFile mainFile = c.get(0);
         Dispatcher d = TestObjectBuilder.getDispatcher(mainFile, c);
         mainFile = d.getState().getMainFile();
 

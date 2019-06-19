@@ -5,7 +5,7 @@
  */
 package comparator;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.MatchSegment;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
@@ -54,8 +54,8 @@ public class MatchFinderTest {
         // makes a corpus with 1 file
         // makes that 1 file have 1 segment called corpusSeg1
         // the Thai text in corpusSeg1 is "test"
-        ArrayList<BasicFile> corpus = new ArrayList();
-        BasicFile bf1 = new BasicFile();
+        ArrayList<TranslationFile> corpus = new ArrayList();
+        TranslationFile bf1 = new TranslationFile();
 
         SegmentBuilder sb = new SegmentBuilder(bf1);
         sb.setThai("test");
@@ -69,7 +69,7 @@ public class MatchFinderTest {
         // makes a second file with 1 segment: mainFileSeg
         // mainFileSeg has Thai text of "test"
         // this represents a segment that is selected in main file for which the user wants to see matches
-        BasicFile bf2 = new BasicFile();
+        TranslationFile bf2 = new TranslationFile();
         sb = new SegmentBuilder(bf2);
         sb.setThai("test");
         Segment mainFileSeg = sb.createSegment();

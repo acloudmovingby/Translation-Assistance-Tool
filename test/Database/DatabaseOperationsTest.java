@@ -5,7 +5,7 @@
  */
 package Database;
 
-import DataStructures.BasicFile;
+import DataStructures.TranslationFile;
 import DataStructures.Segment;
 import DataStructures.SegmentBuilder;
 import DataStructures.TestObjectBuilder;
@@ -98,12 +98,12 @@ public class DatabaseOperationsTest {
         DatabaseOperations.rebootDB();
 
         // adding an empty file, checking it's the same when retrieved
-        BasicFile emptyFile = new BasicFile();
+        TranslationFile emptyFile = new TranslationFile();
         DatabaseOperations.addFile(emptyFile);
         assertEquals(emptyFile, DatabaseOperations.getFile(emptyFile.getFileID()));
 
         // adding the standard test file, checking it's the same.
-        BasicFile file = TestObjectBuilder.getTestFile();
+        TranslationFile file = TestObjectBuilder.getTestFile();
         DatabaseOperations.addFile(file);
         assertEquals(file, DatabaseOperations.getFile(file.getFileID()));
 
