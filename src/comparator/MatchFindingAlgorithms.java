@@ -24,7 +24,7 @@ import java.util.Optional;
 public class MatchFindingAlgorithms {
 
     /**
-     * Returns a MatchList representing all the segments from a corpus that form
+     * Returns a list representing all the segments from a corpus that form
      * a "basic match" with the source Segment. A "basic match" between two
      * segments means these two Segments have common substring(s) of at least
      * the minimum length.
@@ -42,9 +42,9 @@ public class MatchFindingAlgorithms {
         List<MatchSegment> matchList = new ArrayList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();
 
-        // makes all ngrams from seg
+        // makes ngrams from seg
         List<String> nGrams = PostingsList.makeNGrams(source.getThai(), pl.getNGramLength());
-        // for each ngram in seg...
+        // for each ngram in the source text...
         for (String ng : nGrams) {
             // finds segments in the corpus that match that ngram
             List<Segment> segList = pl.getMatchingID(ng);
@@ -53,10 +53,9 @@ public class MatchFindingAlgorithms {
             for (Segment target : segList) {
                 if (!segsAlreadyChecked.contains(target)) {
 
-                    // uses Optionals to check if there is a new match. If so, adds to the matchList
+                    // uses Optionals to check if there is a new match. If so, adds to the list of matches
                     singleSegBasicMatch(source, target, minMatchLength)
                             .ifPresent(newMatchSegment -> matchList.add(newMatchSegment));
-
                     segsAlreadyChecked.add(target);
                 }
             }

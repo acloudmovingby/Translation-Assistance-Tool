@@ -128,7 +128,11 @@ public class Dispatcher {
         if (seg == null) {
             return new ArrayList();
         } else {
-            return state.getMatchManager().basicMatch(seg, state.getMinMatchLength());
+            // find matches
+            List<MatchSegment> listOfMatches = state.getMatchManager().basicMatch(seg, state.getMinMatchLength());
+            // sort in decreasing order according to the longest matching substring
+            listOfMatches.sort((a,b) -> b.longestMatchLengthProperty().get()-a.longestMatchLengthProperty().get());
+            return listOfMatches;
         }
     }
     

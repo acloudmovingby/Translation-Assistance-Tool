@@ -47,8 +47,8 @@ public class State {
         uiState = new UIState();
 
         // Default minimum length for matches
-        minMatchLength = 5;
-        uiState.setMinMatchLength(5);
+        minMatchLength = 7;
+        uiState.setMinMatchLength(minMatchLength);
 
         this.corpus = fileList;
         

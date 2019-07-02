@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
@@ -206,24 +208,22 @@ public class MatchSegment implements Comparable<MatchSegment> {
         return isCommittedProperty;
     }
 
-    private void setLongestMatchLength() {
+    private int findLongestMatchLength() {
         int longestLength = 0;
         int currentLength = 0;
         for (boolean b : charsPartOfSubstring) {
-            if (b == false) {
+            if (b) {
+                currentLength++;
+            } else {
                 longestLength = currentLength > longestLength ? currentLength : longestLength;
                 currentLength = 0;
             }
-            if (b == true) {
-                currentLength++;
-            }
         }
-        longestMatchLength = (currentLength > longestLength ? currentLength : longestLength);
+        return (currentLength > longestLength ? currentLength : longestLength);
     }
 
-    public StringProperty longestMatchLengthProperty() {
-        setLongestMatchLength();
-        return new SimpleStringProperty(String.valueOf(longestMatchLength));
+    public IntegerProperty longestMatchLengthProperty() {
+        return new SimpleIntegerProperty(findLongestMatchLength());
     }
 
     /**

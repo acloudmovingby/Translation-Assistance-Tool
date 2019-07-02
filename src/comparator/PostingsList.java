@@ -41,7 +41,8 @@ public class PostingsList {
      */
     public void addSegment(Segment seg) {
         if (seg != null && seg.isCommitted()) {
-            List<String> ngrams = makeNGrams(seg.getThai(), nGramLength);
+            String tokenizedString = tokenize(seg.getThai());
+            List<String> ngrams = makeNGrams(tokenizedString, nGramLength);
             ngrams.forEach(ngram -> {
                 // retrieves the segments for a given nGram
                 List<Segment> segList = map.get(ngram);
@@ -175,5 +176,21 @@ public class PostingsList {
             sb.append(e.getKey()).append(": ").append(e.getValue());
         });
         return sb.toString();
+    }
+    
+    /**
+     * This is a simple tokenizer. It simply removes basic punctuation (spaces, periods, etc.).
+     * @param str
+     * @return 
+     */
+    private String tokenize(String str) {
+        
+        // almost certainly could combine these two regexes so it doesn't have to go through it twice, but wasn't sure how to do, so just left as is
+        // remove white space characters, "!" and "_" 
+        String ret = str.replaceAll("[ !\t\n\f\r_]", "");
+        // remove any "." that occur more than once (so you ignore text like "......")
+        ret = ret.replaceAll("[.]{2,}", "");
+        return ret;
+        //return str;
     }
 }

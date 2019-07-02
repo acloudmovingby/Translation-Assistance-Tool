@@ -95,7 +95,7 @@ public class DatabaseOperationsTest {
     @Test
     public void testAddFile() {
         System.out.println("addFile");
-        DatabaseOperations.rebootDB();
+        //DatabaseOperations.rebootDB();
 
         // adding an empty file, checking it's the same when retrieved
         TranslationFile emptyFile = new TranslationFile();

@@ -148,7 +148,7 @@ public class Fxml_1Controller implements Initializable {
     TableColumn<MatchSegment, String> fileColComp;
 
     @FXML
-    TableColumn<MatchSegment, String> scoreColComp;
+    TableColumn<MatchSegment, Integer> scoreColComp;
 
     @FXML
     TableView<MatchSegment> compareTable;

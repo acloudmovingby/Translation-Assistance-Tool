@@ -65,7 +65,7 @@ public class Substring {
      */
     private static int[][] findPossibleSubsInS2(String s1, String s2) {
         int[][] subLength = new int[s1.length()][s2.length()];
-        // FINDS WHERE ALL SUBSTRINGS COULD BE 
+        // FINDS WHERE ALL COMMON SUBSTRINGS COULD BE 
         // if a pair of characters are not identical, they are 0
         // if it is >0, it represents the legnth of the substring up to that point
         for (int i = 0; i < s1.length(); i++) {

@@ -49,12 +49,6 @@ public class MatchManager {
         // for ngrams of 8 character length, the number of Segments to check dramatically decreases, so I didn't waste more memory making postingslists for ngrams longer than 8.
         PostingsList pl = plm.getPostingsList(
                 (minMatchLength <= 8 ? minMatchLength : 8));
-
-        // TEMP FOR CHECKING SIZE OF POSTINGS LIST - DELETE LATER
-        for (PostingsList postingsList : plm.getAllPostingsLists()) {
-            //int totalSegs = postingsList.getMap().values().stream().mapToInt(a -> a.size()).sum();
-            //System.out.println("PL" + postingsList.getNGramLength() + ": total Ngrams = " + postingsList.getMap().size() + ", total segs contained = " + totalSegs);
-        }
         
         return MatchFindingAlgorithms.basicMatch(seg, minMatchLength, pl);
     }
