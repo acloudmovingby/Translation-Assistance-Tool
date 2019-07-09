@@ -64,6 +64,11 @@ public class MatchSegment implements Comparable<MatchSegment> {
     int longestMatchLength;
     // The Thai text represented as a TextFlow object
     TextFlow tFlow;
+    
+    /**
+     * An array of int pairs showing intervals in the source segment text where this target segment has matches to, as found by the matching algorithm.
+     */
+    private int[][] sourceMatchIntervals;
 
     public MatchSegment(Segment targetSeg) {
         this.seg = targetSeg;
@@ -227,7 +232,7 @@ public class MatchSegment implements Comparable<MatchSegment> {
     }
 
     /**
-     * Returns a TextFlow object for use in updateItem callback method
+     * Returns a TextFlow object for use in JavaFX updateItem() callback method in table cells
      *
      * @return
      */
@@ -300,4 +305,24 @@ public class MatchSegment implements Comparable<MatchSegment> {
         return seg;
     }
 
+    /**
+     * An array of int pairs showing intervals in the source segment text where this target segment has matches to, as found by the matching algorithm.
+     *
+     * @return 
+     */
+    public int[][] getSourceMatchIntervals() {
+        return sourceMatchIntervals; 
+    }
+    
+    /**
+     * 
+     * An array of int pairs showing intervals in the source segment text where this target segment has matches to, as found by the matching algorithm.
+     *
+     * @param sourceMatchIntervals 
+     */
+    public void setSourceMatchIntervals(int[][] sourceMatchIntervals) {
+        this.sourceMatchIntervals = sourceMatchIntervals;
+    }
 }
+    
+    
