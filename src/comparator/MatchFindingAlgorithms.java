@@ -78,7 +78,7 @@ public class MatchFindingAlgorithms {
      * @return A MatchSegment if a match exists or null if no match exists.
      */
     public static Optional<MatchSegment> singleSegBasicMatch(Segment source, Segment target, int minMatchLength) {
-        boolean[] matchingChars = Substring.getS2Matches(source.getThai(), target.getThai(), minMatchLength);
+        boolean[] matchingChars = CommonSubstringAlgorithmHelper.getS2Matches(source.getThai(), target.getThai(), minMatchLength);
         boolean hasMatch = false;
         // checks to see if there is any match at all
         for (int i = 0; i < matchingChars.length; i++) {

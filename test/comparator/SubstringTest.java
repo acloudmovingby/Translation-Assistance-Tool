@@ -41,7 +41,7 @@ public class SubstringTest {
     }
 
     /**
-     * Test of commonSubsOfMinLength method, of class Substring.
+     * Test of commonSubsOfMinLength method, of class CommonSubstringAlgorithmHelper.
      */
     @Test
     public void testCommonSubsOfMinLength() {
@@ -51,77 +51,77 @@ public class SubstringTest {
         String s1 = "";
         String s2 = "";
         int minLength = 0;
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "";
         s2 = "";
         minLength = 1;
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "a";
         s2 = "b";
         minLength = 1;
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "a";
         s2 = "a";
         minLength = 1;
         l.add("a");
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "a";
         s2 = "a";
         minLength = 2;
         l = new ArrayList();
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "ab";
         s2 = "abb";
         minLength = 2;
         l = new ArrayList();
         l.add("ab");
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "bab";
         s2 = "abb";
         minLength = 2;
         l = new ArrayList();
         l.add("ab");
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "abb";
         s2 = "abb";
         minLength = 3;
         l = new ArrayList();
         l.add("abb");
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "ab";
         s2 = "abb";
         minLength = 2;
         l = new ArrayList();
         l.add("ab");
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "abb";
         s2 = "abb";
         minLength = 4;
         l = new ArrayList();
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "abcabcd";
         s2 = "abcd";
         minLength = 2;
         l = new ArrayList();
         l.addAll(Arrays.asList("abcd", "abc"));
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         s1 = "abc";
         s2 = "abababc";
         minLength = 2;
         l = new ArrayList();
         l.addAll(Arrays.asList("abc", "ab", "ab"));
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
 
         /*
         This test represents possible problems where behavior is currently not defined: complex overlapping substrings
@@ -130,7 +130,7 @@ public class SubstringTest {
         minLength = 2;
         l = new ArrayList();
         l.addAll(Arrays.asList("ababaabb", "baabb"));
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
          */
         // SHOULD DO:
         // no overlapping substrings
@@ -147,7 +147,7 @@ public class SubstringTest {
     }
 
     /**
-     * Test of commonSubsOfMinLength method, of class Substring.
+     * Test of commonSubsOfMinLength method, of class CommonSubstringAlgorithmHelper.
      */
     @Test
     public void testgetS2Matches() {
@@ -158,95 +158,95 @@ public class SubstringTest {
         String s2 = "";
         int minLength = 0;
         expResult = new boolean[0];
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "";
         s2 = "";
         minLength = 1;
         expResult = new boolean[0];
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "a";
         s2 = "b";
         minLength = 1;
         expResult = new boolean[1];
         expResult[0] = false;
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "a";
         s2 = "a";
         minLength = 1;
         expResult = new boolean[1];
         expResult[0] = true;
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "a";
         s2 = "a";
         minLength = 2;
         expResult = new boolean[1];
         expResult[0] = false;
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "ab";
         s2 = "abb";
         minLength = 2;
         expResult = new boolean[]{true, true, false};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "bab";
         s2 = "abb";
         minLength = 2;
         expResult = new boolean[]{true, true, false};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "abb";
         s2 = "abb";
         minLength = 3;
         expResult = new boolean[]{true, true, true};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "ab";
         s2 = "abb";
         minLength = 2;
         expResult = new boolean[]{true, true, false};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "abb";
         s2 = "abb";
         minLength = 4;
         expResult = new boolean[]{false, false, false};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "abcabcd";
         s2 = "abcd";
         minLength = 2;
         expResult = new boolean[]{true, true, true, true};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "abc";
         s2 = "abababc";
         minLength = 2;
         expResult = new boolean[]{true, true, true, true, true, true, true};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         s1 = "ababaabb";
         s2 = "bbaabbcababab";
         minLength = 2;
         expResult = new boolean[]{true, true, true, true, true, true, false, true, true, true, true, true, true};
-        assertEquals(Substring.arrayConverter(expResult),
-                Substring.arrayConverter(Substring.getS2Matches(s1, s2, minLength)));
+        assertEquals(CommonSubstringAlgorithmHelper.arrayConverter(expResult),
+                CommonSubstringAlgorithmHelper.arrayConverter(CommonSubstringAlgorithmHelper.getS2Matches(s1, s2, minLength)));
 
         /*
         This test represents possible problems where behavior is currently not defined: complex overlapping substrings
@@ -255,7 +255,7 @@ public class SubstringTest {
         minLength = 2;
         l = new ArrayList();
         l.addAll(Arrays.asList("ababaabb", "baabb"));
-        assertEquals(l, Substring.commonSubsOfMinLength(s1, s2, minLength));
+        assertEquals(l, CommonSubstringAlgorithmHelper.commonSubsOfMinLength(s1, s2, minLength));
          */
         // SHOULD DO:
         // no overlapping substrings

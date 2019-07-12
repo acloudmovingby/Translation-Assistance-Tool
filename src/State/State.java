@@ -52,15 +52,6 @@ public class State {
 
         this.corpus = fileList;
         
-/*
-        // the following code ensures that the file selected as main file is in fact in the corpus
-        corpus.remove(mainFile);
-        TranslationFile mf = new TranslationFile(mainFile);
-        corpus.add(mf);
-
-        setMainFile(mf);*/
-
-        //matchManager = new MatchManager(this);
         HashSet<Segment> allCommittedSegsInCorpus = TranslationFile.getAllCommittedSegsInFileList(corpus);
         matchManager = new MatchManager(allCommittedSegsInCorpus);
 

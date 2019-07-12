@@ -216,7 +216,7 @@ public class Fxml_1Controller implements Initializable {
         // build the important objects for the program and sets the items for the tables to display
         State state = new State(DatabaseOperations.getAllFiles());
         dispatcher = new Dispatcher(state);
-        setMainFile(mainFile);
+        //setMainFile(mainFile);
         uiState = dispatcher.getUIState();
 
         // UI THINGS THAT DEPEND ON MAINFILE
@@ -363,24 +363,28 @@ public class Fxml_1Controller implements Initializable {
 
         thaiCol.setCellFactory(cf);
         thaiCol.setOnEditCommit(e -> {
-            int row = e.getTablePosition().getRow();
-            Segment editedSeg = tableView.getItems().get(row);
-            if (editedSeg != null) {
-                SegmentBuilder sb = new SegmentBuilder(editedSeg);
-                editedSeg = sb.createSegment();
-                dispatcher.acceptAction(new EditThai(editedSeg, e.getNewValue()));
+            if (!e.getNewValue().equals(e.getOldValue())) {
+                int row = e.getTablePosition().getRow();
+                Segment editedSeg = tableView.getItems().get(row);
+                if (editedSeg != null) {
+                    SegmentBuilder sb = new SegmentBuilder(editedSeg);
+                    editedSeg = sb.createSegment();
+                    dispatcher.acceptAction(new EditThai(editedSeg, e.getNewValue()));
+                }
             }
         });
 
         // English column:
         englishCol.setCellFactory(cf);
         englishCol.setOnEditCommit(e -> {
-            int row = e.getTablePosition().getRow();
-            Segment editedSeg = tableView.getItems().get(row);
-            if (editedSeg != null) {
-                SegmentBuilder sb = new SegmentBuilder(editedSeg);
-                editedSeg = sb.createSegment();
-                dispatcher.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
+            if (!e.getNewValue().equals(e.getOldValue())) {
+                int row = e.getTablePosition().getRow();
+                Segment editedSeg = tableView.getItems().get(row);
+                if (editedSeg != null) {
+                    SegmentBuilder sb = new SegmentBuilder(editedSeg);
+                    editedSeg = sb.createSegment();
+                    dispatcher.acceptAction(new EditEnglish(editedSeg, e.getNewValue()));
+                }
             }
         }
         );
@@ -479,7 +483,7 @@ public class Fxml_1Controller implements Initializable {
             }
         }
         );
-        
+
         // Makes it so merge is disabled except when multiple cells are selected
         tableView.getSelectionModel().getSelectedItems().addListener((Change<? extends Segment> c) -> {
             if (c.getList().size() <= 1) {
@@ -488,7 +492,7 @@ public class Fxml_1Controller implements Initializable {
                 mergeButton.setDisable(false);
             }
         });
-        
+
         /*
         BUTTON IMAGES
          */
@@ -501,13 +505,16 @@ public class Fxml_1Controller implements Initializable {
         redoButton.setGraphic(getImageView("/JavaFX_1/RedoButton.png", 30));
 
     }
-    
+
     /**
-     * Creates a JavaFX ImageView with the given width so JavaFX components can use it. 
-     * 
-     * Because ImageView is a Node, only one can exist in the JavaFX node graph. To use an image multiple times, you can use an Image object which then can be made into several ImageViews.
-     * 
-     * @param imageFilePath 
+     * Creates a JavaFX ImageView with the given width so JavaFX components can
+     * use it.
+     *
+     * Because ImageView is a Node, only one can exist in the JavaFX node graph.
+     * To use an image multiple times, you can use an Image object which then
+     * can be made into several ImageViews.
+     *
+     * @param imageFilePath
      * @param width in pixels
      */
     private ImageView getImageView(String imageFilePath, int width) {
@@ -542,7 +549,6 @@ public class Fxml_1Controller implements Initializable {
     private void commit(ActionEvent event) {
         ObservableList<Segment> selectedItems = tableView.getSelectionModel().getSelectedItems();
         if (selectedItems != null) {
-
             dispatcher.acceptAction(new Commit(selectedItems));
         }
     }
