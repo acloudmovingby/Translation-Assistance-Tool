@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import javafx.util.Pair;
 
 /**
  * Provides methods to find matches between a source Segment and some target Segment.
@@ -42,13 +43,16 @@ public class MatchFindingAlgorithms {
         List<MatchSegment> matchList = new ArrayList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();
 
+        // for testing purposes only
+        List<Pair<String, Integer>> ngramFreq = new ArrayList();
+        
         // makes ngrams from seg
         List<String> nGrams = PostingsList.makeNGrams(source.getThai(), pl.getNGramLength());
         // for each ngram in the source text...
         for (String ng : nGrams) {
             // finds segments in the corpus that match that ngram
             List<Segment> segList = pl.getMatchingID(ng);
-
+            ngramFreq.add(new Pair(ng + ": " + segList.size(), segList.size()));
             // for each segment that matches that ngram....
             for (Segment target : segList) {
                 if (!segsAlreadyChecked.contains(target)) {
@@ -60,8 +64,19 @@ public class MatchFindingAlgorithms {
                 }
             }
         }
+        
+        ngramFreq.sort((a,b) -> b.getValue()-a.getValue());
+        ngramFreq.stream().map(a -> a.getKey()).forEach(System.out::println);
+        
+        
+        // sort in decreasing order according to the longest matching substring
+            ///listOfMatches.sort((a,b) -> b.longestMatchLengthProperty().get()-a.longestMatchLengthProperty().get());
         return matchList;
     }
+    
+    
+            
+            
 
    
     /**
@@ -78,15 +93,9 @@ public class MatchFindingAlgorithms {
      * @return A MatchSegment if a match exists or null if no match exists.
      */
     public static Optional<MatchSegment> singleSegBasicMatch(Segment source, Segment target, int minMatchLength) {
-        boolean[] matchingChars = CommonSubstringAlgorithmHelper.getS2Matches(source.getThai(), target.getThai(), minMatchLength);
-        boolean hasMatch = false;
-        // checks to see if there is any match at all
-        for (int i = 0; i < matchingChars.length; i++) {
-            if (matchingChars[i]) {
-                hasMatch = true;
-                break;
-            }
-        }
+        CommonSubstringFinder commonSubstrings = new CommonSubstringFinder(source.getThai(), target.getThai(), minMatchLength);
+        boolean[] matchingChars = commonSubstrings.getS2MatchIntervals();
+        boolean hasMatch = commonSubstrings.hasCommonSubstrings();
 
         // if there is a match, it creates a MatchSegment and adds it to the MatchList
         if (hasMatch) {
@@ -95,6 +104,8 @@ public class MatchFindingAlgorithms {
             newMatch.setEnglish(target.getEnglish());
             newMatch.setFileName(target.getFileName());
             newMatch.setMatches(matchingChars);
+            newMatch.setSourceMatchIntervals(commonSubstrings.getS1Intervals());
+            newMatch.setTargetMatchIntervals(commonSubstrings.getS2Intervals());
             return Optional.of(newMatch);
         } else {
             return Optional.empty();

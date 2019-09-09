@@ -43,7 +43,7 @@
                               <center>
                                  <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
                                     <content>
-                                       <FlowPane fx:id="loadFileFlowPane" prefHeight="200.0" prefWidth="200.0" />
+                                       <FlowPane fx:id="loadFileFlowPane" prefHeight="267.0" prefWidth="762.0" />
                                     </content>
                                  </ScrollPane>
                               </center>

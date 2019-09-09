@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import UserActions.MutateFileAction;
+import comparator.RankMatches;
 
 /**
  * Receives all user input from the Controller and delegates these tasks to various components that then work directly with the State data. 
@@ -130,9 +131,8 @@ public class Dispatcher {
         } else {
             // find matches
             List<MatchSegment> listOfMatches = state.getMatchManager().basicMatch(seg, state.getMinMatchLength());
-            // sort in decreasing order according to the longest matching substring
-            listOfMatches.sort((a,b) -> b.longestMatchLengthProperty().get()-a.longestMatchLengthProperty().get());
-            return listOfMatches;
+            
+            return RankMatches.rankByAlternatingClusters(listOfMatches);
         }
     }
     

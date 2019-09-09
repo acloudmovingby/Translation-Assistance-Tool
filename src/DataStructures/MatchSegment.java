@@ -8,6 +8,7 @@ package DataStructures;
 import State.UIState;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -18,6 +19,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Pair;
 
 /**
  * This class represents a match between a source Segment in the MainFile and a
@@ -40,7 +42,7 @@ public class MatchSegment implements Comparable<MatchSegment> {
      * Represents where in the seg's Thai property there are matches. Length is
      * equal to seg.getThai().length()
      */
-    private boolean[] charsPartOfSubstring;
+    private boolean[] matches;
     /**
      * The name of the file this segment exists in.
      */
@@ -62,13 +64,10 @@ public class MatchSegment implements Comparable<MatchSegment> {
      */
     int matchSize;
     int longestMatchLength;
-    // The Thai text represented as a TextFlow object
-    TextFlow tFlow;
     
-    /**
-     * An array of int pairs showing intervals in the source segment text where this target segment has matches to, as found by the matching algorithm.
-     */
-    private int[][] sourceMatchIntervals;
+    private List<Pair<Integer,Integer>> targetMatchIntervals;
+    private List<Pair<Integer, Integer>> sourceMatchIntervals;
+    
 
     public MatchSegment(Segment targetSeg) {
         this.seg = targetSeg;
@@ -76,7 +75,9 @@ public class MatchSegment implements Comparable<MatchSegment> {
         thaiProperty = new SimpleStringProperty(seg.getThai());
         englishProperty = new SimpleStringProperty(seg.getEnglish());
         fileName = new SimpleStringProperty(seg.getFileName());
-        charsPartOfSubstring = new boolean[thaiProperty.get().length()];
+        matches = new boolean[thaiProperty.get().length()];
+        sourceMatchIntervals = new ArrayList();
+        targetMatchIntervals = new ArrayList();
     }
 
     public String getFileName() {
@@ -97,8 +98,8 @@ public class MatchSegment implements Comparable<MatchSegment> {
 
     public void setThai(String thai) {
         thaiProperty.set(thai);
-        charsPartOfSubstring = new boolean[getThai().length()];
-        for (boolean b : charsPartOfSubstring) {
+        matches = new boolean[getThai().length()];
+        for (boolean b : matches) {
             b = false;
         }
     }
@@ -112,16 +113,16 @@ public class MatchSegment implements Comparable<MatchSegment> {
     }
 
     public boolean[] getMatches() {
-        return charsPartOfSubstring;
+        return matches;
     }
 
     public void setMatches(boolean[] matches) {
-        this.charsPartOfSubstring = matches;
+        this.matches = matches;
     }
 
     public int getMatchSize() {
         matchSize = 0;
-        for (boolean b : charsPartOfSubstring) {
+        for (boolean b : matches) {
             if (b == true) {
                 matchSize++;
             }
@@ -216,7 +217,7 @@ public class MatchSegment implements Comparable<MatchSegment> {
     private int findLongestMatchLength() {
         int longestLength = 0;
         int currentLength = 0;
-        for (boolean b : charsPartOfSubstring) {
+        for (boolean b : matches) {
             if (b) {
                 currentLength++;
             } else {
@@ -229,15 +230,6 @@ public class MatchSegment implements Comparable<MatchSegment> {
 
     public IntegerProperty longestMatchLengthProperty() {
         return new SimpleIntegerProperty(findLongestMatchLength());
-    }
-
-    /**
-     * Returns a TextFlow object for use in JavaFX updateItem() callback method in table cells
-     *
-     * @return
-     */
-    public TextFlow getTFlow() {
-        return tFlow;
     }
 
     /**
@@ -305,24 +297,22 @@ public class MatchSegment implements Comparable<MatchSegment> {
         return seg;
     }
 
-    /**
-     * An array of int pairs showing intervals in the source segment text where this target segment has matches to, as found by the matching algorithm.
-     *
-     * @return 
-     */
-    public int[][] getSourceMatchIntervals() {
-        return sourceMatchIntervals; 
+    public List<Pair<Integer,Integer>> getTargetMatchIntervals() {
+        return targetMatchIntervals;
     }
     
-    /**
-     * 
-     * An array of int pairs showing intervals in the source segment text where this target segment has matches to, as found by the matching algorithm.
-     *
-     * @param sourceMatchIntervals 
-     */
-    public void setSourceMatchIntervals(int[][] sourceMatchIntervals) {
+    public void setTargetMatchIntervals(List<Pair<Integer,Integer>> targetMatchIntervals) {
+        this.targetMatchIntervals = targetMatchIntervals;
+    }
+    
+    public List<Pair<Integer,Integer>> getSourceMatchIntervals() {
+        return sourceMatchIntervals;
+    }
+    
+    public void setSourceMatchIntervals(List<Pair<Integer,Integer>> sourceMatchIntervals) {
         this.sourceMatchIntervals = sourceMatchIntervals;
     }
+    
 }
     
     

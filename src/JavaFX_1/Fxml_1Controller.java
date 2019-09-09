@@ -17,8 +17,6 @@ import UserActions.Split;
 import UserActions.Uncommit;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -45,7 +43,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -344,19 +341,6 @@ public class Fxml_1Controller implements Initializable {
         thaiCol.setCellValueFactory(new PropertyValueFactory<>("thai"));
         thaiCol.setMinWidth(80);
         thaiCol.setEditable(true);
-        /*
-        // The following just simply displays the Thai text (it is not editable or selectable)
-        thaiCol.setCellFactory(tc -> {
-            TableCell<Segment, String> cell = new TableCell<>();
-            Text text = new Text();
-            text.setFont(UIState.getThaiFont());
-            cell.setGraphic(text);
-            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-            text.wrappingWidthProperty().bind(thaiCol.widthProperty()); // ensures that the text wraps at the column width
-            text.textProperty().bind(cell.itemProperty());
-            cell.setEditable(true);
-            return cell;
-        });*/
 
         EditableCellFactory cf = new EditableCellFactory();
         cf.setFont(UIState.getEnglishFont()); // should actually do in CSS
@@ -443,9 +427,9 @@ public class Fxml_1Controller implements Initializable {
                         setText(null);
                         setStyle("");
                         MatchSegment thisCellSegment = tc.getTableView().getItems().get(this.getIndex());
-                        boolean[] matches = thisCellSegment.getMatches();
-                        // matching characters are marked as one color, non-matching characters are another column
-                        final TextFlow textFlow = matchesAsTextFlow(thisCellSegment.getThai(), matches);
+                        
+//ensures that the matches (common substrings) are highlighted
+                        final TextFlow textFlow = HighlightText.highlightText(thisCellSegment.getThai(), thisCellSegment.getTargetMatchIntervals());
                         this.setGraphic(textFlow);
 
                         setPrefHeight(textFlow.prefHeight(thaiColComp.getWidth()) + 4);
@@ -589,60 +573,7 @@ public class Fxml_1Controller implements Initializable {
         dispatcher.exportCommittedSegs();
     }
 
-    /**
-     * Takes a boolean array of same length as text where true indicates a
-     * matching character and false indicates a non-matching character.
-     *
-     * @param matchingSegText The Thai text with matches in it.
-     * @param matches A boolean array of same length as text.
-     * @return A TextFlow object with matching substrings colored differently.
-     */
-    public TextFlow matchesAsTextFlow(String matchingSegText, boolean[] matches) {
-        // breaks text up into list of matching and non-matching substrings
-        ArrayList<String> substrings = new ArrayList();
-        TextFlow textFlow = new TextFlow();
-        if (matchingSegText.length() == 0) {
-            return textFlow;
-        }
-
-        boolean currentBoolean = matches[0];
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < matches.length; i++) {
-            if (matches[i] != currentBoolean) {
-                // adds substring to list
-                substrings.add(sb.toString());
-                // restarts stringbuilder and resets current boolean
-                sb = new StringBuilder();
-                sb.append(matchingSegText.charAt(i));
-                currentBoolean = matches[i];
-            } else {
-                sb.append(matchingSegText.charAt(i));
-            }
-        }
-        substrings.add(sb.toString());
-
-        // Builds TextFlow object
-        // Assigns specific colors for matching and non-matching substrings.
-        Color matchColor = Color.GREEN;
-        Color nonMatchColor = Color.BLACK;
-        Color currentColor;
-
-        // sets currentColor according to whether the text begins with a  match or not
-        currentColor = matches[0] == false ? nonMatchColor : matchColor;
-
-        Iterator<String> iter = substrings.iterator();
-
-        // creates Text objects, assigns color, then adds to TextFlow
-        while (iter.hasNext()) {
-            Text text = new Text(iter.next());
-            text.setFill(currentColor);
-            text.setFont(UIState.getThaiFont());
-            textFlow.getChildren().add(text);
-            // switches current color
-            currentColor = currentColor == matchColor ? nonMatchColor : matchColor;
-        }
-        return textFlow;
-    }
+    
 
     @FXML
     private void undo(ActionEvent event) {

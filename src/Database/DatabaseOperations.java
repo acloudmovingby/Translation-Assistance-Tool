@@ -38,6 +38,7 @@ public class DatabaseOperations {
      * there is an SQL error, returns false.
      */
     public static boolean addFile(TranslationFile bf) {
+        System.out.println("File added to database.");
         DatabaseOperations.addOrUpdateFileName(bf.getFileID(), bf.getFileName());
         String sql = "INSERT OR REPLACE INTO corpus1(id, fileID, fileName, thai, english, committed, removed, rank) VALUES(?,?,?,?,?,?,?,?)";
 
