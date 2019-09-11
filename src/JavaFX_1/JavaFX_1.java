@@ -19,6 +19,8 @@ public class JavaFX_1 extends Application {
 
     public static Stage stage; // for some reason, some UI components in Controller need this and this was a hacky way to get it
     
+    // something something
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Thai CAT Tool");
