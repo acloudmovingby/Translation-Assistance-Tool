@@ -17,9 +17,7 @@ import javafx.stage.Stage;
  */
 public class JavaFX_1 extends Application {
 
-    public static Stage stage; // for some reason, some UI components in Controller need this and this was a hacky way to get it
-    
-    // something something
+    public static Stage stage; // necessary for the Controller to cause some things to happen, like file open dialog windows
     
     @Override
     public void start(Stage primaryStage) throws Exception {

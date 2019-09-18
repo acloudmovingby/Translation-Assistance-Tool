@@ -237,7 +237,7 @@ public class Fxml_1Controller implements Initializable {
         ***************
          */
         // image for HOME TAB
-        ImageView homeButtonLightBlueIV = new ImageView(getClass().getResource("/JavaFX_1/HomeButtonLightBlue.png").toExternalForm());
+        ImageView homeButtonLightBlueIV = new ImageView(getClass().getResource("/Images/HomeButtonLightBlue.png").toExternalForm());
         homeButtonLightBlueIV.setFitWidth(50);
         homeButtonLightBlueIV.setPreserveRatio(true);
         homeButtonLightBlueIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
@@ -249,7 +249,7 @@ public class Fxml_1Controller implements Initializable {
         homeTab.setText("");
 
         // image for TRANSLATION TAB
-        ImageView translationButtonWhiteIV = new ImageView(getClass().getResource("/JavaFX_1/TranslationButtonWhite.png").toExternalForm());
+        ImageView translationButtonWhiteIV = new ImageView(getClass().getResource("/Images/TranslationButtonWhite.png").toExternalForm());
         translationButtonWhiteIV.setFitWidth(50);
         translationButtonWhiteIV.setPreserveRatio(true);
         translationButtonWhiteIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
@@ -261,7 +261,7 @@ public class Fxml_1Controller implements Initializable {
         translationTab.setText("");
 
         // image for ANALYSIS TAB 
-        ImageView analysisIV = new ImageView(getClass().getResource("/JavaFX_1/PieChartButton.png").toExternalForm());
+        ImageView analysisIV = new ImageView(getClass().getResource("/Images/PieChartButton.png").toExternalForm());
         analysisIV.setFitWidth(50);
         analysisIV.setPreserveRatio(true);
         analysisIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
@@ -280,7 +280,7 @@ public class Fxml_1Controller implements Initializable {
          *******************
          */
         // NEW FILE ICON + IMPORT TMX ICON
-        Image newFileIcon = new Image(getClass().getResource("/JavaFX_1/NewFileIcon.png").toExternalForm());
+        Image newFileIcon = new Image(getClass().getResource("/Images/NewFileIcon.png").toExternalForm());
         ImageView newFileIconIV = new ImageView(newFileIcon);
         newFileIconIV.setFitWidth(110);
         newFileIconIV.setPreserveRatio(true);
@@ -300,7 +300,7 @@ public class Fxml_1Controller implements Initializable {
         homeTopIcons.getChildren().add(newFileLabel);
 
         // LOAD FILE ICONS
-        Image loadFileIconImage = new Image(getClass().getResource("/JavaFX_1/BlankFileIcon.png").toExternalForm());
+        Image loadFileIconImage = new Image(getClass().getResource("/Images/BlankFileIcon.png").toExternalForm());
 
         // Creates the actual icons (which are buttons to open a file for translation) and include the standard blank file icon image, the name of the file, and a listener for when the user clicks on it
         for (TranslationFile file : uiState.getAllFiles()) {
@@ -480,13 +480,13 @@ public class Fxml_1Controller implements Initializable {
         /*
         BUTTON IMAGES
          */
-        commitButton.setGraphic(getImageView("/JavaFX_1/CommitButton.png", 40));
-        uncommitButton.setGraphic(getImageView("/JavaFX_1/UncommitButton.png", 40));
-        splitButton.setGraphic(getImageView("/JavaFX_1/SplitButton.png", 40));
-        mergeButton.setGraphic(getImageView("/JavaFX_1/MergeButton.png", 40));
-        exportButton.setGraphic(getImageView("/JavaFX_1/ExportButton.png", 40));
-        undoButton.setGraphic(getImageView("/JavaFX_1/UndoButton.png", 30));
-        redoButton.setGraphic(getImageView("/JavaFX_1/RedoButton.png", 30));
+        commitButton.setGraphic(getImageView("/Images/CommitButton.png", 40));
+        uncommitButton.setGraphic(getImageView("/Images/UncommitButton.png", 40));
+        splitButton.setGraphic(getImageView("/Images/SplitButton.png", 40));
+        mergeButton.setGraphic(getImageView("/Images/MergeButton.png", 40));
+        exportButton.setGraphic(getImageView("/Images/ExportButton.png", 40));
+        undoButton.setGraphic(getImageView("/Images/UndoButton.png", 30));
+        redoButton.setGraphic(getImageView("/Images/RedoButton.png", 30));
 
     }
 
