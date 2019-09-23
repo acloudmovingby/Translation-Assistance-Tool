@@ -71,7 +71,7 @@ public class Fxml_1Controller implements Initializable {
     /**
      * *****************
      *
-     * TAB FXML OBJECTS (the actual tabs you click on in the TabPane)
+     * TAB FXML OBJECTS (the actual tabs you click on in the vertical tab pane on the left side)
      *
      ******************
      */
@@ -237,38 +237,22 @@ public class Fxml_1Controller implements Initializable {
         ***************
          */
         // image for HOME TAB
-        ImageView homeButtonLightBlueIV = new ImageView(getClass().getResource("/Images/HomeButtonLightBlue.png").toExternalForm());
-        homeButtonLightBlueIV.setFitWidth(50);
-        homeButtonLightBlueIV.setPreserveRatio(true);
-        homeButtonLightBlueIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        homeButtonLightBlueIV.setCache(true); // perhaps not necessary
-        Label homeTabLabel = new Label("Home", homeButtonLightBlueIV);
-        homeTabLabel.setMaxWidth(40);
-        homeTabLabel.getStyleClass().add("homeTabLabel");
+        homeTab.getStyleClass().add("homeTab");
+        Label homeTabLabel = new Label();
+        homeTabLabel.getStyleClass().add("homeTabLabel"); // lets you reference it with the CSS style sheet
         homeTab.setGraphic(homeTabLabel);
         homeTab.setText("");
+       
 
         // image for TRANSLATION TAB
-        ImageView translationButtonWhiteIV = new ImageView(getClass().getResource("/Images/TranslationButtonWhite.png").toExternalForm());
-        translationButtonWhiteIV.setFitWidth(50);
-        translationButtonWhiteIV.setPreserveRatio(true);
-        translationButtonWhiteIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        translationButtonWhiteIV.setCache(true); // perhaps not necessary
-        Label translationTabLabel = new Label("", translationButtonWhiteIV);
-        translationTabLabel.setText("Translation");
-        translationTabLabel.setMaxWidth(40);
+        Label translationTabLabel = new Label();
+        translationTabLabel.getStyleClass().add("translationTabLabel"); // lets you reference it with the CSS style sheet
         translationTab.setGraphic(translationTabLabel);
         translationTab.setText("");
 
         // image for ANALYSIS TAB 
-        ImageView analysisIV = new ImageView(getClass().getResource("/Images/PieChartButton.png").toExternalForm());
-        analysisIV.setFitWidth(50);
-        analysisIV.setPreserveRatio(true);
-        analysisIV.setSmooth(true); // perhaps not necessary (makes it smoother when resized)
-        analysisIV.setCache(true); // perhaps not necessary
-        Label analysisTabLabel = new Label("", analysisIV);
-        analysisTabLabel.setText("Analysis");
-        analysisTabLabel.setMaxWidth(40);
+        Label analysisTabLabel = new Label();
+        analysisTabLabel.getStyleClass().add("analysisTabLabel");
         analysisTab.setGraphic(analysisTabLabel);
         analysisTab.setText("");
 
@@ -327,7 +311,6 @@ public class Fxml_1Controller implements Initializable {
         committedStatusColor = "rgb(183, 215, 255)";
         unCommittedStatusColor = "rgb(255, 255, 255)";
 
-        // Set prompt text for minMatchLength field
         minMatchLengthField.setPromptText(uiState.getMinMatchLength());
         // Set prompt text for search field
         searchField.setPromptText("search...");
@@ -596,21 +579,3 @@ public class Fxml_1Controller implements Initializable {
 
 }
 
-/*
-Callback: 
-    Callback<P, R> 
-        P = the type of the function's argument
-        R = the type of the thing returned
-
-setCellFactory:
-    takes callback that takes a TableColumn<S,T> and returns a TableCell<S,T>
-    bind node text to cell value by doing this:  (the node in the cell).textProperty().bind(cell.itemProperty());
-    
-
-setCellValueFactory:
-    takes callback that takes a CellDataFeatures<S,T> and returns an ObservableValue<T>
-
-updateItem:
-    is a protected method in Cell class
-    is called when the item is changed.
- */
