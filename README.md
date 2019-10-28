@@ -19,10 +19,10 @@ Brands like Trados and Wordfast are widely used by translators <statistic about 
 However in my experience these tools often worked very poorly with Thai.
 
 # Why other software does not work well with Thai
-Possible reasons:
-- Incorrectly counting words (many text processors, including Google Docs until recently, incorrectly counted words in Thai). 
-- Over use of Edit / Levenstein distance. Thai does not use periods, so we have to parse segments purely on line breaks, meaning some segments are quite long. This makes use of edit distance alone a poor choice for comparing commonality.
-- My computer is old and buggy ? 
+It's hard to know why they don't work well, but possible reasons could be: 
+- Their algorithm weights matches oriented around word statistics (like term frequency), but their parsing Thai words incorrectly (note: many text processors, including Google Docs until very recently, counted Thai words incorrectly). Their parsing / normalization might rely on cues like word spaces or punctuation that exist in many Western languages but don't in Thai.
+- Because there's no punctuation to show the end of a sentence in Thai, the programs must parse by line break (i.e. at the end of a paragraph), but this ends up creating much larger segments, which for certain ways of measuring similarity (like edit distance), would make Segments seem quite different, when in fact there are substantial common substrings inside
+- The above two reasons seem very obvious, so I have no real idea why most software fails to work with Thai well...
 
 # Application Basic Requirements
 For any translator who actually wants to use this software, it must be able to:
