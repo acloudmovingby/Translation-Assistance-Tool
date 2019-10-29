@@ -43,7 +43,7 @@ public class MatchFindingAlgorithms {
         List<MatchSegment> matchList = new ArrayList();
         HashSet<Segment> segsAlreadyChecked = new HashSet();
 
-        // for testing purposes only
+        // for testing
         List<Pair<String, Integer>> ngramFreq = new ArrayList();
         
         // makes ngrams from seg
@@ -52,11 +52,10 @@ public class MatchFindingAlgorithms {
         for (String ng : nGrams) {
             // finds segments in the corpus that match that ngram
             List<Segment> segList = pl.getMatchingID(ng);
-            ngramFreq.add(new Pair(ng + ": " + segList.size(), segList.size()));
+            ngramFreq.add(new Pair(ng + ": " + segList.size(), segList.size()));//testing
             // for each segment that matches that ngram....
             for (Segment target : segList) {
-                if (!segsAlreadyChecked.contains(target)) {
-
+                if (!segsAlreadyChecked.contains(target) && target.getID()!=source.getID()) {
                     // uses Optionals to check if there is a new match. If so, adds to the list of matches
                     singleSegBasicMatch(source, target, minMatchLength)
                             .ifPresent(newMatchSegment -> matchList.add(newMatchSegment));
@@ -64,9 +63,10 @@ public class MatchFindingAlgorithms {
                 }
             }
         }
-        
-        ngramFreq.sort((a,b) -> b.getValue()-a.getValue());
-        ngramFreq.stream().map(a -> a.getKey()).forEach(System.out::println);
+        /* useful for testing:
+        ngramFreq.sort((a,b) -> b.getValue()-a.getValue());//testing
+        ngramFreq.stream().map(a -> a.getKey()).forEach(System.out::println);//testing
+        */
         
         
         // sort in decreasing order according to the longest matching substring
@@ -94,16 +94,16 @@ public class MatchFindingAlgorithms {
      */
     public static Optional<MatchSegment> singleSegBasicMatch(Segment source, Segment target, int minMatchLength) {
         CommonSubstringFinder commonSubstrings = new CommonSubstringFinder(source.getThai(), target.getThai(), minMatchLength);
-        boolean[] matchingChars = commonSubstrings.getS2MatchIntervals();
+        //boolean[] matchingChars = commonSubstrings.getS2MatchIntervals();
         boolean hasMatch = commonSubstrings.hasCommonSubstrings();
 
         // if there is a match, it creates a MatchSegment and adds it to the MatchList
         if (hasMatch) {
             MatchSegment newMatch = new MatchSegment(target);
-            newMatch.setThai(target.getThai());
+            /*newMatch.setThai(target.getThai());
             newMatch.setEnglish(target.getEnglish());
             newMatch.setFileName(target.getFileName());
-            newMatch.setMatches(matchingChars);
+            newMatch.setMatches(matchingChars);*/
             newMatch.setSourceMatchIntervals(commonSubstrings.getS1Intervals());
             newMatch.setTargetMatchIntervals(commonSubstrings.getS2Intervals());
             return Optional.of(newMatch);

@@ -113,8 +113,8 @@
                             <TableView fx:id="tableView" editable="true" prefHeight="397.0" prefWidth="932.0" GridPane.rowIndex="2">
                                 <columns>
                                     <TableColumn fx:id="idCol" prefWidth="32.77339541912079" text="id" />
-                                    <TableColumn fx:id="thaiCol" editable="false" prefWidth="311.81269454956055" sortable="false" text="Thai" />
-                                    <TableColumn fx:id="englishCol" minWidth="0.0" prefWidth="378.1872253417969" sortable="false" text="English" />
+                                    <TableColumn fx:id="thaiCol" editable="false" prefWidth="311.81269454956055" sortable="false" text="Source" />
+                                    <TableColumn fx:id="englishCol" minWidth="0.0" prefWidth="378.1872253417969" sortable="false" text="Translation" />
                                     <TableColumn fx:id="status" minWidth="0.0" prefWidth="75.94622802734375" text="Status" />
                                     <TableColumn fx:id="matchScore" prefWidth="60.7294921875" text="Match" />
                                     <TableColumn prefWidth="63.62591552734375" text="Tags" />
@@ -144,8 +144,8 @@
                                         <children>
                                             <TableView fx:id="compareTable" layoutX="3.0" prefHeight="157.0" prefWidth="936.0">
                                                 <columns>
-                                                    <TableColumn fx:id="thaiColComp" prefWidth="358.0" text="Thai" />
-                                                    <TableColumn fx:id="englishColComp" prefWidth="343.0" text="English" />
+                                                    <TableColumn fx:id="thaiColComp" prefWidth="358.0" text="Matching Committed Segments" />
+                                                    <TableColumn fx:id="englishColComp" prefWidth="343.0" text="Translation" />
                                                     <TableColumn fx:id="fileColComp" prefWidth="104.0" text="File" />
                                                     <TableColumn fx:id="scoreColComp" prefWidth="109.0" text="Score" />
                                                 </columns>

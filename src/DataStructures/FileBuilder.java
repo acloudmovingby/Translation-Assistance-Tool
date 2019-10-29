@@ -74,7 +74,6 @@ public class FileBuilder {
 
             /*
             //makes "english" just be an index number, for testing purposes only
-            
             for (int i=0; i<counter; i++) {
                 sb2.append(i + "\n");
             }*/

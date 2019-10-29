@@ -120,7 +120,6 @@ public class DatabaseOperations {
 
         try (Connection conn = DatabaseOperations.connect();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setDouble(1, fileID);
             pstmt.setString(2, fileName);
             pstmt.executeUpdate();
@@ -170,6 +169,45 @@ public class DatabaseOperations {
 
             // set the corresponding param
             pstmt.setDouble(1, id);
+            // execute the delete statement
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("removeSeg: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Removes the file with the specified id from the database
+     *
+     * @param fileId
+     * @return True if removed successfully with no SQL errors.
+     */
+    public static boolean removeFile(double fileId) {
+
+        String sql = "DELETE FROM corpus1 WHERE fileId = ?";
+
+        try (Connection conn = DatabaseOperations.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setDouble(1, fileId);
+            // execute the delete statement
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("removeSeg: " + e.getMessage());
+            return false;
+        }
+        
+        sql = "DELETE FROM files WHERE fileID = ?";
+        try (Connection conn = DatabaseOperations.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setDouble(1, fileId);
             // execute the delete statement
             pstmt.executeUpdate();
             return true;

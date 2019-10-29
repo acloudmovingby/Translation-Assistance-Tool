@@ -40,6 +40,128 @@ public class SubstringTest {
     @After
     public void tearDown() {
     }
+    
+    /**
+     * Tests CommonSubstringFinder on empty strings
+     */
+    @Test
+    public void testEmptyStrings() {
+        System.out.println("Empty strings");
+        
+        boolean expResult = false;
+        String s1 = "";
+        String s2 = "";
+        int minLength = 2;
+        CommonSubstringFinder csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+    }
+    
+    /**
+     * Tests CommonSubstringFinder on two fully matching strings
+     */
+    @Test
+    public void testIdenticalStrings() {
+        System.out.println("Identical strings");
+        
+        boolean expResult = true;
+        String s1 = "abc";
+        String s2 = "abc";
+        int minLength = 2;
+        CommonSubstringFinder csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = true;
+        minLength = 3;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = false;
+        minLength = 4;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+    }
+    
+    /**
+     * Tests CommonSubstringFinder on two fully matching strings
+     */
+    @Test
+    public void testNoMatchStrings() {
+        System.out.println("Non-matching strings");
+        
+        boolean expResult = false;
+        String s1 = "abc";
+        String s2 = "def";
+        int minLength = 2;
+        CommonSubstringFinder csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = false;
+        minLength = 3;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = false;
+        minLength = 4;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+    }
+    
+    /**
+     * Tests CommonSubstringFinder on two fully matching strings
+     */
+    @Test
+    public void testPartiallyMatchingStrings() {
+        System.out.println("Non-matching strings");
+        
+        boolean expResult = true;
+        String s1 = "abcd";
+        String s2 = "zbcd";
+        int minLength = 2;
+        CommonSubstringFinder csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = true;
+        minLength = 3;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = false;
+        minLength = 4;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+    }
+    
+    /**
+     * Tests CommonSubstringFinder on two fully matching strings
+     */
+    @Test
+    public void testPartiallyMatchingStrings2() {
+        System.out.println("Non-matching strings");
+        
+        boolean expResult = true;
+        String s1 = "bcde";
+        String s2 = "zbcdef";
+        int minLength = 2;
+        CommonSubstringFinder csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = true;
+        minLength = 3;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        
+        expResult = true;
+        minLength = 4;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+        expResult = false;
+        
+        minLength = 5;
+        csf = new CommonSubstringFinder(s1,s2,minLength);
+        assertEquals(expResult, csf.hasCommonSubstrings());
+    }
+    
+    
 
     /**
      * Test of commonSubsOfMinLength method, of class CommonSubstringFinder.

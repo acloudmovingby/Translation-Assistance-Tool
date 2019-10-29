@@ -28,10 +28,9 @@ public class PostingsListManager {
         this.committedSegments = committedSegments;
 
         plList = new ArrayList();
-        for (int i = 3; i < 8; i++) {
+        for (int i = 3; i < 10; i++) {
             plList.add(new PostingsList(i));
         }
-
         plList.forEach((pl) -> {
             pl.addMultipleSegments(committedSegments);
         });

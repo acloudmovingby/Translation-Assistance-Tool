@@ -49,11 +49,11 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 
 /**
- * FXML Controller class does: (1) registers user input to pass on to Dispatcher
+ * FXML Controller class (1) registers user input to pass on to Dispatcher
  * and (2) controls UI with any components that can't be done in CSS/FXML (such
  * as dynamic content that I found hard to do in the SceneBuilder).
  *
- * This class primarily wiring between the UI code and the business logic
+ * This class is primarily for the wiring between the UI code and the business logic
  * classes, but performs no business logic itself.
  *
  * JavaFX, the GUI used in this application, relies on working together with an
@@ -194,8 +194,7 @@ public class Fxml_1Controller implements Initializable {
     UIState uiState;
 
     /**
-     * Initializes the controller class. I don't know what url/rb are used for
-     * (something to do with JavaFX)
+     * Initializes the controller class.
      *
      * @param url
      * @param rb
@@ -204,11 +203,10 @@ public class Fxml_1Controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         // builds a main file from the specified Thai document
-        FileBuilder fileBuilder = new FileBuilder();
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
-        TranslationFile mainFile = fileBuilder.justThaiFilePath(filePath);
+        TranslationFile mainFile = FileBuilder.justThaiFilePath(filePath);
 
         // build the important objects for the program and sets the items for the tables to display
         State state = new State(DatabaseOperations.getAllFiles());
@@ -268,26 +266,27 @@ public class Fxml_1Controller implements Initializable {
         ImageView newFileIconIV = new ImageView(newFileIcon);
         newFileIconIV.setFitWidth(110);
         newFileIconIV.setPreserveRatio(true);
-        Button newFileLabel = new Button("New", newFileIconIV);
-        newFileLabel.setMinWidth(130);
-        newFileLabel.setMaxWidth(130);
-        newFileLabel.setGraphicTextGap(8);
-        newFileLabel.setContentDisplay(ContentDisplay.TOP);
-        newFileLabel.setOnAction(e -> {
+        Button newFileButton = new Button("New", newFileIconIV);
+        newFileButton.setMinWidth(130);
+        newFileButton.setMaxWidth(130);
+        newFileButton.setGraphicTextGap(8);
+        newFileButton.setContentDisplay(ContentDisplay.TOP);
+        newFileButton.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             File file = fileChooser.showOpenDialog(JavaFX_1.stage);
             if (file != null) {
                 this.setMainFile(FileBuilder.justThaiFilePath(file.getAbsolutePath()));
+                mainTabPane.getSelectionModel().select(translationTab); // switches the view from the home tab to the translation tab
             }
         }
         );
-        homeTopIcons.getChildren().add(newFileLabel);
+        homeTopIcons.getChildren().add(newFileButton);
 
         // LOAD FILE ICONS
         Image loadFileIconImage = new Image(getClass().getResource("/Images/BlankFileIcon.png").toExternalForm());
 
         // Creates the actual icons (which are buttons to open a file for translation) and include the standard blank file icon image, the name of the file, and a listener for when the user clicks on it
-        for (TranslationFile file : uiState.getAllFiles()) {
+        uiState.getAllFiles().stream().map((file) -> {
             ImageView loadFileIconIV = new ImageView(loadFileIconImage);
             loadFileIconIV.setFitWidth(110);
             loadFileIconIV.setPreserveRatio(true);
@@ -300,11 +299,14 @@ public class Fxml_1Controller implements Initializable {
             loadFileFlowPane.getChildren().add(loadFileIcon);
             // the following handles the events when the user, in the home tab, clicks on a file to open 
             loadFileIcon.setOnAction(e -> {
+                //System.out.println("Removed file: " + DatabaseOperations.removeFile(file.getFileID()));
                 setMainFile(file); // resets the main file
                 mainTabPane.getSelectionModel().select(translationTab); // switches the view from the home tab to the translation tab
             });
+            return loadFileIcon;
+        }).forEachOrdered((loadFileIcon) -> {
             loadFileIcon.getStyleClass().add("loadFileButton");
-        }
+        });
 
         // BELOW IS ONLY UI INITIALIZIATION THAT DOESN'T DEPEND ON MAIN FILE
         // Because the main file can be changed mid program operation, all UI elements that depend on state/UIstate/TopLevelBackEnd need to be in the method setMainFile so they are reset when the main file is changed

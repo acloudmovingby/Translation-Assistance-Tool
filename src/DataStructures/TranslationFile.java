@@ -47,7 +47,7 @@ public class TranslationFile {
     public TranslationFile() {
         activeSegs = FXCollections.observableArrayList();
         hiddenSegs = new ArrayList();
-        fileName = "untitled";
+        fileName = "untitled file";
         fileID = DatabaseOperations.createFileID(fileName);
     }
 

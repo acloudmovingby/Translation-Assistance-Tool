@@ -250,9 +250,6 @@ public class IntervalGraph<U> {
                 .map(e -> e.getKey())
                 .collect(Collectors.toList());
         
-        System.out.println("NEW LEVEL");
-        zeroIn.stream().forEach(a -> System.out.println("Interval: " + a.interval + ", no. of children: " + a.children.size()/* + ", substring: " + ((MatchSegment) a.getObject()).getThai().substring((Integer) a.interval.getKey(), (Integer) a.interval.getValue())*/));
-        
         // sort non-comparable nodes by the lower int in their interval. (Non-comparable means they are disjoint or intersecting sets so their is no clear parent/child relationship)
         // these could of course by sorted in any way (or not sorted), but sorting them in this way allows us to easily test the output because there is a defined ordering we can predict
         zeroIn.sort((Node a, Node b) -> {

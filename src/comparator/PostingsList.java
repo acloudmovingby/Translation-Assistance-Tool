@@ -184,13 +184,14 @@ public class PostingsList {
      * @return 
      */
     private String tokenize(String str) {
-        
+        return str;
+        /* The following was seemed to work for awhile but it caused some issues with the matches. Need to redo
         // almost certainly could combine these two regexes so it doesn't have to go through it twice, but wasn't sure how to do, so just left as is
         // remove white space characters, "!" and "_" 
         String ret = str.replaceAll("[ !\t\n\f\r_]", "");
         // remove any "." that occur more than once (so you ignore text like "......")
         ret = ret.replaceAll("[.]{2,}", "");
         return ret;
-        //return str;
+        //return str;*/
     }
 }
