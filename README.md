@@ -1,3 +1,5 @@
+
+
 # Overview
 
 This tool assists translators by reminding them of other translations that resemble the document they are currently translating. 
@@ -19,10 +21,10 @@ Brands like Trados and Wordfast are widely used by translators <statistic about 
 However in my experience these tools often worked very poorly with Thai.
 
 # Why other software does not work well with Thai
-Possible reasons:
-- Incorrectly counting words (many text processors, including Google Docs until recently, incorrectly counted words in Thai). 
-- Over use of Edit / Levenstein distance. Thai does not use periods, so we have to parse segments purely on line breaks, meaning some segments are quite long. This makes use of edit distance alone a poor choice for comparing commonality.
-- My computer is old and buggy ? 
+It's hard to know why they don't work well, but possible reasons could be: 
+- Their algorithm weights matches oriented around word statistics (like term frequency), but their parsing Thai words incorrectly (note: many text processors, including Google Docs until very recently, counted Thai words incorrectly). Their parsing / normalization might rely on cues like word spaces or punctuation that exist in many Western languages but don't in Thai.
+- Because there's no punctuation to show the end of a sentence in Thai, the programs must parse by line break (i.e. at the end of a paragraph), but this ends up creating much larger segments, which for certain ways of measuring similarity (like edit distance), would make Segments seem quite different, when in fact there are substantial common substrings inside
+- The above two reasons seem very obvious, so I have no real idea why most software fails to work with Thai well...
 
 # Application Basic Requirements
 For any translator who actually wants to use this software, it must be able to:
@@ -56,15 +58,15 @@ UI relies on JavaFX which binds components to properties set in UIState.
 <class diagram>
 
 # Important classes
-**Segment** - Immutable, represents a pairing between a source language and the translation in the target language, if it exists. Has unique id.
-**File** - A list of Segments, with a file name and unique id.
-**State** - Stores all the files in the corpus as well as the MatchManager whose data (the postings lists) depends on the corpus.
-**Controller** - Primarily a wiring between the UI code and the business logic. Sends all user interaction to the Dispatcher.  
-**Dispatcher** - Either interacts with the state directly to perform user actions or delegates the task to a specialized module (e.g. Undo Manager)
-**MutateFileAction** - interface for user actions that directly affect segments in a file. This abstraction makes it so you backup to database and push to UndoManager all in one place
-**UndoManager** - handles undo-redo capability by storing duplicate states 
-**DatabaseManager** - because SQL calls were slow, this module records prior versions of the file and only updates in the database the segments that were changed. 
-**DatabaseOperations** - The actual SQLite database calls. Was made with all static methods (bad!) for convenience sake, and because it was assumed there aren’t multiple databases. 
+* **Segment** - Immutable, represents a pairing between a source language and the translation in the target language, if it exists. Has unique id.
+* **File** - A list of Segments, with a file name and unique id.
+* **State** - Stores all the files in the corpus as well as the MatchManager whose data (the postings lists) depends on the corpus.
+* **Controller** - Primarily a wiring between the UI code and the business logic. Sends all user interaction to the Dispatcher.  
+* **Dispatcher** - Either interacts with the state directly to perform user actions or delegates the task to a specialized module (e.g. Undo Manager)
+* **MutateFileAction** - interface for user actions that directly affect segments in a file. This abstraction makes it so you backup to database and push to UndoManager all in one place
+* **UndoManager** - handles undo-redo capability by storing duplicate states 
+* **DatabaseManager** - because SQL calls were slow, this module records prior versions of the file and only updates in the database the segments that were changed. 
+* **DatabaseOperations** - The actual SQLite database calls. Was made with all static methods (bad!) for convenience sake, and because it was assumed there wouldn’t be multiple databases (bad! need to change this!)
 
 # Immutable Segments
 Whole program revolves around Segments.
@@ -74,14 +76,13 @@ By making them immutable, all operations (committing segments, editing source te
 This isn’t too expensive because individual Segments are relatively short Strings.
 
 # Search Algorithm 
-The translator (if they’re smart) will not just rely on their own translations for matches, but will will also download corpuses of translations from the web (especially say of legal codes, legislation, etc.) 
+The translator will not just rely on their own translations for matches, but will will also download corpuses of translations from the web (especially say of legal codes, legislation, etc.) 
 
-For a sufficiently large corpus a simple tool like the Unix “grep” command may be either slow and/or not provide the flexibility to find the matches that suit the user and to do so quickly.
+Because this might lead to a significant sized corpus, so I wanted to try more "fancy" techniques than simlpe Unix grep.
 
-While perhaps unnecessary, I was really fascinated by the techniques used in the field of “information retrieval” (IR) that are used in many modern search engines. One of the most common techniques, and used by many search engines, is to have “postings lists” which are key-value pairs where the key is a term (or terms) and the value is the “postings list” which is a list of all document ids that contain that term. 
+While perhaps unnecessary, I was really fascinated by the techniques used in the field of “information retrieval” (IR) that are used in many modern search engines. One of the most common techniques, and used by many search engines, is to have inverted indices which are key-value pairs where the key is a term (or terms) and the value is the “postings list” which is a list of all document ids that contain that term. 
 
-
-By breaking up your search query into these terms or groups of terms, you can provide O(1) lookup time to find all documents that may be matches. 
+By breaking up your search query into these terms or groups of terms, you can provide O(1) lookup time to find list of all documents that may be matches. 
 
 One useful way to create terms is to use ngrams, based on either words or characters. “The king sat on the throne…”
 		2-grams with words 		→ “The king”, “king sat”, “sat on”....
