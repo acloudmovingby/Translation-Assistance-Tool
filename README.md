@@ -69,33 +69,25 @@ This isn’t too expensive because individual Segments are relatively short Stri
 # Search Algorithm 
 The translator will not just rely on their own translations for matches, but will will also download corpuses of translations from the web (especially say of legal codes, legislation, etc.) 
 
-Because this might lead to a significant sized corpus, so I wanted to try more "fancy" techniques than simlpe Unix grep.
+I tried to implement my own inverted index (essentially a hashmap between terms and the documents they appear in). By breaking up your search query into these terms or groups of terms, you can provide O(1) lookup time to find list of all documents that may be matches. 
 
-While perhaps unnecessary, I was really fascinated by the techniques used in the field of “information retrieval” (IR) that are used in many modern search engines. One of the most common techniques, and used by many search engines, is to have inverted indices which are key-value pairs where the key is a term (or terms) and the value is the “postings list” which is a list of all document ids that contain that term. 
-
-By breaking up your search query into these terms or groups of terms, you can provide O(1) lookup time to find list of all documents that may be matches. 
-
-One useful way to create terms is to use ngrams, based on either words or characters. “The king sat on the throne…”
+Often you use ngrams, based on either words or characters. “The king sat on the throne…”
 		2-grams with words 		→ “The king”, “king sat”, “sat on”....
 		7-grams with characters 	→ “The kin”, “he king”, “e king “, 
 
-What are postings lists (mention positional index)
-
-<Diagram of Postings Lists>
-
 # Why do n-grams based on characters, not words?
-Many people working in IR technologies might be used to n-grams referring to words. Below are my reasons for why I chose to use n-grams based on short subsequences of characters. I also subsequently found out that this is not an uncommon choice for many Asian languages (source). Here were my reasons that applied to Thai:
-- Thai is not an inflected language, so there are not variations of the same word (e.g. eat, ate, eaten). Thus there is much less need for tokenization (representing eat/ate as the same word in your indices). 
+It's common to use n-grams based on words. Below are my reasons for why I chose to use n-grams based on subsequences of characters. Here were my reasons that applied to Thai:
+- Thai is not an inflected language, so there are not variations of the same word (e.g. eat, ate, eaten). Thus there is much less need for normalization (representing eat/ate as the same word in your indices). 
 - Thai does not use spaces between words, so deciding what is a word is somewhat arbitrary.
-- As a translator I often had to work with OCR to scan documents and current OCR technology does not work as well with Thai. Errors, while sometimes predictable, were not always so and might be hard to tokenize well, especially since there may not be a vast data set to learn from for that particular OCR technology.
+- As a translator I often had to work with OCR to scan documents and current OCR technology does not work as well with Thai. Errors, while sometimes predictable, were not always so and might be hard to normalize/tokenize well, especially since there may not be a vast data set to learn from for that particular OCR technology.
 
 For all the above reasons, I found that simply searching for common substrings and ignoring word boundaries actually worked quite well in practice. However there were two major downsides to this choice:
 - Uses much more memory.
 - Minor issue, but the "rarity" of any particular ngram in the corpus doesn't mean much, as it could be crossing word boundaries. Both words might be common, but it might be uncommon for them to be next to each other, so if I wanted to rank matches by term rarity, it would be better to parse the words separately then use some publicly available term frequency list for Thai.
 
 
-# Ngram - Postings List Further considerations
-When using postings lists, it is sometimes useful to not only have a list of document ids, but also a pointer to where in the document the term is (a "positional index"). You can then use multiple iterators going down different postings lists to calculate whether matches for different terms are contiguous. 
+# Positional Indices in Postings Lists
+When using postings lists, it is can be useful to not only have a list of document ids, but also a pointer to where in the document the term is (a "positional index"). You can then use multiple iterators going down different postings lists to calculate, based on the offsets of these positional indices, whether matches for those different n-grams are contiguous in the same document. 
 
 I didn’t find this technique necessary because my postings lists point to individual Segments which are usually quite short and it’s much easier to then use custom search algorithms to compare the source and corpus segments. I found that for this software, especially because I was using long n-grams of characters and was interested in fuzzy matching, iterating through these postings lists simultaneously using positional indices proved tricky and rather complicated. It was simpler to just use the n-grams to find candidate segments, then compare the segments themselves using another algorithm.
 This also had the added benefit of easily being able to swap out different matching algorithms for the final step. 
