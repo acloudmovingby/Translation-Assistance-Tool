@@ -1,4 +1,8 @@
+Home Tab:
+![Image of homescreen](https://github.com/acloudmovingby/Translation-Assistance-Tool/blob/master/Screenshots/Home%20Screen.png)
 
+Translation Tab:
+![Image of Translation screen](https://github.com/acloudmovingby/Translation-Assistance-Tool/blob/master/Screenshots/Translation%20Screen.png)
 
 # Overview
 
