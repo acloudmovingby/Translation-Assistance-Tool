@@ -141,7 +141,6 @@ public class Dispatcher {
      * @param file 
      */
     public void setMainFile(TranslationFile file) {
-        System.out.println("dispatcher called");
         // set state's main file
         state.setMainFile(file);
         

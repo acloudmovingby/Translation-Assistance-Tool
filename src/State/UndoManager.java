@@ -32,7 +32,7 @@ public class UndoManager {
     }
 
     /**
-     * Stores the current state (currently just the MainFile), so that if undo
+     * Stores the current state (currently just the MainFile, if it exists), so that if undo
      * is called the state can be restored to this version.
      *
      * Note: THIS CLEARS REDOSTACK. UndoManager does not support branching file
@@ -42,7 +42,9 @@ public class UndoManager {
      * @param state
      */
     protected void push(State state) {
-        undoStack.offerFirst(new TranslationFile(state.getMainFile()));
+        if (state.getMainFile() != null) {
+            undoStack.offerFirst(new TranslationFile(state.getMainFile()));
+        }
         redoStack.clear();
     }
 

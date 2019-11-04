@@ -9,7 +9,6 @@ import DataStructures.TranslationFile;
 import Database.DatabaseOperations;
 import comparator.PostingsList;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -27,7 +26,6 @@ public class PostingsListSize {
         int totalSourceLength = TranslationFile.getAllCommittedSegsInFileList(allFiles).stream()
                 .mapToInt(a -> a.getThai().length())
                 .sum();
-        //TimeUnit.SECONDS.sleep(20);
         System.out.println("numSegs = " + numSegs);
         System.out.println("totalSourceLength = " + totalSourceLength);
         
