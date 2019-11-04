@@ -207,7 +207,7 @@ public class Fxml_1Controller implements Initializable {
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
         //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
         //TranslationFile mainFile = FileBuilder.justThaiFilePath(filePath);
-        // testing  github works
+        
         // build the important objects for the program and sets the items for the tables to display
         State state = new State(DatabaseOperations.getAllFiles());
         dispatcher = new Dispatcher(state);
