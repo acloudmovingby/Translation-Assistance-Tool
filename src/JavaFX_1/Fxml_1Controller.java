@@ -202,16 +202,8 @@ public class Fxml_1Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // builds a main file from the specified Thai document
-        //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTestSimple.txt";
-        //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/ABCTest.txt";
-        //String filePath = "/Users/Chris/Desktop/Docs/Documents/Personal/Coding/Non-website design/Thai Parser Project/CAT1/src/CAT1/FanSafety.txt";
-        //TranslationFile mainFile = FileBuilder.justThaiFilePath(filePath);
-        
-        // build the important objects for the program and sets the items for the tables to display
         State state = new State(DatabaseOperations.getAllFiles());
         dispatcher = new Dispatcher(state);
-        //setMainFile(mainFile);
         uiState = dispatcher.getUIState();
 
         // UI THINGS THAT DEPEND ON MAINFILE
