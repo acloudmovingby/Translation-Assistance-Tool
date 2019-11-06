@@ -1,3 +1,6 @@
+# DEMO VIDEO
+This video explains a lot about how the software works, why I made it, etc.: https://youtu.be/qNJlBoaJ1R4
+
 Home Tab:
 ![Image of homescreen](https://github.com/acloudmovingby/Translation-Assistance-Tool/blob/master/Screenshots/Home%20Screen.png)
 
