@@ -1,5 +1,4 @@
-# DEMO VIDEO
-This video explains a lot about how the software works, why I made it, etc.: https://youtu.be/qNJlBoaJ1R4
+
 
 Home Tab:
 ![Image of homescreen](https://github.com/acloudmovingby/Translation-Assistance-Tool/blob/master/Screenshots/Home%20Screen.png)
@@ -126,6 +125,9 @@ Used JavaFX because it is a common UI framework for Java.
 
 As much as possible UI was done through FXML/CSS because it separates the UI from the backend and uses fewer lines of code. However, I found that some dynamically generated content was not possible in pure FXML/CSS, so I did some of that in Java in the controller class. 
 
+# DEMO VIDEO
+This video explains a lot about how the software works, why I made it, etc.: https://youtu.be/qNJlBoaJ1R4
+	
 # Further Resource / Reading
 [Lecture](https://web.stanford.edu/class/cs276/handouts/lecture3-tolerant-retrieval-handout-1-per.pdf) about information retrieval (techniques used for search engines. 
 
